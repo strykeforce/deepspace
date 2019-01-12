@@ -1,0 +1,81 @@
+plugins {
+
+    id "java"
+
+    id "edu.wpi.first.GradleRIO" version "2019.1.1"
+    id "idea"
+
+    id "com.diffplug.gradle.spotless" version "3.16.0"
+
+}
+
+
+def ROBOT_MAIN_CLASS = "frc.team2767.deepspace.Main"
+
+
+deploy {
+    targets {
+        roboRIO("roborio") {
+            team = frc.getTeamNumber() // loaded from .wpilib/wpilib_preferences.json
+        }
+    }
+    artifacts {
+        frcJavaArtifact("frcJava") {
+            targets << "roborio"
+            debug = frc.getDebugOrDefault(false)
+        }
+        // Built in artifact to deploy arbitrary files to the roboRIO.
+        fileTreeArtifact("frcStaticFileDeploy") {
+            // The directory below is the local directory to deploy
+            files = fileTree(dir: "src/main/deploy")
+            // Deploy to RoboRIO target, into /home/lvuser/deploy
+            targets << "roborio"
+            directory = "/home/lvuser/deploy"
+        }
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+
+    compile wpi.deps.wpilib()
+    compile wpi.deps.vendor.java()
+    nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
+    nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
+
+
+    compile "org.strykeforce.thirdcoast:swerve:${thirdcoastVersion}"
+
+
+    compile "org.strykeforce.thirdcoast:telemetry:${thirdcoastVersion}"
+
+
+    compile "ch.qos.logback:logback-classic:${logbackVersion}"
+
+
+}
+
+
+
+jar {
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+
+spotless {
+  java {
+    googleJavaFormat()
+  }
+}
+
