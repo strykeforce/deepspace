@@ -1,24 +1,35 @@
 package frc.team2767.deepspace.motion
 
 import edu.wpi.first.wpilibj.Notifier
+import edu.wpi.first.wpilibj.Preferences
 import mu.KotlinLogging
 import org.strykeforce.thirdcoast.swerve.SwerveDrive
 import org.strykeforce.thirdcoast.trapper.Action
 import org.strykeforce.thirdcoast.trapper.post
 
-const val K_P = 3.7
+const val K_P_POSITION = 3.7
 const val GOOD_ENOUGH = 5500
 const val EXTRA_TIME = 1000L
 
 private const val DT_MS = 20
 private const val T1_MS = 200
 private const val T2_MS = 100
-private const val V_PROG = (12000 * 10).toDouble() // ticks/sec
+private const val V_PROG = (12000 * 10) // ticks/sec
+private const val NAME = "TwistController"
 
 class TwistController(private val drive: SwerveDrive, heading: Double, val distance: Int, targetYaw: Double = 0.0) {
     private val logger = KotlinLogging.logger {}
+    private val prefs = Preferences.getInstance()
 
-    private val motionProfile = MotionProfile(DT_MS, T1_MS, T2_MS, V_PROG, distance)
+    private val kDtMs = prefs.getInt("$NAME/dt", DT_MS)
+    private val kT1Ms = prefs.getInt("$NAME/t1", T1_MS)
+    private val kT2Ms = prefs.getInt("$NAME/t2", T2_MS)
+    private val kVProg = prefs.getInt("$NAME/v_prog", V_PROG)
+    private val kPPosition = prefs.getDouble("$NAME/k_p_position", K_P_POSITION)
+    private val kGoodEnough = prefs.getInt("$NAME/good_enough", GOOD_ENOUGH)
+    private val kExtraTime = prefs.getLong("$NAME/extra_time", EXTRA_TIME)
+
+    private val motionProfile = MotionProfile(kDtMs, kT1Ms, kT2Ms, kVProg, distance)
     private val notifier = Notifier(this::updateDrive)
 
     private val ticksPerSecMax = drive.wheels[0].driveSetpointMax * 10.0
@@ -57,14 +68,16 @@ class TwistController(private val drive: SwerveDrive, heading: Double, val dista
         action.meta["dt"] = DT_MS
         action.meta["t1"] = T1_MS
         action.meta["t2"] = T2_MS
-        action.meta["v_prog"] = V_PROG.toInt()
+        action.meta["v_prog"] = kVProg
         action.meta["direction"] = heading
         action.meta["yaw"] = targetYaw
         action.meta["tags"] = listOf("skippy", "twist")
         action.meta["type"] = "twist"
-        action.meta["k_p"] = K_P
-        action.meta["good_enough"] = GOOD_ENOUGH
+        action.meta["k_p"] = kPPosition
+        action.meta["good_enough"] = kGoodEnough
         action.meta["profile_ticks"] = distance
+
+        initializePreferences()
     }
 
     var isFinished = false
@@ -111,14 +124,14 @@ class TwistController(private val drive: SwerveDrive, heading: Double, val dista
             if (extraTimeStart == 0L) extraTimeStart = System.currentTimeMillis()
             iteration++
             drive.drive(0.0, 0.0, 0.0)
-            if (System.currentTimeMillis() - extraTimeStart > EXTRA_TIME) {
+            if (System.currentTimeMillis() - extraTimeStart > kExtraTime) {
                 isFinished = true
                 return
             }
         } else {
             motionProfile.calculate()
             iteration = motionProfile.iteration
-            setpointVelocity = motionProfile.currVel + K_P * positionError()
+            setpointVelocity = motionProfile.currVel + kPPosition * positionError()
             forward = forwardComponent * setpointVelocity
             strafe = strafeComponent * setpointVelocity
             yaw = 0.0
@@ -142,4 +155,17 @@ class TwistController(private val drive: SwerveDrive, heading: Double, val dista
     }
 
     private fun positionError() = motionProfile.currPos - actualDistance
+
+    private fun initializePreferences() {
+        val prefs = Preferences.getInstance()
+        if (prefs.getBoolean("$NAME/initialized", false)) return
+        prefs.putInt("$NAME/dt", kDtMs)
+        prefs.putInt("$NAME/t1", kT1Ms)
+        prefs.putInt("$NAME/t2", kT2Ms)
+        prefs.putInt("$NAME/v_prog", kVProg)
+        prefs.putDouble("$NAME/k_p_position", kPPosition)
+        prefs.putInt("$NAME/good_enough", kGoodEnough)
+        prefs.putLong("$NAME/extra_time", kExtraTime)
+        prefs.putBoolean("$NAME/initialized", true)
+    }
 }

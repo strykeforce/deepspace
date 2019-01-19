@@ -14,7 +14,7 @@ import java.io.File
 //    t4  = time to get to destination, in ms, at vProg. t4 = dist/vProg
 //     n  = number of inputs to filter. n = roundup(t4/dt)
 
-class MotionProfile(val dt: Int, t1: Int, t2: Int, val vProg: Double, dist: Int) {
+class MotionProfile(val dt: Int, t1: Int, t2: Int, val vProg: Int, dist: Int) {
 
     private val f1 = IntArray(Math.ceil(t1.toDouble() / dt).toInt())
     private val f2 = DoubleArray(Math.ceil(t2.toDouble() / dt).toInt())
@@ -34,7 +34,7 @@ class MotionProfile(val dt: Int, t1: Int, t2: Int, val vProg: Double, dist: Int)
         get() = iteration >= n + f1.size + f2.size + 1
 
     init {
-        val t4 = dist / vProg * 1000
+        val t4 = dist / vProg.toDouble() * 1000
         n = Math.ceil(t4 / dt).toInt()
     }
 
