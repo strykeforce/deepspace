@@ -15,7 +15,7 @@ public final class TeleOpDriveCommand extends Command {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   private static final DriveSubsystem swerve = Robot.DRIVE;
-  private static final DriverControls controls = Robot.CONTROLS.getDriverControls();
+  private static DriverControls controls;
 
   public TeleOpDriveCommand() {
     requires(swerve);
@@ -23,6 +23,7 @@ public final class TeleOpDriveCommand extends Command {
 
   @Override
   protected void initialize() {
+    controls = Robot.CONTROLS.getDriverControls();
     swerve.setDriveMode(TELEOP);
   }
 
