@@ -26,7 +26,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     logger.info("Today is {}", new Date());
     DRIVE.zeroAzimuthEncoders();
-
+    DRIVE.zeroGyro();
     TELEMETRY.start();
   }
 
