@@ -30,7 +30,7 @@ public class DriverControls {
 
     new JoystickButton(joystick, Button.HAMBURGER.id).whenPressed(log(Button.HAMBURGER));
     //    new JoystickButton(joystick, Button.X.id).whenPressed(new TeleOpDriveCommand());
-    new JoystickButton(joystick, Button.UP.id).whenPressed(new TwistCommand(0d, 100_000, 0d));
+    new JoystickButton(joystick, Button.UP.id).whenPressed(new TwistCommand(0d, 200_000, 0d));
     new JoystickButton(joystick, Button.DOWN.id).whenPressed(log(Button.DOWN));
 
     // Trim Switches

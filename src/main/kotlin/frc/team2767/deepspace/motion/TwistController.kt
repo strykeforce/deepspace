@@ -6,8 +6,9 @@ import org.strykeforce.thirdcoast.swerve.SwerveDrive
 import org.strykeforce.thirdcoast.trapper.Action
 import org.strykeforce.thirdcoast.trapper.post
 
-const val K_P = -1.2
+const val K_P = 3.7
 const val GOOD_ENOUGH = 5500
+const val EXTRA_TIME = 1000L
 
 private const val DT_MS = 20
 private const val T1_MS = 200
@@ -66,8 +67,8 @@ class TwistController(private val drive: SwerveDrive, heading: Double, val dista
         action.meta["profile_ticks"] = distance
     }
 
-    val isFinished
-        get() = motionProfile.isFinished && Math.abs(distance - actualDistance) < GOOD_ENOUGH
+    var isFinished = false
+    var extraTimeStart = 0L
 
     private val actualDistance: Double
         get() {
@@ -76,8 +77,12 @@ class TwistController(private val drive: SwerveDrive, heading: Double, val dista
             return distance / 4.0
         }
 
-    private val actualVelocity: Int
-        get() = drive.wheels[0].driveTalon.getSelectedSensorVelocity(0)
+    private val actualVelocity: Double
+        get() {
+            val wheel = drive.wheels[0]
+            val sign = if (wheel.isInverted) -1.0 else 1.0
+            return sign * wheel.driveTalon.getSelectedSensorVelocity(0).toDouble()
+        }
 
     fun start() {
         notifier.startPeriodic(DT_MS / 1000.0)
@@ -95,20 +100,37 @@ class TwistController(private val drive: SwerveDrive, heading: Double, val dista
         action.post()
     }
 
+    var iteration = 0
+
     private fun updateDrive() {
-        motionProfile.calculate()
-        val velocity = motionProfile.currVel + K_P * positionError()
-        val forward = forwardComponent * velocity
-        val strafe = strafeComponent * velocity
-        val yaw = 0.0
-        drive.drive(forward, strafe, yaw)
+        var setpointVelocity = 0.0
+        var forward = 0.0
+        var strafe = 0.0
+        var yaw = 0.0
+        if (motionProfile.isFinished) {
+            if (extraTimeStart == 0L) extraTimeStart = System.currentTimeMillis()
+            iteration++
+            drive.drive(0.0, 0.0, 0.0)
+            if (System.currentTimeMillis() - extraTimeStart > EXTRA_TIME) {
+                isFinished = true
+                return
+            }
+        } else {
+            motionProfile.calculate()
+            iteration = motionProfile.iteration
+            setpointVelocity = motionProfile.currVel + K_P * positionError()
+            forward = forwardComponent * setpointVelocity
+            strafe = strafeComponent * setpointVelocity
+            yaw = 0.0
+            drive.drive(forward, strafe, yaw)
+        }
         action.traceData.add(
             listOf(
-                (motionProfile.iteration * DT_MS).toDouble(), // millis
+                (iteration * DT_MS).toDouble(), // millis
                 motionProfile.currAcc,     // profile_acc
                 motionProfile.currVel,     // profile_vel
-                velocity,                  // setpoint_vel
-                actualVelocity.toDouble(), // actual_vel
+                setpointVelocity,          // setpoint_vel
+                actualVelocity,            // actual_vel
                 motionProfile.currPos,     // profile_ticks
                 actualDistance,            // actual_ticks
                 forward,  // forward
@@ -119,5 +141,5 @@ class TwistController(private val drive: SwerveDrive, heading: Double, val dista
         )
     }
 
-    private fun positionError() = actualDistance - motionProfile.currPos
+    private fun positionError() = motionProfile.currPos - actualDistance
 }
