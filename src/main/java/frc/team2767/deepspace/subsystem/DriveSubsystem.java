@@ -2,6 +2,7 @@ package frc.team2767.deepspace.subsystem;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.kauailabs.navx.frc.AHRS;
@@ -20,7 +21,7 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 public class DriveSubsystem extends Subsystem {
 
-  private static final double DRIVE_SETPOINT_MAX = 20_000.0;
+  private static final double DRIVE_SETPOINT_MAX = 25_000.0;
   private static final double ROBOT_LENGTH = 1.0;
   private static final double ROBOT_WIDTH = 1.0;
 
@@ -117,6 +118,8 @@ public class DriveSubsystem extends Subsystem {
     driveConfig.slot0.kF = 0.028;
     driveConfig.slot0.integralZone = 3000;
     driveConfig.slot0.allowableClosedloopError = 0;
+    driveConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_25Ms;
+    driveConfig.velocityMeasurementWindow = 8;
 
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
