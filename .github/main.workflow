@@ -8,7 +8,7 @@ action "gradle build" {
   args = "build"
 }
 
-workflow "shaking finger action" {
+workflow "process pull request" {
   on = "pull_request"
   resolves = ["post gif on fail", "branch cleanup"]
 }
