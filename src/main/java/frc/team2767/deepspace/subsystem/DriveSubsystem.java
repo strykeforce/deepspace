@@ -2,6 +2,7 @@ package frc.team2767.deepspace.subsystem;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.kauailabs.navx.frc.AHRS;
@@ -9,6 +10,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.command.TeleOpDriveCommand;
+import frc.team2767.deepspace.motion.TwistController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
@@ -19,12 +21,14 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 public class DriveSubsystem extends Subsystem {
 
-  private static final double DRIVE_SETPOINT_MAX = 0.0;
+  private static final double DRIVE_SETPOINT_MAX = 25_000.0;
   private static final double ROBOT_LENGTH = 1.0;
   private static final double ROBOT_WIDTH = 1.0;
 
   private final SwerveDrive swerve = getSwerve();
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+  private TwistController twistController;
 
   public DriveSubsystem() {}
 
@@ -45,6 +49,26 @@ public class DriveSubsystem extends Subsystem {
   public void drive(double forward, double strafe, double azimuth) {
     swerve.drive(forward, strafe, azimuth);
   }
+
+  ////////////////////////////////////////////////////////////////////////////
+  // TWIST
+  ////////////////////////////////////////////////////////////////////////////
+
+  public void twistTo(double heading, int distance, double targetYaw) {
+    twistController = new TwistController(swerve, heading, distance, targetYaw);
+    twistController.start();
+  }
+
+  public boolean isTwistFinished() {
+    return twistController.isFinished();
+  }
+
+  public void endTwist() {
+    twistController.stop();
+    twistController = null;
+  }
+
+  ////////////////////////////////////////////////////////////////////////////
 
   public void zeroGyro() {
     AHRS gyro = swerve.getGyro();
@@ -86,8 +110,16 @@ public class DriveSubsystem extends Subsystem {
     TalonSRXConfiguration driveConfig = new TalonSRXConfiguration();
     driveConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
     driveConfig.continuousCurrentLimit = 40;
-    driveConfig.peakCurrentDuration = 0;
-    driveConfig.peakCurrentLimit = 0;
+    driveConfig.peakCurrentDuration = 40;
+    driveConfig.peakCurrentLimit = 1;
+    driveConfig.slot0.kP = 0.03;
+    driveConfig.slot0.kI = 0.0003;
+    driveConfig.slot0.kD = 0.0;
+    driveConfig.slot0.kF = 0.028;
+    driveConfig.slot0.integralZone = 3000;
+    driveConfig.slot0.allowableClosedloopError = 0;
+    driveConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_25Ms;
+    driveConfig.velocityMeasurementWindow = 8;
 
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
@@ -101,6 +133,8 @@ public class DriveSubsystem extends Subsystem {
       TalonSRX driveTalon = new TalonSRX(i + 10);
       driveTalon.configAllSettings(driveConfig);
       driveTalon.setNeutralMode(NeutralMode.Brake);
+      driveTalon.enableCurrentLimit(true);
+      //      driveTalon.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, 10);
 
       telemetryService.register(azimuthTalon);
       telemetryService.register(driveTalon);
