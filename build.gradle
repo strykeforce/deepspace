@@ -32,7 +32,6 @@ deploy {
 
 repositories {
     jcenter()
-    mavenLocal()
 }
 
 dependencies {
