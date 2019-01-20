@@ -6,31 +6,46 @@ import mu.KotlinLogging
 import org.strykeforce.thirdcoast.swerve.SwerveDrive
 import org.strykeforce.thirdcoast.trapper.Action
 import org.strykeforce.thirdcoast.trapper.post
+import kotlin.math.absoluteValue
+import kotlin.math.min
+import kotlin.math.sign
 
 private const val NAME = "TwistController"
+private const val MOTION_PROFILE = "MotionProfile"
+private const val DISTANCE_LOOP = "DistanceLoop"
+private const val YAW_LOOP = "YawLoop"
 
-const val K_P_POSITION = "$NAME/k_p_position"
-const val K_P_POSITION_DEFAULT = 3.7
+const val K_P_DISTANCE = "$NAME/$DISTANCE_LOOP/k_p"
+const val K_P_DISTANCE_DEFAULT = 3.7
+const val GOOD_ENOUGH_DISTANCE = "$NAME/$DISTANCE_LOOP/good_enough"
+const val GOOD_ENOUGH_DISTANCE_DEFAULT = 5500
 
-const val GOOD_ENOUGH = "$NAME/good_enough"
-const val GOOD_ENOUGH_DEFAULT = 5500
+const val K_P_YAW = "$NAME/$YAW_LOOP/k_p"
+const val K_P_YAW_DEFAULT = 0.0
+const val MAX_YAW = "$NAME/$YAW_LOOP/max_yaw"
+const val MAX_YAW_DEFAULT = 0.01
 
-const val EXTRA_TIME = "$NAME/extra_time"
+const val EXTRA_TIME = "$NAME/$MOTION_PROFILE/extra_time"
 const val EXTRA_TIME_DEFAULT = 1000L
 
-private const val DT_MS = "$NAME/dt"
+private const val DT_MS = "$NAME/$MOTION_PROFILE/dt"
 private const val DT_MS_DEFAULT = 20
 
-private const val T1_MS = "$NAME/t1"
+private const val T1_MS = "$NAME/$MOTION_PROFILE/t1"
 private const val T1_MS_DEFAULT = 200
 
-private const val T2_MS = "$NAME/t2"
+private const val T2_MS = "$NAME/$MOTION_PROFILE/t2"
 private const val T2_MS_DEFAULT = 100
 
-private const val V_PROFILE = "$NAME/v_profile"
+private const val V_PROFILE = "$NAME/$MOTION_PROFILE/v_profile"
 private const val V_PROFILE_DEFAULT = (12000 * 10) // ticks/sec
 
-class TwistController(private val drive: SwerveDrive, heading: Double, val distance: Int, targetYaw: Double = 0.0) {
+class TwistController(
+    private val drive: SwerveDrive,
+    heading: Double,
+    private val distance: Int,
+    private val targetYaw: Double = 0.0
+) {
     private val logger = KotlinLogging.logger {}
     private val prefs = Preferences.getInstance()
 
@@ -38,8 +53,10 @@ class TwistController(private val drive: SwerveDrive, heading: Double, val dista
     private val kT1Ms = prefs.getInt(T1_MS, T1_MS_DEFAULT)
     private val kT2Ms = prefs.getInt(T2_MS, T2_MS_DEFAULT)
     private val kVProg = prefs.getInt(V_PROFILE, V_PROFILE_DEFAULT)
-    private val kPPosition = prefs.getDouble(K_P_POSITION, K_P_POSITION_DEFAULT)
-    private val kGoodEnough = prefs.getInt(GOOD_ENOUGH, GOOD_ENOUGH_DEFAULT)
+    private val kPDistance = prefs.getDouble(K_P_DISTANCE, K_P_DISTANCE_DEFAULT)
+    private val kGoodEnoughDistance = prefs.getInt(GOOD_ENOUGH_DISTANCE, GOOD_ENOUGH_DISTANCE_DEFAULT)
+    private val kPYaw = prefs.getDouble(K_P_YAW, K_P_YAW_DEFAULT)
+    private val kMaxYaw = prefs.getDouble(MAX_YAW, MAX_YAW_DEFAULT)
     private val kExtraTime = prefs.getLong(EXTRA_TIME, EXTRA_TIME_DEFAULT)
 
     private val motionProfile = MotionProfile(kDtMs, kT1Ms, kT2Ms, kVProg, distance)
@@ -65,7 +82,8 @@ class TwistController(private val drive: SwerveDrive, heading: Double, val dista
                 "forward",
                 "strafe",
                 "yaw",
-                "gyro_angle"
+                "gyro_angle",
+                "drive_current"
             )
         )
 
@@ -86,8 +104,8 @@ class TwistController(private val drive: SwerveDrive, heading: Double, val dista
         action.meta["yaw"] = targetYaw
         action.meta["tags"] = listOf("skippy", "twist")
         action.meta["type"] = "twist"
-        action.meta["k_p"] = kPPosition
-        action.meta["good_enough"] = kGoodEnough
+        action.meta["k_p"] = kPDistance
+        action.meta["good_enough"] = kGoodEnoughDistance
         action.meta["profile_ticks"] = distance
 
         initializePreferences()
@@ -106,8 +124,13 @@ class TwistController(private val drive: SwerveDrive, heading: Double, val dista
     private val actualVelocity: Double
         get() {
             val wheel = drive.wheels[0]
-            val sign = if (wheel.isInverted) -1.0 else 1.0
-            return sign * wheel.driveTalon.getSelectedSensorVelocity(0).toDouble()
+            return wheel.driveTalon.getSelectedSensorVelocity(0).toDouble()
+        }
+
+    private val actualDriveCurrent: Double
+        get() {
+            val wheel = drive.wheels[0]
+            return wheel.driveTalon.outputCurrent
         }
 
     fun start() {
@@ -144,10 +167,10 @@ class TwistController(private val drive: SwerveDrive, heading: Double, val dista
         } else {
             motionProfile.calculate()
             iteration = motionProfile.iteration
-            setpointVelocity = motionProfile.currVel + kPPosition * positionError()
+            setpointVelocity = motionProfile.currVel + kPDistance * positionError
             forward = forwardComponent * setpointVelocity
             strafe = strafeComponent * setpointVelocity
-            yaw = 0.0
+            yaw = yawError.sign * min((kPYaw * yawError).absoluteValue, kMaxYaw)
             drive.drive(forward, strafe, yaw)
         }
         action.traceData.add(
@@ -159,17 +182,24 @@ class TwistController(private val drive: SwerveDrive, heading: Double, val dista
                 actualVelocity,            // actual_vel
                 motionProfile.currPos,     // profile_ticks
                 actualDistance,            // actual_ticks
-                forward,  // forward
-                strafe,   // strafe
-                yaw,   // yaw
-                drive.gyro.angle
+                forward,                   // forward
+                strafe,                    // strafe
+                yaw,                       // yaw
+                drive.gyro.angle,
+                actualDriveCurrent
             )
         )
     }
 
-    private fun positionError() = motionProfile.currPos - actualDistance
+    private val positionError
+        get() = motionProfile.currPos - actualDistance
 
-    private fun initializePreferences() {
+    private val yawError
+        get() = targetYaw - drive.gyro.angle
+
+    private
+
+    fun initializePreferences() {
         val prefs = Preferences.getInstance()
         val initialized = "$NAME/initialized"
         if (prefs.getBoolean(initialized, false)) return
@@ -178,8 +208,10 @@ class TwistController(private val drive: SwerveDrive, heading: Double, val dista
             putInt(T1_MS, kT1Ms)
             putInt(T2_MS, kT2Ms)
             putInt(V_PROFILE, kVProg)
-            putDouble(K_P_POSITION, kPPosition)
-            putInt(GOOD_ENOUGH, kGoodEnough)
+            putDouble(K_P_DISTANCE, kPDistance)
+            putInt(GOOD_ENOUGH_DISTANCE, kGoodEnoughDistance)
+            putDouble(K_P_YAW, kPYaw)
+            putDouble(MAX_YAW, kMaxYaw)
             putLong(EXTRA_TIME, kExtraTime)
             putBoolean(initialized, true)
         }

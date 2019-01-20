@@ -31,6 +31,8 @@ deploy {
 }
 
 repositories {
+//    maven { url 'https://jitpack.io' }
+//    mavenLocal()
     jcenter()
 }
 

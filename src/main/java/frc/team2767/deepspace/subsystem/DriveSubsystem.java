@@ -110,8 +110,8 @@ public class DriveSubsystem extends Subsystem {
     TalonSRXConfiguration driveConfig = new TalonSRXConfiguration();
     driveConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
     driveConfig.continuousCurrentLimit = 40;
-    driveConfig.peakCurrentDuration = 0;
-    driveConfig.peakCurrentLimit = 0;
+    driveConfig.peakCurrentDuration = 40;
+    driveConfig.peakCurrentLimit = 1;
     driveConfig.slot0.kP = 0.03;
     driveConfig.slot0.kI = 0.0003;
     driveConfig.slot0.kD = 0.0;
@@ -133,6 +133,8 @@ public class DriveSubsystem extends Subsystem {
       TalonSRX driveTalon = new TalonSRX(i + 10);
       driveTalon.configAllSettings(driveConfig);
       driveTalon.setNeutralMode(NeutralMode.Brake);
+      driveTalon.enableCurrentLimit(true);
+      //      driveTalon.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, 10);
 
       telemetryService.register(azimuthTalon);
       telemetryService.register(driveTalon);
