@@ -5,7 +5,7 @@ workflow "check build on push" {
 
 action "gradle build" {
   uses = "MrRamych/gradle-actions@12909e7ccd3ed7e3b39c2f3ac350d6849eabeaf3"
-  args = "build"
+  args = "--no-daemon build"
 }
 
 workflow "process pull request" {
