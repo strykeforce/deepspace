@@ -54,7 +54,7 @@ public class DriveSubsystem extends Subsystem {
   // TWIST
   ////////////////////////////////////////////////////////////////////////////
 
-  public void twistTo(double heading, int distance, double targetYaw) {
+  public void startTwist(double heading, int distance, double targetYaw) {
     twistController = new TwistController(swerve, heading, distance, targetYaw);
     twistController.start();
   }
@@ -129,11 +129,14 @@ public class DriveSubsystem extends Subsystem {
     for (int i = 0; i < 4; i++) {
       TalonSRX azimuthTalon = new TalonSRX(i);
       azimuthTalon.configAllSettings(azimuthConfig);
+      azimuthTalon.enableCurrentLimit(true);
+      azimuthTalon.enableVoltageCompensation(true);
 
       TalonSRX driveTalon = new TalonSRX(i + 10);
       driveTalon.configAllSettings(driveConfig);
       driveTalon.setNeutralMode(NeutralMode.Brake);
       driveTalon.enableCurrentLimit(true);
+      driveTalon.enableVoltageCompensation(true);
       //      driveTalon.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, 10);
 
       telemetryService.register(azimuthTalon);

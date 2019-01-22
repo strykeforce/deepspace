@@ -21,7 +21,7 @@ public class TwistCommand extends Command {
 
   @Override
   protected void initialize() {
-    DRIVE.twistTo(heading, distance, targetYaw);
+    DRIVE.startTwist(heading, distance, targetYaw);
   }
 
   @Override
