@@ -30,7 +30,7 @@ public class TwistCommand extends Command {
   }
 
   @Override
-  protected void end() {
-    DRIVE.endTwist();
+  protected void interrupted() {
+    DRIVE.interruptTwist();
   }
 }

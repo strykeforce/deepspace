@@ -2,13 +2,14 @@ package frc.team2767.deepspace.motion
 
 import edu.wpi.first.wpilibj.Notifier
 import edu.wpi.first.wpilibj.Preferences
+import frc.team2767.deepspace.motion.TwistState.*
 import mu.KotlinLogging
 import org.strykeforce.thirdcoast.swerve.SwerveDrive
 import org.strykeforce.thirdcoast.trapper.Action
 import org.strykeforce.thirdcoast.trapper.post
 import kotlin.math.absoluteValue
-import kotlin.math.min
-import kotlin.math.sign
+
+private enum class TwistState { STARTING, RUNNING, STOPPING, STOPPED }
 
 class TwistController(
     private val drive: SwerveDrive,
@@ -24,14 +25,14 @@ class TwistController(
     private val kT2Ms = prefs.getInt(T2_MS, 100)
     private val kVProg = prefs.getInt(V_PROFILE, 12000 * 10)
     private val kPDistance = prefs.getDouble(K_P_DISTANCE, 3.7)
-    private val kGoodEnoughDistance = prefs.getInt(GOOD_ENOUGH_DISTANCE, 5500)
+    //    private val kGoodEnoughDistance = prefs.getInt(GOOD_ENOUGH_DISTANCE, 5500)
     private val kPYaw = prefs.getDouble(K_P_YAW, 0.0)
     private val kMaxYaw = prefs.getDouble(MAX_YAW, 0.01)
     private val kExtraTime = prefs.getLong(EXTRA_TIME, 1000L)
     private val kTrace = prefs.getBoolean(TRACE, false)
 
     private val motionProfile = MotionProfile(kDtMs, kT1Ms, kT2Ms, kVProg, distance)
-    private val notifier = Notifier(this::updateDrive)
+    private val notifier = Notifier(this::process)
 
     private val ticksPerSecMax = drive.wheels[0].driveSetpointMax * 10.0
     private val forwardComponent = Math.cos(Math.toRadians(heading)) / ticksPerSecMax
@@ -39,11 +40,13 @@ class TwistController(
 
     private val start = IntArray(4)
 
-    private var action = Action(name = "Skippy Motion Profile", traceMeasures = TRACE_MEASURES)
+    private var action = Action(name = "Skippy Twist", traceMeasures = TRACE_MEASURES)
+    private var extraTimeStart = 0L
+    @Volatile
+    private var state = STARTING
 
 
     init {
-        drive.setDriveMode(SwerveDrive.DriveMode.CLOSED_LOOP)
         logger.debug {
             "INIT motion, heading = $heading, distance = $distance,\n" +
                     "ticks/sec max = $ticksPerSecMax\n" +
@@ -60,14 +63,25 @@ class TwistController(
             meta["tags"] = listOf("skippy", "twist")
             meta["type"] = "twist"
             meta["k_p"] = kPDistance
-            meta["good_enough"] = kGoodEnoughDistance
+//            meta["good_enough"] = kGoodEnoughDistance
             meta["profile_ticks"] = distance
         }
-        initializePreferences()
+        savePreferences()
     }
 
-    var isFinished = false
-    var extraTimeStart = 0L
+
+    fun start() {
+        notifier.startPeriodic(DT_MS_DEFAULT / 1000.0)
+    }
+
+    fun interrupt() {
+        logger.warn("interrupted in $state state")
+        state = STOPPED
+    }
+
+    val isFinished: Boolean
+        get() = state == STOPPED
+
 
     private val actualDistance
         get() = drive.wheels.foldIndexed(0.0) { index, sum, wheel ->
@@ -78,97 +92,100 @@ class TwistController(
     private val actualVelocity: Int
         get() = drive.wheels[0].driveTalon.getSelectedSensorVelocity(0)
 
+
     private val actualDriveCurrent: Double
-        get() {
-            val wheel = drive.wheels[0]
-            return wheel.driveTalon.outputCurrent
-        }
+        get() = drive.wheels[0].driveTalon.outputCurrent
 
-    fun start() {
-        notifier.startPeriodic(DT_MS_DEFAULT / 1000.0)
-        logger.info("START motion, gyro angle = {}", drive.gyro.angle)
-        for (i in 0..3) start[i] = drive.wheels[i].driveTalon.getSelectedSensorPosition(0)
-        if (kTrace) action.meta["gyro_start"] = drive.gyro.angle
-    }
+    private val actualDriveVoltage: Double
+        get() = drive.wheels[0].driveTalon.motorOutputVoltage
 
-    fun stop() {
-        notifier.close()
-        drive.drive(0.0, 0.0, 0.0)
-        logger.info("FINISH motion position = {}", motionProfile.currPos)
-        if (kTrace) with(action) {
-            meta["gyro_end"] = drive.gyro.angle
-            meta["actual_ticks"] = actualDistance
-            post()
-        }
-    }
 
-    var iteration = 0
+    private val positionError
+        get() = motionProfile.currPos - actualDistance
 
-    private fun updateDrive() {
-        var setpointVelocity = 0.0
+
+    private val yawError
+        get() = targetYaw - drive.gyro.angle
+
+
+    private fun process() {
+        var velocity = 0.0
         var forward = 0.0
         var strafe = 0.0
         var yaw = 0.0
-        if (motionProfile.isFinished) {
-            if (extraTimeStart == 0L) extraTimeStart = System.currentTimeMillis()
-            iteration++
-            drive.drive(0.0, 0.0, 0.0)
-            if (System.currentTimeMillis() - extraTimeStart > kExtraTime) {
-                isFinished = true
-                return
+
+        motionProfile.calculate()
+
+        when (state) {
+            STARTING -> {
+                drive.setDriveMode(SwerveDrive.DriveMode.CLOSED_LOOP)
+                drive.wheels.forEachIndexed { i, wheel -> start[i] = wheel.driveTalon.getSelectedSensorPosition(0) }
+                state = RUNNING
+                logState()
+                logger.debug { "current profile velocity = ${motionProfile.currVel}" }
             }
-        } else {
-            motionProfile.calculate()
-            iteration = motionProfile.iteration
-            setpointVelocity = motionProfile.currVel + kPDistance * positionError
-            forward = forwardComponent * setpointVelocity
-            strafe = strafeComponent * setpointVelocity
-            yaw = yawError.sign * min((kPYaw * yawError).absoluteValue, kMaxYaw)
-            drive.drive(forward, strafe, yaw)
+            RUNNING -> {
+                velocity = motionProfile.currVel + kPDistance * positionError
+                forward = forwardComponent * velocity
+                strafe = strafeComponent * velocity
+                yaw = (kPYaw * yawError).coerceIn(-kMaxYaw, kMaxYaw)
+                drive.drive(forward, strafe, yaw)
+
+                if (motionProfile.isFinished) {
+                    extraTimeStart = System.currentTimeMillis()
+                    drive.stop()
+                    state = STOPPING
+                    logState()
+                }
+            }
+            STOPPING -> {
+                if (System.currentTimeMillis() - extraTimeStart > kExtraTime) state = STOPPED
+            }
+            STOPPED -> {
+                drive.stop()
+                if (kTrace) action.post()
+                logState()
+                notifier.close()
+            }
         }
-        if (kTrace) action.traceData.add(
+
+        if (kTrace && state != STOPPED) action.traceData.add(
             listOf(
-                (iteration * DT_MS_DEFAULT).toDouble(), // millis
+                (motionProfile.iteration * DT_MS_DEFAULT).toDouble(), // millis
                 motionProfile.currAcc,     // profile_acc
                 motionProfile.currVel,     // profile_vel
-                setpointVelocity,          // setpoint_vel
+                velocity,                  // setpoint_vel
                 actualVelocity.toDouble(), // actual_vel
                 motionProfile.currPos,     // profile_ticks
                 actualDistance,            // actual_ticks
                 forward,                   // forward
                 strafe,                    // strafe
                 yaw,                       // yaw
-                drive.gyro.angle,
-                actualDriveCurrent
+                drive.gyro.angle,          // gyro_angle
+                actualDriveCurrent,        // drive_current
+                actualDriveVoltage         // drive_voltage
             )
         )
     }
 
-    private val positionError
-        get() = motionProfile.currPos - actualDistance
+    private fun logState() = logger.info("$state")
 
-    private val yawError
-        get() = targetYaw - drive.gyro.angle
 
-    private
-
-    fun initializePreferences() {
-        val prefs = Preferences.getInstance()
-        if (prefs.getBoolean(PREFS_INITIALIZED, false)) return
-        with(prefs) {
-            putInt(DT_MS, kDtMs)
-            putInt(T1_MS, kT1Ms)
-            putInt(T2_MS, kT2Ms)
-            putInt(V_PROFILE, kVProg)
-            putDouble(K_P_DISTANCE, kPDistance)
-            putInt(GOOD_ENOUGH_DISTANCE, kGoodEnoughDistance)
-            putDouble(K_P_YAW, kPYaw)
-            putDouble(MAX_YAW, kMaxYaw)
-            putLong(EXTRA_TIME, kExtraTime)
-            putBoolean(TRACE, kTrace)
-            putBoolean(PREFS_INITIALIZED, true)
-        }
+    private fun savePreferences() = with(Preferences.getInstance()) {
+        if (!getBoolean(PREFS_SAVE, true)) return
+        putInt(DT_MS, kDtMs)
+        putInt(T1_MS, kT1Ms)
+        putInt(T2_MS, kT2Ms)
+        putInt(V_PROFILE, kVProg)
+        putDouble(K_P_DISTANCE, kPDistance)
+//        putInt(GOOD_ENOUGH_DISTANCE, kGoodEnoughDistance)
+        putDouble(K_P_YAW, kPYaw)
+        putDouble(MAX_YAW, kMaxYaw)
+        putLong(EXTRA_TIME, kExtraTime)
+        putBoolean(TRACE, kTrace)
+        putBoolean(PREFS_SAVE, false)
     }
+
 }
 
 private val TRACE_MEASURES = listOf(
@@ -183,15 +200,16 @@ private val TRACE_MEASURES = listOf(
     "strafe",
     "yaw",
     "gyro_angle",
-    "drive_current"
+    "drive_current",
+    "drive_voltage"
 )
 
 private const val PREFS_NAME = "TwistController"
-private const val PREFS_INITIALIZED = "$PREFS_NAME/initialized"
+private const val PREFS_SAVE = "$PREFS_NAME/save_prefs"
+private const val TRACE = "$PREFS_NAME/save_trace"
 private const val MOTION_PROFILE = "MotionProfile"
 private const val DISTANCE_LOOP = "DistanceLoop"
 private const val YAW_LOOP = "YawLoop"
-private const val TRACE = "save_trace"
 private const val K_P_DISTANCE = "$PREFS_NAME/$DISTANCE_LOOP/k_p"
 private const val GOOD_ENOUGH_DISTANCE = "$PREFS_NAME/$DISTANCE_LOOP/good_enough"
 private const val K_P_YAW = "$PREFS_NAME/$YAW_LOOP/k_p"

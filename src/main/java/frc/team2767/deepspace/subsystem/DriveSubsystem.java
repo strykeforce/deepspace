@@ -38,7 +38,6 @@ public class DriveSubsystem extends Subsystem {
   }
 
   public void setDriveMode(DriveMode mode) {
-    logger.debug("setting drive mode to {}", mode);
     swerve.setDriveMode(mode);
   }
 
@@ -63,9 +62,8 @@ public class DriveSubsystem extends Subsystem {
     return twistController.isFinished();
   }
 
-  public void endTwist() {
-    twistController.stop();
-    twistController = null;
+  public void interruptTwist() {
+    twistController.interrupt();
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -138,6 +136,7 @@ public class DriveSubsystem extends Subsystem {
       driveTalon.enableCurrentLimit(true);
       driveTalon.enableVoltageCompensation(true);
       //      driveTalon.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, 10);
+      //      driveTalon.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0 5, 10);
 
       telemetryService.register(azimuthTalon);
       telemetryService.register(driveTalon);
