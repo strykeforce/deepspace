@@ -1,6 +1,7 @@
 package frc.team2767.deepspace.control;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.LogCommand;
 import org.slf4j.Logger;
@@ -16,6 +17,57 @@ public class GameControls {
 
   public GameControls(int port) {
     joystick = new Joystick(port);
+
+    // Shoulder
+    new JoystickButton(joystick, GameControls.Shoulder.LEFT.id)
+        .whenPressed(log(GameControls.Shoulder.LEFT));
+    new JoystickButton(joystick, GameControls.Shoulder.RIGHT.id)
+        .whenPressed(log(GameControls.Shoulder.RIGHT));
+
+    // Triggers
+    new JoystickButton(joystick, GameControls.Trigger.LEFT.id)
+        .whenPressed(log(GameControls.Trigger.LEFT));
+    new JoystickButton(joystick, GameControls.Trigger.RIGHT.id)
+        .whenPressed(log(GameControls.Trigger.RIGHT));
+
+    // Push-buttons
+    new JoystickButton(joystick, GameControls.Button.A.id).whenPressed(log(GameControls.Button.A));
+    new JoystickButton(joystick, GameControls.Button.B.id).whenPressed(log(GameControls.Button.B));
+    new JoystickButton(joystick, GameControls.Button.X.id).whenPressed(log(GameControls.Button.X));
+    new JoystickButton(joystick, GameControls.Button.Y.id).whenPressed(log(GameControls.Button.Y));
+    new JoystickButton(joystick, GameControls.Button.START.id)
+        .whenPressed(log(GameControls.Button.START));
+    new JoystickButton(joystick, GameControls.Button.BACK.id)
+        .whenPressed(log(GameControls.Button.BACK));
+    new JoystickButton(joystick, GameControls.Button.LEFT.id)
+        .whenPressed(log(GameControls.Button.LEFT));
+    new JoystickButton(joystick, GameControls.Button.RIGHT.id)
+        .whenPressed(log(GameControls.Button.RIGHT));
+  }
+
+  /** Left stick Y (up-down) axis. */
+  public double getLY() {
+    return -joystick.getRawAxis(Axis.LEFT_Y.id);
+  }
+
+  /** Left stick X (left-right) axis. */
+  public double getLX() {
+    return joystick.getRawAxis(Axis.LEFT_X.id);
+  }
+
+  /** Right stick Y (up-down) axis. */
+  public double getRY() {
+    return -joystick.getRawAxis(Axis.RIGHT_Y.id);
+  }
+
+  /** Right stick X (left-right) axis. */
+  public double getRX() {
+    return joystick.getRawAxis(Axis.RIGHT_X.id);
+  }
+
+  /** D-pad axis. */
+  public int getDPad() {
+    return joystick.getPOV();
   }
 
   private <E extends Enum<E>> Command log(E control) {
@@ -24,13 +76,9 @@ public class GameControls {
 
   public enum Axis {
     LEFT_X(0),
-    LEFT_Y(0),
-    RIGHT_X(0),
-    RIGHT_Y(0),
-    TUNER(0),
-    LEFT_TRIGGER(0),
-    RIGHT_TRIGGER(0);
-
+    LEFT_Y(1),
+    RIGHT_X(2),
+    RIGHT_Y(3);
     private final int id;
 
     Axis(int id) {
@@ -39,8 +87,8 @@ public class GameControls {
   }
 
   public enum Shoulder {
-    LEFT(0),
-    RIGHT(0);
+    LEFT(5),
+    RIGHT(6);
 
     private final int id;
 
@@ -49,30 +97,30 @@ public class GameControls {
     }
   }
 
-  public enum Button {
-    A(0),
-    B(0),
-    X(0),
-    Y(0),
-    START(0),
-    BACK(0);
+  public enum Trigger {
+    LEFT(7),
+    RIGHT(8);
 
     private final int id;
 
-    Button(int id) {
+    Trigger(int id) {
       this.id = id;
     }
   }
 
-  public enum DPad {
-    UP(0),
-    DOWN(0),
-    LEFT(0),
-    RIGHT(0);
+  public enum Button {
+    A(2),
+    B(3),
+    X(1),
+    Y(4),
+    START(10),
+    BACK(9),
+    LEFT(11),
+    RIGHT(12);
 
     private final int id;
 
-    DPad(int id) {
+    Button(int id) {
       this.id = id;
     }
   }
