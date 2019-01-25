@@ -24,13 +24,16 @@ public class Robot extends TimedRobot {
   public static final Controls CONTROLS = new Controls();
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
-  private final NetworkTableInstance instance = NetworkTableInstance.getDefault();
-  private NetworkTable table;
+  private NetworkTableEntry bearing;
+  private NetworkTableEntry range;
 
   @Override
   public void robotInit() {
-    table = instance.getTable("Shuffleboard");
+    NetworkTableInstance instance = NetworkTableInstance.getDefault();
+    NetworkTable table = instance.getTable("Pyeye");
     Session.INSTANCE.setBaseUrl("https://keeper.strykeforce.org");
+    bearing = table.getEntry("camera_bearing");
+    range = table.getEntry("camera_range");
     DRIVE.zeroAzimuthEncoders();
     DRIVE.zeroGyro();
     TELEMETRY.start();
@@ -38,10 +41,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    NetworkTableEntry bearing = table.getEntry("bearing");
-    NetworkTableEntry range = table.getEntry("range");
-
-    logger.debug("bearing={} range={}", bearing.getDouble(2767.0), range.getDouble(2767.0));
+    logger.debug("bearing={} range={}", bearing.getNumber(2767.01), range.getNumber(2767.0));
     Scheduler.getInstance().run();
   }
 }
