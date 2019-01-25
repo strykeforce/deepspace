@@ -1,5 +1,8 @@
 package frc.team2767.deepspace;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team2767.deepspace.control.Controls;
@@ -21,9 +24,12 @@ public class Robot extends TimedRobot {
   public static final Controls CONTROLS = new Controls();
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private final NetworkTableInstance instance = NetworkTableInstance.getDefault();
+  private NetworkTable table;
 
   @Override
   public void robotInit() {
+    table = instance.getTable("Shuffleboard");
     Session.INSTANCE.setBaseUrl("https://keeper.strykeforce.org");
     DRIVE.zeroAzimuthEncoders();
     DRIVE.zeroGyro();
@@ -32,6 +38,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    NetworkTableEntry bearing = table.getEntry("bearing");
+    NetworkTableEntry range = table.getEntry("range");
+
+    logger.debug("bearing={} range={}", bearing.getDouble(2767.0), range.getDouble(2767.0));
     Scheduler.getInstance().run();
   }
 }
