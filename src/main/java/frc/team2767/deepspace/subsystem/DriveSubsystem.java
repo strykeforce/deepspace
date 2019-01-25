@@ -110,8 +110,8 @@ public class DriveSubsystem extends Subsystem {
     driveConfig.continuousCurrentLimit = 40;
     driveConfig.peakCurrentDuration = 40;
     driveConfig.peakCurrentLimit = 1;
-    driveConfig.slot0.kP = 0.03;
-    driveConfig.slot0.kI = 0.0003;
+    driveConfig.slot0.kP = 0.08;
+    driveConfig.slot0.kI = 0.0005;
     driveConfig.slot0.kD = 0.0;
     driveConfig.slot0.kF = 0.028;
     driveConfig.slot0.integralZone = 3000;
