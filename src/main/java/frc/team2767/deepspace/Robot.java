@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team2767.deepspace.control.Controls;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
+import frc.team2767.deepspace.subsystem.VisionSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryController;
@@ -18,6 +19,7 @@ public class Robot extends TimedRobot {
   public static final TelemetryService TELEMETRY = new TelemetryService(TelemetryController::new);
 
   public static final DriveSubsystem DRIVE = new DriveSubsystem();
+  public static final VisionSubsystem VISION = new VisionSubsystem();
 
   // Controls initialize Commands so this should be instantiated last to prevent
   // NullPointerExceptions in commands that require() Subsystems above.
@@ -37,6 +39,8 @@ public class Robot extends TimedRobot {
     DRIVE.zeroAzimuthEncoders();
     DRIVE.zeroGyro();
     TELEMETRY.start();
+
+    //    new SmartDashboardControls();
   }
 
   @Override
