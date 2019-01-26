@@ -61,14 +61,14 @@ public class TwistCalculator {
             + dXtemp * Math.sin(Math.toRadians(swerveRotation));
   }
 
-  /** @return twsit heading */
+  /** @return twist heading */
   public double getHeading() {
-    return 0.0;
+    return Math.atan2(deltaY, deltaX);
   }
 
   /** @return twist range */
   public double getRange() {
-    return 0.0;
+    return Math.hypot(deltaX, deltaY);
   }
 
   /** @return twist yaw */

@@ -7,10 +7,13 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
 import frc.team2767.deepspace.util.TwistCalculator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TwistExecutorCommand extends InstantCommand {
 
   private static final DriveSubsystem swerve = Robot.DRIVE;
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   @Override
   protected void initialize() {
@@ -26,9 +29,12 @@ public class TwistExecutorCommand extends InstantCommand {
     TwistCalculator twistCalculator =
         new TwistCalculator(cameraAngle, cameraRange, cameraX, cameraY, swerveRotation);
 
-    new TwistCommand(
-        twistCalculator.getHeading(),
-        (int) (DriveSubsystem.TICKS_PER_INCH * twistCalculator.getRange()),
-        twistCalculator.getyaw());
+    logger.debug("range={} bearing={}", range, bearing);
+    logger.debug("range={} heading={}", twistCalculator.getRange(), twistCalculator.getHeading());
+
+    //    new TwistCommand(
+    //        twistCalculator.getHeading(),
+    //        (int) (DriveSubsystem.TICKS_PER_INCH * twistCalculator.getRange()),
+    //        0.0);
   }
 }
