@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.LogCommand;
-import frc.team2767.deepspace.command.TwistCommand;
+import frc.team2767.deepspace.command.TwistExecutorCommand;
 import frc.team2767.deepspace.command.ZeroGyroCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +29,8 @@ public class DriverControls {
     new JoystickButton(joystick, Button.RESET.id).whenPressed(new ZeroGyroCommand());
 
     new JoystickButton(joystick, Button.HAMBURGER.id).whenPressed(log(Button.HAMBURGER));
-    //    new JoystickButton(joystick, Button.X.id).whenPressed(new TeleOpDriveCommand());
-    new JoystickButton(joystick, Button.UP.id).whenPressed(new TwistCommand(0d, 200_000, 0d));
+    new JoystickButton(joystick, Button.X.id).whenPressed(log(Button.X));
+    new JoystickButton(joystick, Button.UP.id).whenPressed(new TwistExecutorCommand());
     new JoystickButton(joystick, Button.DOWN.id).whenPressed(log(Button.DOWN));
 
     // Trim Switches
@@ -42,6 +42,10 @@ public class DriverControls {
     new JoystickButton(joystick, Trim.RIGHT_X_NEG.id).whenPressed(log(Trim.RIGHT_X_NEG));
     new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenPressed(log(Trim.RIGHT_Y_POS));
     new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenPressed(log(Trim.RIGHT_Y_NEG));
+  }
+
+  private <E extends Enum<E>> Command log(E control) {
+    return new LogCommand(logger, control.toString());
   }
 
   /** Left stick X (up-down) axis. */
@@ -72,10 +76,6 @@ public class DriverControls {
   /** Right slider on back of controller. */
   public double getRightBackAxis() {
     return joystick.getRawAxis(Axis.RIGHT_BACK.id);
-  }
-
-  private <E extends Enum<E>> Command log(E control) {
-    return new LogCommand(logger, control.toString());
   }
 
   public enum Axis {
