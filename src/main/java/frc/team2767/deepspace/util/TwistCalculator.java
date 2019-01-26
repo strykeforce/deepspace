@@ -90,9 +90,4 @@ public class TwistCalculator {
   public double getRange() {
     return Math.hypot(deltaX, deltaY);
   }
-
-  /** @return twist yaw */
-  public double getyaw() {
-    return 0.0;
-  }
 }
