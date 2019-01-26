@@ -25,6 +25,8 @@ public class DriveSubsystem extends Subsystem {
   private static final double ROBOT_LENGTH = 1.0;
   private static final double ROBOT_WIDTH = 1.0;
 
+  public static final double TICKS_PER_INCH = 1900;
+
   private final SwerveDrive swerve = getSwerve();
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -74,6 +76,10 @@ public class DriveSubsystem extends Subsystem {
     double adj = gyro.getAngle() % 360;
     gyro.setAngleAdjustment(-adj);
     logger.info("resetting gyro zero ({})", adj);
+  }
+
+  public AHRS getGyro() {
+    return swerve.getGyro();
   }
 
   // Swerve configuration
