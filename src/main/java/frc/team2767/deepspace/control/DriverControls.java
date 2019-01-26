@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.LogCommand;
 import frc.team2767.deepspace.command.TwistExecutorCommand;
-import frc.team2767.deepspace.command.TwistCommand;
 import frc.team2767.deepspace.command.Vision.LightsOff;
 import frc.team2767.deepspace.command.Vision.LightsOn;
 import frc.team2767.deepspace.command.ZeroGyroCommand;
@@ -46,7 +45,6 @@ public class DriverControls {
     new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenPressed(log(Trim.RIGHT_Y_POS));
     new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenPressed(log(Trim.RIGHT_Y_NEG));
   }
-
 
   /** Left stick X (up-down) axis. */
   public double getForward() {
