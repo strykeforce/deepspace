@@ -47,9 +47,6 @@ public class DriverControls {
     new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenPressed(log(Trim.RIGHT_Y_NEG));
   }
 
-  private <E extends Enum<E>> Command log(E control) {
-    return new LogCommand(logger, control.toString());
-  }
 
   /** Left stick X (up-down) axis. */
   public double getForward() {
@@ -79,6 +76,10 @@ public class DriverControls {
   /** Right slider on back of controller. */
   public double getRightBackAxis() {
     return joystick.getRawAxis(Axis.RIGHT_BACK.id);
+  }
+
+  private <E extends Enum<E>> Command log(E control) {
+    return new LogCommand(logger, control.toString());
   }
 
   public enum Axis {
