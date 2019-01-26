@@ -14,17 +14,17 @@ public final class TeleOpDriveCommand extends Command {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  private static final DriveSubsystem swerve = Robot.DRIVE;
+  private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static DriverControls controls;
 
   public TeleOpDriveCommand() {
-    requires(swerve);
+    requires(DRIVE);
   }
 
   @Override
   protected void initialize() {
     controls = Robot.CONTROLS.getDriverControls();
-    swerve.setDriveMode(TELEOP);
+    DRIVE.setDriveMode(TELEOP);
   }
 
   @Override
@@ -33,7 +33,7 @@ public final class TeleOpDriveCommand extends Command {
     double strafe = deadband(controls.getStrafe());
     double azimuth = deadband(controls.getYaw());
 
-    swerve.drive(forward, strafe, azimuth);
+    DRIVE.drive(forward, strafe, azimuth);
   }
 
   @Override
@@ -43,7 +43,7 @@ public final class TeleOpDriveCommand extends Command {
 
   @Override
   protected void end() {
-    swerve.drive(0.0, 0.0, 0.0);
+    DRIVE.drive(0.0, 0.0, 0.0);
   }
 
   private double deadband(double value) {
