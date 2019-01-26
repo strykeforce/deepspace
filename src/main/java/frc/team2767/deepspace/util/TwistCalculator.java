@@ -1,7 +1,14 @@
 package frc.team2767.deepspace.util;
 
+import frc.team2767.deepspace.Robot;
+import frc.team2767.deepspace.subsystem.DriveSubsystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class TwistCalculator {
 
+  private final DriveSubsystem DRIVE = Robot.DRIVE;
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private double deltaX;
   private double deltaY;
   private double cameraAngle;
@@ -9,6 +16,8 @@ public class TwistCalculator {
   private double cameraX;
   private double cameraY;
   private double swerveRotation;
+
+  private double headingAdjustment;
 
   public TwistCalculator(
       double cameraAngle,
@@ -29,9 +38,12 @@ public class TwistCalculator {
 
     deltaX = 0.0;
     deltaY = 0.0;
+    headingAdjustment = 0.0;
 
     this.cameraAngle = cameraAngle;
-    this.cameraRange = cameraRange;
+    double slope = 1.2449;
+    double intercept = -4.3949;
+    this.cameraRange = slope * cameraRange + intercept;
     this.cameraX = cameraX;
     this.cameraY = cameraY;
     this.swerveRotation = swerveRotation;
@@ -39,6 +51,8 @@ public class TwistCalculator {
     targetToCamera();
     cameraToRobot();
     robotToSwerve();
+
+    logger.debug("x={} y={}", deltaX, deltaY);
   }
 
   private void targetToCamera() {
@@ -49,6 +63,8 @@ public class TwistCalculator {
   private void cameraToRobot() {
     deltaX += cameraX;
     deltaY += cameraY;
+
+    headingAdjustment = Math.atan2(deltaY, deltaX);
   }
 
   private void robotToSwerve() {
@@ -63,7 +79,11 @@ public class TwistCalculator {
 
   /** @return twist heading */
   public double getHeading() {
-    return Math.atan2(deltaY, deltaX);
+
+    //    double robotToTarget = Math.toDegrees(Math.atan2(deltaY, deltaX));
+    logger.debug("gyro yaw={} angleDiff={}", DRIVE.getGyro().getAngle(), cameraAngle);
+
+    return DRIVE.getGyro().getAngle() - headingAdjustment;
   }
 
   /** @return twist range */

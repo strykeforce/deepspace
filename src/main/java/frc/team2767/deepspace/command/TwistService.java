@@ -10,7 +10,7 @@ import frc.team2767.deepspace.util.TwistCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TwistExecutorCommand extends InstantCommand {
+public class TwistService extends InstantCommand {
 
   private static final DriveSubsystem swerve = Robot.DRIVE;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -22,14 +22,14 @@ public class TwistExecutorCommand extends InstantCommand {
     NetworkTableEntry range = table.getEntry("camera_range");
     double cameraAngle = (double) bearing.getNumber(0.0);
     double cameraRange = (double) range.getNumber(0.0);
-    double cameraX = 10.0; // TODO: Update camera positions
+    double cameraX = 13.5; // TODO: Update camera positions
     double cameraY = 0.0; // TODO: Update camera positions
     double swerveRotation = swerve.getGyro().getYaw();
 
     TwistCalculator twistCalculator =
         new TwistCalculator(cameraAngle, cameraRange, cameraX, cameraY, swerveRotation);
 
-    logger.debug("range={} bearing={}", range, bearing);
+    //    logger.debug("range={} bearing={}", range.getDouble(2767), bearing.getDouble(2767));
     logger.debug("range={} heading={}", twistCalculator.getRange(), twistCalculator.getHeading());
 
     //    new TwistCommand(

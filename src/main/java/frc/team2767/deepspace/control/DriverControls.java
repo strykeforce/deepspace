@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.LogCommand;
-import frc.team2767.deepspace.command.TwistExecutorCommand;
+import frc.team2767.deepspace.command.TwistService;
 import frc.team2767.deepspace.command.Vision.LightsOff;
 import frc.team2767.deepspace.command.Vision.LightsOn;
 import frc.team2767.deepspace.command.ZeroGyroCommand;
@@ -32,7 +32,7 @@ public class DriverControls {
 
     new JoystickButton(joystick, Button.HAMBURGER.id).whenPressed(log(Button.HAMBURGER));
     new JoystickButton(joystick, Button.X.id).whenPressed(log(Button.X));
-    new JoystickButton(joystick, Button.UP.id).whenPressed(new TwistExecutorCommand());
+    new JoystickButton(joystick, Button.UP.id).whenPressed(new TwistService());
     new JoystickButton(joystick, Button.DOWN.id).whenPressed(log(Button.DOWN));
 
     // Trim Switches
