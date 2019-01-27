@@ -26,10 +26,10 @@ public class TwistCalculator {
       double cameraY,
       double swerveRotation) {
 
-    setInputs(cameraAngle, cameraRange, cameraX, cameraY, swerveRotation);
+    computeNew(cameraAngle, cameraRange, cameraX, cameraY, swerveRotation);
   }
 
-  private void setInputs(
+  private void computeNew(
       double cameraAngle,
       double cameraRange,
       double cameraX,
@@ -41,9 +41,9 @@ public class TwistCalculator {
     headingAdjustment = 0.0;
 
     this.cameraAngle = cameraAngle;
-    double slope = 1.2449;
-    double intercept = -4.3949;
-    this.cameraRange = slope * cameraRange + intercept;
+    double transferSlope = 1.2449;
+    double transferIntercept = -4.3949;
+    this.cameraRange = transferSlope * cameraRange + transferIntercept;
     this.cameraX = cameraX;
     this.cameraY = cameraY;
     this.swerveRotation = swerveRotation;
@@ -51,8 +51,6 @@ public class TwistCalculator {
     targetToCamera();
     cameraToRobot();
     robotToSwerve();
-
-    logger.debug("x={} y={}", deltaX, deltaY);
   }
 
   private void targetToCamera() {
@@ -79,10 +77,6 @@ public class TwistCalculator {
 
   /** @return twist heading */
   public double getHeading() {
-
-    //    double robotToTarget = Math.toDegrees(Math.atan2(deltaY, deltaX));
-    logger.debug("gyro yaw={} angleDiff={}", DRIVE.getGyro().getAngle(), cameraAngle);
-
     return DRIVE.getGyro().getAngle() - headingAdjustment;
   }
 

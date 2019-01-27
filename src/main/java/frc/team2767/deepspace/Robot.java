@@ -29,11 +29,9 @@ public class Robot extends TimedRobot {
 
     Session.INSTANCE.setBaseUrl("https://keeper.strykeforce.org");
 
-    DRIVE.zeroAzimuthEncoders();
+    DRIVE.zeroYawEncoders();
     DRIVE.zeroGyro();
     TELEMETRY.start();
-
-    //    new SmartDashboardControls();
   }
 
   @Override
