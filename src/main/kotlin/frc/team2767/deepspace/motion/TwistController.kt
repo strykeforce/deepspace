@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Preferences
 import frc.team2767.deepspace.motion.TwistState.*
 import mu.KotlinLogging
 import org.strykeforce.thirdcoast.swerve.SwerveDrive
+import org.strykeforce.thirdcoast.swerve.Wheel
 import org.strykeforce.thirdcoast.trapper.Action
 import org.strykeforce.thirdcoast.trapper.post
 import kotlin.math.absoluteValue
@@ -28,6 +29,7 @@ class TwistController(
     //    private val kGoodEnoughDistance = prefs.getInt(GOOD_ENOUGH_DISTANCE, 5500)
     private val kPYaw = prefs.getDouble(K_P_YAW, 0.0)
     private val kMaxYaw = prefs.getDouble(MAX_YAW, 0.01)
+    private val kYawTpd = prefs.getDouble(YAW_TPD, 0.0)
     private val kExtraTime = prefs.getLong(EXTRA_TIME, 1000L)
     private val kTrace = prefs.getBoolean(TRACE, false)
 
@@ -44,6 +46,8 @@ class TwistController(
     private var extraTimeStart = 0L
     @Volatile
     private var state = STARTING
+    private var lastYawAngle = 0.0
+    private var yawDistanceCorrection = 0.0
 
 
     init {
@@ -96,16 +100,35 @@ class TwistController(
     private val actualDriveCurrent: Double
         get() = drive.wheels[0].driveTalon.outputCurrent
 
+
     private val actualDriveVoltage: Double
         get() = drive.wheels[0].driveTalon.motorOutputVoltage
 
 
     private val positionError
-        get() = motionProfile.currPos - actualDistance
+        get() = motionProfile.currPos + yawDistanceCorrection - actualDistance
 
 
     private val yawError
         get() = targetYaw - drive.gyro.angle
+
+    private fun isWheelYawInPhase(wheel: Wheel, index: Int, yawDelta: Double): Boolean {
+        if (yawDelta > 0)
+            return if (wheel.isInverted) index == 1 || index == 3 else index == 0 || index == 2
+        return if (wheel.isInverted) index == 0 || index == 2 else return index == 1 || index == 3
+    }
+
+
+    private fun updateYawDistanceCorrection() {
+        val yawAngle     = drive.gyro.angle
+        val yawDelta = yawAngle - lastYawAngle
+        val wheels = drive.wheels
+        wheels.forEachIndexed { index, wheel ->
+            if (isWheelYawInPhase(wheel, index, yawDelta)) yawDistanceCorrection += yawDelta.absoluteValue * kYawTpd
+            else yawDistanceCorrection -= yawDelta.absoluteValue * kYawTpd
+        }
+        lastYawAngle = yawAngle
+    }
 
 
     private fun process() {
@@ -120,6 +143,7 @@ class TwistController(
             STARTING -> {
                 drive.setDriveMode(SwerveDrive.DriveMode.CLOSED_LOOP)
                 drive.wheels.forEachIndexed { i, wheel -> start[i] = wheel.driveTalon.getSelectedSensorPosition(0) }
+                lastYawAngle = drive.gyro.angle
                 state = RUNNING
                 logState()
                 logger.debug { "current profile velocity = ${motionProfile.currVel}" }
@@ -129,6 +153,8 @@ class TwistController(
                 forward = forwardComponent * velocity
                 strafe = strafeComponent * velocity
                 yaw = (kPYaw * yawError).coerceIn(-kMaxYaw, kMaxYaw)
+                updateYawDistanceCorrection()
+
                 drive.drive(forward, strafe, yaw)
 
                 if (motionProfile.isFinished) {
@@ -163,7 +189,8 @@ class TwistController(
                 yaw,                       // yaw
                 drive.gyro.angle,          // gyro_angle
                 actualDriveCurrent,        // drive_current
-                actualDriveVoltage         // drive_voltage
+                actualDriveVoltage,        // drive_voltage
+                yawDistanceCorrection                // yaw_distance
             )
         )
     }
@@ -181,6 +208,7 @@ class TwistController(
 //        putInt(GOOD_ENOUGH_DISTANCE, kGoodEnoughDistance)
         putDouble(K_P_YAW, kPYaw)
         putDouble(MAX_YAW, kMaxYaw)
+        putDouble(YAW_TPD, kYawTpd)
         putLong(EXTRA_TIME, kExtraTime)
         putBoolean(TRACE, kTrace)
         putBoolean(PREFS_SAVE, false)
@@ -201,7 +229,8 @@ private val TRACE_MEASURES = listOf(
     "yaw",
     "gyro_angle",
     "drive_current",
-    "drive_voltage"
+    "drive_voltage",
+    "yaw_distance"
 )
 
 private const val PREFS_NAME = "TwistController"
@@ -214,6 +243,7 @@ private const val K_P_DISTANCE = "$PREFS_NAME/$DISTANCE_LOOP/k_p"
 private const val GOOD_ENOUGH_DISTANCE = "$PREFS_NAME/$DISTANCE_LOOP/good_enough"
 private const val K_P_YAW = "$PREFS_NAME/$YAW_LOOP/k_p"
 private const val MAX_YAW = "$PREFS_NAME/$YAW_LOOP/max_yaw"
+private const val YAW_TPD = "$PREFS_NAME/$DISTANCE_LOOP/yaw_tpd"
 private const val EXTRA_TIME = "$PREFS_NAME/$MOTION_PROFILE/extra_time"
 private const val DT_MS = "$PREFS_NAME/$MOTION_PROFILE/dt"
 private const val DT_MS_DEFAULT = 20
