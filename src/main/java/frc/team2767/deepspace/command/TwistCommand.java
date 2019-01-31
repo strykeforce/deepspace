@@ -8,7 +8,7 @@ import frc.team2767.deepspace.subsystem.DriveSubsystem;
 
 public class TwistCommand extends Command {
 
-  private static final DriveSubsystem DRIVE = Robot.DRIVE;
+  private static final DriveSubsystem DRIVE = Robot.DriveSubsystem;
   private final double heading;
   private final int distance;
   private final double targetYaw;

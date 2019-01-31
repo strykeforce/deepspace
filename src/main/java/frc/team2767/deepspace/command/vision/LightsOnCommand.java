@@ -6,7 +6,7 @@ import frc.team2767.deepspace.subsystem.VisionSubsystem;
 
 public class LightsOnCommand extends InstantCommand {
 
-  private final VisionSubsystem VISION = Robot.VISION;
+  private final VisionSubsystem VISION = Robot.VisionSubsystem;
 
   public LightsOnCommand() {
     requires(VISION);
