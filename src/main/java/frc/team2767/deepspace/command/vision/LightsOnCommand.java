@@ -1,19 +1,19 @@
-package frc.team2767.deepspace.command.Vision;
+package frc.team2767.deepspace.command.vision;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.VisionSubsystem;
 
-public class LightsOff extends InstantCommand {
+public class LightsOnCommand extends InstantCommand {
 
   private final VisionSubsystem VISION = Robot.VISION;
 
-  public LightsOff() {
+  public LightsOnCommand() {
     requires(VISION);
   }
 
   @Override
   protected void initialize() {
-    VISION.enableLights(false);
+    VISION.enableLights(true);
   }
 }
