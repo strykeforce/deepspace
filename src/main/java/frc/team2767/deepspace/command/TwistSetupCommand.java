@@ -10,7 +10,7 @@ import frc.team2767.deepspace.util.TwistCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TwistSetup extends InstantCommand {
+public class TwistSetupCommand extends InstantCommand {
 
   private static final DriveSubsystem DRIVE = Robot.DriveSubsystem;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
