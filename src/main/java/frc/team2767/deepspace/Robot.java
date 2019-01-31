@@ -15,8 +15,8 @@ public class Robot extends TimedRobot {
   // Instantiate this before Subsystems because they use telemetry service.
   public static final TelemetryService TELEMETRY = new TelemetryService(TelemetryController::new);
 
-  public static final DriveSubsystem DRIVE = new DriveSubsystem();
-  public static final VisionSubsystem VISION = new VisionSubsystem();
+  public static final DriveSubsystem DriveSubsystem = new DriveSubsystem();
+  public static final VisionSubsystem VisionSubsystem = new VisionSubsystem();
 
   // Controls initialize Commands so this should be instantiated last to prevent
   // NullPointerExceptions in commands that require() Subsystems above.
@@ -29,8 +29,8 @@ public class Robot extends TimedRobot {
 
     Session.INSTANCE.setBaseUrl("https://keeper.strykeforce.org");
 
-    DRIVE.zeroYawEncoders();
-    DRIVE.zeroGyro();
+    DriveSubsystem.zeroYawEncoders();
+    DriveSubsystem.zeroGyro();
     TELEMETRY.start();
   }
 

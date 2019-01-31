@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 public class TwistCalculator {
 
-  private final DriveSubsystem DRIVE = Robot.DRIVE;
+  private final DriveSubsystem DRIVE = Robot.DriveSubsystem;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private double deltaX;
   private double deltaY;
