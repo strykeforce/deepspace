@@ -19,8 +19,6 @@ public class TwistCalculator {
   private double cameraPositionBearing;
   private double swerveRotation;
 
-  private double headingAdjustment;
-
   public TwistCalculator(
       double cameraAngle,
       double cameraRange,
@@ -42,7 +40,6 @@ public class TwistCalculator {
 
     deltaX = 0.0;
     deltaY = 0.0;
-    headingAdjustment = 0.0;
 
     this.cameraAngle = cameraAngle;
     double transferSlope = 1.2449;
@@ -66,8 +63,6 @@ public class TwistCalculator {
   private void cameraToRobot() {
     deltaX += cameraX;
     deltaY += cameraY;
-
-    headingAdjustment = Math.atan2(deltaY, deltaX);
   }
 
   private void robotToSwerve() {
