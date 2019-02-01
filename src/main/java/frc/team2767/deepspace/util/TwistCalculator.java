@@ -7,7 +7,8 @@ import org.slf4j.LoggerFactory;
 
 public class TwistCalculator {
 
-  private final DriveSubsystem DRIVE = Robot.DRIVE;
+  private final double distanceSafetyAdjustment = 10.0;
+  private final DriveSubsystem DRIVE = Robot.DriveSubsystem;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private double deltaX;
   private double deltaY;
@@ -15,6 +16,7 @@ public class TwistCalculator {
   private double cameraRange;
   private double cameraX;
   private double cameraY;
+  private double cameraPositionBearing;
   private double swerveRotation;
 
   private double headingAdjustment;
@@ -24,16 +26,18 @@ public class TwistCalculator {
       double cameraRange,
       double cameraX,
       double cameraY,
+      double cameraPositionBearing,
       double swerveRotation) {
 
-    setInputs(cameraAngle, cameraRange, cameraX, cameraY, swerveRotation);
+    computeNew(cameraAngle, cameraRange, cameraX, cameraY, cameraPositionBearing, swerveRotation);
   }
 
-  private void setInputs(
+  private void computeNew(
       double cameraAngle,
       double cameraRange,
       double cameraX,
       double cameraY,
+      double cameraPositionBearing,
       double swerveRotation) {
 
     deltaX = 0.0;
@@ -41,18 +45,17 @@ public class TwistCalculator {
     headingAdjustment = 0.0;
 
     this.cameraAngle = cameraAngle;
-    double slope = 1.2449;
-    double intercept = -4.3949;
-    this.cameraRange = slope * cameraRange + intercept;
+    double transferSlope = 1.2449;
+    double transferIntercept = -4.3949;
+    this.cameraRange = transferSlope * cameraRange + transferIntercept;
     this.cameraX = cameraX;
     this.cameraY = cameraY;
+    this.cameraPositionBearing = cameraPositionBearing;
     this.swerveRotation = swerveRotation;
 
     targetToCamera();
     cameraToRobot();
     robotToSwerve();
-
-    logger.debug("x={} y={}", deltaX, deltaY);
   }
 
   private void targetToCamera() {
@@ -79,15 +82,11 @@ public class TwistCalculator {
 
   /** @return twist heading */
   public double getHeading() {
-
-    //    double robotToTarget = Math.toDegrees(Math.atan2(deltaY, deltaX));
-    logger.debug("gyro yaw={} angleDiff={}", DRIVE.getGyro().getAngle(), cameraAngle);
-
-    return DRIVE.getGyro().getAngle() - headingAdjustment;
+    return (cameraPositionBearing + DRIVE.getGyro().getAngle() + cameraAngle);
   }
 
   /** @return twist range */
   public double getRange() {
-    return Math.hypot(deltaX, deltaY);
+    return Math.hypot(deltaX, deltaY) - distanceSafetyAdjustment;
   }
 }

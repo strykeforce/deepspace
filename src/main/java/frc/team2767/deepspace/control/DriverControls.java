@@ -4,10 +4,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.LogCommand;
-import frc.team2767.deepspace.command.TwistService;
-import frc.team2767.deepspace.command.Vision.LightsOff;
-import frc.team2767.deepspace.command.Vision.LightsOn;
+import frc.team2767.deepspace.command.TwistSetupCommand;
 import frc.team2767.deepspace.command.ZeroGyroCommand;
+import frc.team2767.deepspace.command.vision.LightsOffCommand;
+import frc.team2767.deepspace.command.vision.LightsOnCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,12 +32,12 @@ public class DriverControls {
 
     new JoystickButton(joystick, Button.HAMBURGER.id).whenPressed(log(Button.HAMBURGER));
     new JoystickButton(joystick, Button.X.id).whenPressed(log(Button.X));
-    new JoystickButton(joystick, Button.UP.id).whenPressed(new TwistService());
+    new JoystickButton(joystick, Button.UP.id).whenPressed(new TwistSetupCommand());
     new JoystickButton(joystick, Button.DOWN.id).whenPressed(log(Button.DOWN));
 
     // Trim Switches
-    new JoystickButton(joystick, Trim.LEFT_X_POS.id).whenPressed(new LightsOn());
-    new JoystickButton(joystick, Trim.LEFT_X_NEG.id).whenPressed(new LightsOff());
+    new JoystickButton(joystick, Trim.LEFT_X_POS.id).whenPressed(new LightsOnCommand());
+    new JoystickButton(joystick, Trim.LEFT_X_NEG.id).whenPressed(new LightsOffCommand());
     new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenPressed(log(Trim.LEFT_Y_POS));
     new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenPressed(log(Trim.LEFT_Y_NEG));
     new JoystickButton(joystick, Trim.RIGHT_X_POS.id).whenPressed(log(Trim.RIGHT_X_POS));

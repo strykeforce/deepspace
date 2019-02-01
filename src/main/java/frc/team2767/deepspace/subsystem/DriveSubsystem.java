@@ -26,7 +26,7 @@ public class DriveSubsystem extends Subsystem {
   private static final double ROBOT_LENGTH = 1.0;
   private static final double ROBOT_WIDTH = 1.0;
 
-  public static final double TICKS_PER_INCH = 1900;
+  public static final double TICKS_PER_INCH = 1900; // TODO: Set Ticks per inch
 
   private final SwerveDrive swerve = getSwerve();
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -44,12 +44,12 @@ public class DriveSubsystem extends Subsystem {
     swerve.setDriveMode(mode);
   }
 
-  public void zeroAzimuthEncoders() {
+  public void zeroYawEncoders() {
     swerve.zeroAzimuthEncoders();
   }
 
-  public void drive(double forward, double strafe, double azimuth) {
-    swerve.drive(forward, strafe, azimuth);
+  public void drive(double forward, double strafe, double yaw) {
+    swerve.drive(forward, strafe, yaw);
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -57,6 +57,7 @@ public class DriveSubsystem extends Subsystem {
   ////////////////////////////////////////////////////////////////////////////
 
   public void startTwist(double heading, int distance, double targetYaw) {
+    logger.debug("starting twist");
     twistController = new TwistController(swerve, heading, distance, targetYaw);
     twistController.start();
   }
@@ -103,19 +104,19 @@ public class DriveSubsystem extends Subsystem {
   }
 
   private Wheel[] getWheels() {
-    TalonSRXConfiguration azimuthConfig = new TalonSRXConfiguration();
-    azimuthConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
-    azimuthConfig.continuousCurrentLimit = 10;
-    azimuthConfig.peakCurrentDuration = 0;
-    azimuthConfig.peakCurrentLimit = 0;
-    azimuthConfig.slot0.kP = 10.0;
-    azimuthConfig.slot0.kI = 0.0;
-    azimuthConfig.slot0.kD = 100.0;
-    azimuthConfig.slot0.kF = 0.0;
-    azimuthConfig.slot0.integralZone = 0;
-    azimuthConfig.slot0.allowableClosedloopError = 0;
-    azimuthConfig.motionAcceleration = 10_000;
-    azimuthConfig.motionCruiseVelocity = 800;
+    TalonSRXConfiguration yawConfig = new TalonSRXConfiguration();
+    yawConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
+    yawConfig.continuousCurrentLimit = 10;
+    yawConfig.peakCurrentDuration = 0;
+    yawConfig.peakCurrentLimit = 0;
+    yawConfig.slot0.kP = 10.0;
+    yawConfig.slot0.kI = 0.0;
+    yawConfig.slot0.kD = 100.0;
+    yawConfig.slot0.kF = 0.0;
+    yawConfig.slot0.integralZone = 0;
+    yawConfig.slot0.allowableClosedloopError = 0;
+    yawConfig.motionAcceleration = 10_000;
+    yawConfig.motionCruiseVelocity = 800;
 
     TalonSRXConfiguration driveConfig = new TalonSRXConfiguration();
     driveConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
@@ -137,10 +138,10 @@ public class DriveSubsystem extends Subsystem {
     Wheel[] wheels = new Wheel[4];
 
     for (int i = 0; i < 4; i++) {
-      TalonSRX azimuthTalon = new TalonSRX(i);
-      azimuthTalon.configAllSettings(azimuthConfig);
-      azimuthTalon.enableCurrentLimit(true);
-      azimuthTalon.enableVoltageCompensation(true);
+      TalonSRX yawTalon = new TalonSRX(i);
+      yawTalon.configAllSettings(yawConfig);
+      yawTalon.enableCurrentLimit(true);
+      yawTalon.enableVoltageCompensation(true);
 
       TalonSRX driveTalon = new TalonSRX(i + 10);
       driveTalon.configAllSettings(driveConfig);
@@ -150,10 +151,10 @@ public class DriveSubsystem extends Subsystem {
       //      driveTalon.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, 10);
       //      driveTalon.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0 5, 10);
 
-      telemetryService.register(azimuthTalon);
+      telemetryService.register(yawTalon);
       telemetryService.register(driveTalon);
 
-      Wheel wheel = new Wheel(azimuthTalon, driveTalon, DRIVE_SETPOINT_MAX);
+      Wheel wheel = new Wheel(yawTalon, driveTalon, DRIVE_SETPOINT_MAX);
       wheels[i] = wheel;
     }
 

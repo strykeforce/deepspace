@@ -14,7 +14,7 @@ public final class TeleOpDriveCommand extends Command {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  private static final DriveSubsystem DRIVE = Robot.DRIVE;
+  private static final DriveSubsystem DRIVE = Robot.DriveSubsystem;
   private static DriverControls controls;
 
   public TeleOpDriveCommand() {
