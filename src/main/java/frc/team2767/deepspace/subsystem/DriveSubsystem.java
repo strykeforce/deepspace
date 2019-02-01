@@ -57,6 +57,7 @@ public class DriveSubsystem extends Subsystem {
   ////////////////////////////////////////////////////////////////////////////
 
   public void startTwist(double heading, int distance, double targetYaw) {
+    logger.debug("starting twist");
     twistController = new TwistController(swerve, heading, distance, targetYaw);
     twistController.start();
   }

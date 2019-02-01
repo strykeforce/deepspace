@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 public class TwistCalculator {
 
+  private final double distanceSafetyAdjustment = 10.0;
   private final DriveSubsystem DRIVE = Robot.DriveSubsystem;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private double deltaX;
@@ -15,6 +16,7 @@ public class TwistCalculator {
   private double cameraRange;
   private double cameraX;
   private double cameraY;
+  private double cameraPositionBearing;
   private double swerveRotation;
 
   private double headingAdjustment;
@@ -24,9 +26,10 @@ public class TwistCalculator {
       double cameraRange,
       double cameraX,
       double cameraY,
+      double cameraPositionBearing,
       double swerveRotation) {
 
-    computeNew(cameraAngle, cameraRange, cameraX, cameraY, swerveRotation);
+    computeNew(cameraAngle, cameraRange, cameraX, cameraY, cameraPositionBearing, swerveRotation);
   }
 
   private void computeNew(
@@ -34,6 +37,7 @@ public class TwistCalculator {
       double cameraRange,
       double cameraX,
       double cameraY,
+      double cameraPositionBearing,
       double swerveRotation) {
 
     deltaX = 0.0;
@@ -46,6 +50,7 @@ public class TwistCalculator {
     this.cameraRange = transferSlope * cameraRange + transferIntercept;
     this.cameraX = cameraX;
     this.cameraY = cameraY;
+    this.cameraPositionBearing = cameraPositionBearing;
     this.swerveRotation = swerveRotation;
 
     targetToCamera();
@@ -77,11 +82,11 @@ public class TwistCalculator {
 
   /** @return twist heading */
   public double getHeading() {
-    return DRIVE.getGyro().getAngle() - headingAdjustment;
+    return (cameraPositionBearing + DRIVE.getGyro().getAngle() + cameraAngle);
   }
 
   /** @return twist range */
   public double getRange() {
-    return Math.hypot(deltaX, deltaY);
+    return Math.hypot(deltaX, deltaY) - distanceSafetyAdjustment;
   }
 }
