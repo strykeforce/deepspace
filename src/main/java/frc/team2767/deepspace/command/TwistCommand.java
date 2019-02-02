@@ -13,7 +13,6 @@ public class TwistCommand extends Command {
 
   private final double heading;
   private final int distance;
-  private final double distanceSafetyAdjustment = 10.0;
   private final double targetYaw;
   //  private final NetworkTableInstance instance = NetworkTableInstance.getDefault();
   //  private final NetworkTable table;
@@ -22,7 +21,7 @@ public class TwistCommand extends Command {
     //    table = instance.getTable("Shuffleboard");
     logger.debug("twist command constructor");
     this.heading = heading;
-    this.distance = distance - (int) (distanceSafetyAdjustment * DRIVE.TICKS_PER_INCH);
+    this.distance = distance;
     this.targetYaw = targetYaw;
     requires(DRIVE);
     setInterruptible(true);

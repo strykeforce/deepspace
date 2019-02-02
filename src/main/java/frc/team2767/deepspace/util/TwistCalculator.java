@@ -12,29 +12,14 @@ public class TwistCalculator {
   private double deltaY;
   private double cameraAngle;
   private double cameraRange;
-  private double cameraX;
-  private double cameraY;
   private double cameraPositionBearing;
-  private double swerveRotation;
 
-  public TwistCalculator(
-      double cameraAngle,
-      double cameraRange,
-      double cameraX,
-      double cameraY,
-      double cameraPositionBearing,
-      double swerveRotation) {
+  public TwistCalculator(double cameraAngle, double cameraRange, double cameraPositionBearing) {
 
-    computeNew(cameraAngle, cameraRange, cameraX, cameraY, cameraPositionBearing, swerveRotation);
+    computeNew(cameraAngle, cameraRange, cameraPositionBearing);
   }
 
-  private void computeNew(
-      double cameraAngle,
-      double cameraRange,
-      double cameraX,
-      double cameraY,
-      double cameraPositionBearing,
-      double swerveRotation) {
+  private void computeNew(double cameraAngle, double cameraRange, double cameraPositionBearing) {
 
     deltaX = 0.0;
     deltaY = 0.0;
@@ -43,34 +28,14 @@ public class TwistCalculator {
     double transferSlope = 1.2449;
     double transferIntercept = -4.3949;
     this.cameraRange = transferSlope * cameraRange + transferIntercept;
-    this.cameraX = cameraX;
-    this.cameraY = cameraY;
     this.cameraPositionBearing = cameraPositionBearing;
-    this.swerveRotation = swerveRotation;
 
     targetToCamera();
-//    cameraToRobot();
-//    robotToSwerve();
   }
 
   private void targetToCamera() {
     deltaX = (cameraRange * Math.cos(Math.toRadians(cameraAngle)));
     deltaY = (cameraRange * Math.sin(Math.toRadians(cameraAngle)));
-  }
-
-  private void cameraToRobot() {
-    deltaX += cameraX;
-    deltaY += cameraY;
-  }
-
-  private void robotToSwerve() {
-    double dXtemp = deltaX;
-    deltaX =
-        deltaX * Math.cos(Math.toRadians(swerveRotation))
-            - deltaY * Math.sin(Math.toRadians(swerveRotation));
-    deltaY =
-        deltaY * Math.cos(Math.toRadians(swerveRotation))
-            + dXtemp * Math.sin(Math.toRadians(swerveRotation));
   }
 
   /** @return twist heading */
