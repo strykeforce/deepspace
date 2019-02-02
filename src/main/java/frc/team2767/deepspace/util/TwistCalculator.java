@@ -6,8 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TwistCalculator {
-
-  private final double distanceSafetyAdjustment = 10.0;
   private final DriveSubsystem DRIVE = Robot.DriveSubsystem;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private double deltaX;
@@ -51,8 +49,8 @@ public class TwistCalculator {
     this.swerveRotation = swerveRotation;
 
     targetToCamera();
-    cameraToRobot();
-    robotToSwerve();
+//    cameraToRobot();
+//    robotToSwerve();
   }
 
   private void targetToCamera() {
@@ -82,6 +80,6 @@ public class TwistCalculator {
 
   /** @return twist range */
   public double getRange() {
-    return Math.hypot(deltaX, deltaY) - distanceSafetyAdjustment;
+    return Math.hypot(deltaX, deltaY);
   }
 }
