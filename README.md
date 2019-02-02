@@ -4,18 +4,18 @@
 
 Subsystem    | Talon   | ID | PDP
 ------------ | ------- | -- | ---
-Drive        | azimuth | 0  |
-Drive        | azimuth | 1  |
-Drive        | azimuth | 2  |
-Drive        | azimuth | 3  |
-Drive        | drive   | 10 |
-Drive        | drive   | 11 |
-Drive        | drive   | 12 |
-Drive        | drive   | 13 |
-CargoIntake  | arm     | 20 | 
+Drive        | azimuth | 0  | 11
+Drive        | azimuth | 1  | 9
+Drive        | azimuth | 2  | 10
+Drive        | azimuth | 3  | 8
+Drive        | drive   | 10 | 14
+Drive        | drive   | 11 | 13
+Drive        | drive   | 12 | 15
+Drive        | drive   | 13 | 12
+CargoIntake  | arm     | 20 | 4
 CargoIntake  | rollers | 21 | 
-Elevator     | elevator| 30 | 
-Biscuit      | rotate  | 40 | 
+Elevator     | elevator| 30 | 0
+Biscuit      | rotate  | 40 | 7
 Climb        | master  | 50 | 
 Climb        | slave   | 51 | 
 Vacuum       | vacuum  | 60 | 
