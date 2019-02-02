@@ -40,7 +40,7 @@ public class BiscuitSubsystem extends Subsystem {
 
   TalonSRX biscuit = new TalonSRX(BISCUIT_ID);
   TalonSRXConfiguration biscuitConfig = new TalonSRXConfiguration();
-  
+
 
   public BiscuitSubsystem() {
     telemetryService.register(biscuit);
