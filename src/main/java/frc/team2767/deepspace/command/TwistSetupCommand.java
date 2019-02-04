@@ -27,25 +27,37 @@ public class TwistSetupCommand extends InstantCommand {
     double cameraAngle = (double) bearing.getNumber(0.0);
     double cameraRange = (double) range.getNumber(0.0);
     double cameraPositionBearing = -90.0;
+    double cameraX = 0.0;
+    double cameraY = 9.0;
+
+    double targetYaw = preferences.getDouble("targetYaw", 0) + 90.0;
 
     TwistCalculator twistCalculator =
-        new TwistCalculator(cameraAngle, cameraRange, cameraPositionBearing);
+        new TwistCalculator(
+            cameraAngle,
+            cameraRange,
+            cameraX,
+            cameraY,
+            cameraPositionBearing,
+            DRIVE.getGyro().getYaw(),
+            targetYaw);
 
     logger.debug("range={} heading={}", twistCalculator.getRange(), twistCalculator.getHeading());
 
-    double targetYaw = preferences.getDouble("targetYaw", 0.0) + 90.0;
     logger.debug("targetYaw={}", targetYaw);
 
     double distanceSafetyAdjustment = preferences.getDouble("safetyDistance", 10.0);
 
-    double finalRange = twistCalculator.getRange() - distanceSafetyAdjustment;
-    //    Command twist =
-    //        new TwistCommand(
-    //            twistCalculator.getHeading(),
-    //            (int) (DriveSubsystem.TICKS_PER_INCH * finalRange),
-    //            targetYaw);
+    Command twist =
+        new TwistCommand(
+            twistCalculator.getHeading(),
+            (int)
+                (DriveSubsystem.TICKS_PER_INCH
+                    * (twistCalculator.getRange() - distanceSafetyAdjustment)),
+            targetYaw);
 
-    Command twist = new TwistCommand(-118.0, (int) (DriveSubsystem.TICKS_PER_INCH * 80), targetYaw);
+    //    Command twist = new TwistCommand(-118.0, (int) (DriveSubsystem.TICKS_PER_INCH * 80),
+    // targetYaw);
     twist.start();
   }
 }

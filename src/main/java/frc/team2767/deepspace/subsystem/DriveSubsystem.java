@@ -122,7 +122,7 @@ public class DriveSubsystem extends Subsystem {
     driveConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
     driveConfig.continuousCurrentLimit = 40;
     driveConfig.peakCurrentDuration = 40;
-    driveConfig.peakCurrentLimit = 1;
+    driveConfig.peakCurrentLimit = 45;
     driveConfig.slot0.kP = 0.08;
     driveConfig.slot0.kI = 0.0005;
     driveConfig.slot0.kD = 0.0;
