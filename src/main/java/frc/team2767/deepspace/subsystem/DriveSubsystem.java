@@ -22,18 +22,18 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 public class DriveSubsystem extends Subsystem {
 
+  public static final double TICKS_PER_INCH = 1900; // TODO: Set Ticks per inch
   private static final double DRIVE_SETPOINT_MAX = 25_000.0;
   private static final double ROBOT_LENGTH = 1.0;
   private static final double ROBOT_WIDTH = 1.0;
-
-  public static final double TICKS_PER_INCH = 1900; // TODO: Set Ticks per inch
-
   private final SwerveDrive swerve = getSwerve();
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   private TwistController twistController;
 
-  public DriveSubsystem() {}
+  public DriveSubsystem() {
+    swerve.setFieldOriented(true);
+  }
 
   @Override
   protected void initDefaultCommand() {
@@ -122,7 +122,7 @@ public class DriveSubsystem extends Subsystem {
     driveConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
     driveConfig.continuousCurrentLimit = 40;
     driveConfig.peakCurrentDuration = 40;
-    driveConfig.peakCurrentLimit = 1;
+    driveConfig.peakCurrentLimit = 45;
     driveConfig.slot0.kP = 0.08;
     driveConfig.slot0.kI = 0.0005;
     driveConfig.slot0.kD = 0.0;
