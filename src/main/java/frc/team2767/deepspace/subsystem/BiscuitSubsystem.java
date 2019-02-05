@@ -116,14 +116,9 @@ public class BiscuitSubsystem extends Subsystem {
 
         }
 
-    public void startMotion (Position position){
+    public void setPosition(Position position){
         int target = findNearest(getEncoderValue(position));
-
-        if (target - biscuit.getSelectedSensorPosition() > 0) {
-            run(.20);
-        } else {
-            run(-.20);
-        }
+        biscuit.set(ControlMode.Position, target);
     }
   }
 
@@ -131,9 +126,17 @@ public class BiscuitSubsystem extends Subsystem {
     biscuit.set(ControlMode.PercentOutput, power);
   }
 
-  public void stop() {
-    biscuit.set(ControlMode.PercentOutput, 0);
-  }
+    public boolean positionReached (Position position){
+        if (Math.abs(biscuit.getSelectedSensorPosition() - getEncoderValue(position)) < CLOSE_ENOUGH){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void stop(){
+        biscuit.set(ControlMode.PercentOutput, 0);
+    }
 
   public enum Position {
     UP,
