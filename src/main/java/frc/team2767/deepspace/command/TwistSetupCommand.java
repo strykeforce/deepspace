@@ -51,7 +51,7 @@ public class TwistSetupCommand extends InstantCommand {
 
     logger.debug("targetYaw={}", targetYaw);
 
-    double distanceSafetyAdjustment = preferences.getDouble("safetyDistance", 10.0);
+    double distanceSafetyAdjustment = preferences.getDouble("safetyDistance", 2.0);
 
     double cameraDistanceFromRobotEdge = 6.0;
     Command twist =

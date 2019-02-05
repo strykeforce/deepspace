@@ -29,6 +29,7 @@ public class TwistCalculator {
     double transferSlope = 1.2449;
     double transferIntercept = -4.3949;
     double range = transferSlope * cameraRange + transferIntercept;
+    //    double range = cameraRange;
     this.cameraX = cameraX;
     this.cameraY = cameraY;
 
