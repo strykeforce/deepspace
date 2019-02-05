@@ -53,8 +53,10 @@ public class BiscuitSubsystem extends Subsystem {
     biscuitPreferences();
   }
 
-  @Override
-  protected void initDefaultCommand() {}
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @Override
+    protected void initDefaultCommand(){}
 
   public void biscuitPreferences(){
     //FIXME actually set in preferences
@@ -112,24 +114,16 @@ public class BiscuitSubsystem extends Subsystem {
     biscuit.set(ControlMode.Position, target);
   }
 
-  int findNearest(int basePosition) {
-    int nearest = 1000000;
-    for (int k = -NUM_ROTATIONS; k <= NUM_ROTATIONS; k++) {
-      int loopedPosition = basePosition + k * TICKS_PER_REV;
-      if (Math.abs(biscuit.getSelectedSensorPosition() - loopedPosition) < nearest
-          && LOW_ENCODER_LIMIT < loopedPosition
-          && HIGH_ENCODER_LIMIT > loopedPosition) {
-        nearest = loopedPosition;
-      }
-    }
-    return nearest;
-  }
+        }
 
-  public boolean onTarget() {
-    if (Math.abs(biscuit.getSelectedSensorPosition() - target) < CLOSE_ENOUGH) {
-      return true;
-    } else {
-      return false;
+    public void startMotion (Position position){
+        int target = findNearest(getEncoderValue(position));
+
+        if (target - biscuit.getSelectedSensorPosition() > 0) {
+            run(.20);
+        } else {
+            run(-.20);
+        }
     }
   }
 
