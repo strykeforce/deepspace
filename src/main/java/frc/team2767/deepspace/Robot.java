@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team2767.deepspace.control.Controls;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
+import frc.team2767.deepspace.subsystem.CargoIntakeSubsystem;
 import frc.team2767.deepspace.subsystem.VisionSubsystem;
 import javax.swing.*;
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ public class Robot extends TimedRobot {
   // Instantiate this before Subsystems because they use telemetry service.
   public static final TelemetryService TELEMETRY = new TelemetryService(TelemetryController::new);
 
+  public static final CargoIntakeSubsystem CargoIntakeSubsystem = new CargoIntakeSubsystem();
   public static final DriveSubsystem DriveSubsystem = new DriveSubsystem();
   public static final VisionSubsystem VisionSubsystem = new VisionSubsystem();
 
