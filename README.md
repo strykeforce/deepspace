@@ -18,7 +18,7 @@ Elevator     | elevator| 30 | 0
 Biscuit      | rotate  | 40 | 7
 Climb        | master  | 50 | 
 Climb        | slave   | 51 | 
-Vacuum       | vacuum  | 60 | 
+Vacuum       | vacuum  | 60 | 1
 
 ## Servos
 
