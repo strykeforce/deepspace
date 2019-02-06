@@ -79,6 +79,7 @@ public class GameControls {
     LEFT_Y(1),
     RIGHT_X(2),
     RIGHT_Y(3);
+
     private final int id;
 
     Axis(int id) {
