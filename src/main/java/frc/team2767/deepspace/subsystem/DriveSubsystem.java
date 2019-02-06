@@ -26,6 +26,7 @@ public class DriveSubsystem extends Subsystem {
   private static final double DRIVE_SETPOINT_MAX = 25_000.0;
   private static final double ROBOT_LENGTH = 1.0;
   private static final double ROBOT_WIDTH = 1.0;
+
   private final SwerveDrive swerve = getSwerve();
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -50,6 +51,10 @@ public class DriveSubsystem extends Subsystem {
 
   public void drive(double forward, double strafe, double yaw) {
     swerve.drive(forward, strafe, yaw);
+  }
+
+  public void stop() {
+    swerve.stop();
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -159,5 +164,9 @@ public class DriveSubsystem extends Subsystem {
     }
 
     return wheels;
+  }
+
+  public Wheel[] getAllWheels() {
+    return swerve.getWheels();
   }
 }
