@@ -34,7 +34,8 @@ public class DriverControls {
     new JoystickButton(joystick, Button.HAMBURGER.id).whenPressed(log(Button.HAMBURGER));
     new JoystickButton(joystick, Button.X.id).whenPressed(log(Button.X));
     new JoystickButton(joystick, Button.UP.id).whenPressed(new TwistSetupCommand());
-    new JoystickButton(joystick, Button.DOWN.id).whenPressed(new PathCommand("loading_to_cargo"));
+    new JoystickButton(joystick, Button.DOWN.id)
+        .whenPressed(new PathCommand("loading_to_cargo", 0.0));
 
     // Trim Switches
     new JoystickButton(joystick, Trim.LEFT_X_POS.id).whenPressed(new LightsOnCommand());
