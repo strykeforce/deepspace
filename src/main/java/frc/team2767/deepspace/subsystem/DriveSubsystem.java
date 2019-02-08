@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.command.TeleOpDriveCommand;
+import frc.team2767.deepspace.motion.PathController;
 import frc.team2767.deepspace.motion.TwistController;
 import java.util.List;
 import org.slf4j.Logger;
@@ -31,6 +32,7 @@ public class DriveSubsystem extends Subsystem {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   private TwistController twistController;
+  private PathController pathController;
 
   public DriveSubsystem() {
     swerve.setFieldOriented(true);
@@ -55,6 +57,24 @@ public class DriveSubsystem extends Subsystem {
 
   public void stop() {
     swerve.stop();
+  }
+
+  ////////////////////////////////////////////////////////////////////////////
+  // PATHFINDER
+  ////////////////////////////////////////////////////////////////////////////
+
+  public void startPath(PathController path) {
+    this.pathController = path;
+    pathController.start();
+  }
+
+  public boolean isPathFinished() {
+    return !pathController.isRunning();
+  }
+
+  public void endPath() {
+    pathController.stop();
+    pathController = null;
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -94,7 +114,9 @@ public class DriveSubsystem extends Subsystem {
     return swerve.getGyro();
   }
 
-  // Swerve configuration
+  ////////////////////////////////////////////////////////////////////////////
+  // SWERVE CONFIG
+  ////////////////////////////////////////////////////////////////////////////
 
   private SwerveDrive getSwerve() {
     SwerveDriveConfig config = new SwerveDriveConfig();
