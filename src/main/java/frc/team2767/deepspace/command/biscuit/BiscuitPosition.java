@@ -8,10 +8,10 @@ public class BiscuitPosition extends Command {
     BiscuitSubsystem biscuitSubsystem = Robot.BiscuitSubsystem;
     BiscuitSubsystem.Position position;
 
-    public BiscuitPosition(BiscuitSubsystem.Position position){
-        this.position = position;
-        requires(biscuitSubsystem);
-    }
+  public BiscuitPosition(BiscuitSubsystem.Position position) {
+    this.position = position;
+    requires(biscuitSubsystem);
+  }
 
     @Override
     protected void initialize(){

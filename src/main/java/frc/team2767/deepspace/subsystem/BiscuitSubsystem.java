@@ -53,7 +53,7 @@ public class BiscuitSubsystem extends Subsystem {
     biscuitPreferences();
   }
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     protected void initDefaultCommand(){}
@@ -116,27 +116,26 @@ public class BiscuitSubsystem extends Subsystem {
 
         }
 
-    public void setPosition(Position position){
-        int target = findNearest(getEncoderValue(position));
-        biscuit.set(ControlMode.Position, target);
-    }
+  public void setPosition(Position position) {
+    int target = findNearest(getEncoderValue(position));
+    biscuit.set(ControlMode.Position, target);
   }
 
   public void runOpenLoop(double power) {
     biscuit.set(ControlMode.PercentOutput, power);
   }
 
-    public boolean positionReached (Position position){
-        if (Math.abs(biscuit.getSelectedSensorPosition() - getEncoderValue(position)) < CLOSE_ENOUGH){
-            return true;
-        } else {
-            return false;
-        }
+  public boolean positionReached(Position position) {
+    if (Math.abs(biscuit.getSelectedSensorPosition() - getEncoderValue(position)) < CLOSE_ENOUGH) {
+      return true;
+    } else {
+      return false;
     }
+  }
 
-    public void stop(){
-        biscuit.set(ControlMode.PercentOutput, 0);
-    }
+  public void stop() {
+    biscuit.set(ControlMode.PercentOutput, 0);
+  }
 
   public enum Position {
     UP,
