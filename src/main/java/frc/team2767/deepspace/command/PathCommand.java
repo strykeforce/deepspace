@@ -9,36 +9,31 @@ import org.slf4j.LoggerFactory;
 
 public class PathCommand extends Command {
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private static final DriveSubsystem DRIVE = Robot.DriveSubsystem;
-
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private PathController pathController;
-  private String pathName;
 
   public PathCommand(String pathName) {
 
     logger.debug("PathCommand for {} init", pathName);
-    this.pathName = pathName;
+    pathController = new PathController(pathName);
     requires(DRIVE);
   }
 
   @Override
   protected void initialize() {
-    pathController = new PathController(pathName);
-  }
-
-  @Override
-  protected void execute() {
-    pathController.run();
-  }
-
-  @Override
-  protected void end() {
-    logger.debug("PathCommand ending");
+    DRIVE.startPath(pathController);
   }
 
   @Override
   protected boolean isFinished() {
-    return !pathController.isRunning();
+    return DRIVE.isPathFinished();
+  }
+
+  @Override
+  protected void end() {
+
+    DRIVE.endPath();
+    logger.debug("PathCommand ending");
   }
 }
