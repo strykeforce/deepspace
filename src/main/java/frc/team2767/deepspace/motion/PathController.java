@@ -3,10 +3,11 @@ package frc.team2767.deepspace.motion;
 import edu.wpi.first.wpilibj.Notifier;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
-import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.Wheel;
+
+import java.io.File;
 
 public class PathController implements Runnable {
 
@@ -15,13 +16,13 @@ public class PathController implements Runnable {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   @SuppressWarnings("FieldCanBeLocal")
-  private final double DISTANCE_kP = 0.2;
+  private final double DISTANCE_kP = 0.000002;
 
   @SuppressWarnings("FieldCanBeLocal")
-  private final double ACCELERATION_kF = 0.2;
+  private final double ACCELERATION_kF = 0.0;
 
   @SuppressWarnings("FieldCanBeLocal")
-  private final double YAW_kP = 0.2;
+  private final double YAW_kP = 0.004;
 
   private final Wheel[] wheels;
   private final int PID = 0;
@@ -29,9 +30,8 @@ public class PathController implements Runnable {
   private String pathName;
   private Notifier notifier;
   private int iteration;
+  private double targetYaw;
   private int[] start;
-
-  // parse csv for v and a and heading
 
   private boolean running;
 
@@ -45,11 +45,12 @@ public class PathController implements Runnable {
     trajectory = new Trajectory(csvFile);
   }
 
-  public void start() {
+  public void start(double targetYaw) {
     for (int i = 0; i < NUM_WHEELS; i++) {
       start[i] = wheels[i].getDriveTalon().getSelectedSensorPosition(PID);
     }
 
+    this.targetYaw = targetYaw;
     notifier = new Notifier(this);
     notifier.startPeriodic(0.05);
     iteration = 1;
@@ -73,7 +74,6 @@ public class PathController implements Runnable {
     //  FIXME: fix calculations of velocity
     //
 
-
     double setpointVelocity =
         segment.velocity
             + DISTANCE_kP * distanceError(segment.position)
@@ -84,8 +84,7 @@ public class PathController implements Runnable {
 
     double yaw =
         YAW_kP
-            * (Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0)
-                - Math.toDegrees(segment.heading));
+            * (Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0) - Math.toDegrees(targetYaw));
 
     if (forward > 1d || strafe > 1d) logger.warn("forward = {} strafe = {}", forward, strafe);
 
