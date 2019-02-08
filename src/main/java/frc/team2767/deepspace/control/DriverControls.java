@@ -22,11 +22,6 @@ public class DriverControls {
   DriverControls(int port) {
     joystick = new Joystick(port);
 
-    // Shoulder switches
-    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(log(Shoulder.LEFT_DOWN));
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed(log(Shoulder.LEFT_UP));
-    new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id).whenPressed(log(Shoulder.RIGHT_DOWN));
-
     // Push-buttons
     new JoystickButton(joystick, Button.RESET.id).whenPressed(new ZeroGyroCommand());
 
@@ -140,3 +135,12 @@ public class DriverControls {
     }
   }
 }
+    // Shoulder switches
+    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(new BiscuitPositive());
+    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenReleased(new BiscuitStop());
+
+    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed(new BiscuitNegative());
+    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased(new BiscuitStop());
+
+    new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id).whenPressed(new BiscuitZero());
+
