@@ -1,15 +1,14 @@
 package frc.team2767.deepspace.motion;
 
+import edu.wpi.first.wpilibj.Notifier;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
-import jaci.pathfinder.PathfinderFRC;
-import jaci.pathfinder.Trajectory;
-import jaci.pathfinder.Trajectory.Segment;
+import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.Wheel;
 
-public class PathController {
+public class PathController implements Runnable {
 
   private static final DriveSubsystem DRIVE = Robot.DriveSubsystem;
   private static final int NUM_WHEELS = 4;
@@ -28,22 +27,31 @@ public class PathController {
   private final int PID = 0;
   private Trajectory trajectory;
   private String pathName;
+  private Notifier notifier;
   private int iteration;
   private int[] start;
+
+  // parse csv for v and a and heading
 
   private boolean running;
 
   public PathController(String pathName) {
-    logger.debug("1");
     this.pathName = pathName;
-    trajectory = PathfinderFRC.getTrajectory(pathName);
-    logger.debug("2");
     wheels = DRIVE.getAllWheels();
     start = new int[4];
+
+    File csvFile = new File("home/lvuser/deploy/paths/" + pathName + ".pf1.csv");
+
+    trajectory = new Trajectory(csvFile);
+  }
+
+  public void start() {
     for (int i = 0; i < NUM_WHEELS; i++) {
       start[i] = wheels[i].getDriveTalon().getSelectedSensorPosition(PID);
     }
-    logger.debug("3");
+
+    notifier = new Notifier(this);
+    notifier.startPeriodic(0.05);
     iteration = 1;
     running = true;
   }
@@ -52,13 +60,19 @@ public class PathController {
     return running;
   }
 
+  @Override
   public void run() {
     if (iteration == trajectory.length()) {
       stop();
       return;
     }
 
-    Segment segment = trajectory.get(iteration);
+    Trajectory.Segment segment = trajectory.getIteration(iteration);
+
+    //
+    //  FIXME: fix calculations of velocity
+    //
+
 
     double setpointVelocity =
         segment.velocity
@@ -67,6 +81,7 @@ public class PathController {
 
     double forward = Math.cos(segment.heading) * setpointVelocity;
     double strafe = -Math.sin(segment.heading) * setpointVelocity;
+
     double yaw =
         YAW_kP
             * (Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0)
