@@ -12,9 +12,10 @@ public class PathCommand extends Command {
   private static final DriveSubsystem DRIVE = Robot.DriveSubsystem;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private PathController pathController;
+  private double targetYaw;
 
-  public PathCommand(String pathName) {
-
+  public PathCommand(String pathName, double targetYaw) {
+    this.targetYaw = targetYaw;
     logger.debug("PathCommand for {} init", pathName);
     pathController = new PathController(pathName);
     requires(DRIVE);
@@ -22,7 +23,7 @@ public class PathCommand extends Command {
 
   @Override
   protected void initialize() {
-    DRIVE.startPath(pathController);
+    DRIVE.startPath(pathController, targetYaw);
   }
 
   @Override

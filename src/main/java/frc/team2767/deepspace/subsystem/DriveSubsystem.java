@@ -63,9 +63,9 @@ public class DriveSubsystem extends Subsystem {
   // PATHFINDER
   ////////////////////////////////////////////////////////////////////////////
 
-  public void startPath(PathController path) {
+  public void startPath(PathController path, double targetYaw) {
     this.pathController = path;
-    pathController.start();
+    pathController.start(targetYaw);
   }
 
   public boolean isPathFinished() {
