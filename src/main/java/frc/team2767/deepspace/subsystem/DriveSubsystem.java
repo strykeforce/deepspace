@@ -63,8 +63,8 @@ public class DriveSubsystem extends Subsystem {
   // PATHFINDER
   ////////////////////////////////////////////////////////////////////////////
 
-  public void startPath(PathController path, double targetYaw) {
-    this.pathController = path;
+  public void startPath(String path, double targetYaw) {
+    this.pathController = new PathController(path);
     pathController.start(targetYaw);
   }
 
@@ -74,7 +74,12 @@ public class DriveSubsystem extends Subsystem {
 
   public void endPath() {
     pathController.stop();
-    pathController = null;
+  }
+
+  public void interruptPath() {
+    pathController.interrupt();
+    logger.debug("path interrupted");
+    //    pathController = null;
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -114,6 +119,10 @@ public class DriveSubsystem extends Subsystem {
     return swerve.getGyro();
   }
 
+  public SwerveDrive getSwerveDrive() {
+    return swerve;
+  }
+
   ////////////////////////////////////////////////////////////////////////////
   // SWERVE CONFIG
   ////////////////////////////////////////////////////////////////////////////
@@ -148,16 +157,16 @@ public class DriveSubsystem extends Subsystem {
     TalonSRXConfiguration driveConfig = new TalonSRXConfiguration();
     driveConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
     driveConfig.continuousCurrentLimit = 40;
-    driveConfig.peakCurrentDuration = 40;
-    driveConfig.peakCurrentLimit = 45;
+    driveConfig.peakCurrentDuration = 0;
+    driveConfig.peakCurrentLimit = 0;
     driveConfig.slot0.kP = 0.08;
     driveConfig.slot0.kI = 0.0005;
     driveConfig.slot0.kD = 0.0;
     driveConfig.slot0.kF = 0.028;
     driveConfig.slot0.integralZone = 3000;
     driveConfig.slot0.allowableClosedloopError = 0;
-    driveConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_25Ms;
-    driveConfig.velocityMeasurementWindow = 8;
+    driveConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms;
+    driveConfig.velocityMeasurementWindow = 64;
 
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
