@@ -116,21 +116,16 @@ public class BiscuitSubsystem extends Subsystem {
 
         }
 
-  public void setPosition(Position position) {
-    int target = findNearest(getEncoderValue(position));
-    biscuit.set(ControlMode.Position, target);
-  }
-
-  public void runOpenLoop(double power) {
-    biscuit.set(ControlMode.PercentOutput, power);
-  }
-
-  public boolean positionReached(Position position) {
-    if (Math.abs(biscuit.getSelectedSensorPosition() - getEncoderValue(position)) < CLOSE_ENOUGH) {
+  public boolean onTarget() {
+    if (Math.abs(biscuit.getSelectedSensorPosition() - target) < CLOSE_ENOUGH) {
       return true;
     } else {
       return false;
     }
+  }
+
+  public void runOpenLoop(double power) {
+    biscuit.set(ControlMode.PercentOutput, power);
   }
 
   public void stop() {
