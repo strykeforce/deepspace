@@ -40,3 +40,4 @@ public class Robot extends TimedRobot {
     Scheduler.getInstance().run();
   }
 }
+    BiscuitSubsystem.pos = frc.team2767.deepspace.subsystem.BiscuitSubsystem.Position.DOWN;
