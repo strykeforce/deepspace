@@ -68,5 +68,6 @@ idea {
 spotless {
   java {
     googleJavaFormat()
+    lineEndings = 'GIT_ATTRIBUTES'
   }
 }
