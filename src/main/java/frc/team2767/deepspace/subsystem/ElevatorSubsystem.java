@@ -1,25 +1,31 @@
 package frc.team2767.deepspace.subsystem;
 
+import static com.ctre.phoenix.motorcontrol.ControlMode.Disabled;
+import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
+
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.sun.scenario.Settings;
+import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team2767.deepspace.Robot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.Errors;
-
-import static com.ctre.phoenix.motorcontrol.ControlMode.Disabled;
-import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
+import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 public class ElevatorSubsystem extends Subsystem {
   private static final int ID = 30;
+  private static final int BACKUP = 2767;
 
   private static final Logger logger = LoggerFactory.getLogger(ElevatorSubsystem.class);
   private static final int TIMEOUT = 10;
   private static final int STABLE_THRESH = 1;
+  public Position position;
 
   private int kUpAccel;
   private int kUpVelocity;
@@ -52,7 +58,27 @@ public class ElevatorSubsystem extends Subsystem {
       logger.error("Talon not present");
     }
 
-    //need to make the backups actually relevant
+    elevatorPreferences();
+    configTalon();
+  }
+
+  private void elevatorPreferences() {
+    if (!preferences.containsKey(K_UP_ACCEL)) preferences.putInt(K_UP_ACCEL, BACKUP);
+    if (!preferences.containsKey(K_UP_VELOCITY)) preferences.putInt(K_UP_VELOCITY, BACKUP);
+    if (!preferences.containsKey(K_DOWN_SLOW_ACCEL)) preferences.putInt(K_DOWN_SLOW_ACCEL, BACKUP);
+    if (!preferences.containsKey(K_DOWN_SLOW_VELOCITY))
+      preferences.putInt(K_DOWN_SLOW_VELOCITY, BACKUP);
+    if (!preferences.containsKey(K_DOWN_FAST_ACCEL)) preferences.putInt(K_DOWN_FAST_ACCEL, BACKUP);
+    if (!preferences.containsKey(K_DOWN_FAST_VELOCITY))
+      preferences.putInt(K_DOWN_FAST_VELOCITY, BACKUP);
+    if (!preferences.containsKey(K_DOWN_VELOCITY_SHIFT_POS))
+      preferences.putInt(K_DOWN_VELOCITY_SHIFT_POS, BACKUP);
+    if (!preferences.containsKey(K_UP_OUTPUT)) preferences.putDouble(K_UP_OUTPUT, BACKUP);
+    if (!preferences.containsKey(K_DOWN_OUTPUT)) preferences.putDouble(K_DOWN_OUTPUT, BACKUP);
+    if (!preferences.containsKey(K_STOP_OUTPUT)) preferences.putDouble(K_STOP_OUTPUT, BACKUP);
+    if (!preferences.containsKey(K_CLOSE_ENOUGH)) preferences.putInt(K_CLOSE_ENOUGH, BACKUP);
+
+    // need to make the backups actually relevant
     kUpAccel = preferences.getInt(K_UP_ACCEL, 0);
     kUpVelocity = preferences.getInt(K_UP_VELOCITY, 0);
     kDownSlowAccel = preferences.getInt(K_DOWN_SLOW_ACCEL, 0);
@@ -64,10 +90,50 @@ public class ElevatorSubsystem extends Subsystem {
     kDownOutput = preferences.getDouble(K_DOWN_OUTPUT, 0);
     kStopOutput = preferences.getDouble(K_STOP_OUTPUT, 0);
     kCloseEnough = preferences.getInt(K_CLOSE_ENOUGH, 0);
+
+    logger.info("kUpAccel: {}", kUpAccel);
+    logger.info("kUpVelocity: {}", kUpVelocity);
+    logger.info("kDownSlowAccel: {}", kDownSlowAccel);
+    logger.info("kDownSlowVelocity: {}", kDownSlowVelocity);
+    logger.info("kDownFastAccel: {}", kDownFastAccel);
+    logger.info("kDownFastVelocity: {}", kDownFastVelocity);
+    logger.info("kDownVelocityShiftPos: {}", kDownVelocityShiftPos);
+    logger.info("kUpOutput: {}", kUpOutput);
+    logger.info("kDownOutput: {}", kDownOutput);
+    logger.info("kStopOutput: {}", kStopOutput);
+    logger.info("kCloseEnough: {}", kCloseEnough);
   }
 
-  public void setPosition(int position) {
-    setpoint = position;
+  private void configTalon() {
+    TalonSRXConfiguration elevatorConfig = new TalonSRXConfiguration();
+    elevatorConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
+    elevatorConfig.continuousCurrentLimit = 20;
+    elevatorConfig.peakCurrentDuration = 40;
+    elevatorConfig.peakCurrentLimit = 25;
+    elevatorConfig.slot0.kP = 1;
+    elevatorConfig.slot0.kI = 0;
+    elevatorConfig.slot0.kD = 40;
+    elevatorConfig.slot0.kF = 0.25;
+    elevatorConfig.slot0.integralZone = 0;
+    elevatorConfig.slot0.allowableClosedloopError = 0;
+    elevatorConfig.forwardSoftLimitEnable = true;
+    elevatorConfig.forwardSoftLimitThreshold = 30_000;
+    elevatorConfig.voltageCompSaturation = 12;
+    elevatorConfig.voltageMeasurementFilter = 32;
+    elevatorConfig.motionAcceleration = 2000;
+    elevatorConfig.motionCruiseVelocity = 200;
+
+    talon.configAllSettings(elevatorConfig);
+    talon.enableCurrentLimit(true);
+    talon.enableVoltageCompensation(true);
+
+    TelemetryService telemetryService = Robot.TELEMETRY;
+    telemetryService.stop();
+    telemetryService.register(talon);
+  }
+
+  public void setPosition(Position position) {
+    setpoint = position.position;
     startPosition = talon.getSelectedSensorPosition(0);
     logger.info("setting position = {}, starting at {}", position, startPosition);
 
@@ -83,7 +149,7 @@ public class ElevatorSubsystem extends Subsystem {
 
     checkEncoder = true;
     positionStartTime = System.nanoTime();
-    talon.set(ControlMode.MotionMagic, position);
+    talon.set(ControlMode.MotionMagic, setpoint);
   }
 
   public void adjustVelocity() {
@@ -132,6 +198,10 @@ public class ElevatorSubsystem extends Subsystem {
   }
 
   public void positionToZero() {
+    talon.configPeakCurrentLimit(2);
+    talon.configReverseLimitSwitchSource(
+        LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
+
     logger.info("positioning to zero position");
     talon.set(PercentOutput, kDownOutput);
   }
@@ -145,21 +215,28 @@ public class ElevatorSubsystem extends Subsystem {
     setpoint = 0;
     ErrorCode err = talon.setSelectedSensorPosition(setpoint, 0, TIMEOUT);
     Errors.check(err, logger);
-    talon.set(ControlMode.MotionMagic, setpoint);
+    // talon.set(ControlMode.MotionMagic, setpoint);
     logger.info("lift position zeroed, setpoint = {}", setpoint);
+
+    talon.configPeakCurrentLimit(25);
+    talon.enableCurrentLimit(true);
+    talon.configReverseLimitSwitchSource(
+        LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
   }
 
   public void openLoopMove(Direction direction) {
     if (direction.equals(Direction.UP)) {
+      logger.info("moving up at {}", kUpOutput);
       talon.set(ControlMode.PercentOutput, kUpOutput);
     } else if (direction.equals(Direction.DOWN)) {
+      logger.info("moving down at {}", kDownOutput);
       talon.set(ControlMode.PercentOutput, kDownOutput);
     }
   }
 
   public void stop() {
     logger.info("lift stop at position {}", talon.getSelectedSensorPosition(0));
-    talon.set(ControlMode.PercentOutput, kStopOutput);
+    talon.set(PercentOutput, kStopOutput);
   }
 
   @Override
@@ -169,13 +246,12 @@ public class ElevatorSubsystem extends Subsystem {
     HATCH_LOW,
     HATCH_MEDIUM,
     HATCH_HIGH,
+    STOW,
     CARGO_LOW,
-    ROCKET_LOW,
-    ROCKET_MEDIUM,
-    ROCKET_HIGH;
+    CARGO_MEDIUM,
+    CARGO_HIGH;
 
     private static final String KEY_BASE = "ElevatorSubsystem/Position/";
-    private static final int BACKUP = 2767;
 
     final int position;
 
@@ -192,18 +268,16 @@ public class ElevatorSubsystem extends Subsystem {
     DOWN;
   }
 
-  private final String PREFS_NAME = "Elevator";
-  private final String K_UP_ACCEL = "$PREFS_NAME/u_accel";
-  private final String K_UP_VELOCITY = "$PREFS_NAME/u_velocity";
-  private final String K_DOWN_SLOW_ACCEL = "$PREFS_NAME/d_s_accel";
-  private final String K_DOWN_SLOW_VELOCITY = "$PREFS_NAME/d_s_velocity";
-  private final String K_DOWN_FAST_ACCEL = "$PREFS_NAME/d_f_accel";
-  private final String K_DOWN_FAST_VELOCITY = "$PREFS_NAME/d_f_velocity";
-  private final String K_DOWN_VELOCITY_SHIFT_POS = "$PREFS_NAME/d_velocity_shift_pos";
-  private final String K_UP_OUTPUT = "$PREFS_NAME/u_output";
-  private final String K_DOWN_OUTPUT = "$PREFS_NAME/d_output";
-  private final String K_STOP_OUTPUT = "$PREFS_NAME/stop_output";
-  private final String K_CLOSE_ENOUGH = "$PREFS_NAME/close_enough";
+  private final String PREFS_NAME = "ElevatorSubsystem/Settings/";
+  private final String K_UP_ACCEL = PREFS_NAME + "u_accel";
+  private final String K_UP_VELOCITY = PREFS_NAME + "u_velocity";
+  private final String K_DOWN_SLOW_ACCEL = PREFS_NAME + "d_s_accel";
+  private final String K_DOWN_SLOW_VELOCITY = PREFS_NAME + "d_s_velocity";
+  private final String K_DOWN_FAST_ACCEL = PREFS_NAME + "d_f_accel";
+  private final String K_DOWN_FAST_VELOCITY = PREFS_NAME + "d_f_velocity";
+  private final String K_DOWN_VELOCITY_SHIFT_POS = PREFS_NAME + "d_velocity_shift_pos";
+  private final String K_UP_OUTPUT = PREFS_NAME + "u_output";
+  private final String K_DOWN_OUTPUT = PREFS_NAME + "d_output";
+  private final String K_STOP_OUTPUT = PREFS_NAME + "stop_output";
+  private final String K_CLOSE_ENOUGH = PREFS_NAME + "close_enough";
 }
-
-

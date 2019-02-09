@@ -3,7 +3,9 @@ package frc.team2767.deepspace.control;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team2767.deepspace.command.Elevator.*;
 import frc.team2767.deepspace.command.LogCommand;
+import frc.team2767.deepspace.subsystem.ElevatorSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +24,7 @@ public class GameControls {
     new JoystickButton(joystick, GameControls.Shoulder.LEFT.id)
         .whenPressed(log(GameControls.Shoulder.LEFT));
     new JoystickButton(joystick, GameControls.Shoulder.RIGHT.id)
-        .whenPressed(log(GameControls.Shoulder.RIGHT));
+        .whenPressed(new ElevatorStopCommand());
 
     // Triggers
     new JoystickButton(joystick, GameControls.Trigger.LEFT.id)
@@ -31,10 +33,13 @@ public class GameControls {
         .whenPressed(log(GameControls.Trigger.RIGHT));
 
     // Push-buttons
-    new JoystickButton(joystick, GameControls.Button.A.id).whenPressed(log(GameControls.Button.A));
-    new JoystickButton(joystick, GameControls.Button.B.id).whenPressed(log(GameControls.Button.B));
-    new JoystickButton(joystick, GameControls.Button.X.id).whenPressed(log(GameControls.Button.X));
-    new JoystickButton(joystick, GameControls.Button.Y.id).whenPressed(log(GameControls.Button.Y));
+    new JoystickButton(joystick, GameControls.Button.A.id)
+        .whenPressed(new ElevatorOpenLoopDownCommand());
+    new JoystickButton(joystick, GameControls.Button.B.id)
+        .whenPressed(new ElevatorPositionCommand(ElevatorSubsystem.Position.STOW));
+    new JoystickButton(joystick, GameControls.Button.X.id).whenPressed(new ElevatorZeroCommand());
+    new JoystickButton(joystick, GameControls.Button.Y.id)
+        .whenPressed(new ElevatorOpenLoopUpCommand());
     new JoystickButton(joystick, GameControls.Button.START.id)
         .whenPressed(log(GameControls.Button.START));
     new JoystickButton(joystick, GameControls.Button.BACK.id)

@@ -8,7 +8,7 @@ public class Controls {
     return driverControls;
   }
 
-  //  private final GameControls gameControls = new GameControls(1);
+  private final GameControls gameControls = new GameControls(1);
 
   //  public GameControls getGameControls() {
   //    return gameControls;
