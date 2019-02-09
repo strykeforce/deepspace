@@ -14,7 +14,7 @@ public class PathCommand extends Command {
   private double targetYaw;
 
   public PathCommand(String pathName, double targetYaw) {
-    logger.debug("PathCommand for {} init", pathName);
+    logger.debug("PathCommand for {} constructor", pathName);
     requires(DRIVE);
     this.targetYaw = targetYaw;
     setInterruptible(true);

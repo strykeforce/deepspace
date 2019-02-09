@@ -4,7 +4,6 @@ import static frc.team2767.deepspace.subsystem.DriveSubsystem.TICKS_PER_INCH;
 
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Preferences;
-import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
 import java.io.File;
 import org.slf4j.Logger;
@@ -14,7 +13,7 @@ import org.strykeforce.thirdcoast.swerve.Wheel;
 
 public class PathController implements Runnable {
 
-  private static final DriveSubsystem DRIVE = Robot.DriveSubsystem;
+  private static SwerveDrive DRIVE;
   private static final int NUM_WHEELS = 4;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -29,7 +28,7 @@ public class PathController implements Runnable {
   @SuppressWarnings("FieldCanBeLocal")
   private double YAW_kP;
 
-  private Wheel[] wheels = DRIVE.getAllWheels();
+  private Wheel[] wheels;
   private double maxVelocityInSec;
   private Trajectory trajectory;
   private Notifier notifier;
@@ -42,7 +41,9 @@ public class PathController implements Runnable {
 
   private Preferences preferences;
 
-  public PathController(String pathName) {
+  public PathController(SwerveDrive swerveDrive, String pathName) {
+    DRIVE = swerveDrive;
+    wheels = DRIVE.getWheels();
     preferences = Preferences.getInstance();
     File csvFile = new File("home/lvuser/deploy/paths/" + pathName + ".pf1.csv");
 
