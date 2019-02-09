@@ -41,7 +41,6 @@ public class TwistCommand extends Command {
 
   @Override
   protected void interrupted() {
-
     logger.debug("twist command interrupted");
     DRIVE.interruptTwist();
   }

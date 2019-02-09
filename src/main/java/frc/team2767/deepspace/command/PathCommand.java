@@ -37,4 +37,10 @@ public class PathCommand extends Command {
     DRIVE.endPath();
     logger.debug("PathCommand ending");
   }
+
+  @Override
+  protected void interrupted() {
+    logger.debug("path command interrupted");
+    DRIVE.interruptPath();
+  }
 }
