@@ -24,12 +24,12 @@ public class PathController implements Runnable {
   private final int PID = 0;
 
   @SuppressWarnings("FieldCanBeLocal")
-  private double DISTANCE_kP = 0.0000002;
+  private double DISTANCE_kP;
 
   @SuppressWarnings("FieldCanBeLocal")
-  private double YAW_kP = 0.001;
+  private double YAW_kP;
 
-  private Wheel[] wheels;
+  private Wheel[] wheels = DRIVE.getAllWheels();
   private double maxVelocityInSec;
   private Trajectory trajectory;
   private String pathName;
@@ -37,7 +37,6 @@ public class PathController implements Runnable {
   private int iteration;
   private double targetYaw;
   private int[] start;
-  private boolean running;
   private double DT = 0.05;
 
   private States state;
@@ -57,8 +56,7 @@ public class PathController implements Runnable {
     this.targetYaw = targetYaw;
     notifier = new Notifier(this);
     notifier.startPeriodic(DT);
-
-    running = true;
+    state = States.STARTING;
   }
 
   public boolean isRunning() {
@@ -70,6 +68,7 @@ public class PathController implements Runnable {
 
     switch (state) {
       case STARTING:
+        logState();
         double ticksPerSecMax = wheels[0].getDriveSetpointMax() * 10.0;
         setPreferences();
         maxVelocityInSec = ticksPerSecMax / DriveSubsystem.TICKS_PER_INCH;
@@ -82,7 +81,9 @@ public class PathController implements Runnable {
 
         logInit();
         state = States.RUNNING;
+        break;
       case RUNNING:
+        logState();
         if (iteration == trajectory.length()) {
           state = States.STOPPING;
         }
@@ -105,27 +106,32 @@ public class PathController implements Runnable {
             segment.y,
             forward,
             strafe,
-            DISTANCE_kP * distanceError(segment.position),
+            distanceError(segment.position),
             yaw);
         if (forward > 1d || strafe > 1d) logger.warn("forward = {} strafe = {}", forward, strafe);
 
         DRIVE.drive(forward, strafe, yaw);
         iteration++;
+        break;
       case STOPPING:
+        logState();
         state = States.STOPPED;
+        break;
       case STOPPED:
+        logState();
         DRIVE.endPath();
-        notifier.close();
+        notifier.stop();
+        break;
     }
   }
 
-  public void interrupt() {
-    state = States.STOPPED;
+  private void logState() {
+    logger.debug("{}", state);
   }
 
   private void setPreferences() {
-    YAW_kP = preferences.getDouble("PathController/pathYawKp", 0.0);
-    DISTANCE_kP = preferences.getDouble("PathController/pathDistKp", 0.0);
+    YAW_kP = preferences.getDouble("PathController/pathYawKp", 0.01);
+    DISTANCE_kP = preferences.getDouble("PathController/pathDistKp", 0.000002);
   }
 
   private void logInit() {
@@ -149,10 +155,12 @@ public class PathController implements Runnable {
     return distance;
   }
 
+  public void interrupt() {
+    state = States.STOPPED;
+  }
+
   public void stop() {
-    if (!running) return;
     logger.info("FINISH path {}", pathName);
     DRIVE.stop();
-    running = false;
   }
 }

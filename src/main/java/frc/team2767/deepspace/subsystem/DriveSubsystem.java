@@ -74,7 +74,6 @@ public class DriveSubsystem extends Subsystem {
 
   public void endPath() {
     pathController.stop();
-    pathController = null;
   }
 
   public void interruptPath() {
