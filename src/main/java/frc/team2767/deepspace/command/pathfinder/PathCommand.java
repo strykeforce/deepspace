@@ -1,4 +1,4 @@
-package frc.team2767.deepspace.command;
+package frc.team2767.deepspace.command.pathfinder;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.Robot;
