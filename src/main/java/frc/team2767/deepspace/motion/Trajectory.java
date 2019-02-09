@@ -11,6 +11,8 @@ public class Trajectory {
   private double[] acceleration;
   private double[] heading;
   private double[] position;
+  private double[] x;
+  private double[] y;
   private int length;
   private BufferedReader bufferedReader;
   private File csvFile;
@@ -20,6 +22,8 @@ public class Trajectory {
     length = 0;
     findLength();
 
+    x = new double[length];
+    y = new double[length];
     velocity = new double[length];
     acceleration = new double[length];
     heading = new double[length];
@@ -64,17 +68,19 @@ public class Trajectory {
         String csvSplit = ",";
         String[] values = line.split(csvSplit);
 
+        x[iteration] = Double.parseDouble(values[1]);
+        y[iteration] = Double.parseDouble(values[2]);
         position[iteration] = Double.parseDouble(values[3]);
         velocity[iteration] = Double.parseDouble(values[4]);
         acceleration[iteration] = Double.parseDouble(values[5]);
         heading[iteration] = Double.parseDouble(values[7]);
 
-        logger.debug(
-            "{}, {}, {}, {}",
-            position[iteration],
-            velocity[iteration],
-            acceleration[iteration],
-            heading[iteration]);
+        //        logger.debug(
+        //            "{}, {}, {}, {}",
+        //            position[iteration],
+        //            velocity[iteration],
+        //            acceleration[iteration],
+        //            heading[iteration]);
 
         iteration++;
       }
@@ -98,7 +104,12 @@ public class Trajectory {
 
   public Segment getIteration(int iteration) {
     return new Segment(
-        heading[iteration], acceleration[iteration], velocity[iteration], position[iteration]);
+        x[iteration],
+        y[iteration],
+        heading[iteration],
+        acceleration[iteration],
+        velocity[iteration],
+        position[iteration]);
   }
 
   static class Segment {
@@ -106,12 +117,17 @@ public class Trajectory {
     double acceleration;
     double velocity;
     double position;
+    double x;
+    double y;
 
-    Segment(double heading, double acceleration, double velocity, double position) {
+    Segment(
+        double x, double y, double heading, double acceleration, double velocity, double position) {
       this.heading = heading;
       this.acceleration = acceleration;
       this.velocity = velocity;
       this.position = position;
+      this.x = x;
+      this.y = y;
     }
   }
 }

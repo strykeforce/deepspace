@@ -14,24 +14,27 @@ public class PathController implements Runnable {
   private static final int NUM_WHEELS = 4;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+  private double ticksPerSecMax;
+  private final int TICKS_PER_INCH = 1900;
+
   @SuppressWarnings("FieldCanBeLocal")
-  private final double DISTANCE_kP = 0.000002;
+  private final double DISTANCE_kP = 0.0000002;
 
   @SuppressWarnings("FieldCanBeLocal")
   private final double ACCELERATION_kF = 0.0;
 
   @SuppressWarnings("FieldCanBeLocal")
-  private final double YAW_kP = 0.004;
+  private final double YAW_kP = 0.001;
 
   private final Wheel[] wheels;
   private final int PID = 0;
+  private double maxVelocityInSec;
   private Trajectory trajectory;
   private String pathName;
   private Notifier notifier;
   private int iteration;
   private double targetYaw;
   private int[] start;
-
   private boolean running;
 
   public PathController(String pathName) {
@@ -45,6 +48,12 @@ public class PathController implements Runnable {
   }
 
   public void start(double targetYaw) {
+
+    logger.debug("Path start");
+    ticksPerSecMax = wheels[0].getDriveSetpointMax() * 10.0;
+    logger.debug("tps max = {}", ticksPerSecMax);
+    maxVelocityInSec = ticksPerSecMax / TICKS_PER_INCH;
+    logger.debug("maxVelocity in/s = {}", maxVelocityInSec);
     for (int i = 0; i < NUM_WHEELS; i++) {
       start[i] = wheels[i].getDriveTalon().getSelectedSensorPosition(PID);
     }
@@ -73,13 +82,23 @@ public class PathController implements Runnable {
     //  FIXME: fix calculations of velocity
     //
 
+    double desiredVelocity = segment.velocity / (maxVelocityInSec);
+
     double setpointVelocity =
-        segment.velocity
+        desiredVelocity
             + DISTANCE_kP * distanceError(segment.position)
             + ACCELERATION_kF * segment.acceleration;
 
     double forward = Math.cos(segment.heading) * setpointVelocity;
-    double strafe = -Math.sin(segment.heading) * setpointVelocity;
+    double strafe = Math.sin(segment.heading) * setpointVelocity;
+
+    logger.debug(
+        "x={} y={} forward = {} strafe = {}, disError={}",
+        segment.x,
+        segment.y,
+        forward,
+        strafe,
+        DISTANCE_kP * distanceError(segment.position));
 
     double yaw =
         YAW_kP
