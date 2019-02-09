@@ -29,7 +29,7 @@ public class PathCommand extends Command {
   protected boolean isFinished() {
     return DRIVE.isPathFinished();
   }
-  
+
   @Override
   protected void interrupted() {
     logger.debug("PathCommand interrupted");

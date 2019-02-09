@@ -32,7 +32,6 @@ public class PathController implements Runnable {
   private Wheel[] wheels = DRIVE.getAllWheels();
   private double maxVelocityInSec;
   private Trajectory trajectory;
-  private String pathName;
   private Notifier notifier;
   private int iteration;
   private double targetYaw;
@@ -45,7 +44,6 @@ public class PathController implements Runnable {
 
   public PathController(String pathName) {
     preferences = Preferences.getInstance();
-    this.pathName = pathName;
     File csvFile = new File("home/lvuser/deploy/paths/" + pathName + ".pf1.csv");
 
     trajectory = new Trajectory(csvFile);
@@ -122,7 +120,7 @@ public class PathController implements Runnable {
         break;
       case STOPPED:
         logState();
-        DRIVE.endPath();
+        DRIVE.stop();
         notifier.close();
         break;
     }
@@ -161,10 +159,5 @@ public class PathController implements Runnable {
   public void interrupt() {
     logger.debug("interrupted");
     state = States.STOPPED;
-  }
-
-  public void stop() {
-    logger.info("FINISH path {}", pathName);
-    DRIVE.stop();
   }
 }

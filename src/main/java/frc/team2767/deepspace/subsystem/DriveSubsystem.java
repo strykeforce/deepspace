@@ -72,10 +72,6 @@ public class DriveSubsystem extends Subsystem {
     return !pathController.isRunning();
   }
 
-  public void endPath() {
-    pathController.stop();
-  }
-
   public void interruptPath() {
     pathController.interrupt();
     logger.debug("path interrupted");
