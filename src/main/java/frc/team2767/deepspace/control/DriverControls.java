@@ -3,9 +3,7 @@ package frc.team2767.deepspace.control;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team2767.deepspace.command.LogCommand;
-import frc.team2767.deepspace.command.TwistSetupCommand;
-import frc.team2767.deepspace.command.ZeroGyroCommand;
+import frc.team2767.deepspace.command.*;
 import frc.team2767.deepspace.command.vision.LightsOffCommand;
 import frc.team2767.deepspace.command.vision.LightsOnCommand;
 import org.slf4j.Logger;
@@ -31,9 +29,10 @@ public class DriverControls {
     new JoystickButton(joystick, Button.RESET.id).whenPressed(new ZeroGyroCommand());
 
     new JoystickButton(joystick, Button.HAMBURGER.id).whenPressed(log(Button.HAMBURGER));
-    new JoystickButton(joystick, Button.X.id).whenPressed(log(Button.X));
+    new JoystickButton(joystick, Button.X.id).whenPressed(new TimedDriveTest(2.0));
     new JoystickButton(joystick, Button.UP.id).whenPressed(new TwistSetupCommand());
-    new JoystickButton(joystick, Button.DOWN.id).whenPressed(log(Button.DOWN));
+    new JoystickButton(joystick, Button.DOWN.id)
+        .whenPressed(new PathCommand("loading_to_cargo", 0.0));
 
     // Trim Switches
     new JoystickButton(joystick, Trim.LEFT_X_POS.id).whenPressed(new LightsOnCommand());

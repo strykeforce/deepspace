@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.command.TeleOpDriveCommand;
+import frc.team2767.deepspace.motion.PathController;
 import frc.team2767.deepspace.motion.TwistController;
 import java.util.List;
 import org.slf4j.Logger;
@@ -26,10 +27,12 @@ public class DriveSubsystem extends Subsystem {
   private static final double DRIVE_SETPOINT_MAX = 25_000.0;
   private static final double ROBOT_LENGTH = 1.0;
   private static final double ROBOT_WIDTH = 1.0;
+
   private final SwerveDrive swerve = getSwerve();
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   private TwistController twistController;
+  private PathController pathController;
 
   public DriveSubsystem() {
     swerve.setFieldOriented(true);
@@ -50,6 +53,28 @@ public class DriveSubsystem extends Subsystem {
 
   public void drive(double forward, double strafe, double yaw) {
     swerve.drive(forward, strafe, yaw);
+  }
+
+  public void stop() {
+    swerve.stop();
+  }
+
+  ////////////////////////////////////////////////////////////////////////////
+  // PATHFINDER
+  ////////////////////////////////////////////////////////////////////////////
+
+  public void startPath(String path, double targetYaw) {
+    logger.debug("starting path");
+    this.pathController = new PathController(swerve, path, targetYaw);
+    pathController.start();
+  }
+
+  public boolean isPathFinished() {
+    return pathController.isFinished();
+  }
+
+  public void interruptPath() {
+    pathController.interrupt();
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -89,7 +114,13 @@ public class DriveSubsystem extends Subsystem {
     return swerve.getGyro();
   }
 
-  // Swerve configuration
+  public SwerveDrive getSwerveDrive() {
+    return swerve;
+  }
+
+  ////////////////////////////////////////////////////////////////////////////
+  // SWERVE CONFIG
+  ////////////////////////////////////////////////////////////////////////////
 
   private SwerveDrive getSwerve() {
     SwerveDriveConfig config = new SwerveDriveConfig();
@@ -121,16 +152,16 @@ public class DriveSubsystem extends Subsystem {
     TalonSRXConfiguration driveConfig = new TalonSRXConfiguration();
     driveConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
     driveConfig.continuousCurrentLimit = 40;
-    driveConfig.peakCurrentDuration = 40;
-    driveConfig.peakCurrentLimit = 45;
+    driveConfig.peakCurrentDuration = 0;
+    driveConfig.peakCurrentLimit = 0;
     driveConfig.slot0.kP = 0.08;
     driveConfig.slot0.kI = 0.0005;
     driveConfig.slot0.kD = 0.0;
     driveConfig.slot0.kF = 0.028;
     driveConfig.slot0.integralZone = 3000;
     driveConfig.slot0.allowableClosedloopError = 0;
-    driveConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_25Ms;
-    driveConfig.velocityMeasurementWindow = 8;
+    driveConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms;
+    driveConfig.velocityMeasurementWindow = 64;
 
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
@@ -159,5 +190,9 @@ public class DriveSubsystem extends Subsystem {
     }
 
     return wheels;
+  }
+
+  public Wheel[] getAllWheels() {
+    return swerve.getWheels();
   }
 }
