@@ -13,7 +13,6 @@ import org.strykeforce.thirdcoast.swerve.Wheel;
 
 public class PathController implements Runnable {
 
-  private static SwerveDrive DRIVE;
   private static final int NUM_WHEELS = 4;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -21,6 +20,7 @@ public class PathController implements Runnable {
   private final double ACCELERATION_kF = 0.0;
 
   private final int PID = 0;
+  private SwerveDrive DRIVE;
 
   @SuppressWarnings("FieldCanBeLocal")
   private double DISTANCE_kP;
@@ -41,8 +41,9 @@ public class PathController implements Runnable {
 
   private Preferences preferences;
 
-  public PathController(SwerveDrive swerveDrive, String pathName) {
+  public PathController(SwerveDrive swerveDrive, String pathName, double targetYaw) {
     DRIVE = swerveDrive;
+    this.targetYaw = targetYaw;
     wheels = DRIVE.getWheels();
     preferences = Preferences.getInstance();
     File csvFile = new File("home/lvuser/deploy/paths/" + pathName + ".pf1.csv");
@@ -50,15 +51,14 @@ public class PathController implements Runnable {
     trajectory = new Trajectory(csvFile);
   }
 
-  public void start(double targetYaw) {
+  public void start() {
     start = new int[4];
-    this.targetYaw = targetYaw;
     notifier = new Notifier(this);
     notifier.startPeriodic(DT);
     state = States.STARTING;
   }
 
-  public boolean isRunning() {
+  public boolean isFinished() {
     return state == States.STOPPED;
   }
 
@@ -71,7 +71,7 @@ public class PathController implements Runnable {
         double ticksPerSecMax = wheels[0].getDriveSetpointMax() * 10.0;
         setPreferences();
         maxVelocityInSec = ticksPerSecMax / DriveSubsystem.TICKS_PER_INCH;
-        iteration = 1;
+        iteration = 0;
         DRIVE.setDriveMode(SwerveDrive.DriveMode.CLOSED_LOOP);
 
         for (int i = 0; i < NUM_WHEELS; i++) {
@@ -83,7 +83,7 @@ public class PathController implements Runnable {
         break;
       case RUNNING:
         logState();
-        if (iteration == trajectory.length()) {
+        if (iteration == trajectory.length() - 1) {
 
           state = States.STOPPING;
         }
@@ -101,20 +101,21 @@ public class PathController implements Runnable {
                 * (Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0)
                     - Math.toDegrees(targetYaw));
         logger.debug(
-            "x={} y={} forward = {} strafe = {}, dist err = {} yaw = {}",
+            "{} : x={} y={} forward = {} strafe = {}, dist err = {} yaw = {}",
+            iteration,
             segment.x,
             segment.y,
             forward,
             strafe,
             distanceError(segment.position),
             yaw);
+
         if (forward > 1d || strafe > 1d) logger.warn("forward = {} strafe = {}", forward, strafe);
 
         DRIVE.drive(forward, strafe, yaw);
         iteration++;
         break;
       case STOPPING:
-        DRIVE.stop();
         DRIVE.setDriveMode(SwerveDrive.DriveMode.OPEN_LOOP);
         logState();
         state = States.STOPPED;
@@ -133,7 +134,7 @@ public class PathController implements Runnable {
 
   private void setPreferences() {
     YAW_kP = preferences.getDouble("PathController/pathYawKp", 0.01);
-    DISTANCE_kP = preferences.getDouble("PathController/pathDistKp", 0.0000002);
+    DISTANCE_kP = preferences.getDouble("PathController/pathDistKp", 0.000001);
   }
 
   private void logInit() {

@@ -64,18 +64,17 @@ public class DriveSubsystem extends Subsystem {
   ////////////////////////////////////////////////////////////////////////////
 
   public void startPath(String path, double targetYaw) {
-    this.pathController = new PathController(swerve, path);
-    pathController.start(targetYaw);
+    logger.debug("starting path");
+    this.pathController = new PathController(swerve, path, targetYaw);
+    pathController.start();
   }
 
   public boolean isPathFinished() {
-    return !pathController.isRunning();
+    return pathController.isFinished();
   }
 
   public void interruptPath() {
     pathController.interrupt();
-    logger.debug("path interrupted");
-    //    pathController = null;
   }
 
   ////////////////////////////////////////////////////////////////////////////
