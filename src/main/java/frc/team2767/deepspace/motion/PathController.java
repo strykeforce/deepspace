@@ -3,19 +3,17 @@ package frc.team2767.deepspace.motion;
 import edu.wpi.first.wpilibj.Notifier;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
-import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.Wheel;
+
+import java.io.File;
 
 public class PathController implements Runnable {
 
   private static final DriveSubsystem DRIVE = Robot.DriveSubsystem;
   private static final int NUM_WHEELS = 4;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-  private double ticksPerSecMax;
-  private final int TICKS_PER_INCH = 1900;
 
   @SuppressWarnings("FieldCanBeLocal")
   private final double DISTANCE_kP = 0.0000002;
@@ -36,8 +34,10 @@ public class PathController implements Runnable {
   private double targetYaw;
   private int[] start;
   private boolean running;
+  private double DT = 0.05;
 
   public PathController(String pathName) {
+    //    action = new Action("Path", )
     this.pathName = pathName;
     wheels = DRIVE.getAllWheels();
     start = new int[4];
@@ -48,11 +48,12 @@ public class PathController implements Runnable {
   }
 
   public void start(double targetYaw) {
+    double ticksPerSecMax = wheels[0].getDriveSetpointMax() * 10.0;
+    double TICKS_PER_INCH = DriveSubsystem.TICKS_PER_INCH;
+    maxVelocityInSec = ticksPerSecMax / TICKS_PER_INCH;
 
     logger.debug("Path start");
-    ticksPerSecMax = wheels[0].getDriveSetpointMax() * 10.0;
     logger.debug("tps max = {}", ticksPerSecMax);
-    maxVelocityInSec = ticksPerSecMax / TICKS_PER_INCH;
     logger.debug("maxVelocity in/s = {}", maxVelocityInSec);
     for (int i = 0; i < NUM_WHEELS; i++) {
       start[i] = wheels[i].getDriveTalon().getSelectedSensorPosition(PID);
@@ -60,7 +61,7 @@ public class PathController implements Runnable {
 
     this.targetYaw = targetYaw;
     notifier = new Notifier(this);
-    notifier.startPeriodic(0.05);
+    notifier.startPeriodic(DT);
     iteration = 1;
     running = true;
   }
@@ -78,10 +79,6 @@ public class PathController implements Runnable {
 
     Trajectory.Segment segment = trajectory.getIteration(iteration);
 
-    //
-    //  FIXME: fix calculations of velocity
-    //
-
     double desiredVelocity = segment.velocity / (maxVelocityInSec);
 
     double setpointVelocity =
@@ -93,7 +90,7 @@ public class PathController implements Runnable {
     double strafe = Math.sin(segment.heading) * setpointVelocity;
 
     logger.debug(
-        "x={} y={} forward = {} strafe = {}, disError={}",
+        "x={} y={} forward = {} strafe = {}, dist err = {}",
         segment.x,
         segment.y,
         forward,
