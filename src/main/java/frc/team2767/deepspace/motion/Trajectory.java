@@ -64,7 +64,6 @@ public class Trajectory {
       String headers = bufferedReader.readLine();
       logger.debug("{}", headers);
       while ((line = bufferedReader.readLine()) != null) {
-        // use comma as separator
         String csvSplit = ",";
         String[] values = line.split(csvSplit);
 
@@ -74,13 +73,6 @@ public class Trajectory {
         velocity[iteration] = Double.parseDouble(values[4]);
         acceleration[iteration] = Double.parseDouble(values[5]);
         heading[iteration] = Double.parseDouble(values[7]);
-
-        //        logger.debug(
-        //            "{}, {}, {}, {}",
-        //            position[iteration],
-        //            velocity[iteration],
-        //            acceleration[iteration],
-        //            heading[iteration]);
 
         iteration++;
       }

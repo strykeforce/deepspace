@@ -1,4 +1,4 @@
-package frc.team2767.deepspace.command;
+package frc.team2767.deepspace.command.twist;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -33,8 +33,6 @@ public class TwistSetupCommand extends InstantCommand {
     logger.debug("pyeye bearing={} range={}", cameraAngle, cameraRange);
     logger.debug("current gyro = {}", DRIVE.getGyro().getAngle());
 
-    //    double targetYaw = preferences.getDouble("targetYaw", 0);
-
     double targetYaw = 0.0;
     TwistCalculator twistCalculator =
         new TwistCalculator(
@@ -45,9 +43,6 @@ public class TwistSetupCommand extends InstantCommand {
             cameraPositionBearing,
             DRIVE.getGyro().getAngle(),
             targetYaw);
-    //
-    //    logger.debug("range={} heading={}", twistCalculator.getRange(),
-    // twistCalculator.getHeading());
 
     logger.debug("targetYaw={}", targetYaw);
 
@@ -64,8 +59,6 @@ public class TwistSetupCommand extends InstantCommand {
                         - cameraDistanceFromRobotEdge)),
             targetYaw);
 
-    //    Command twist = new TwistCommand(-118.0, (int) (DriveSubsystem.TICKS_PER_INCH * 80),
-    // targetYaw);
     twist.start();
   }
 }

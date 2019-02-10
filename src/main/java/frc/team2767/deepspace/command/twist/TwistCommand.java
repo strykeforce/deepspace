@@ -1,4 +1,4 @@
-package frc.team2767.deepspace.command;
+package frc.team2767.deepspace.command.twist;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.Robot;
@@ -14,11 +14,8 @@ public class TwistCommand extends Command {
   private final double heading;
   private final int distance;
   private final double targetYaw;
-  //  private final NetworkTableInstance instance = NetworkTableInstance.getDefault();
-  //  private final NetworkTable table;
 
   public TwistCommand(double heading, int distance, double targetYaw) {
-    //    table = instance.getTable("Shuffleboard");
     logger.debug("twist command constructor");
     this.heading = heading;
     this.distance = distance;

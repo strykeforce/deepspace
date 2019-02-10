@@ -16,30 +16,29 @@ public class PathController implements Runnable {
   private static final int NUM_WHEELS = 4;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  @SuppressWarnings("FieldCanBeLocal")
-  private final double ACCELERATION_kF = 0.0;
-
   private final int PID = 0;
+
+  @SuppressWarnings("FieldCanBeLocal")
+  private final double accelerationKf = 0.0;
+
   private SwerveDrive DRIVE;
 
   @SuppressWarnings("FieldCanBeLocal")
-  private double DISTANCE_kP;
+  private double distanceKp;
 
   @SuppressWarnings("FieldCanBeLocal")
-  private double YAW_kP;
-
-  private Wheel[] wheels;
-  private double maxVelocityInSec;
-  private Trajectory trajectory;
-  private Notifier notifier;
-  private int iteration;
-  private double targetYaw;
-  private int[] start;
-  private double DT = 0.05;
-
-  private States state;
+  private double yawKp;
 
   private Preferences preferences;
+  private Trajectory trajectory;
+  private Notifier notifier;
+  private Wheel[] wheels;
+  private States state;
+  private double maxVelocityInSec;
+  private double targetYaw;
+  private double DT = 0.05;
+  private int iteration;
+  private int[] start;
 
   public PathController(SwerveDrive swerveDrive, String pathName, double targetYaw) {
     DRIVE = swerveDrive;
@@ -92,12 +91,12 @@ public class PathController implements Runnable {
         double desiredVelocity = segment.velocity / (maxVelocityInSec);
         double setpointVelocity =
             desiredVelocity
-                + DISTANCE_kP * distanceError(segment.position)
-                + ACCELERATION_kF * segment.acceleration;
+                + distanceKp * distanceError(segment.position)
+                + accelerationKf * segment.acceleration;
         double forward = Math.cos(segment.heading) * setpointVelocity;
         double strafe = Math.sin(segment.heading) * setpointVelocity;
         double yaw =
-            -YAW_kP
+            -yawKp
                 * (Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0)
                     - Math.toDegrees(targetYaw));
         logger.debug(
@@ -133,13 +132,13 @@ public class PathController implements Runnable {
   }
 
   private void setPreferences() {
-    YAW_kP = preferences.getDouble("PathController/pathYawKp", 0.01);
-    DISTANCE_kP = preferences.getDouble("PathController/pathDistKp", 0.000001);
+    yawKp = preferences.getDouble("PathController/pathYawKp", 0.01);
+    distanceKp = preferences.getDouble("PathController/pathDistKp", 0.000001);
   }
 
   private void logInit() {
     logger.debug("Path start");
-    logger.debug("yawKp = {} distKp = {}", YAW_kP, DISTANCE_kP);
+    logger.debug("yawKp = {} distKp = {}", yawKp, distanceKp);
     logger.debug("targetYaw = {}", targetYaw);
     logger.debug("maxVelocity in/s = {}", maxVelocityInSec);
   }
