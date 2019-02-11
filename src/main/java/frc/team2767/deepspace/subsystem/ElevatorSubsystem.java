@@ -4,10 +4,7 @@ import static com.ctre.phoenix.motorcontrol.ControlMode.Disabled;
 import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
 
 import com.ctre.phoenix.ErrorCode;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import edu.wpi.first.wpilibj.Preferences;
@@ -60,6 +57,7 @@ public class ElevatorSubsystem extends Subsystem {
 
     elevatorPreferences();
     configTalon();
+    logger.info("");
   }
 
   private void elevatorPreferences() {
@@ -115,9 +113,11 @@ public class ElevatorSubsystem extends Subsystem {
     elevatorConfig.slot0.kD = 40;
     elevatorConfig.slot0.kF = 0.25;
     elevatorConfig.slot0.integralZone = 0;
+    elevatorConfig.velocityMeasurementWindow = 64;
+    elevatorConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms;
     elevatorConfig.slot0.allowableClosedloopError = 0;
     elevatorConfig.forwardSoftLimitEnable = true;
-    elevatorConfig.forwardSoftLimitThreshold = 30_000;
+    elevatorConfig.forwardSoftLimitThreshold = 31_000;
     elevatorConfig.voltageCompSaturation = 12;
     elevatorConfig.voltageMeasurementFilter = 32;
     elevatorConfig.motionAcceleration = 2000;
@@ -150,6 +150,24 @@ public class ElevatorSubsystem extends Subsystem {
     checkEncoder = true;
     positionStartTime = System.nanoTime();
     talon.set(ControlMode.MotionMagic, setpoint);
+  }
+
+  public void gamePieceAdjust(GamePiece currentGP, int height) {
+    Position newPosition;
+
+    if (currentGP.equals(GamePiece.CARGO)) {
+      if (height == 0) newPosition = Position.CARGO_LOW;
+      else if (height == 1) newPosition = Position.CARGO_MEDIUM;
+      else newPosition = Position.CARGO_HIGH;
+    } else if (currentGP.equals(GamePiece.HATCH)) {
+      if (height == 0) newPosition = Position.HATCH_LOW;
+      else if (height == 1) newPosition = Position.HATCH_MEDIUM;
+      else newPosition = Position.HATCH_HIGH;
+    } else {
+      newPosition = Position.STOW;
+    }
+
+    setPosition(newPosition);
   }
 
   public void adjustVelocity() {
@@ -266,6 +284,11 @@ public class ElevatorSubsystem extends Subsystem {
   public enum Direction {
     UP,
     DOWN;
+  }
+
+  public enum GamePiece {
+    HATCH,
+    CARGO;
   }
 
   private final String PREFS_NAME = "ElevatorSubsystem/Settings/";

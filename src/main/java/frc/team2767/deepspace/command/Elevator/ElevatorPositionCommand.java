@@ -10,7 +10,7 @@ public class ElevatorPositionCommand extends Command {
   private ElevatorSubsystem.Position position;
 
   public ElevatorPositionCommand(ElevatorSubsystem.Position position) {
-
+    this.position = position;
     requires(ELEVATOR);
   }
 
