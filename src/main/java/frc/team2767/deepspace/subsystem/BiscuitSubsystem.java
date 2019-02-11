@@ -73,10 +73,8 @@ public class BiscuitSubsystem extends Subsystem {
     biscuitPreferences();
   }
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Override
-    protected void initDefaultCommand(){}
+  @Override
+  protected void initDefaultCommand() {}
 
   public void biscuitPreferences() {
     // FIXME actually set from preference
