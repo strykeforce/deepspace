@@ -20,13 +20,20 @@ public class IntakeSubsystem extends Subsystem {
   @Override
   protected void initDefaultCommand() {}
 
-  // FIXME
-  public void zero() {
-    if (shoulder.getSensorCollection().isRevLimitSwitchClosed()) {
-      shoulder.setSelectedSensorPosition(0, 0, 500);
-    } else {
-      logger.warn("Cargo intake zero failed");
-    }
+  public void shoulderStop() {
+    shoulder.set(ControlMode.PercentOutput, 0);
+  }
+
+  ////////////////////////////////////////////////////////////////////////////
+  // SHOULDER
+  ////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * @param controlMode roller TalonSRX control mode
+   * @param setpoint TalonSRX setpoint
+   */
+  public void runShoulderOutput(ControlMode controlMode, double setpoint) {
+    roller.set(controlMode, setpoint);
   }
 
   // FIXME
@@ -52,20 +59,13 @@ public class IntakeSubsystem extends Subsystem {
     }
   }
 
-  ////////////////////////////////////////////////////////////////////////////
-  // SHOULDER
-  ////////////////////////////////////////////////////////////////////////////
-
-  public void shoulderStop() {
-    shoulder.set(ControlMode.PercentOutput, 0);
-  }
-
-  /**
-   * @param controlMode roller TalonSRX control mode
-   * @param setpoint TalonSRX setpoint
-   */
-  public void runShoulderOutput(ControlMode controlMode, double setpoint) {
-    roller.set(controlMode, setpoint);
+  // FIXME
+  public void shoulderZero() {
+    if (shoulder.getSensorCollection().isRevLimitSwitchClosed()) {
+      shoulder.setSelectedSensorPosition(0, 0, 500);
+    } else {
+      logger.warn("Cargo intake shoulderZero failed");
+    }
   }
 
   ////////////////////////////////////////////////////////////////////////////
