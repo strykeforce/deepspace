@@ -102,9 +102,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   // ROLLER
   ////////////////////////////////////////////////////////////////////////////
 
-  /**
-   * @param setpoint TalonSRX setpoint
-   */
+  /** @param setpoint TalonSRX setpoint */
   public void rollerOpenLoop(double setpoint) {
     roller.set(ControlMode.PercentOutput, setpoint);
   }
