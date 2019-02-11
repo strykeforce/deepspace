@@ -5,15 +5,15 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.IntakeSubsystem;
 
-public class IntakeOut extends InstantCommand {
-  IntakeSubsystem intakeSubsystem = Robot.IntakeSubsystem;
+public class IntakeInCommand extends InstantCommand {
+  private final IntakeSubsystem INTAKE = Robot.IntakeSubsystem;
 
-  IntakeOut() {
-    requires(intakeSubsystem);
+  public IntakeInCommand() {
+    requires(INTAKE);
   }
 
   @Override
   protected void initialize() {
-    intakeSubsystem.setRollerOutput(ControlMode.PercentOutput, -0.2);
+    INTAKE.rollerOpenLoop(0.2);
   }
 }
