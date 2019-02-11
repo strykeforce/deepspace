@@ -1,6 +1,7 @@
 package frc.team2767.deepspace.subsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.kauailabs.navx.frc.AHRS;
@@ -14,8 +15,7 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 public class BiscuitSubsystem extends Subsystem {
   private int CLOSE_ENOUGH = 50; // FIXME
   private final int BISCUIT_ID = 40;
-  private final int NUM_ROTATIONS = 2; // FIXME
-  private final int TICKS_PER_REV = 12300;
+  private final int TICKS_PER_REV = 3074 * 4;
   private int LOW_ENCODER_LIMIT = -8800; // FIXME
   private int HIGH_ENCODER_LIMIT = 8800; // FIXME
 
@@ -41,13 +41,28 @@ public class BiscuitSubsystem extends Subsystem {
   TalonSRX biscuit = new TalonSRX(BISCUIT_ID);
   TalonSRXConfiguration biscuitConfig = new TalonSRXConfiguration();
 
-
   public BiscuitSubsystem() {
     telemetryService.register(biscuit);
+    biscuitConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
     biscuitConfig.forwardSoftLimitThreshold = HIGH_ENCODER_LIMIT;
     biscuitConfig.reverseSoftLimitThreshold = LOW_ENCODER_LIMIT;
     biscuitConfig.forwardSoftLimitEnable = true;
     biscuitConfig.reverseSoftLimitEnable = true;
+
+    biscuitConfig.slot0.kP = 1.0;
+    biscuitConfig.slot0.kI = 0.0;
+    biscuitConfig.slot0.kD = 0.0;
+    biscuitConfig.slot0.kF = 0.65;
+    biscuitConfig.slot0.integralZone = 0;
+
+    biscuitConfig.peakCurrentDuration = 40;
+    biscuitConfig.peakCurrentLimit = 25;
+    biscuitConfig.continuousCurrentLimit = 20;
+
+
+    biscuitConfig.motionCruiseVelocity = 1_000;
+    biscuitConfig.motionAcceleration = 2_000;
+
     biscuit.configAllSettings(biscuitConfig);
 
     biscuitPreferences();
@@ -58,8 +73,9 @@ public class BiscuitSubsystem extends Subsystem {
     @Override
     protected void initDefaultCommand(){}
 
-  public void biscuitPreferences(){
-    //FIXME actually set in preferences
+  public void biscuitPreferences() {
+    // FIXME actually set from preference
+
     if (!preferences.containsKey(closeEnoughKey)) preferences.putInt(closeEnoughKey, BACKUP);
     if (!preferences.containsKey(absoluteZeroKey)) preferences.putInt(absoluteZeroKey, BACKUP);
     if (!preferences.containsKey(lowLimitKey)) preferences.putInt(lowLimitKey, BACKUP);
@@ -90,21 +106,21 @@ public class BiscuitSubsystem extends Subsystem {
 
   public void setPosition(Position position) {
     double angle = getGyroAngle();
-    switch (position){
+    switch (position) {
       case PLACE:
         if (plannedDirection == FieldDirections.FIELD_RIGHT && Math.abs(angle) < 90
-                || plannedDirection == FieldDirections.FIELD_LEFT && Math.abs(angle) > 90) {
-          target = findNearest(Position.RIGHT.encoderPosition);
+            || plannedDirection == FieldDirections.FIELD_LEFT && Math.abs(angle) > 90) {
+          target = Position.RIGHT.encoderPosition;
         } else {
-          target = findNearest(Position.LEFT.encoderPosition);
+          target = Position.LEFT.encoderPosition;
         }
         break;
       case PICKUP:
         if (plannedDirection == FieldDirections.FIELD_SOUTH && angle > 0
-                || plannedDirection == FieldDirections.FIELD_NORTH && angle < 0) {
-          target = findNearest(Position.RIGHT.encoderPosition);
+            || plannedDirection == FieldDirections.FIELD_NORTH && angle < 0) {
+          target = Position.RIGHT.encoderPosition;
         } else {
-          target = findNearest(Position.LEFT.encoderPosition);
+          target = Position.LEFT.encoderPosition;
         }
         break;
       default:
@@ -113,8 +129,6 @@ public class BiscuitSubsystem extends Subsystem {
     }
     biscuit.set(ControlMode.Position, target);
   }
-
-        }
 
   public boolean onTarget() {
     if (Math.abs(biscuit.getSelectedSensorPosition() - target) < CLOSE_ENOUGH) {
