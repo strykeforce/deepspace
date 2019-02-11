@@ -107,7 +107,7 @@ public class DriveSubsystem extends Subsystem {
     gyro.setAngleAdjustment(0);
     double adj = gyro.getAngle() % 360;
     gyro.setAngleAdjustment(-adj);
-    logger.info("resetting gyro zero ({})", adj);
+    logger.info("resetting gyro shoulderZero ({})", adj);
   }
 
   public AHRS getGyro() {
