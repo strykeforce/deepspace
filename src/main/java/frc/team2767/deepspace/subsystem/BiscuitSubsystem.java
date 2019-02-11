@@ -2,6 +2,7 @@ package frc.team2767.deepspace.subsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.kauailabs.navx.frc.AHRS;
@@ -15,9 +16,9 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 public class BiscuitSubsystem extends Subsystem {
   private int CLOSE_ENOUGH = 50; // FIXME
   private final int BISCUIT_ID = 40;
-  private final int TICKS_PER_REV = 3074 * 4;
-  private int LOW_ENCODER_LIMIT = -8800; // FIXME
-  private int HIGH_ENCODER_LIMIT = 8800; // FIXME
+  private final int TICKS_PER_REV = 12300;
+  private int LOW_ENCODER_LIMIT = -6150; // FIXME
+  private int HIGH_ENCODER_LIMIT = 6150; // FIXME
 
   private static final String KEY_BASE = "BiscuitSubsystem/Position/";
   private static final int BACKUP = 2767;
@@ -58,7 +59,11 @@ public class BiscuitSubsystem extends Subsystem {
     biscuitConfig.peakCurrentDuration = 40;
     biscuitConfig.peakCurrentLimit = 25;
     biscuitConfig.continuousCurrentLimit = 20;
+    biscuitConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms;
+    biscuitConfig.velocityMeasurementWindow = 64;
 
+    biscuitConfig.voltageCompSaturation = 12;
+    biscuitConfig.voltageMeasurementFilter = 32;
 
     biscuitConfig.motionCruiseVelocity = 1_000;
     biscuitConfig.motionAcceleration = 2_000;
