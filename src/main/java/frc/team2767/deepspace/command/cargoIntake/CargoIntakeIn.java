@@ -5,14 +5,14 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.CargoIntakeSubsystem;
 
 public class CargoIntakeIn extends InstantCommand {
-    CargoIntakeSubsystem cargoIntakeSubsystem = Robot.CargoIntakeSubsystem;
+  CargoIntakeSubsystem cargoIntakeSubsystem = Robot.CargoIntakeSubsystem;
 
-    CargoIntakeIn(){
-        requires(cargoIntakeSubsystem);
-    }
+  CargoIntakeIn() {
+    requires(cargoIntakeSubsystem);
+  }
 
-    @Override
-    protected void initialize() {
-        cargoIntakeSubsystem.rollerIn();
-    }
+  @Override
+  protected void initialize() {
+    cargoIntakeSubsystem.rollerIn();
+  }
 }
