@@ -5,7 +5,7 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.IntakeSubsystem;
 
 public class IntakeOutCommand extends InstantCommand {
-  private final IntakeSubsystem INTAKE = Robot.IntakeSubsystem;
+  private final IntakeSubsystem INTAKE = Robot.INTAKE;
 
   private final double percent = 0.2;
 

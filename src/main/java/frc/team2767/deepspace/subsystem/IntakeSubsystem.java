@@ -45,7 +45,6 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   private int reverseShoulderSoftLimit; // FIXME
   private Preferences preferences;
 
-
   public IntakeSubsystem() {
     this.preferences = Preferences.getInstance();
 
@@ -163,8 +162,6 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     logger.info("kUpOutput: {}", kShoulderUpOutput);
     logger.info("kCloseEnough: {}", kCloseEnough);
   }
-
-
 
   ////////////////////////////////////////////////////////////////////////////
   // SHOULDER

@@ -6,7 +6,7 @@ import frc.team2767.deepspace.subsystem.IntakeSubsystem;
 
 public class IntakeZeroCommand extends Command {
 
-  private final IntakeSubsystem INTAKE = Robot.IntakeSubsystem;
+  private final IntakeSubsystem INTAKE = Robot.INTAKE;
 
   public IntakeZeroCommand() {
     requires(INTAKE);

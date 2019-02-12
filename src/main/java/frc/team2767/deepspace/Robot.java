@@ -3,9 +3,8 @@ package frc.team2767.deepspace;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team2767.deepspace.control.Controls;
-import frc.team2767.deepspace.subsystem.DriveSubsystem;
-import frc.team2767.deepspace.subsystem.IntakeSubsystem;
-import frc.team2767.deepspace.subsystem.VisionSubsystem;
+import frc.team2767.deepspace.subsystem.*;
+import javax.swing.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryController;
@@ -16,24 +15,35 @@ public class Robot extends TimedRobot {
   // Instantiate this before Subsystems because they use telemetry service.
   public static final TelemetryService TELEMETRY = new TelemetryService(TelemetryController::new);
 
-  public static final IntakeSubsystem IntakeSubsystem = new IntakeSubsystem();
-  public static final DriveSubsystem DriveSubsystem = new DriveSubsystem();
-  public static final VisionSubsystem VisionSubsystem = new VisionSubsystem();
+  public static DriveSubsystem DRIVE;
+  public static VisionSubsystem VISION;
+  public static ElevatorSubsystem ELEVATOR;
+  public static BiscuitSubsystem BISCUIT;
+  public static IntakeSubsystem INTAKE;
 
-  // Controls initialize Commands so this should be instantiated last to prevent
-  // NullPointerExceptions in commands that require() Subsystems above.
-  public static final Controls CONTROLS = new Controls();
+  public static Controls CONTROLS;
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   @Override
   public void robotInit() {
+    DRIVE = new DriveSubsystem();
+    VISION = new VisionSubsystem();
+    ELEVATOR = new ElevatorSubsystem();
+    BISCUIT = new BiscuitSubsystem();
+    INTAKE = new IntakeSubsystem();
+
+    // Controls initialize Commands so this should be instantiated last to prevent
+    // NullPointerExceptions in commands that require() Subsystems above.
+    CONTROLS = new Controls();
 
     Session.INSTANCE.setBaseUrl("https://keeper.strykeforce.org");
 
-    DriveSubsystem.zeroYawEncoders();
-    DriveSubsystem.zeroGyro();
+    DRIVE.zeroYawEncoders();
+    DRIVE.zeroGyro();
     TELEMETRY.start();
+
+    //    new SmartDashboardControls();
   }
 
   @Override
