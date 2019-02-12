@@ -12,8 +12,8 @@ Drive        | drive   | 10 | 14
 Drive        | drive   | 11 | 13
 Drive        | drive   | 12 | 15
 Drive        | drive   | 13 | 12
-CargoIntake  | arm     | 20 | 4
-CargoIntake  | rollers | 21 | 5
+Intake       | arm     | 20 | 4
+Intake       | rollers | 21 | 5
 Elevator     | elevator| 30 | 0
 Biscuit      | rotate  | 40 | 7
 Climb        | master  | 50 | 

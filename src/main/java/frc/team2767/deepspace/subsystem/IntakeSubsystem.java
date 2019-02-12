@@ -1,7 +1,10 @@
 package frc.team2767.deepspace.subsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team2767.deepspace.subsystem.safety.Limitable;
 import org.slf4j.Logger;
@@ -9,31 +12,101 @@ import org.slf4j.LoggerFactory;
 
 public class IntakeSubsystem extends Subsystem implements Limitable {
 
-  private final int kCloseEnough = 0; // FIXME
-  private final int SHOULDER_ID = 20; // FIXME
-  private final int ROLLER_ID = 21; // FIXME
-  private final int SHOULDER_UP_POSITION = 0; // FIXME
-  private final int SHOULDER_LOAD_POSITION = 0; // FIXME
-  private final int SHOULDER_ZERO_POSITION = 0;
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private final int SHOULDER_ID = 20;
+  private final int ROLLER_ID = 21;
+  private final int STABLE_THRESH = 4;
+  private int kCloseEnough; // FIXME
+  private double kDownOuput;
+  private int shoulderUpPosition; // FIXME
+  private int shoulderLoadPosition; // FIXME
+  private int shoulderZeroPosition;
+  private Logger logger = LoggerFactory.getLogger(this.getClass());
   private TalonSRX shoulder = new TalonSRX(SHOULDER_ID);
   private TalonSRX roller = new TalonSRX(ROLLER_ID);
-
-  private final int STABLE_THRESH = 4;
   private int stableCount;
   private int setpoint;
 
-  private final double kDownOuput = 0.1;
+  private int forwardShoulderSoftLimit; // FIXME
+  private int reverseShoulderSoftLimit; // FIXME
 
-  private int forwardSoftLimit;
-  private int reverseSoftLimit;
+  private Preferences preferences;
 
-  @Override
-  protected void initDefaultCommand() {}
+  public IntakeSubsystem() {
+    this.preferences = Preferences.getInstance();
+
+    if (shoulder == null) {
+      logger.error("Shoulder not present");
+    }
+
+    if (roller == null) {
+      logger.error("Roller not present");
+    }
+
+    shoulderPreferences();
+    configTalon();
+  }
+
+  private void shoulderPreferences() {}
+
+  @SuppressWarnings("Duplicates")
+  private void configTalon() {
+    // FIXME: wont't run
+    TalonSRXConfiguration shoulderConfig = new TalonSRXConfiguration();
+    shoulderConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
+    shoulderConfig.continuousCurrentLimit = 0;
+    shoulderConfig.peakCurrentDuration = 0;
+    shoulderConfig.peakCurrentLimit = 0;
+    shoulderConfig.slot0.kP = 0;
+    shoulderConfig.slot0.kI = 0;
+    shoulderConfig.slot0.kD = 0;
+    shoulderConfig.slot0.kF = 0;
+    shoulderConfig.slot0.integralZone = 0;
+    shoulderConfig.slot0.allowableClosedloopError = 0;
+    shoulderConfig.forwardSoftLimitEnable = true;
+    shoulderConfig.forwardSoftLimitThreshold = forwardShoulderSoftLimit;
+    shoulderConfig.reverseSoftLimitEnable = true;
+    shoulderConfig.reverseSoftLimitThreshold = reverseShoulderSoftLimit;
+    shoulderConfig.voltageCompSaturation = 0;
+    shoulderConfig.voltageMeasurementFilter = 0;
+    shoulderConfig.motionAcceleration = 0;
+    shoulderConfig.motionCruiseVelocity = 0;
+
+    // FIXME: won't run
+    TalonSRXConfiguration rollerConfig = new TalonSRXConfiguration();
+    rollerConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
+    rollerConfig.continuousCurrentLimit = 0;
+    rollerConfig.peakCurrentDuration = 0;
+    rollerConfig.peakCurrentLimit = 0;
+    rollerConfig.slot0.kP = 0;
+    rollerConfig.slot0.kI = 0;
+    rollerConfig.slot0.kD = 0;
+    rollerConfig.slot0.kF = 0;
+    rollerConfig.slot0.integralZone = 0;
+    rollerConfig.slot0.allowableClosedloopError = 0;
+    rollerConfig.forwardSoftLimitEnable = true;
+    rollerConfig.forwardSoftLimitThreshold = forwardShoulderSoftLimit;
+    rollerConfig.reverseSoftLimitEnable = true;
+    rollerConfig.reverseSoftLimitThreshold = reverseShoulderSoftLimit;
+    rollerConfig.voltageCompSaturation = 0;
+    rollerConfig.voltageMeasurementFilter = 0;
+    rollerConfig.motionAcceleration = 0;
+    rollerConfig.motionCruiseVelocity = 0;
+
+    shoulder.configAllSettings(shoulderConfig);
+    shoulder.enableCurrentLimit(true);
+    shoulder.enableVoltageCompensation(true);
+
+    roller.configAllSettings(rollerConfig);
+    roller.enableCurrentLimit(true);
+    roller.enableVoltageCompensation(true);
+  }
 
   ////////////////////////////////////////////////////////////////////////////
   // SHOULDER
   ////////////////////////////////////////////////////////////////////////////
+
+  @Override
+  protected void initDefaultCommand() {}
 
   /**
    * @param controlMode roller TalonSRX control mode
@@ -44,7 +117,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   }
 
   public void shoulderZeroWithLimitSwitch() {
-    shoulder.setSelectedSensorPosition(SHOULDER_ZERO_POSITION);
+    shoulder.setSelectedSensorPosition(shoulderZeroPosition);
   }
 
   public void shoulderToZero() {
@@ -66,8 +139,8 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
 
   @Override
   public void setLimits(int forward, int reverse) {
-    forwardSoftLimit = forward;
-    reverseSoftLimit = reverse;
+    shoulder.configForwardSoftLimitThreshold(forward);
+    shoulder.configReverseSoftLimitThreshold(reverse);
   }
 
   public void setPosition(ShoulderPosition position) {
@@ -78,14 +151,18 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   private int getPositionSetpoint(ShoulderPosition position) {
     switch (position) {
       case UP:
-        return SHOULDER_UP_POSITION;
+        return shoulderUpPosition;
       case LOAD:
-        return SHOULDER_LOAD_POSITION;
+        return shoulderLoadPosition;
       default:
         logger.warn("Invalid intake position");
         return 0;
     }
   }
+
+  ////////////////////////////////////////////////////////////////////////////
+  // ROLLER
+  ////////////////////////////////////////////////////////////////////////////
 
   public boolean onTarget() {
     int error = setpoint - shoulder.getSelectedSensorPosition(0);
@@ -98,10 +175,6 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     return false;
   }
 
-  ////////////////////////////////////////////////////////////////////////////
-  // ROLLER
-  ////////////////////////////////////////////////////////////////////////////
-
   /** @param setpoint TalonSRX setpoint */
   public void rollerOpenLoop(double setpoint) {
     roller.set(ControlMode.PercentOutput, setpoint);
@@ -109,5 +182,10 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
 
   public void rollerStop() {
     roller.set(ControlMode.PercentOutput, 0.0);
+  }
+
+  public enum ShoulderPosition {
+    UP,
+    LOAD
   }
 }
