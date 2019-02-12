@@ -26,10 +26,10 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   private final String SHOULDER_DOWN_OUPUT = PREFS_NAME + "shoulder_down";
   private final int BACKUP = 0;
   private int kCloseEnough;
-  private double kShoulderUpPosition;
-  private double kShoulderZeroPosition;
-  private double kShoulderDownPosition;
-  private double kShoulderLoadPosition;
+  private int kShoulderUpPosition;
+  private int kShoulderZeroPosition;
+  private int kShoulderDownPosition;
+  private int kShoulderLoadPosition;
   private double kRollerOut;
   private double kRollerIn;
   private double kShoulderUpOutput;
@@ -38,15 +38,13 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   private Logger logger = LoggerFactory.getLogger(this.getClass());
   private TalonSRX shoulder = new TalonSRX(SHOULDER_ID);
 
-  ////////////////////////////////////////////////////////////////////////////
-  // SHOULDER
-  ////////////////////////////////////////////////////////////////////////////
   private TalonSRX roller = new TalonSRX(ROLLER_ID);
   private int stableCount;
   private int setpoint;
   private int forwardShoulderSoftLimit; // FIXME
   private int reverseShoulderSoftLimit; // FIXME
   private Preferences preferences;
+
 
   public IntakeSubsystem() {
     this.preferences = Preferences.getInstance();
@@ -166,10 +164,11 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     logger.info("kCloseEnough: {}", kCloseEnough);
   }
 
-  ////////////////////////////////////////////////////////////////////////////
-  // ROLLER
-  ////////////////////////////////////////////////////////////////////////////
 
+
+  ////////////////////////////////////////////////////////////////////////////
+  // SHOULDER
+  ////////////////////////////////////////////////////////////////////////////
   @Override
   protected void initDefaultCommand() {}
 
@@ -182,11 +181,11 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   }
 
   public void shoulderZeroWithLimitSwitch() {
-    shoulder.setSelectedSensorPosition(shoulderZeroPosition);
+    shoulder.setSelectedSensorPosition(kShoulderZeroPosition);
   }
 
   public void shoulderToZero() {
-    shoulder.set(ControlMode.PercentOutput, kDownOuput);
+    shoulder.set(ControlMode.PercentOutput, kShoulderDownOutput);
   }
 
   public boolean onZero() {
@@ -216,9 +215,9 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   private int getPositionSetpoint(ShoulderPosition position) {
     switch (position) {
       case UP:
-        return shoulderUpPosition;
+        return kShoulderUpPosition;
       case LOAD:
-        return shoulderLoadPosition;
+        return kShoulderLoadPosition;
       default:
         logger.warn("Invalid intake position");
         return 0;
@@ -235,6 +234,10 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     }
     return false;
   }
+
+  ////////////////////////////////////////////////////////////////////////////
+  // ROLLER
+  ////////////////////////////////////////////////////////////////////////////
 
   /** @param setpoint TalonSRX setpoint */
   public void rollerOpenLoop(double setpoint) {
