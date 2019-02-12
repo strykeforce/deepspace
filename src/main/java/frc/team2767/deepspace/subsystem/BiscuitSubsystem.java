@@ -9,11 +9,12 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team2767.deepspace.Robot;
+import frc.team2767.deepspace.subsystem.safety.Limitable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
-public class BiscuitSubsystem extends Subsystem {
+public class BiscuitSubsystem extends Subsystem implements Limitable {
   private int CLOSE_ENOUGH = 50; // FIXME
   private final int BISCUIT_ID = 40;
   private final int TICKS_PER_REV = 12300;
@@ -76,6 +77,15 @@ public class BiscuitSubsystem extends Subsystem {
   @Override
   protected void initDefaultCommand() {}
 
+  @Override
+  public void setLimits(int forward, int reverse) {}
+
+
+  @Override
+  public int getPosition() {
+    return biscuit.getSelectedSensorPosition() % TICKS_PER_REV;
+  }
+
   public void biscuitPreferences() {
     // FIXME actually set from preference
 
@@ -101,10 +111,6 @@ public class BiscuitSubsystem extends Subsystem {
     AHRS gyro = driveSubsystem.getGyro();
     double angle = gyro.getYaw();
     return angle;
-  }
-
-  public int getPosition() {
-    return biscuit.getSelectedSensorPosition() % TICKS_PER_REV;
   }
 
   public void setPosition(Position position) {
