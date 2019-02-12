@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 public class PathCommand extends Command {
 
-  private static final DriveSubsystem DRIVE = Robot.DriveSubsystem;
+  private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   private double targetYaw;

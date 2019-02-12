@@ -4,10 +4,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.*;
+import frc.team2767.deepspace.command.Vision.LightsOffCommand;
+import frc.team2767.deepspace.command.Vision.LightsOnCommand;
 import frc.team2767.deepspace.command.pathfinder.PathCommand;
 import frc.team2767.deepspace.command.twist.TwistSetupCommand;
-import frc.team2767.deepspace.command.vision.LightsOffCommand;
-import frc.team2767.deepspace.command.vision.LightsOnCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
