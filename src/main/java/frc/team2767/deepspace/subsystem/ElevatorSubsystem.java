@@ -10,12 +10,13 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team2767.deepspace.Robot;
+import frc.team2767.deepspace.subsystem.safety.Limitable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.talon.Errors;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
-public class ElevatorSubsystem extends Subsystem {
+public class ElevatorSubsystem extends Subsystem implements Limitable {
   private static final int ID = 30;
   private static final int BACKUP = 2767;
 
@@ -47,6 +48,14 @@ public class ElevatorSubsystem extends Subsystem {
   private int setpoint;
   private long positionStartTime;
   private int stableCount;
+
+  @Override
+  public int getPosition() {
+    return 0;
+  }
+
+  @Override
+  public void setLimits(int forward, int reverse) {}
 
   public ElevatorSubsystem() {
     this.preferences = Preferences.getInstance();

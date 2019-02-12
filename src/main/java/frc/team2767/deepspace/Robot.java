@@ -6,6 +6,7 @@ import frc.team2767.deepspace.control.Controls;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
 import frc.team2767.deepspace.subsystem.ElevatorSubsystem;
 import frc.team2767.deepspace.subsystem.VisionSubsystem;
+import javax.swing.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryController;
@@ -36,7 +37,7 @@ public class Robot extends TimedRobot {
 
     Session.INSTANCE.setBaseUrl("https://keeper.strykeforce.org");
 
-    DRIVE.zeroAzimuthEncoders();
+    DRIVE.zeroYawEncoders();
     DRIVE.zeroGyro();
     TELEMETRY.start();
 

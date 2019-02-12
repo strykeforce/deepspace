@@ -75,6 +75,7 @@ class TwistController(
 
 
     fun start() {
+        logger.debug { "twist controller start" }
         notifier.startPeriodic(DT_MS_DEFAULT / 1000.0)
     }
 

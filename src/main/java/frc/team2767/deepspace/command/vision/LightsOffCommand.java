@@ -4,11 +4,11 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.VisionSubsystem;
 
-public class LightsOff extends InstantCommand {
+public class LightsOffCommand extends InstantCommand {
 
   private final VisionSubsystem VISION = Robot.VISION;
 
-  public LightsOff() {
+  public LightsOffCommand() {
     requires(VISION);
   }
 

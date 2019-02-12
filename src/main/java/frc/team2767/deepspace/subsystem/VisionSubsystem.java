@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class VisionSubsystem extends Subsystem {
 
-  private final DigitalOutput lightsOutput = new DigitalOutput(6);
+  private final DigitalOutput lightsOutput = new DigitalOutput(0);
 
   public VisionSubsystem() {
     lightsOutput.set(true);
