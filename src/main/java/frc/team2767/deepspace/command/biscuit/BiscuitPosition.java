@@ -13,13 +13,13 @@ public class BiscuitPosition extends Command {
     requires(biscuitSubsystem);
   }
 
-    @Override
-    protected void initialize(){
-        biscuitSubsystem.startMotion(position);
-    }
+  @Override
+  protected void initialize() {
+    biscuitSubsystem.setPosition(position);
+  }
 
-    @Override
-    protected boolean isFinished(){
-        return biscuitSubsystem.positionReached(position);
-    }
+  @Override
+  protected boolean isFinished() {
+    return biscuitSubsystem.onTarget();
+  }
 }

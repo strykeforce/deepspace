@@ -29,7 +29,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-
+    BiscuitSubsystem.pos = frc.team2767.deepspace.subsystem.BiscuitSubsystem.Position.DOWN;
     Session.INSTANCE.setBaseUrl("https://keeper.strykeforce.org");
 
     DriveSubsystem.zeroYawEncoders();
@@ -42,4 +42,3 @@ public class Robot extends TimedRobot {
     Scheduler.getInstance().run();
   }
 }
-    BiscuitSubsystem.pos = frc.team2767.deepspace.subsystem.BiscuitSubsystem.Position.DOWN;
