@@ -15,20 +15,37 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   private final int SHOULDER_ID = 20;
   private final int ROLLER_ID = 21;
   private final int STABLE_THRESH = 4;
-  private int kCloseEnough; // FIXME
-  private double kDownOuput;
-  private int shoulderUpPosition; // FIXME
-  private int shoulderLoadPosition; // FIXME
-  private int shoulderZeroPosition;
+  private final String PREFS_NAME = "IntakeSubsytem/Settings/";
+  private final String K_CLOSE_ENOUGH = PREFS_NAME + "close_enough";
+  private final String SHOULDER_UP_POSITION = PREFS_NAME + "up_position";
+  private final String SHOULDER_ZERO_POSITION = PREFS_NAME + "zero_position";
+  private final String SHOULDER_LOAD_POSITION = PREFS_NAME + "load_position";
+  private final String ROLLER_OUT_OUTPUT = PREFS_NAME + "roller_out";
+  private final String ROLLER_IN_OPUTPUT = PREFS_NAME + "roller_in";
+  private final String SHOULDER_UP_OUPTUT = PREFS_NAME + "shoulder_up";
+  private final String SHOULDER_DOWN_OUPUT = PREFS_NAME + "shoulder_down";
+  private final int BACKUP = 0;
+  private int kCloseEnough;
+  private double kShoulderUpPosition;
+  private double kShoulderZeroPosition;
+  private double kShoulderDownPosition;
+  private double kShoulderLoadPosition;
+  private double kRollerOut;
+  private double kRollerIn;
+  private double kShoulderUpOutput;
+  private double kShoulderDownOutput;
+
   private Logger logger = LoggerFactory.getLogger(this.getClass());
   private TalonSRX shoulder = new TalonSRX(SHOULDER_ID);
+
+  ////////////////////////////////////////////////////////////////////////////
+  // SHOULDER
+  ////////////////////////////////////////////////////////////////////////////
   private TalonSRX roller = new TalonSRX(ROLLER_ID);
   private int stableCount;
   private int setpoint;
-
   private int forwardShoulderSoftLimit; // FIXME
   private int reverseShoulderSoftLimit; // FIXME
-
   private Preferences preferences;
 
   public IntakeSubsystem() {
@@ -101,8 +118,56 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     roller.enableVoltageCompensation(true);
   }
 
+  @SuppressWarnings("Duplicates")
+  private void elevatorPreferences() {
+    if (!preferences.containsKey(SHOULDER_DOWN_OUPUT)) {
+      preferences.putInt(SHOULDER_DOWN_OUPUT, BACKUP);
+    }
+    if (!preferences.containsKey(SHOULDER_UP_OUPTUT)) {
+      preferences.putInt(SHOULDER_UP_OUPTUT, BACKUP);
+    }
+    if (!preferences.containsKey(SHOULDER_ZERO_POSITION)) {
+      preferences.putInt(SHOULDER_ZERO_POSITION, BACKUP);
+    }
+    if (!preferences.containsKey(SHOULDER_LOAD_POSITION)) {
+      preferences.putInt(SHOULDER_LOAD_POSITION, BACKUP);
+    }
+    if (!preferences.containsKey(SHOULDER_UP_POSITION)) {
+      preferences.putInt(SHOULDER_UP_POSITION, BACKUP);
+    }
+    if (!preferences.containsKey(ROLLER_IN_OPUTPUT)) {
+      preferences.putInt(ROLLER_IN_OPUTPUT, BACKUP);
+    }
+    if (!preferences.containsKey(ROLLER_OUT_OUTPUT)) {
+      preferences.putInt(ROLLER_OUT_OUTPUT, BACKUP);
+    }
+    if (!preferences.containsKey(K_CLOSE_ENOUGH)) {
+      preferences.putInt(K_CLOSE_ENOUGH, BACKUP);
+    }
+
+    // need to make the backups actually relevant
+    kShoulderDownOutput = preferences.getInt(SHOULDER_DOWN_OUPUT, BACKUP);
+    kShoulderUpOutput = preferences.getInt(SHOULDER_UP_OUPTUT, BACKUP);
+    kShoulderZeroPosition = preferences.getInt(SHOULDER_ZERO_POSITION, BACKUP);
+    kShoulderLoadPosition = preferences.getInt(SHOULDER_LOAD_POSITION, BACKUP);
+    kShoulderUpPosition = preferences.getInt(SHOULDER_UP_POSITION, BACKUP);
+    kRollerIn = preferences.getInt(ROLLER_IN_OPUTPUT, BACKUP);
+    kRollerOut = preferences.getDouble(ROLLER_OUT_OUTPUT, BACKUP);
+    kCloseEnough = preferences.getInt(K_CLOSE_ENOUGH, BACKUP);
+
+    logger.info("kShoulderDownOutput: {}", kShoulderDownOutput);
+    logger.info("kShoulderUpOutput: {}", kShoulderUpOutput);
+    logger.info("kShoulderZeroPosition: {}", kShoulderZeroPosition);
+    logger.info("kShoulderLoadPosition: {}", kShoulderLoadPosition);
+    logger.info("kShoulderUpPosition: {}", kShoulderUpPosition);
+    logger.info("kRollerIn: {}", kRollerIn);
+    logger.info("kRollerOut: {}", kRollerOut);
+    logger.info("kUpOutput: {}", kShoulderUpOutput);
+    logger.info("kCloseEnough: {}", kCloseEnough);
+  }
+
   ////////////////////////////////////////////////////////////////////////////
-  // SHOULDER
+  // ROLLER
   ////////////////////////////////////////////////////////////////////////////
 
   @Override
@@ -159,10 +224,6 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
         return 0;
     }
   }
-
-  ////////////////////////////////////////////////////////////////////////////
-  // ROLLER
-  ////////////////////////////////////////////////////////////////////////////
 
   public boolean onTarget() {
     int error = setpoint - shoulder.getSelectedSensorPosition(0);
