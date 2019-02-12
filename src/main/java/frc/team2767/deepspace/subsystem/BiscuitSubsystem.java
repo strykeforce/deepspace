@@ -30,7 +30,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   String highLimitKey = KEY_BASE + "HIGH_LIMIT";
   String closeEnoughKey = KEY_BASE + "CLOSE_ENOUGH";
 
-  DriveSubsystem driveSubsystem = Robot.DriveSubsystem;
+  DriveSubsystem driveSubsystem = Robot.DRIVE;
   TelemetryService telemetryService = Robot.TELEMETRY;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   public FieldDirections plannedDirection;
@@ -79,7 +79,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
 
   @Override
   public void setLimits(int forward, int reverse) {}
-
 
   @Override
   public int getPosition() {

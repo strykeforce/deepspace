@@ -6,7 +6,7 @@ import frc.team2767.deepspace.subsystem.DriveSubsystem;
 
 public final class ZeroGyroCommand extends InstantCommand {
 
-  private static final DriveSubsystem DRIVE = Robot.DriveSubsystem;
+  private static final DriveSubsystem DRIVE = Robot.DRIVE;
 
   public ZeroGyroCommand() {
     requires(DRIVE);

@@ -5,7 +5,7 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 
 public class BiscuitPlan extends InstantCommand {
-  BiscuitSubsystem biscuitSubsystem = Robot.BiscuitSubsystem;
+  BiscuitSubsystem biscuitSubsystem = Robot.BISCUIT;
   BiscuitSubsystem.FieldDirections direction;
 
   public BiscuitPlan(BiscuitSubsystem.FieldDirections direction) {

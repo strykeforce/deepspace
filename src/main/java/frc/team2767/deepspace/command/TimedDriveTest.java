@@ -10,7 +10,7 @@ import org.strykeforce.thirdcoast.swerve.Wheel;
 
 public class TimedDriveTest extends TimedCommand {
 
-  private static final DriveSubsystem DRIVE = Robot.DriveSubsystem;
+  private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   //  private TalonSRX[] talons;
   private Wheel[] wheels;
