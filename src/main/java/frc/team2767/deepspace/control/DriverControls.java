@@ -6,10 +6,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.*;
 import frc.team2767.deepspace.command.Vision.LightsOffCommand;
 import frc.team2767.deepspace.command.Vision.LightsOnCommand;
-import frc.team2767.deepspace.command.biscuit.BiscuitPosition;
-import frc.team2767.deepspace.command.biscuit.BiscuitPositive;
-import frc.team2767.deepspace.command.biscuit.BiscuitStop;
-import frc.team2767.deepspace.command.biscuit.BiscuitZero;
+import frc.team2767.deepspace.command.biscuit.*;
 import frc.team2767.deepspace.command.pathfinder.PathCommand;
 import frc.team2767.deepspace.command.twist.TwistSetupCommand;
 import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
@@ -31,9 +28,13 @@ public class DriverControls {
     new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(new BiscuitPositive());
     new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenReleased(new BiscuitStop());
 
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id)
-        .whenPressed(new BiscuitPosition(BiscuitSubsystem.Position.UP));
+    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed(new BiscuitNegative());
     new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased(new BiscuitStop());
+
+    new JoystickButton(joystick, Trim.LEFT_X_POS.id)
+        .whenPressed(new BiscuitPosition(BiscuitSubsystem.Position.UP));
+    new JoystickButton(joystick, Trim.LEFT_X_NEG.id)
+        .whenPressed(new BiscuitPosition(BiscuitSubsystem.Position.DOWN));
 
     new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id).whenPressed(new BiscuitZero());
 

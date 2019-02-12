@@ -1,8 +1,6 @@
 package frc.team2767.deepspace.subsystem;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
+import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.kauailabs.navx.frc.AHRS;
@@ -15,11 +13,11 @@ import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 public class BiscuitSubsystem extends Subsystem implements Limitable {
-  private int CLOSE_ENOUGH = 50; // FIXME
+  private int CLOSE_ENOUGH = 8; // FIXME
   private final int BISCUIT_ID = 40;
   private final int TICKS_PER_REV = 12300;
-  private int LOW_ENCODER_LIMIT = -6150; // FIXME
-  private int HIGH_ENCODER_LIMIT = 6150; // FIXME
+  private int LOW_ENCODER_LIMIT = -6170; // FIXME
+  private int HIGH_ENCODER_LIMIT = 6170; // FIXME
 
   private static final String KEY_BASE = "BiscuitSubsystem/Position/";
   private static final int BACKUP = 2767;
@@ -71,6 +69,8 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
 
     biscuit.configAllSettings(biscuitConfig);
 
+    biscuit.configForwardLimitSwitchSource(
+        LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
     biscuitPreferences();
   }
 
@@ -131,6 +131,15 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
           target = Position.LEFT.encoderPosition;
         }
         break;
+      case DOWN:
+        if (biscuit.getSelectedSensorPosition() >= 0) {
+          target = Position.DOWN_L.encoderPosition;
+          logger.info("target {}", target);
+          logger.info("position {}", biscuit.getSelectedSensorPosition());
+        } else {
+          target = Position.DOWN_R.encoderPosition;
+        }
+        break;
       default:
         target = position.encoderPosition;
         break;
@@ -156,11 +165,15 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
 
   public enum Position {
     UP,
-    DOWN,
+    DOWN_L,
+    DOWN_R,
     LEFT,
     RIGHT,
     BACK_STOP_L,
     BACK_STOP_R,
+    TILT_UP_L,
+    TILT_UP_R,
+    DOWN,
     PLACE,
     PICKUP;
     // FIXME need set
