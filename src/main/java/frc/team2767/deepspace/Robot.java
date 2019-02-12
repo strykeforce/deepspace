@@ -3,6 +3,7 @@ package frc.team2767.deepspace;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team2767.deepspace.control.Controls;
+import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
 import frc.team2767.deepspace.subsystem.ElevatorSubsystem;
 import frc.team2767.deepspace.subsystem.VisionSubsystem;
@@ -20,6 +21,7 @@ public class Robot extends TimedRobot {
   public static DriveSubsystem DRIVE;
   public static VisionSubsystem VISION;
   public static ElevatorSubsystem ELEVATOR;
+  public static BiscuitSubsystem BISCUIT;
 
   public static Controls CONTROLS;
 
@@ -30,6 +32,7 @@ public class Robot extends TimedRobot {
     DRIVE = new DriveSubsystem();
     VISION = new VisionSubsystem();
     ELEVATOR = new ElevatorSubsystem();
+    BISCUIT = new BiscuitSubsystem();
 
     // Controls initialize Commands so this should be instantiated last to prevent
     // NullPointerExceptions in commands that require() Subsystems above.

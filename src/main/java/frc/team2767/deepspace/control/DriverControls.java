@@ -6,8 +6,13 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.*;
 import frc.team2767.deepspace.command.Vision.LightsOffCommand;
 import frc.team2767.deepspace.command.Vision.LightsOnCommand;
+import frc.team2767.deepspace.command.biscuit.BiscuitPosition;
+import frc.team2767.deepspace.command.biscuit.BiscuitPositive;
+import frc.team2767.deepspace.command.biscuit.BiscuitStop;
+import frc.team2767.deepspace.command.biscuit.BiscuitZero;
 import frc.team2767.deepspace.command.pathfinder.PathCommand;
 import frc.team2767.deepspace.command.twist.TwistSetupCommand;
+import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,9 +28,14 @@ public class DriverControls {
     joystick = new Joystick(port);
 
     // Shoulder switches
-    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(log(Shoulder.LEFT_DOWN));
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed(log(Shoulder.LEFT_UP));
-    new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id).whenPressed(log(Shoulder.RIGHT_DOWN));
+    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(new BiscuitPositive());
+    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenReleased(new BiscuitStop());
+
+    new JoystickButton(joystick, Shoulder.LEFT_UP.id)
+        .whenPressed(new BiscuitPosition(BiscuitSubsystem.Position.UP));
+    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased(new BiscuitStop());
+
+    new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id).whenPressed(new BiscuitZero());
 
     // Push-buttons
     new JoystickButton(joystick, Button.RESET.id).whenPressed(new ZeroGyroCommand());
