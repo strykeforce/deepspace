@@ -43,9 +43,9 @@ public class DriverControls {
     new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenInactive(new ElevatorStopCommand());
     new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenActive(new ElevatorOpenLoopDownCommand());
 
-
     // intake
-    new JoystickButton(joystick, Trim.RIGHT_X_POS.id).whenPressed(new IntakePositionCommand(IntakeSubsystem.ShoulderPosition.UP));
+    new JoystickButton(joystick, Trim.RIGHT_X_POS.id)
+        .whenPressed(new IntakePositionCommand(IntakeSubsystem.ShoulderPosition.UP));
     new JoystickButton(joystick, Trim.RIGHT_X_NEG.id).whenPressed(log(Trim.RIGHT_X_NEG));
 
     // Push-buttons
