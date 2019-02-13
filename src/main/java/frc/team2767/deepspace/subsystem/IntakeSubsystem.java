@@ -6,9 +6,11 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.safety.Limitable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 public class IntakeSubsystem extends Subsystem implements Limitable {
 
@@ -168,6 +170,11 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     roller.enableCurrentLimit(true);
     roller.enableVoltageCompensation(true);
     logger.debug("configured roller talon");
+
+    TelemetryService telemetryService = Robot.TELEMETRY;
+    telemetryService.stop();
+    telemetryService.register(shoulder);
+    telemetryService.register(roller);
   }
 
   @Override
