@@ -4,10 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.*;
-import frc.team2767.deepspace.command.biscuit.BiscuitPosition;
-import frc.team2767.deepspace.command.biscuit.BiscuitPositive;
-import frc.team2767.deepspace.command.biscuit.BiscuitStop;
-import frc.team2767.deepspace.command.biscuit.BiscuitZero;
+import frc.team2767.deepspace.command.biscuit.*;
 import frc.team2767.deepspace.command.pathfinder.PathCommand;
 import frc.team2767.deepspace.command.twist.TwistSetupCommand;
 import frc.team2767.deepspace.command.vision.LightsOffCommand;
@@ -28,14 +25,23 @@ public class DriverControls {
     joystick = new Joystick(port);
 
     // Shoulder switches
-    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(new BiscuitPositive());
-    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenReleased(new BiscuitStop());
+    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(new BiscuitPositiveCommand());
+    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenReleased(new BiscuitStopCommand());
 
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id)
-        .whenPressed(new BiscuitPosition(BiscuitSubsystem.Position.UP));
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased(new BiscuitStop());
+    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed(new BiscuitNegativeCommand());
+    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased(new BiscuitStopCommand());
 
-    new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id).whenPressed(new BiscuitZero());
+    new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id)
+        .whenPressed(new BiscuitPlanCommand(BiscuitSubsystem.FieldDirections.PLACE_L));
+    new JoystickButton(joystick, Trim.RIGHT_Y_POS.id)
+        .whenPressed(new BiscuitPlanCommand(BiscuitSubsystem.FieldDirections.PLACE_R));
+
+    new JoystickButton(joystick, Trim.RIGHT_X_POS.id)
+        .whenPressed(new BiscuitPositionCommand(BiscuitSubsystem.Position.UP));
+    new JoystickButton(joystick, Trim.RIGHT_X_NEG.id)
+        .whenPressed(new BiscuitPositionCommand(BiscuitSubsystem.Position.PLACE));
+
+    new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id).whenPressed(new BiscuitZeroCommand());
 
     // Push-buttons
     new JoystickButton(joystick, Button.RESET.id).whenPressed(new ZeroGyroCommand());
@@ -51,10 +57,6 @@ public class DriverControls {
     new JoystickButton(joystick, Trim.LEFT_X_NEG.id).whenPressed(new LightsOffCommand());
     new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenPressed(log(Trim.LEFT_Y_POS));
     new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenPressed(log(Trim.LEFT_Y_NEG));
-    new JoystickButton(joystick, Trim.RIGHT_X_POS.id).whenPressed(log(Trim.RIGHT_X_POS));
-    new JoystickButton(joystick, Trim.RIGHT_X_NEG.id).whenPressed(log(Trim.RIGHT_X_NEG));
-    new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenPressed(log(Trim.RIGHT_Y_POS));
-    new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenPressed(log(Trim.RIGHT_Y_NEG));
   }
 
   /** Left stick X (up-down) axis. */

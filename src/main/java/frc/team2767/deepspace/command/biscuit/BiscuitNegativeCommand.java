@@ -4,16 +4,15 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 
-public class BiscuitPositive extends InstantCommand {
+public class BiscuitNegativeCommand extends InstantCommand {
   BiscuitSubsystem biscuitSubsystem = Robot.BISCUIT;
 
-  public BiscuitPositive() {
+  public BiscuitNegativeCommand() {
     requires(biscuitSubsystem);
   }
 
   @Override
   protected void initialize() {
-    System.out.println("BiscuitPositive");
-    biscuitSubsystem.runOpenLoop(.15);
+    biscuitSubsystem.runOpenLoop(-.07);
   }
 }
