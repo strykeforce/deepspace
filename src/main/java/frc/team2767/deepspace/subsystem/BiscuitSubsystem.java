@@ -32,7 +32,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   TelemetryService telemetryService = Robot.TELEMETRY;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  public Position plannedPosition;
+  public Position plannedPosition = Position.UP;
   public FieldDirections plannedDirection;
   public BiscuitGamePiece gamePiece;
 
@@ -46,7 +46,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     biscuitPreferences();
 
     biscuit.configForwardLimitSwitchSource(
-       LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
+        LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
 
     telemetryService.register(biscuit);
     biscuitConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
@@ -88,8 +88,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   }
 
   public void biscuitPreferences() {
-    // FIXME actually set from preference
-
     if (!preferences.containsKey(closeEnoughKey)) preferences.putInt(closeEnoughKey, BACKUP);
     if (!preferences.containsKey(absoluteZeroKey)) preferences.putInt(absoluteZeroKey, BACKUP);
     if (!preferences.containsKey(lowLimitKey)) preferences.putInt(lowLimitKey, BACKUP);
@@ -103,9 +101,14 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   public void zero() {
     if (!preferences.containsKey(absoluteZeroKey)) preferences.putInt(absoluteZeroKey, BACKUP);
     int absoluteZero = preferences.getInt(absoluteZeroKey, BACKUP);
+    logger.info("Preferences zero = {}", absoluteZero);
+    logger.info("Relative position = {}", biscuit.getSelectedSensorPosition());
+    logger.info(
+        "Absolute position = {}", biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF);
 
-    zero = biscuit.getSensorCollection().getPulseWidthPosition() - absoluteZero;
+    zero = biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF - absoluteZero;
     biscuit.setSelectedSensorPosition(zero);
+    logger.info("New relative position = {}", zero);
   }
 
   public double getGyroAngle() {

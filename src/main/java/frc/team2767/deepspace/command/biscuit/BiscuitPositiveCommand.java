@@ -14,6 +14,6 @@ public class BiscuitPositiveCommand extends InstantCommand {
   @Override
   protected void initialize() {
     System.out.println("BiscuitPositiveCommand");
-    biscuitSubsystem.runOpenLoop(.07);
+    biscuitSubsystem.runOpenLoop(.20);
   }
 }
