@@ -15,7 +15,7 @@ public class BiscuitPosition extends Command {
 
   @Override
   protected void initialize() {
-    biscuitSubsystem.setPosition(position);
+    biscuitSubsystem.setPosition();
   }
 
   @Override

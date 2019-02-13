@@ -4,11 +4,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.*;
-import frc.team2767.deepspace.command.Vision.LightsOffCommand;
-import frc.team2767.deepspace.command.Vision.LightsOnCommand;
 import frc.team2767.deepspace.command.biscuit.*;
 import frc.team2767.deepspace.command.pathfinder.PathCommand;
 import frc.team2767.deepspace.command.twist.TwistSetupCommand;
+import frc.team2767.deepspace.command.vision.*;
 import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,10 +30,15 @@ public class DriverControls {
     new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed(new BiscuitNegative());
     new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased(new BiscuitStop());
 
-    new JoystickButton(joystick, Trim.LEFT_X_POS.id)
+    new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id)
+        .whenPressed(new BiscuitPlan(BiscuitSubsystem.FieldDirections.PLACE_L));
+    new JoystickButton(joystick, Trim.RIGHT_Y_POS.id)
+        .whenPressed(new BiscuitPlan(BiscuitSubsystem.FieldDirections.PLACE_R));
+
+    new JoystickButton(joystick, Trim.RIGHT_X_POS.id)
         .whenPressed(new BiscuitPosition(BiscuitSubsystem.Position.UP));
-    new JoystickButton(joystick, Trim.LEFT_X_NEG.id)
-        .whenPressed(new BiscuitPosition(BiscuitSubsystem.Position.DOWN));
+    new JoystickButton(joystick, Trim.RIGHT_X_NEG.id)
+        .whenPressed(new BiscuitPosition(BiscuitSubsystem.Position.PLACE));
 
     new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id).whenPressed(new BiscuitZero());
 
@@ -52,10 +56,6 @@ public class DriverControls {
     new JoystickButton(joystick, Trim.LEFT_X_NEG.id).whenPressed(new LightsOffCommand());
     new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenPressed(log(Trim.LEFT_Y_POS));
     new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenPressed(log(Trim.LEFT_Y_NEG));
-    new JoystickButton(joystick, Trim.RIGHT_X_POS.id).whenPressed(log(Trim.RIGHT_X_POS));
-    new JoystickButton(joystick, Trim.RIGHT_X_NEG.id).whenPressed(log(Trim.RIGHT_X_NEG));
-    new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenPressed(log(Trim.RIGHT_Y_POS));
-    new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenPressed(log(Trim.RIGHT_Y_NEG));
   }
 
   /** Left stick X (up-down) axis. */

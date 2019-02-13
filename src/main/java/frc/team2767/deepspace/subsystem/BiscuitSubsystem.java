@@ -31,12 +31,13 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   DriveSubsystem driveSubsystem = Robot.DRIVE;
   TelemetryService telemetryService = Robot.TELEMETRY;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+  public Position plannedPosition;
   public FieldDirections plannedDirection;
+  public BiscuitGamePiece gamePiece;
 
   int zero = 0;
   int target = 0;
-
-  public Position pos; // temporary to open preferences
 
   TalonSRX biscuit = new TalonSRX(BISCUIT_ID);
   TalonSRXConfiguration biscuitConfig = new TalonSRXConfiguration();
@@ -112,23 +113,34 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     return angle;
   }
 
-  public void setPosition(Position position) {
+  public void setPosition() {
     double angle = getGyroAngle();
-    switch (position) {
+    switch (plannedPosition) {
       case PLACE:
-        if (plannedDirection == FieldDirections.FIELD_RIGHT && Math.abs(angle) < 90
-            || plannedDirection == FieldDirections.FIELD_LEFT && Math.abs(angle) > 90) {
+        if (plannedDirection == FieldDirections.PLACE_R && Math.abs(angle) < 90
+            || plannedDirection == FieldDirections.PLACE_L && Math.abs(angle) > 90) {
           target = Position.RIGHT.encoderPosition;
         } else {
           target = Position.LEFT.encoderPosition;
         }
         break;
-      case PICKUP:
-        if (plannedDirection == FieldDirections.FIELD_SOUTH && angle > 0
-            || plannedDirection == FieldDirections.FIELD_NORTH && angle < 0) {
-          target = Position.RIGHT.encoderPosition;
+      case LEVEL_3:
+        if (plannedDirection == FieldDirections.PLACE_R && Math.abs(angle) < 90
+                || plannedDirection == FieldDirections.PLACE_L && Math.abs(angle) > 90) {
+          if (gamePiece == BiscuitGamePiece.CARGO) target = Position.TILT_UP_R.encoderPosition;
+          if (gamePiece == BiscuitGamePiece.HATCH) target = Position.RIGHT.encoderPosition;
         } else {
-          target = Position.LEFT.encoderPosition;
+          if (gamePiece == BiscuitGamePiece.CARGO) target = Position.TILT_UP_L.encoderPosition;
+          if (gamePiece == BiscuitGamePiece.HATCH) target = Position.LEFT.encoderPosition;
+        }
+        break;
+      case PICKUP:
+        if (angle > 0) {
+          if (gamePiece == BiscuitGamePiece.CARGO) target = Position.BACK_STOP_L.encoderPosition;
+          if (gamePiece == BiscuitGamePiece.HATCH) target = Position.RIGHT.encoderPosition;
+        } else {
+          if (gamePiece == BiscuitGamePiece.CARGO) target = Position.BACK_STOP_R.encoderPosition;
+          if (gamePiece == BiscuitGamePiece.HATCH) target = Position.LEFT.encoderPosition;
         }
         break;
       case DOWN:
@@ -141,7 +153,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
         }
         break;
       default:
-        target = position.encoderPosition;
+        target = plannedPosition.encoderPosition;
         break;
     }
     biscuit.set(ControlMode.Position, target);
@@ -163,6 +175,11 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     biscuit.set(ControlMode.PercentOutput, 0);
   }
 
+  public enum BiscuitGamePiece {
+    CARGO,
+    HATCH;
+  }
+
   public enum Position {
     UP,
     DOWN_L,
@@ -175,8 +192,9 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     TILT_UP_R,
     DOWN,
     PLACE,
+    LEVEL_3,
     PICKUP;
-    // FIXME need set
+
     final int encoderPosition;
 
     Position() {
@@ -187,9 +205,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   }
 
   public enum FieldDirections {
-    FIELD_LEFT,
-    FIELD_RIGHT,
-    FIELD_NORTH,
-    FIELD_SOUTH
+    PLACE_L,
+    PLACE_R,
   }
 }
