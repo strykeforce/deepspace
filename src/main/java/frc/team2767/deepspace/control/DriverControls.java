@@ -4,15 +4,14 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.*;
-import frc.team2767.deepspace.command.biscuit.BiscuitPosition;
-import frc.team2767.deepspace.command.biscuit.BiscuitPositive;
-import frc.team2767.deepspace.command.biscuit.BiscuitStop;
-import frc.team2767.deepspace.command.biscuit.BiscuitZero;
+import frc.team2767.deepspace.command.biscuit.*;
+import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
+import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
+import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
 import frc.team2767.deepspace.command.pathfinder.PathCommand;
 import frc.team2767.deepspace.command.twist.TwistSetupCommand;
 import frc.team2767.deepspace.command.vision.LightsOffCommand;
 import frc.team2767.deepspace.command.vision.LightsOnCommand;
-import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,21 +26,25 @@ public class DriverControls {
   DriverControls(int port) {
     joystick = new Joystick(port);
 
-    // Shoulder switches
+    // biscuit
     new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(new BiscuitPositive());
     new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenReleased(new BiscuitStop());
 
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id)
-        .whenPressed(new BiscuitPosition(BiscuitSubsystem.Position.UP));
+    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed(new BiscuitNegative());
     new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased(new BiscuitStop());
 
-    new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id).whenPressed(new BiscuitZero());
+    new JoystickButton(joystick, Button.X.id).whenPressed(new BiscuitZero());
+
+    //     elevator
+    new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenActive(new ElevatorOpenLoopUpCommand());
+    new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenInactive(new ElevatorStopCommand());
+    new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenInactive(new ElevatorStopCommand());
+    new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenActive(new ElevatorOpenLoopDownCommand());
 
     // Push-buttons
     new JoystickButton(joystick, Button.RESET.id).whenPressed(new ZeroGyroCommand());
 
     new JoystickButton(joystick, Button.HAMBURGER.id).whenPressed(log(Button.HAMBURGER));
-    new JoystickButton(joystick, Button.X.id).whenPressed(new TimedDriveTest(2.0));
     new JoystickButton(joystick, Button.UP.id).whenPressed(new TwistSetupCommand());
     new JoystickButton(joystick, Button.DOWN.id)
         .whenPressed(new PathCommand("loading_to_cargo_B_L", 0.0));
@@ -49,8 +52,7 @@ public class DriverControls {
     // Trim Switches
     new JoystickButton(joystick, Trim.LEFT_X_POS.id).whenPressed(new LightsOnCommand());
     new JoystickButton(joystick, Trim.LEFT_X_NEG.id).whenPressed(new LightsOffCommand());
-    new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenPressed(log(Trim.LEFT_Y_POS));
-    new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenPressed(log(Trim.LEFT_Y_NEG));
+
     new JoystickButton(joystick, Trim.RIGHT_X_POS.id).whenPressed(log(Trim.RIGHT_X_POS));
     new JoystickButton(joystick, Trim.RIGHT_X_NEG.id).whenPressed(log(Trim.RIGHT_X_NEG));
     new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenPressed(log(Trim.RIGHT_Y_POS));

@@ -18,8 +18,8 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   private int CLOSE_ENOUGH = 50; // FIXME
   private final int BISCUIT_ID = 40;
   private final int TICKS_PER_REV = 12300;
-  private int LOW_ENCODER_LIMIT = -6150; // FIXME
-  private int HIGH_ENCODER_LIMIT = 6150; // FIXME
+  private int LOW_ENCODER_LIMIT = -120000; // FIXME
+  private int HIGH_ENCODER_LIMIT = 120000; // FIXME
 
   private static final String KEY_BASE = "BiscuitSubsystem/Position/";
   private static final int BACKUP = 2767;
@@ -48,8 +48,8 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     biscuitConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
     biscuitConfig.forwardSoftLimitThreshold = HIGH_ENCODER_LIMIT;
     biscuitConfig.reverseSoftLimitThreshold = LOW_ENCODER_LIMIT;
-    biscuitConfig.forwardSoftLimitEnable = true;
-    biscuitConfig.reverseSoftLimitEnable = true;
+    biscuitConfig.forwardSoftLimitEnable = false;
+    biscuitConfig.reverseSoftLimitEnable = false;
 
     biscuitConfig.slot0.kP = 1.0;
     biscuitConfig.slot0.kI = 0.0;
@@ -147,10 +147,12 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   }
 
   public void runOpenLoop(double power) {
+    logger.debug("running biscuit in open loop at {}", power);
     biscuit.set(ControlMode.PercentOutput, power);
   }
 
   public void stop() {
+    logger.debug("stopping biscuit");
     biscuit.set(ControlMode.PercentOutput, 0);
   }
 
