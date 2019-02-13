@@ -1,11 +1,11 @@
 package frc.team2767.deepspace.util;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class TwistCalculatorTest {
 
