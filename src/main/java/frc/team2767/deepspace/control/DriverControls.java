@@ -45,8 +45,9 @@ public class DriverControls {
 
     // intake
     new JoystickButton(joystick, Trim.RIGHT_X_POS.id)
-        .whenPressed(new IntakePositionCommand(IntakeSubsystem.ShoulderPosition.UP));
-    new JoystickButton(joystick, Trim.RIGHT_X_NEG.id).whenPressed(log(Trim.RIGHT_X_NEG));
+        .whenActive(new IntakePositionCommand(IntakeSubsystem.ShoulderPosition.UP));
+    new JoystickButton(joystick, Trim.RIGHT_X_NEG.id)
+        .whenActive(new IntakePositionCommand(IntakeSubsystem.ShoulderPosition.LOAD));
 
     // Push-buttons
     new JoystickButton(joystick, Button.RESET.id).whenPressed(new ZeroGyroCommand());
