@@ -26,9 +26,7 @@ class HtmlReport {
   void save() {
     try (Writer writer = Files.newBufferedWriter(FILE.toPath(), UTF_8)) {
       TagCreator.html(
-              head(
-                  title("Health Check Results"),
-                  styleWithInlineFile("/META-INF/healthcheck.css")),
+              head(title("Health Check Results"), styleWithInlineFile("/META-INF/healthcheck.css")),
               body(
                   h1("DEEPSPACE Health Check"),
                   p(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))),

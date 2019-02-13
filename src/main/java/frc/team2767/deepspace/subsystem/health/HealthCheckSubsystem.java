@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -41,13 +40,13 @@ public class HealthCheckSubsystem extends Subsystem {
     if (!initialized) throw new IllegalStateException("must initialize before saving reports");
     future =
         executorService.submit(
-                () -> {
-                  HtmlReport htmlReport = new HtmlReport(tests);
-                  htmlReport.save();
-                  CsvReport csvReport = new CsvReport(tests);
-                  csvReport.save();
-                  return true;
-                });
+            () -> {
+              HtmlReport htmlReport = new HtmlReport(tests);
+              htmlReport.save();
+              CsvReport csvReport = new CsvReport(tests);
+              csvReport.save();
+              return true;
+            });
   }
 
   public boolean isFinished() {
