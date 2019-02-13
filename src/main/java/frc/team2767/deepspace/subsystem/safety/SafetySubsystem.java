@@ -1,23 +1,32 @@
 package frc.team2767.deepspace.subsystem.safety;
 
-import static frc.team2767.deepspace.subsystem.safety.BiscuitPosition.*;
-import static frc.team2767.deepspace.subsystem.safety.ElevatorPosition.*;
-import static frc.team2767.deepspace.subsystem.safety.IntakePosition.INTAKE_INTAKE;
-import static frc.team2767.deepspace.subsystem.safety.IntakePosition.INTAKE_STOW;
-
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team2767.deepspace.Robot;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static frc.team2767.deepspace.subsystem.safety.BiscuitPosition.*;
+import static frc.team2767.deepspace.subsystem.safety.ElevatorPosition.*;
+import static frc.team2767.deepspace.subsystem.safety.IntakePosition.INTAKE_INTAKE;
+import static frc.team2767.deepspace.subsystem.safety.IntakePosition.INTAKE_STOW;
+
 public class SafetySubsystem extends Subsystem {
 
   private final Limitable biscuitSubsystem;
   private final Limitable intakeSubsystem;
   private final Limitable elevatorSubsystem;
-
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private BiscuitPosition biscuitLimit;
+  private IntakePosition intakeLimit;
+  private ElevatorPosition elevatorLimit;
+  private BiscuitPosition biscuitCurrent;
+  private IntakePosition intakeCurrent;
+  private ElevatorPosition elevatorCurrent;
+
+  public SafetySubsystem() {
+    this(Robot.BISCUIT, Robot.INTAKE, Robot.ELEVATOR);
+  }
 
   SafetySubsystem(
       Limitable biscuitSubsystem, Limitable intakeSubsystem, Limitable elevatorSubsystem) {
@@ -26,19 +35,18 @@ public class SafetySubsystem extends Subsystem {
     this.elevatorSubsystem = elevatorSubsystem;
   }
 
-  public SafetySubsystem() {
-    this(Robot.BISCUIT, Robot.INTAKE, Robot.ELEVATOR);
-  }
+  @Override
+  protected void initDefaultCommand() {}
 
   @Override
   public void periodic() {
-    BiscuitPosition biscuitCurrent = BiscuitPosition.of(biscuitSubsystem.getPosition());
-    IntakePosition intakeCurrent = IntakePosition.of(intakeSubsystem.getPosition());
-    ElevatorPosition elevatorCurrent = ElevatorPosition.of(elevatorSubsystem.getPosition());
+    biscuitCurrent = BiscuitPosition.of(biscuitSubsystem.getPosition());
+    intakeCurrent = IntakePosition.of(intakeSubsystem.getPosition());
+    elevatorCurrent = ElevatorPosition.of(elevatorSubsystem.getPosition());
 
-    BiscuitPosition biscuitLimit = biscuitLimit(biscuitCurrent, intakeCurrent, elevatorCurrent);
-    IntakePosition intakeLimit = intakeLimit(biscuitCurrent, elevatorCurrent);
-    ElevatorPosition elevatorLimit = elevatorLimit(biscuitCurrent, intakeCurrent);
+    biscuitLimit = biscuitLimit(biscuitCurrent, intakeCurrent, elevatorCurrent);
+    intakeLimit = intakeLimit(biscuitCurrent, elevatorCurrent);
+    elevatorLimit = elevatorLimit(biscuitCurrent, intakeCurrent);
 
     biscuitSubsystem.setLimits(biscuitLimit.forwardLimit, biscuitLimit.reverseLimit);
     intakeSubsystem.setLimits(intakeLimit.forwardLimit, intakeLimit.reverseLimit);
@@ -186,5 +194,22 @@ public class SafetySubsystem extends Subsystem {
   }
 
   @Override
-  protected void initDefaultCommand() {}
+  public String toString() {
+
+    return "current="
+        + "\n\t"
+        + elevatorCurrent.toString()
+        + "\n\t"
+        + intakeCurrent.toString()
+        + "\n\t"
+        + biscuitCurrent.toString()
+        + "limits="
+        + "\n\t"
+        + elevatorLimit.toString()
+        + "\n\t"
+        + intakeLimit.toString()
+        + "\n\t"
+        + biscuitLimit.toString()
+        + "END SAFETY LOG DUMP";
+  }
 }

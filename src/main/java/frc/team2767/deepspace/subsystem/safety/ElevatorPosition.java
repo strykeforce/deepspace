@@ -35,4 +35,9 @@ enum ElevatorPosition {
     // else return most conservative case
     return ELEVATOR_4;
   }
+
+  @Override
+  public String toString() {
+    return "forwardLimit=" + forwardLimit + ", reverseLimit=" + reverseLimit;
+  }
 }

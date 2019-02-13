@@ -9,6 +9,7 @@ import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
 import frc.team2767.deepspace.command.intake.IntakePositionCommand;
+import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.pathfinder.PathCommand;
 import frc.team2767.deepspace.command.twist.TwistSetupCommand;
 import frc.team2767.deepspace.command.vision.LightsOffCommand;

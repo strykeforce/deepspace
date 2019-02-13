@@ -32,4 +32,9 @@ enum BiscuitPosition {
         || this == BiscuitPosition.BISCUIT_120L_180L
         || this == BiscuitPosition.BISCUIT_180L;
   }
+
+  @Override
+  public String toString() {
+    return "forwardLimit=" + forwardLimit + ", reverseLimit=" + reverseLimit;
+  }
 }

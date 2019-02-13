@@ -15,4 +15,9 @@ enum IntakePosition {
   public static IntakePosition of(int position) {
     return INTAKE_STOW;
   }
+
+  @Override
+  public String toString() {
+    return "forwardLimit=" + forwardLimit + ", reverseLimit=" + reverseLimit;
+  }
 }
