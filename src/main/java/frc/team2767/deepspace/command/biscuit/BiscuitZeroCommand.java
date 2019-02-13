@@ -4,17 +4,15 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 
-public class BiscuitPlan extends InstantCommand {
+public class BiscuitZeroCommand extends InstantCommand {
   BiscuitSubsystem biscuitSubsystem = Robot.BISCUIT;
-  BiscuitSubsystem.FieldDirections direction;
 
-  public BiscuitPlan(BiscuitSubsystem.FieldDirections direction) {
-    this.direction = direction;
+  public BiscuitZeroCommand() {
     requires(biscuitSubsystem);
   }
 
   @Override
   protected void initialize() {
-    biscuitSubsystem.plannedDirection = direction;
+    biscuitSubsystem.zero();
   }
 }

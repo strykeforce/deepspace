@@ -3,8 +3,11 @@ package frc.team2767.deepspace.control;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team2767.deepspace.command.*;
-import frc.team2767.deepspace.command.biscuit.*;
+import frc.team2767.deepspace.command.ZeroGyroCommand;
+import frc.team2767.deepspace.command.biscuit.BiscuitNegativeCommand;
+import frc.team2767.deepspace.command.biscuit.BiscuitPositiveCommand;
+import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
+import frc.team2767.deepspace.command.biscuit.BiscuitZeroCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
@@ -30,13 +33,13 @@ public class DriverControls {
     joystick = new Joystick(port);
 
     // biscuit
-    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(new BiscuitPositive());
-    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenReleased(new BiscuitStop());
+    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(new BiscuitPositiveCommand());
+    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenReleased(new BiscuitStopCommand());
 
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed(new BiscuitNegative());
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased(new BiscuitStop());
+    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed(new BiscuitNegativeCommand());
+    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased(new BiscuitStopCommand());
 
-    new JoystickButton(joystick, Button.X.id).whenPressed(new BiscuitZero());
+    new JoystickButton(joystick, Button.X.id).whenPressed(new BiscuitZeroCommand());
 
     //     elevator
     new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenActive(new ElevatorOpenLoopUpCommand());
@@ -68,6 +71,10 @@ public class DriverControls {
     new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenPressed(log(Trim.RIGHT_Y_NEG));
   }
 
+  private <E extends Enum<E>> Command log(E control) {
+    return new LogCommand(logger, control.toString());
+  }
+
   /** Left stick X (up-down) axis. */
   public double getForward() {
     return -joystick.getRawAxis(Axis.LEFT_X.id);
@@ -96,10 +103,6 @@ public class DriverControls {
   /** Right slider on back of controller. */
   public double getRightBackAxis() {
     return joystick.getRawAxis(Axis.RIGHT_BACK.id);
-  }
-
-  private <E extends Enum<E>> Command log(E control) {
-    return new LogCommand(logger, control.toString());
   }
 
   public enum Axis {
