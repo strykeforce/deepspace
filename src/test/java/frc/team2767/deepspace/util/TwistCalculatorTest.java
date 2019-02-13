@@ -9,9 +9,8 @@ import org.junit.jupiter.params.provider.CsvFileSource;
 
 class TwistCalculatorTest {
 
-  @Disabled
   @ParameterizedTest
-  @CsvFileSource(resources = "inputs.csv", numLinesToSkip = 1)
+  @CsvFileSource(resources = "/inputs.csv", numLinesToSkip = 1)
   void getHeading(
       double cameraAngle,
       double cameraRange,
@@ -36,9 +35,8 @@ class TwistCalculatorTest {
         .isCloseTo(expectedRange, Percentage.withPercentage(0.1));
   }
 
-  @Disabled
   @ParameterizedTest
-  @CsvFileSource(resources = "inputs.csv", numLinesToSkip = 1)
+  @CsvFileSource(resources = "/inputs.csv", numLinesToSkip = 1)
   void getRange(
       double cameraAngle,
       double cameraRange,
