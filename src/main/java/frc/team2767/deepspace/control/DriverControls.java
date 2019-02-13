@@ -24,23 +24,23 @@ public class DriverControls {
     joystick = new Joystick(port);
 
     // Shoulder switches
-    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(new BiscuitPositive());
-    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenReleased(new BiscuitStop());
+    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(new BiscuitPositiveCommand());
+    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenReleased(new BiscuitStopCommand());
 
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed(new BiscuitNegative());
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased(new BiscuitStop());
+    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed(new BiscuitNegativeCommand());
+    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased(new BiscuitStopCommand());
 
     new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id)
-        .whenPressed(new BiscuitPlan(BiscuitSubsystem.FieldDirections.PLACE_L));
+        .whenPressed(new BiscuitPlanCommand(BiscuitSubsystem.FieldDirections.PLACE_L));
     new JoystickButton(joystick, Trim.RIGHT_Y_POS.id)
-        .whenPressed(new BiscuitPlan(BiscuitSubsystem.FieldDirections.PLACE_R));
+        .whenPressed(new BiscuitPlanCommand(BiscuitSubsystem.FieldDirections.PLACE_R));
 
     new JoystickButton(joystick, Trim.RIGHT_X_POS.id)
-        .whenPressed(new BiscuitPosition(BiscuitSubsystem.Position.UP));
+        .whenPressed(new BiscuitPositionCommand(BiscuitSubsystem.Position.UP));
     new JoystickButton(joystick, Trim.RIGHT_X_NEG.id)
-        .whenPressed(new BiscuitPosition(BiscuitSubsystem.Position.PLACE));
+        .whenPressed(new BiscuitPositionCommand(BiscuitSubsystem.Position.PLACE));
 
-    new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id).whenPressed(new BiscuitZero());
+    new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id).whenPressed(new BiscuitZeroCommand());
 
     // Push-buttons
     new JoystickButton(joystick, Button.RESET.id).whenPressed(new ZeroGyroCommand());
