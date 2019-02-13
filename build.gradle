@@ -43,6 +43,7 @@ dependencies {
     compile "org.strykeforce.thirdcoast:telemetry:${thirdcoastVersion}"
     compile "ch.qos.logback:logback-classic:${logbackVersion}"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}"
+    compile group: 'com.j2html', name: 'j2html', version: '1.4.0'
 
     // Testing
     testCompile "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
