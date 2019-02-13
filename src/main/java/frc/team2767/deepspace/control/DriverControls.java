@@ -8,10 +8,12 @@ import frc.team2767.deepspace.command.biscuit.*;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
+import frc.team2767.deepspace.command.intake.IntakePositionCommand;
 import frc.team2767.deepspace.command.pathfinder.PathCommand;
 import frc.team2767.deepspace.command.twist.TwistSetupCommand;
 import frc.team2767.deepspace.command.vision.LightsOffCommand;
 import frc.team2767.deepspace.command.vision.LightsOnCommand;
+import frc.team2767.deepspace.subsystem.IntakeSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +42,11 @@ public class DriverControls {
     new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenInactive(new ElevatorStopCommand());
     new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenInactive(new ElevatorStopCommand());
     new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenActive(new ElevatorOpenLoopDownCommand());
+
+
+    // intake
+    new JoystickButton(joystick, Trim.RIGHT_X_POS.id).whenPressed(new IntakePositionCommand(IntakeSubsystem.ShoulderPosition.UP));
+    new JoystickButton(joystick, Trim.RIGHT_X_NEG.id).whenPressed(log(Trim.RIGHT_X_NEG));
 
     // Push-buttons
     new JoystickButton(joystick, Button.RESET.id).whenPressed(new ZeroGyroCommand());

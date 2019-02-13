@@ -2,8 +2,8 @@ package frc.team2767.deepspace.subsystem.safety;
 
 enum BiscuitPosition {
   BISCUIT_0(0, 0),
-  BISCUIT_90L(3000, -3000),
-  BISCUIT_90R(3000, -3000),
+  BISCUIT_90L(0, 0),
+  BISCUIT_90R(0, 0),
   BISCUIT_90L_120L(0, 0),
   BISCUIT_90R_120R(0, 0),
   BISCUIT_120L(0, 0),
