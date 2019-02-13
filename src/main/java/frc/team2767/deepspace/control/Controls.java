@@ -4,6 +4,7 @@ public class Controls {
 
   private final DriverControls driverControls = new DriverControls(0);
   private final GameControls gameControls = new GameControls(1);
+  private final SmartDashboardControls smartDashboardControls = new SmartDashboardControls();
 
   public Controls() {
     //    new SmartDashboardControls();
@@ -15,5 +16,9 @@ public class Controls {
 
   public GameControls getGameControls() {
     return gameControls;
+  }
+
+  public SmartDashboardControls getSmartDashboardControls() {
+    return smartDashboardControls;
   }
 }
