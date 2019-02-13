@@ -4,14 +4,14 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.*;
-import frc.team2767.deepspace.command.Vision.LightsOffCommand;
-import frc.team2767.deepspace.command.Vision.LightsOnCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPosition;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositive;
 import frc.team2767.deepspace.command.biscuit.BiscuitStop;
 import frc.team2767.deepspace.command.biscuit.BiscuitZero;
 import frc.team2767.deepspace.command.pathfinder.PathCommand;
 import frc.team2767.deepspace.command.twist.TwistSetupCommand;
+import frc.team2767.deepspace.command.vision.LightsOffCommand;
+import frc.team2767.deepspace.command.vision.LightsOnCommand;
 import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +44,7 @@ public class DriverControls {
     new JoystickButton(joystick, Button.X.id).whenPressed(new TimedDriveTest(2.0));
     new JoystickButton(joystick, Button.UP.id).whenPressed(new TwistSetupCommand());
     new JoystickButton(joystick, Button.DOWN.id)
-        .whenPressed(new PathCommand("loading_to_cargo", 0.0));
+        .whenPressed(new PathCommand("loading_to_cargo_B_L", 0.0));
 
     // Trim Switches
     new JoystickButton(joystick, Trim.LEFT_X_POS.id).whenPressed(new LightsOnCommand());
