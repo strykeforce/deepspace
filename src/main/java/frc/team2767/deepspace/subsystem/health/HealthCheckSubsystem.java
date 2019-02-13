@@ -41,16 +41,13 @@ public class HealthCheckSubsystem extends Subsystem {
     if (!initialized) throw new IllegalStateException("must initialize before saving reports");
     future =
         executorService.submit(
-            new Callable<Boolean>() {
-              @Override
-              public Boolean call() throws Exception {
-                HtmlReport htmlReport = new HtmlReport(tests);
-                htmlReport.save();
-                CsvReport csvReport = new CsvReport(tests);
-                csvReport.save();
-                return true;
-              }
-            });
+                () -> {
+                  HtmlReport htmlReport = new HtmlReport(tests);
+                  htmlReport.save();
+                  CsvReport csvReport = new CsvReport(tests);
+                  csvReport.save();
+                  return true;
+                });
   }
 
   public boolean isFinished() {

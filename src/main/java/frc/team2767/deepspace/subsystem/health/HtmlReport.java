@@ -28,7 +28,7 @@ class HtmlReport {
       TagCreator.html(
               head(
                   title("Health Check Results"),
-                  styleWithInlineFile("/META-INF/powerup/healthcheck.css")),
+                  styleWithInlineFile("/META-INF/healthcheck.css")),
               body(
                   h1("DEEPSPACE Health Check"),
                   p(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))),
