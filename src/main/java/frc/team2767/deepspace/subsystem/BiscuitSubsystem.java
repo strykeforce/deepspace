@@ -43,12 +43,17 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   TalonSRXConfiguration biscuitConfig = new TalonSRXConfiguration();
 
   public BiscuitSubsystem() {
+    biscuitPreferences();
+
+    biscuit.configForwardLimitSwitchSource(
+       LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
+
     telemetryService.register(biscuit);
     biscuitConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
     biscuitConfig.forwardSoftLimitThreshold = HIGH_ENCODER_LIMIT;
     biscuitConfig.reverseSoftLimitThreshold = LOW_ENCODER_LIMIT;
-    biscuitConfig.forwardSoftLimitEnable = true;
-    biscuitConfig.reverseSoftLimitEnable = true;
+    biscuitConfig.forwardSoftLimitEnable = false;
+    biscuitConfig.reverseSoftLimitEnable = false;
 
     biscuitConfig.slot0.kP = 1.0;
     biscuitConfig.slot0.kI = 0.0;
@@ -69,10 +74,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     biscuitConfig.motionAcceleration = 2_000;
 
     biscuit.configAllSettings(biscuitConfig);
-
-    biscuit.configForwardLimitSwitchSource(
-        LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
-    biscuitPreferences();
   }
 
   @Override
@@ -126,7 +127,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
         break;
       case LEVEL_3:
         if (plannedDirection == FieldDirections.PLACE_R && Math.abs(angle) < 90
-                || plannedDirection == FieldDirections.PLACE_L && Math.abs(angle) > 90) {
+            || plannedDirection == FieldDirections.PLACE_L && Math.abs(angle) > 90) {
           if (gamePiece == BiscuitGamePiece.CARGO) target = Position.TILT_UP_R.encoderPosition;
           if (gamePiece == BiscuitGamePiece.HATCH) target = Position.RIGHT.encoderPosition;
         } else {
