@@ -17,7 +17,7 @@ public class IntakePositionCommand extends Command {
 
   @Override
   protected void initialize() {
-    INTAKE.setPosition(IntakeSubsystem.ShoulderPosition.UP);
+    INTAKE.setPosition(position);
   }
 
   @Override

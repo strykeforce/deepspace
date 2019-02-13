@@ -122,26 +122,25 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
 
   @SuppressWarnings("Duplicates")
   private void configTalon() {
-    // FIXME: wont't run
     TalonSRXConfiguration shoulderConfig = new TalonSRXConfiguration();
     shoulderConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
-    shoulderConfig.continuousCurrentLimit = 0;
-    shoulderConfig.peakCurrentDuration = 0;
-    shoulderConfig.peakCurrentLimit = 0;
-    shoulderConfig.slot0.kP = 0;
+    shoulderConfig.continuousCurrentLimit = 5;
+    shoulderConfig.peakCurrentDuration = 40;
+    shoulderConfig.peakCurrentLimit = 10;
+    shoulderConfig.slot0.kP = 4;
     shoulderConfig.slot0.kI = 0;
-    shoulderConfig.slot0.kD = 0;
-    shoulderConfig.slot0.kF = 0;
+    shoulderConfig.slot0.kD = 60;
+    shoulderConfig.slot0.kF = 1;
     shoulderConfig.slot0.integralZone = 0;
     shoulderConfig.slot0.allowableClosedloopError = 0;
     shoulderConfig.forwardSoftLimitEnable = true;
     shoulderConfig.forwardSoftLimitThreshold = kForwardShoulderSoftLimit;
     shoulderConfig.reverseSoftLimitEnable = true;
     shoulderConfig.reverseSoftLimitThreshold = kReverseShoulderSoftLimit;
-    shoulderConfig.voltageCompSaturation = 0;
-    shoulderConfig.voltageMeasurementFilter = 0;
-    shoulderConfig.motionAcceleration = 0;
-    shoulderConfig.motionCruiseVelocity = 0;
+    shoulderConfig.voltageCompSaturation = 12;
+    shoulderConfig.voltageMeasurementFilter = 32;
+    shoulderConfig.motionAcceleration = 3000;
+    shoulderConfig.motionCruiseVelocity = 1000;
 
     // FIXME: won't run
     TalonSRXConfiguration rollerConfig = new TalonSRXConfiguration();
