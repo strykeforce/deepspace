@@ -24,11 +24,12 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   private final String ROLLER_IN_OPUTPUT = PREFS_NAME + "roller_in";
   private final String SHOULDER_UP_OUPTUT = PREFS_NAME + "shoulder_up";
   private final String SHOULDER_DOWN_OUPUT = PREFS_NAME + "shoulder_down";
+  private final String K_FORWARD_SOFT_LIMIT = PREFS_NAME + "shoulder_forward_soft_limit";
+  private final String K_REVERSE_SOFT_LIMIT = PREFS_NAME + "shoulder_reverse_soft_limit";
   private final int BACKUP = 0;
   private int kCloseEnough;
   private int kShoulderUpPosition;
   private int kShoulderZeroPosition;
-  private int kShoulderDownPosition;
   private int kShoulderLoadPosition;
   private double kRollerOut;
   private double kRollerIn;
@@ -41,8 +42,8 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   private TalonSRX roller = new TalonSRX(ROLLER_ID);
   private int stableCount;
   private int setpoint;
-  private int forwardShoulderSoftLimit; // FIXME
-  private int reverseShoulderSoftLimit; // FIXME
+  private int kForwardShoulderSoftLimit; // FIXME
+  private int kReverseShoulderSoftLimit; // FIXME
   private Preferences preferences;
 
   public IntakeSubsystem() {
@@ -56,67 +57,13 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
       logger.error("Roller not present");
     }
 
-    shoulderPreferences();
+    intakePreferences();
     configTalon();
-  }
-
-  private void shoulderPreferences() {}
-
-  @SuppressWarnings("Duplicates")
-  private void configTalon() {
-    // FIXME: wont't run
-    TalonSRXConfiguration shoulderConfig = new TalonSRXConfiguration();
-    shoulderConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
-    shoulderConfig.continuousCurrentLimit = 0;
-    shoulderConfig.peakCurrentDuration = 0;
-    shoulderConfig.peakCurrentLimit = 0;
-    shoulderConfig.slot0.kP = 0;
-    shoulderConfig.slot0.kI = 0;
-    shoulderConfig.slot0.kD = 0;
-    shoulderConfig.slot0.kF = 0;
-    shoulderConfig.slot0.integralZone = 0;
-    shoulderConfig.slot0.allowableClosedloopError = 0;
-    shoulderConfig.forwardSoftLimitEnable = true;
-    shoulderConfig.forwardSoftLimitThreshold = forwardShoulderSoftLimit;
-    shoulderConfig.reverseSoftLimitEnable = true;
-    shoulderConfig.reverseSoftLimitThreshold = reverseShoulderSoftLimit;
-    shoulderConfig.voltageCompSaturation = 0;
-    shoulderConfig.voltageMeasurementFilter = 0;
-    shoulderConfig.motionAcceleration = 0;
-    shoulderConfig.motionCruiseVelocity = 0;
-
-    // FIXME: won't run
-    TalonSRXConfiguration rollerConfig = new TalonSRXConfiguration();
-    rollerConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
-    rollerConfig.continuousCurrentLimit = 0;
-    rollerConfig.peakCurrentDuration = 0;
-    rollerConfig.peakCurrentLimit = 0;
-    rollerConfig.slot0.kP = 0;
-    rollerConfig.slot0.kI = 0;
-    rollerConfig.slot0.kD = 0;
-    rollerConfig.slot0.kF = 0;
-    rollerConfig.slot0.integralZone = 0;
-    rollerConfig.slot0.allowableClosedloopError = 0;
-    rollerConfig.forwardSoftLimitEnable = true;
-    rollerConfig.forwardSoftLimitThreshold = forwardShoulderSoftLimit;
-    rollerConfig.reverseSoftLimitEnable = true;
-    rollerConfig.reverseSoftLimitThreshold = reverseShoulderSoftLimit;
-    rollerConfig.voltageCompSaturation = 0;
-    rollerConfig.voltageMeasurementFilter = 0;
-    rollerConfig.motionAcceleration = 0;
-    rollerConfig.motionCruiseVelocity = 0;
-
-    shoulder.configAllSettings(shoulderConfig);
-    shoulder.enableCurrentLimit(true);
-    shoulder.enableVoltageCompensation(true);
-
-    roller.configAllSettings(rollerConfig);
-    roller.enableCurrentLimit(true);
-    roller.enableVoltageCompensation(true);
+    setLimits(kForwardShoulderSoftLimit, kReverseShoulderSoftLimit);
   }
 
   @SuppressWarnings("Duplicates")
-  private void elevatorPreferences() {
+  private void intakePreferences() {
     if (!preferences.containsKey(SHOULDER_DOWN_OUPUT)) {
       preferences.putInt(SHOULDER_DOWN_OUPUT, BACKUP);
     }
@@ -141,6 +88,12 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     if (!preferences.containsKey(K_CLOSE_ENOUGH)) {
       preferences.putInt(K_CLOSE_ENOUGH, BACKUP);
     }
+    if (!preferences.containsKey(K_FORWARD_SOFT_LIMIT)) {
+      preferences.putInt(K_FORWARD_SOFT_LIMIT, BACKUP);
+    }
+    if (!preferences.containsKey(K_REVERSE_SOFT_LIMIT)) {
+      preferences.putInt(K_REVERSE_SOFT_LIMIT, BACKUP);
+    }
 
     // need to make the backups actually relevant
     kShoulderDownOutput = preferences.getInt(SHOULDER_DOWN_OUPUT, BACKUP);
@@ -151,33 +104,87 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     kRollerIn = preferences.getInt(ROLLER_IN_OPUTPUT, BACKUP);
     kRollerOut = preferences.getDouble(ROLLER_OUT_OUTPUT, BACKUP);
     kCloseEnough = preferences.getInt(K_CLOSE_ENOUGH, BACKUP);
+    kForwardShoulderSoftLimit = preferences.getInt(K_FORWARD_SOFT_LIMIT, BACKUP);
+    kReverseShoulderSoftLimit = preferences.getInt(K_REVERSE_SOFT_LIMIT, BACKUP);
 
-    logger.info("kShoulderDownOutput: {}", kShoulderDownOutput);
-    logger.info("kShoulderUpOutput: {}", kShoulderUpOutput);
-    logger.info("kShoulderZeroPosition: {}", kShoulderZeroPosition);
-    logger.info("kShoulderLoadPosition: {}", kShoulderLoadPosition);
-    logger.info("kShoulderUpPosition: {}", kShoulderUpPosition);
-    logger.info("kRollerIn: {}", kRollerIn);
-    logger.info("kRollerOut: {}", kRollerOut);
-    logger.info("kUpOutput: {}", kShoulderUpOutput);
-    logger.info("kCloseEnough: {}", kCloseEnough);
+    logger.info("kShoulderDownOutput={}", kShoulderDownOutput);
+    logger.info("kShoulderUpOutput={}", kShoulderUpOutput);
+    logger.info("kShoulderZeroPosition={}", kShoulderZeroPosition);
+    logger.info("kShoulderLoadPosition={}", kShoulderLoadPosition);
+    logger.info("kShoulderUpPosition={}", kShoulderUpPosition);
+    logger.info("kRollerIn={}", kRollerIn);
+    logger.info("kRollerOut={}", kRollerOut);
+    logger.info("kUpOutput={}", kShoulderUpOutput);
+    logger.info("kCloseEnough={}", kCloseEnough);
+    logger.info("kForwardShoulderSoftLimit={}", kForwardShoulderSoftLimit);
+    logger.info("kReverseShoulderSoftLimit={}", kReverseShoulderSoftLimit);
   }
+
+  @SuppressWarnings("Duplicates")
+  private void configTalon() {
+    TalonSRXConfiguration shoulderConfig = new TalonSRXConfiguration();
+    shoulderConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
+    shoulderConfig.continuousCurrentLimit = 5;
+    shoulderConfig.peakCurrentDuration = 40;
+    shoulderConfig.peakCurrentLimit = 10;
+    shoulderConfig.slot0.kP = 4;
+    shoulderConfig.slot0.kI = 0;
+    shoulderConfig.slot0.kD = 60;
+    shoulderConfig.slot0.kF = 1;
+    shoulderConfig.slot0.integralZone = 0;
+    shoulderConfig.slot0.allowableClosedloopError = 0;
+    shoulderConfig.forwardSoftLimitEnable = true;
+    shoulderConfig.forwardSoftLimitThreshold = kForwardShoulderSoftLimit;
+    shoulderConfig.reverseSoftLimitEnable = true;
+    shoulderConfig.reverseSoftLimitThreshold = kReverseShoulderSoftLimit;
+    shoulderConfig.voltageCompSaturation = 12;
+    shoulderConfig.voltageMeasurementFilter = 32;
+    shoulderConfig.motionAcceleration = 3000;
+    shoulderConfig.motionCruiseVelocity = 1000;
+
+    // FIXME: won't run
+    TalonSRXConfiguration rollerConfig = new TalonSRXConfiguration();
+    rollerConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
+    rollerConfig.continuousCurrentLimit = 0;
+    rollerConfig.peakCurrentDuration = 0;
+    rollerConfig.peakCurrentLimit = 0;
+    rollerConfig.slot0.kP = 0;
+    rollerConfig.slot0.kI = 0;
+    rollerConfig.slot0.kD = 0;
+    rollerConfig.slot0.kF = 0;
+    rollerConfig.slot0.integralZone = 0;
+    rollerConfig.slot0.allowableClosedloopError = 0;
+    rollerConfig.voltageCompSaturation = 0;
+    rollerConfig.voltageMeasurementFilter = 0;
+    rollerConfig.motionAcceleration = 0;
+    rollerConfig.motionCruiseVelocity = 0;
+
+    shoulder.configAllSettings(shoulderConfig);
+    shoulder.enableCurrentLimit(true);
+    shoulder.enableVoltageCompensation(true);
+    logger.debug("configured shoulder talon");
+
+    roller.configAllSettings(rollerConfig);
+    roller.enableCurrentLimit(true);
+    roller.enableVoltageCompensation(true);
+    logger.debug("configured roller talon");
+  }
+
+  @Override
+  protected void initDefaultCommand() {}
 
   ////////////////////////////////////////////////////////////////////////////
   // SHOULDER
   ////////////////////////////////////////////////////////////////////////////
-  @Override
-  protected void initDefaultCommand() {}
 
-  /**
-   * @param controlMode roller TalonSRX control mode
-   * @param setpoint TalonSRX setpoint
-   */
-  public void shoulderOpenLoop(ControlMode controlMode, double setpoint) {
-    roller.set(controlMode, setpoint);
+  /** @param setpoint TalonSRX setpoint */
+  public void shoulderOpenLoop(double setpoint) {
+    logger.debug("shoulder open loop at {}", setpoint);
+    roller.set(ControlMode.PercentOutput, setpoint);
   }
 
   public void shoulderZeroWithLimitSwitch() {
+    logger.debug("shoulder zeroing with limit switch");
     shoulder.setSelectedSensorPosition(kShoulderZeroPosition);
   }
 
@@ -186,10 +193,16 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   }
 
   public boolean onZero() {
-    return shoulder.getSensorCollection().isFwdLimitSwitchClosed();
+    if (shoulder.getSensorCollection().isFwdLimitSwitchClosed()) {
+      logger.debug("limit switch closed");
+      return true;
+    }
+
+    return false;
   }
 
   public void shoulderStop() {
+    logger.debug("shoulder stop");
     shoulder.set(ControlMode.PercentOutput, 0.0);
   }
 
@@ -200,11 +213,13 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
 
   @Override
   public void setLimits(int forward, int reverse) {
+    logger.debug("setting shoulder soft limits fwd={} rev={}", forward, reverse);
     shoulder.configForwardSoftLimitThreshold(forward);
     shoulder.configReverseSoftLimitThreshold(reverse);
   }
 
   public void setPosition(ShoulderPosition position) {
+    logger.debug("setting shoulder position={}", position);
     setpoint = getPositionSetpoint(position);
     shoulder.set(ControlMode.Position, getPositionSetpoint(position));
   }
@@ -216,11 +231,12 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
       case LOAD:
         return kShoulderLoadPosition;
       default:
-        logger.warn("Invalid intake position");
+        logger.warn("Invalid shoulder position");
         return 0;
     }
   }
 
+  @SuppressWarnings("Duplicates")
   public boolean onTarget() {
     int error = setpoint - shoulder.getSelectedSensorPosition(0);
     if (Math.abs(error) > kCloseEnough) stableCount = 0;
@@ -238,10 +254,12 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
 
   /** @param setpoint TalonSRX setpoint */
   public void rollerOpenLoop(double setpoint) {
+    logger.debug("rollers open loop at ", setpoint);
     roller.set(ControlMode.PercentOutput, setpoint);
   }
 
   public void rollerStop() {
+    logger.debug("roller stop");
     roller.set(ControlMode.PercentOutput, 0.0);
   }
 

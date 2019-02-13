@@ -1,4 +1,4 @@
-package frc.team2767.deepspace.command.Elevator;
+package frc.team2767.deepspace.command.elevator;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team2767.deepspace.Robot;
