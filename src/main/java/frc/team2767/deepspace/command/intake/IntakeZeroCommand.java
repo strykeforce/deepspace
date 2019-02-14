@@ -23,7 +23,7 @@ public class IntakeZeroCommand extends Command {
 
   @Override
   protected boolean isFinished() {
-    return INTAKE.onZero();
+    return INTAKE.onZero() || isTimedOut();
   }
 
   @Override

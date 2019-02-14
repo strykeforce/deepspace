@@ -3,9 +3,10 @@ package frc.team2767.deepspace.control;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team2767.deepspace.command.LogCommand;
+import frc.team2767.deepspace.command.biscuit.BiscuitZeroCommand;
 import frc.team2767.deepspace.command.elevator.*;
-import frc.team2767.deepspace.subsystem.ElevatorSubsystem;
+import frc.team2767.deepspace.command.intake.IntakeZeroCommand;
+import frc.team2767.deepspace.command.log.LogCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,34 +21,40 @@ public class GameControls {
   public GameControls(int port) {
     joystick = new Joystick(port);
 
-    // Shoulder
-    new JoystickButton(joystick, GameControls.Shoulder.LEFT.id)
-        .whenPressed(log(GameControls.Shoulder.LEFT));
-    new JoystickButton(joystick, GameControls.Shoulder.RIGHT.id)
-        .whenPressed(new ElevatorStopCommand());
-
-    // Triggers
-    new JoystickButton(joystick, GameControls.Trigger.LEFT.id)
-        .whenPressed(log(GameControls.Trigger.LEFT));
-    new JoystickButton(joystick, GameControls.Trigger.RIGHT.id)
-        .whenPressed(log(GameControls.Trigger.RIGHT));
-
-    // Push-buttons
-    new JoystickButton(joystick, GameControls.Button.A.id)
-        .whenPressed(new ElevatorOpenLoopDownCommand());
-    new JoystickButton(joystick, GameControls.Button.B.id)
-        .whenPressed(new ElevatorPositionCommand(ElevatorSubsystem.Position.STOW));
     new JoystickButton(joystick, GameControls.Button.X.id).whenPressed(new ElevatorZeroCommand());
-    new JoystickButton(joystick, GameControls.Button.Y.id)
-        .whenPressed(new ElevatorOpenLoopUpCommand());
-    new JoystickButton(joystick, GameControls.Button.START.id)
-        .whenPressed(log(GameControls.Button.START));
-    new JoystickButton(joystick, GameControls.Button.BACK.id)
-        .whenPressed(log(GameControls.Button.BACK));
-    new JoystickButton(joystick, GameControls.Button.LEFT.id)
-        .whenPressed(log(GameControls.Button.LEFT));
-    new JoystickButton(joystick, GameControls.Button.RIGHT.id)
-        .whenPressed(log(GameControls.Button.RIGHT));
+    new JoystickButton(joystick, GameControls.Button.Y.id).whenPressed(new BiscuitZeroCommand());
+    new JoystickButton(joystick, GameControls.Button.B.id).whenPressed(new IntakeZeroCommand());
+
+    //    // Shoulder
+    //    new JoystickButton(joystick, GameControls.Shoulder.LEFT.id)
+    //        .whenPressed(log(GameControls.Shoulder.LEFT));
+    //    new JoystickButton(joystick, GameControls.Shoulder.RIGHT.id)
+    //        .whenPressed(new ElevatorStopCommand());
+    //
+    //    // Triggers
+    //    new JoystickButton(joystick, GameControls.Trigger.LEFT.id)
+    //        .whenPressed(log(GameControls.Trigger.LEFT));
+    //    new JoystickButton(joystick, GameControls.Trigger.RIGHT.id)
+    //        .whenPressed(log(GameControls.Trigger.RIGHT));
+    //
+    //    // Push-buttons
+    //    new JoystickButton(joystick, GameControls.Button.A.id)
+    //        .whenPressed(new ElevatorOpenLoopDownCommand());
+    //    new JoystickButton(joystick, GameControls.Button.B.id)
+    //        .whenPressed(new ElevatorPositionCommand(ElevatorSubsystem.Position.STOW));
+    //
+    //    new JoystickButton(joystick, GameControls.Button.START.id)
+    //        .whenPressed(log(GameControls.Button.START));
+    //    new JoystickButton(joystick, GameControls.Button.BACK.id)
+    //        .whenPressed(log(GameControls.Button.BACK));
+    //    new JoystickButton(joystick, GameControls.Button.LEFT.id)
+    //        .whenPressed(log(GameControls.Button.LEFT));
+    //    new JoystickButton(joystick, GameControls.Button.RIGHT.id)
+    //        .whenPressed(log(GameControls.Button.RIGHT));
+  }
+
+  private <E extends Enum<E>> Command log(E control) {
+    return new LogCommand(logger, control.toString());
   }
 
   /** Left stick Y (up-down) axis. */
@@ -73,10 +80,6 @@ public class GameControls {
   /** D-pad axis. */
   public int getDPad() {
     return joystick.getPOV();
-  }
-
-  private <E extends Enum<E>> Command log(E control) {
-    return new LogCommand(logger, control.toString());
   }
 
   public enum Axis {

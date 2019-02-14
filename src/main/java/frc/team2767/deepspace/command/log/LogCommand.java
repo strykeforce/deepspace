@@ -1,4 +1,4 @@
-package frc.team2767.deepspace.command;
+package frc.team2767.deepspace.command.log;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import org.slf4j.Logger;

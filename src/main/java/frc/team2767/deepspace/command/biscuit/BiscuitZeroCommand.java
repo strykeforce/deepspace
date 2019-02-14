@@ -5,14 +5,14 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 
 public class BiscuitZeroCommand extends InstantCommand {
-  BiscuitSubsystem biscuitSubsystem = Robot.BISCUIT;
+  BiscuitSubsystem BISCUIT = Robot.BISCUIT;
 
   public BiscuitZeroCommand() {
-    requires(biscuitSubsystem);
+    requires(BISCUIT);
   }
 
   @Override
   protected void initialize() {
-    biscuitSubsystem.zero();
+    BISCUIT.zero();
   }
 }
