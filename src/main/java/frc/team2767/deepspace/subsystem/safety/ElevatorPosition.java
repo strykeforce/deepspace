@@ -1,11 +1,11 @@
 package frc.team2767.deepspace.subsystem.safety;
 
 enum ElevatorPosition {
-  ELEVATOR_4(3270, 41),
-  ELEVATOR_9(3270, 1580),
-  ELEVATOR_10(3270, 2000),
-  ELEVATOR_16(3270, 5250),
-  ELEVATOR_21(3270, 7800);
+  ELEVATOR_4(32000, 50),
+  ELEVATOR_9(32000, 1725),
+  ELEVATOR_10(32000, 2250),
+  ELEVATOR_16(32000, 5090),
+  ELEVATOR_21(32000, 7800);
 
   public final int forwardLimit;
   public final int reverseLimit;
