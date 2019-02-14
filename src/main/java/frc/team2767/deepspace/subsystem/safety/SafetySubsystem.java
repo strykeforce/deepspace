@@ -50,6 +50,11 @@ public class SafetySubsystem extends Subsystem {
 
     biscuitSubsystem.setLimits(biscuitLimit.forwardLimit, biscuitLimit.reverseLimit);
     intakeSubsystem.setLimits(intakeLimit.forwardLimit, intakeLimit.reverseLimit);
+
+    if (elevatorLimit == null) {
+      logger.warn("elevator limit null");
+    }
+
     elevatorSubsystem.setLimits(elevatorLimit.forwardLimit, elevatorLimit.reverseLimit);
   }
 
@@ -103,8 +108,8 @@ public class SafetySubsystem extends Subsystem {
       case ELEVATOR_9:
         switch (biscuitPosition) {
           case BISCUIT_0:
-            intakeLimit = INTAKE_INTAKE;
-            break;
+            //            intakeLimit = INTAKE_INTAKE;
+            //            break;
           case BISCUIT_90L:
           case BISCUIT_90R:
           case BISCUIT_90L_120L:
@@ -165,6 +170,7 @@ public class SafetySubsystem extends Subsystem {
           case BISCUIT_120L_180L:
           case BISCUIT_120R_180R:
           case BISCUIT_180L:
+          case BISCUIT_180R:
             elevatorPosition = ELEVATOR_21;
             break;
         }
@@ -185,6 +191,7 @@ public class SafetySubsystem extends Subsystem {
           case BISCUIT_120L_180L:
           case BISCUIT_120R_180R:
           case BISCUIT_180L:
+          case BISCUIT_180R:
             elevatorPosition = ELEVATOR_9;
             break;
         }
@@ -198,11 +205,11 @@ public class SafetySubsystem extends Subsystem {
 
     return "current="
         + "\n\t"
-        + elevatorCurrent.toString()
+        + elevatorCurrent.name()
         + "\n\t"
-        + intakeCurrent.toString()
+        + intakeCurrent.name()
         + "\n\t"
-        + biscuitCurrent.toString()
+        + biscuitCurrent.name()
         + "\nlimits="
         + "\n\t"
         + elevatorLimit.toString()

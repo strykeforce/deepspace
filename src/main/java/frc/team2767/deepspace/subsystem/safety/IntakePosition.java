@@ -14,10 +14,10 @@ enum IntakePosition {
 
   public static IntakePosition of(int position) {
     if (position > 7700) {
-      return INTAKE_STOW;
+      return INTAKE_INTAKE;
     }
 
-    return INTAKE_INTAKE;
+    return INTAKE_STOW;
   }
 
   @Override

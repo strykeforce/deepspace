@@ -2,9 +2,9 @@ package frc.team2767.deepspace.subsystem.safety;
 
 enum BiscuitPosition {
   // giving set locations a +/- 100 range
-  BISCUIT_0(100, -100),
-  BISCUIT_90L(3072, 100),
-  BISCUIT_90R(-100, -3072),
+  BISCUIT_0(1000, -1000),
+  BISCUIT_90L(3072, 1000),
+  BISCUIT_90R(-1000, -3072),
   BISCUIT_90L_120L(3996, 3072),
   BISCUIT_90R_120R(-3072, -3996),
   BISCUIT_120L(4196, 3996),
@@ -23,7 +23,7 @@ enum BiscuitPosition {
   }
 
   public static BiscuitPosition of(int position) {
-    if (-100 <= position && position <= 100) {
+    if (-1000 <= position && position <= 1000) {
       return BISCUIT_0;
     }
 
