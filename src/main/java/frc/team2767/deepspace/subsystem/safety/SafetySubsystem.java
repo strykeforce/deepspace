@@ -203,13 +203,12 @@ public class SafetySubsystem extends Subsystem {
         + intakeCurrent.toString()
         + "\n\t"
         + biscuitCurrent.toString()
-        + "limits="
+        + "\nlimits="
         + "\n\t"
         + elevatorLimit.toString()
         + "\n\t"
         + intakeLimit.toString()
         + "\n\t"
-        + biscuitLimit.toString()
-        + "END SAFETY LOG DUMP";
+        + biscuitLimit.toString();
   }
 }

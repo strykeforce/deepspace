@@ -38,6 +38,6 @@ enum ElevatorPosition {
 
   @Override
   public String toString() {
-    return "forwardLimit=" + forwardLimit + ", reverseLimit=" + reverseLimit;
+    return "Elevator: forwardLimit=" + forwardLimit + ", reverseLimit=" + reverseLimit;
   }
 }

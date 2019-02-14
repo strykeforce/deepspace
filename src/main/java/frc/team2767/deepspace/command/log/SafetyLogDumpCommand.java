@@ -15,6 +15,6 @@ public class SafetyLogDumpCommand extends InstantCommand {
 
   @Override
   protected void initialize() {
-    logger.debug("BEGIN SAFETY LOG DUMP\n" + SAFETY.toString());
+    logger.debug("BEGIN SAFETY LOG DUMP\n" + SAFETY.toString() + "\nEND SAFETY LOG DUMP");
   }
 }

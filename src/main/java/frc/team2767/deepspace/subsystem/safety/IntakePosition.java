@@ -13,11 +13,15 @@ enum IntakePosition {
   }
 
   public static IntakePosition of(int position) {
-    return INTAKE_STOW;
+    if (position > 7700) {
+      return INTAKE_STOW;
+    }
+
+    return INTAKE_INTAKE;
   }
 
   @Override
   public String toString() {
-    return "forwardLimit=" + forwardLimit + ", reverseLimit=" + reverseLimit;
+    return "Intake: forwardLimit=" + forwardLimit + ", reverseLimit=" + reverseLimit;
   }
 }
