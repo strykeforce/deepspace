@@ -187,7 +187,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   /** @param setpoint TalonSRX setpoint */
   public void shoulderOpenLoop(double setpoint) {
     logger.debug("shoulder open loop at {}", setpoint);
-    roller.set(ControlMode.PercentOutput, setpoint);
+    shoulder.set(ControlMode.PercentOutput, setpoint);
   }
 
   public void shoulderZeroWithLimitSwitch() {
@@ -220,7 +220,6 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
 
   @Override
   public void setLimits(int forward, int reverse) {
-    logger.debug("setting shoulder soft limits fwd={} rev={}", forward, reverse);
     shoulder.configForwardSoftLimitThreshold(forward);
     shoulder.configReverseSoftLimitThreshold(reverse);
   }

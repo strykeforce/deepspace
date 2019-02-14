@@ -5,21 +5,21 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 
 public class BiscuitPositionCommand extends Command {
-  BiscuitSubsystem biscuitSubsystem = Robot.BISCUIT;
+  BiscuitSubsystem BISCUIT = Robot.BISCUIT;
   BiscuitSubsystem.Position position;
 
   public BiscuitPositionCommand(BiscuitSubsystem.Position position) {
     this.position = position;
-    requires(biscuitSubsystem);
+    requires(BISCUIT);
   }
 
   @Override
   protected void initialize() {
-    biscuitSubsystem.setPosition();
+    BISCUIT.setPosition();
   }
 
   @Override
   protected boolean isFinished() {
-    return biscuitSubsystem.onTarget();
+    return BISCUIT.onTarget();
   }
 }

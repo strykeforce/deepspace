@@ -11,13 +11,13 @@ import frc.team2767.deepspace.command.biscuit.BiscuitZeroCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
-import frc.team2767.deepspace.command.intake.IntakePositionCommand;
+import frc.team2767.deepspace.command.intake.IntakeDownCommand;
+import frc.team2767.deepspace.command.intake.IntakeStopCommand;
+import frc.team2767.deepspace.command.intake.IntakeUpCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
-import frc.team2767.deepspace.command.pathfinder.PathCommand;
-import frc.team2767.deepspace.command.twist.TwistSetupCommand;
+import frc.team2767.deepspace.command.log.SafetyLogDumpCommand;
 import frc.team2767.deepspace.command.vision.LightsOffCommand;
 import frc.team2767.deepspace.command.vision.LightsOnCommand;
-import frc.team2767.deepspace.subsystem.IntakeSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,13 +33,16 @@ public class DriverControls {
     joystick = new Joystick(port);
 
     // biscuit
-    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(new BiscuitPositiveCommand());
-    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenReleased(new BiscuitStopCommand());
+    new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenActive(new BiscuitPositiveCommand());
+    new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenInactive(new BiscuitStopCommand());
+    new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenActive(new BiscuitNegativeCommand());
+    new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenInactive(new BiscuitStopCommand());
 
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed(new BiscuitNegativeCommand());
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased(new BiscuitStopCommand());
-
-    new JoystickButton(joystick, Button.X.id).whenPressed(new BiscuitZeroCommand());
+    //    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed();
+    //    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenReleased();
+    //
+    //    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed();
+    //    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased();
 
     //     elevator
     new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenActive(new ElevatorOpenLoopUpCommand());
@@ -47,28 +50,20 @@ public class DriverControls {
     new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenInactive(new ElevatorStopCommand());
     new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenActive(new ElevatorOpenLoopDownCommand());
 
-    // intake
-    new JoystickButton(joystick, Trim.RIGHT_X_POS.id)
-        .whenActive(new IntakePositionCommand(IntakeSubsystem.ShoulderPosition.UP));
-    new JoystickButton(joystick, Trim.RIGHT_X_NEG.id)
-        .whenActive(new IntakePositionCommand(IntakeSubsystem.ShoulderPosition.LOAD));
-
-    // Push-buttons
+    // ZEROS / LOG DUMPS
     new JoystickButton(joystick, Button.RESET.id).whenPressed(new ZeroGyroCommand());
+    new JoystickButton(joystick, Button.HAMBURGER.id).whenPressed(new SafetyLogDumpCommand());
+//    new JoystickButton(joystick, Button.X.id).whenPressed(new BiscuitZeroCommand());
 
-    new JoystickButton(joystick, Button.HAMBURGER.id).whenPressed(log(Button.HAMBURGER));
-    new JoystickButton(joystick, Button.UP.id).whenPressed(new TwistSetupCommand());
-    new JoystickButton(joystick, Button.DOWN.id)
-        .whenPressed(new PathCommand("loading_to_cargo_B_L", 0.0));
-
-    // Trim Switches
+    // LIGHTS
     new JoystickButton(joystick, Trim.LEFT_X_POS.id).whenPressed(new LightsOnCommand());
     new JoystickButton(joystick, Trim.LEFT_X_NEG.id).whenPressed(new LightsOffCommand());
 
-    new JoystickButton(joystick, Trim.RIGHT_X_POS.id).whenPressed(log(Trim.RIGHT_X_POS));
-    new JoystickButton(joystick, Trim.RIGHT_X_NEG.id).whenPressed(log(Trim.RIGHT_X_NEG));
-    new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenPressed(log(Trim.RIGHT_Y_POS));
-    new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenPressed(log(Trim.RIGHT_Y_NEG));
+    // shoulder
+    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(new IntakeDownCommand());
+    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed(new IntakeUpCommand());
+    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenReleased(new IntakeStopCommand());
+    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased(new IntakeStopCommand());
   }
 
   private <E extends Enum<E>> Command log(E control) {

@@ -1,15 +1,15 @@
 package frc.team2767.deepspace.subsystem.safety;
 
+import static frc.team2767.deepspace.subsystem.safety.BiscuitPosition.*;
+import static frc.team2767.deepspace.subsystem.safety.ElevatorPosition.*;
+import static frc.team2767.deepspace.subsystem.safety.IntakePosition.INTAKE_INTAKE;
+import static frc.team2767.deepspace.subsystem.safety.IntakePosition.INTAKE_STOW;
+
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team2767.deepspace.Robot;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static frc.team2767.deepspace.subsystem.safety.BiscuitPosition.*;
-import static frc.team2767.deepspace.subsystem.safety.ElevatorPosition.*;
-import static frc.team2767.deepspace.subsystem.safety.IntakePosition.INTAKE_INTAKE;
-import static frc.team2767.deepspace.subsystem.safety.IntakePosition.INTAKE_STOW;
 
 public class SafetySubsystem extends Subsystem {
 
