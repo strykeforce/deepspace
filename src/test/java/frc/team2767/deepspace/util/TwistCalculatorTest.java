@@ -1,11 +1,10 @@
 package frc.team2767.deepspace.util;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.assertj.core.data.Percentage;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class TwistCalculatorTest {
 
@@ -29,7 +28,8 @@ class TwistCalculatorTest {
             cameraY,
             cameraPositionBearing,
             swerveRotation,
-            targetYaw);
+            targetYaw,
+            0.0);
 
     assertThat(twistCalculator.getHeading())
         .isCloseTo(expectedRange, Percentage.withPercentage(0.1));
@@ -55,7 +55,8 @@ class TwistCalculatorTest {
             cameraY,
             cameraPositionBearing,
             swerveRotation,
-            targetYaw);
+            targetYaw,
+            0.0);
 
     assertThat(twistCalculator.getRange()).isCloseTo(expectedRange, Percentage.withPercentage(0.1));
   }

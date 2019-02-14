@@ -13,6 +13,12 @@ public class TwistCalculator {
   private double cameraY;
   private double finalHeading;
   private double finalRange;
+  private double cameraAngle;
+  private double cameraRange;
+  private double cameraPositionBearing;
+  private double swerveRotation;
+  private double targetYaw;
+  private double gyroOverride;
 
   public TwistCalculator(
       double cameraAngle,
@@ -21,16 +27,27 @@ public class TwistCalculator {
       double cameraY,
       double cameraPositionBearing,
       double swerveRotation,
-      double targetYaw) {
+      double targetYaw,
+      double gyroOverride) {
+    this.cameraAngle = cameraAngle;
+    this.cameraRange = cameraRange;
+    this.cameraX = cameraX;
+    this.cameraY = cameraY;
+    this.cameraPositionBearing = cameraPositionBearing;
+    this.swerveRotation = swerveRotation;
+    this.targetYaw = targetYaw;
+    this.gyroOverride = gyroOverride;
+    compute();
+  }
 
+  @SuppressWarnings("Duplicates")
+  private void compute() {
     double deltaX;
     double deltaY;
 
     double transferSlope = 1.2449;
     double transferIntercept = -4.3949;
     double range = transferSlope * cameraRange + transferIntercept;
-    this.cameraX = cameraX;
-    this.cameraY = cameraY;
 
     double currentX =
         cameraX * Math.cos(Math.toRadians(swerveRotation))
@@ -51,7 +68,14 @@ public class TwistCalculator {
     deltaX = finalX - currentX;
     deltaY = finalY - currentY;
 
-    double initialHeading = cameraPositionBearing + DRIVE.getGyro().getAngle() + cameraAngle;
+    double gyroAngle;
+    if (DRIVE.getGyro() == null) {
+      logger.warn("GYRO not connected");
+      gyroAngle = gyroOverride;
+    } else {
+      gyroAngle = DRIVE.getGyro().getAngle();
+    }
+    double initialHeading = cameraPositionBearing + gyroAngle + cameraAngle;
 
     double headingX = range * Math.cos(Math.toRadians(initialHeading));
     double headingY = range * Math.sin(Math.toRadians(initialHeading));
@@ -63,6 +87,24 @@ public class TwistCalculator {
     finalRange = Math.hypot(xCorrected, yCorrected);
 
     logger.debug("Driving range of {} at {}", finalRange, finalHeading);
+  }
+
+  public TwistCalculator(
+      double cameraAngle,
+      double cameraRange,
+      double cameraX,
+      double cameraY,
+      double cameraPositionBearing,
+      double swerveRotation,
+      double targetYaw) {
+    this.cameraAngle = cameraAngle;
+    this.cameraRange = cameraRange;
+    this.cameraX = cameraX;
+    this.cameraY = cameraY;
+    this.cameraPositionBearing = cameraPositionBearing;
+    this.swerveRotation = swerveRotation;
+    this.targetYaw = targetYaw;
+    compute();
   }
 
   /** @return twist heading */
