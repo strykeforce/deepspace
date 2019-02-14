@@ -21,8 +21,21 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   private static final Logger logger = LoggerFactory.getLogger(ElevatorSubsystem.class);
   private static final int TIMEOUT = 10;
   private static final int STABLE_THRESH = 1;
+  private final TalonSRX elevator = new TalonSRX(ID);
+  private final Preferences preferences;
+  private final String PREFS_NAME = "ElevatorSubsystem/Settings/";
+  private final String K_UP_ACCEL = PREFS_NAME + "u_accel";
+  private final String K_UP_VELOCITY = PREFS_NAME + "u_velocity";
+  private final String K_DOWN_SLOW_ACCEL = PREFS_NAME + "d_s_accel";
+  private final String K_DOWN_SLOW_VELOCITY = PREFS_NAME + "d_s_velocity";
+  private final String K_DOWN_FAST_ACCEL = PREFS_NAME + "d_f_accel";
+  private final String K_DOWN_FAST_VELOCITY = PREFS_NAME + "d_f_velocity";
+  private final String K_DOWN_VELOCITY_SHIFT_POS = PREFS_NAME + "d_velocity_shift_pos";
+  private final String K_UP_OUTPUT = PREFS_NAME + "u_output";
+  private final String K_DOWN_OUTPUT = PREFS_NAME + "d_output";
+  private final String K_STOP_OUTPUT = PREFS_NAME + "stop_output";
+  private final String K_CLOSE_ENOUGH = PREFS_NAME + "close_enough";
   public Position position;
-
   private int kUpAccel;
   private int kUpVelocity;
   private int kDownSlowAccel;
@@ -34,10 +47,6 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   private double kDownOutput;
   private double kStopOutput;
   private int kCloseEnough;
-
-  private final TalonSRX elevator = new TalonSRX(ID);
-  private final Preferences preferences;
-
   private boolean checkEncoder;
   private boolean upward;
   private boolean checkSlow;
@@ -47,13 +56,8 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   private long positionStartTime;
   private int stableCount;
 
-  @Override
-  public int getPosition() {
-    return 0;
-  }
-
-  @Override
-  public void setLimits(int forward, int reverse) {}
+  private int kForwardLimit;
+  private int kReverseLimit;
 
   public ElevatorSubsystem() {
     this.preferences = Preferences.getInstance();
@@ -137,6 +141,17 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
     telemetryService.register(elevator);
+  }
+
+  @Override
+  public int getPosition() {
+    return elevator.getSelectedSensorPosition(0);
+  }
+
+  @Override
+  public void setLimits(int forward, int reverse) {
+    kForwardLimit = forward;
+    kReverseLimit = reverse;
   }
 
   public void setPosition(Position position) {
@@ -299,17 +314,4 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     HATCH,
     CARGO;
   }
-
-  private final String PREFS_NAME = "ElevatorSubsystem/Settings/";
-  private final String K_UP_ACCEL = PREFS_NAME + "u_accel";
-  private final String K_UP_VELOCITY = PREFS_NAME + "u_velocity";
-  private final String K_DOWN_SLOW_ACCEL = PREFS_NAME + "d_s_accel";
-  private final String K_DOWN_SLOW_VELOCITY = PREFS_NAME + "d_s_velocity";
-  private final String K_DOWN_FAST_ACCEL = PREFS_NAME + "d_f_accel";
-  private final String K_DOWN_FAST_VELOCITY = PREFS_NAME + "d_f_velocity";
-  private final String K_DOWN_VELOCITY_SHIFT_POS = PREFS_NAME + "d_velocity_shift_pos";
-  private final String K_UP_OUTPUT = PREFS_NAME + "u_output";
-  private final String K_DOWN_OUTPUT = PREFS_NAME + "d_output";
-  private final String K_STOP_OUTPUT = PREFS_NAME + "stop_output";
-  private final String K_CLOSE_ENOUGH = PREFS_NAME + "close_enough";
 }

@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.biscuit.BiscuitZeroCommand;
-import frc.team2767.deepspace.command.elevator.*;
+import frc.team2767.deepspace.command.elevator.ElevatorZeroCommand;
 import frc.team2767.deepspace.command.intake.IntakeZeroCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import org.slf4j.Logger;

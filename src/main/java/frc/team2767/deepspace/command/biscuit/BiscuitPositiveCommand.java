@@ -13,6 +13,6 @@ public class BiscuitPositiveCommand extends InstantCommand {
 
   @Override
   protected void initialize() {
-    BISCUIT.runOpenLoop(.07);
+    BISCUIT.runOpenLoop(.15);
   }
 }
