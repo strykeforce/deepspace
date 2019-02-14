@@ -25,8 +25,8 @@ public class DriveSubsystem extends Subsystem {
 
   public static final double TICKS_PER_INCH = 1900; // TODO: Set Ticks per inch
   private static final double DRIVE_SETPOINT_MAX = 25_000.0;
-  private static final double ROBOT_LENGTH = 1.0;
-  private static final double ROBOT_WIDTH = 1.0;
+  private static final double ROBOT_LENGTH = 21.0;
+  private static final double ROBOT_WIDTH = 26.0;
 
   private final SwerveDrive swerve = getSwerve();
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
