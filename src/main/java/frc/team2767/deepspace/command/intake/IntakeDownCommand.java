@@ -16,6 +16,6 @@ public class IntakeDownCommand extends InstantCommand {
 
   @Override
   protected void initialize() {
-    INTAKE.shoulderOpenLoop(-0.15);
+    INTAKE.shoulderOpenLoop(0.3);
   }
 }

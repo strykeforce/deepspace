@@ -3,7 +3,6 @@ package frc.team2767.deepspace.subsystem;
 import static com.ctre.phoenix.motorcontrol.ControlMode.Disabled;
 import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
 
-import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
@@ -13,7 +12,6 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.safety.Limitable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.strykeforce.thirdcoast.talon.Errors;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 public class ElevatorSubsystem extends Subsystem implements Limitable {
@@ -37,7 +35,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   private double kStopOutput;
   private int kCloseEnough;
 
-  private final TalonSRX talon = new TalonSRX(ID);
+  private final TalonSRX elevator = new TalonSRX(ID);
   private final Preferences preferences;
 
   private boolean checkEncoder;
@@ -60,7 +58,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   public ElevatorSubsystem() {
     this.preferences = Preferences.getInstance();
 
-    if (talon == null) {
+    if (elevator == null) {
       logger.error("Talon not present");
     }
 
@@ -132,25 +130,25 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     elevatorConfig.motionAcceleration = 2000;
     elevatorConfig.motionCruiseVelocity = 200;
 
-    talon.configAllSettings(elevatorConfig);
-    talon.enableCurrentLimit(true);
-    talon.enableVoltageCompensation(true);
+    elevator.configAllSettings(elevatorConfig);
+    elevator.enableCurrentLimit(true);
+    elevator.enableVoltageCompensation(true);
 
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
-    telemetryService.register(talon);
+    telemetryService.register(elevator);
   }
 
   public void setPosition(Position position) {
     setpoint = position.position;
-    startPosition = talon.getSelectedSensorPosition(0);
+    startPosition = elevator.getSelectedSensorPosition(0);
     logger.info("setting position = {}, starting at {}", position, startPosition);
 
     upward = setpoint > startPosition;
 
     if (upward) {
-      talon.configMotionCruiseVelocity(kUpVelocity, 0);
-      talon.configMotionAcceleration(kUpAccel, 0);
+      elevator.configMotionCruiseVelocity(kUpVelocity, 0);
+      elevator.configMotionAcceleration(kUpAccel, 0);
     } else {
       checkFast = checkSlow = true;
       adjustVelocity();
@@ -158,7 +156,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
 
     checkEncoder = true;
     positionStartTime = System.nanoTime();
-    talon.set(ControlMode.MotionMagic, setpoint);
+    elevator.set(ControlMode.MotionMagic, setpoint);
   }
 
   public void gamePieceAdjust(GamePiece currentGP, int height) {
@@ -180,14 +178,14 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   }
 
   public void adjustVelocity() {
-    int position = talon.getSelectedSensorPosition(0);
+    int position = elevator.getSelectedSensorPosition(0);
 
     if (checkEncoder) {
       long elapsed = System.nanoTime() - positionStartTime;
       if (elapsed < 200e6) return;
 
       if (Math.abs(position - startPosition) == 0) {
-        talon.set(Disabled, 0);
+        elevator.set(Disabled, 0);
         if (setpoint != 0) logger.error("no encoder movement detected in {} ms", elapsed / 1e6);
         setpoint = position;
         positionStartTime += elapsed;
@@ -198,23 +196,24 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     if (upward) return;
 
     if (checkFast && position > kDownVelocityShiftPos) {
-      talon.configMotionCruiseVelocity(kDownFastVelocity, 0);
-      talon.configMotionAcceleration(kDownFastAccel, 0);
+      elevator.configMotionCruiseVelocity(kDownFastVelocity, 0);
+      elevator.configMotionAcceleration(kDownFastAccel, 0);
       logger.debug("frontTalon velocity = fast ({}) position = {}", kDownFastVelocity, position);
       checkFast = false;
       return;
     }
 
     if (checkSlow && position < kDownVelocityShiftPos) {
-      talon.configMotionCruiseVelocity(kDownSlowVelocity, 0);
-      talon.configMotionAcceleration(kDownSlowAccel, 0);
+      elevator.configMotionCruiseVelocity(kDownSlowVelocity, 0);
+      elevator.configMotionAcceleration(kDownSlowAccel, 0);
       logger.debug("frontTalon velocity = slow ({}) position = {}", kDownSlowVelocity, position);
       checkFast = checkSlow = false;
     }
   }
 
+  @SuppressWarnings("Duplicates")
   public boolean onTarget() {
-    int error = setpoint - talon.getSelectedSensorPosition(0);
+    int error = setpoint - elevator.getSelectedSensorPosition(0);
     if (Math.abs(error) > kCloseEnough) stableCount = 0;
     else stableCount++;
     if (stableCount > STABLE_THRESH) {
@@ -225,45 +224,46 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   }
 
   public void positionToZero() {
-    talon.configPeakCurrentLimit(2);
-    talon.configReverseLimitSwitchSource(
+    elevator.configPeakCurrentLimit(2);
+    elevator.configReverseLimitSwitchSource(
         LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
 
     logger.info("positioning to zero position");
-    talon.set(PercentOutput, kDownOutput);
+    elevator.set(PercentOutput, kDownOutput);
   }
 
   public boolean onZero() {
-    return talon.getSensorCollection().isRevLimitSwitchClosed();
+    return elevator.getSensorCollection().isRevLimitSwitchClosed();
   }
 
   public void zeroPosition() {
-    talon.selectProfileSlot(0, 0);
-    setpoint = 0;
-    ErrorCode err = talon.setSelectedSensorPosition(setpoint, 0, TIMEOUT);
-    Errors.check(err, logger);
-    // talon.set(ControlMode.MotionMagic, setpoint);
-    logger.info("lift position zeroed, setpoint = {}", setpoint);
+    elevator.selectProfileSlot(0, 0);
+    int absoluteZero = 46;
+    int zero = elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF - absoluteZero;
+    elevator.setSelectedSensorPosition(zero);
 
-    talon.configPeakCurrentLimit(25);
-    talon.enableCurrentLimit(true);
-    talon.configReverseLimitSwitchSource(
+    // elevator.set(ControlMode.MotionMagic, setpoint);
+    logger.info("lift position zeroed to = {}", zero);
+
+    elevator.configPeakCurrentLimit(25);
+    elevator.enableCurrentLimit(true);
+    elevator.configReverseLimitSwitchSource(
         LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
   }
 
   public void openLoopMove(Direction direction) {
     if (direction.equals(Direction.UP)) {
       logger.info("moving up at {}", kUpOutput);
-      talon.set(ControlMode.PercentOutput, kUpOutput);
+      elevator.set(ControlMode.PercentOutput, kUpOutput);
     } else if (direction.equals(Direction.DOWN)) {
       logger.info("moving down at {}", kDownOutput);
-      talon.set(ControlMode.PercentOutput, kDownOutput);
+      elevator.set(ControlMode.PercentOutput, kDownOutput);
     }
   }
 
   public void stop() {
-    logger.info("lift stop at position {}", talon.getSelectedSensorPosition(0));
-    talon.set(PercentOutput, kStopOutput);
+    logger.info("lift stop at position {}", elevator.getSelectedSensorPosition(0));
+    elevator.set(PercentOutput, kStopOutput);
   }
 
   @Override

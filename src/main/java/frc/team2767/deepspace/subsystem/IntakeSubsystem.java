@@ -22,10 +22,10 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   private final String SHOULDER_UP_POSITION = PREFS_NAME + "up_position";
   private final String SHOULDER_ZERO_POSITION = PREFS_NAME + "zero_position";
   private final String SHOULDER_LOAD_POSITION = PREFS_NAME + "load_position";
-  private final String ROLLER_OUT_OUTPUT = PREFS_NAME + "roller_out";
-  private final String ROLLER_IN_OPUTPUT = PREFS_NAME + "roller_in";
-  private final String SHOULDER_UP_OUPTUT = PREFS_NAME + "shoulder_up";
-  private final String SHOULDER_DOWN_OUPUT = PREFS_NAME + "shoulder_down";
+  private final String ROLLER_OUT_OUTPUT = PREFS_NAME + "roller_out_output";
+  private final String ROLLER_IN_OPUTPUT = PREFS_NAME + "roller_in_output";
+  private final String SHOULDER_UP_OUPTUT = PREFS_NAME + "shoulder_up_output";
+  private final String SHOULDER_DOWN_OUPUT = PREFS_NAME + "shoulder_down_output";
   private final String K_FORWARD_SOFT_LIMIT = PREFS_NAME + "shoulder_forward_soft_limit";
   private final String K_REVERSE_SOFT_LIMIT = PREFS_NAME + "shoulder_reverse_soft_limit";
   private final int BACKUP = 0;
@@ -44,8 +44,8 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   private TalonSRX roller = new TalonSRX(ROLLER_ID);
   private int stableCount;
   private int setpoint;
-  private int kForwardShoulderSoftLimit; // FIXME
-  private int kReverseShoulderSoftLimit; // FIXME
+  private int kForwardShoulderSoftLimit;
+  private int kReverseShoulderSoftLimit;
   private Preferences preferences;
 
   public IntakeSubsystem() {
@@ -61,7 +61,6 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
 
     intakePreferences();
     configTalon();
-    setLimits(kForwardShoulderSoftLimit, kReverseShoulderSoftLimit);
   }
 
   @SuppressWarnings("Duplicates")
@@ -144,7 +143,6 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     shoulderConfig.motionAcceleration = 3000;
     shoulderConfig.motionCruiseVelocity = 1000;
 
-    // FIXME: won't run
     TalonSRXConfiguration rollerConfig = new TalonSRXConfiguration();
     rollerConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
     rollerConfig.continuousCurrentLimit = 0;
@@ -161,6 +159,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     rollerConfig.motionAcceleration = 0;
     rollerConfig.motionCruiseVelocity = 0;
 
+    shoulder.configForwardSoftLimitEnable(true);
     shoulder.configAllSettings(shoulderConfig);
     shoulder.enableCurrentLimit(true);
     shoulder.enableVoltageCompensation(true);
@@ -196,11 +195,12 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   }
 
   public void shoulderToZero() {
+    logger.debug("running to zero");
     shoulder.set(ControlMode.PercentOutput, kShoulderDownOutput);
   }
 
   public boolean onZero() {
-    if (shoulder.getSensorCollection().isFwdLimitSwitchClosed()) {
+    if (shoulder.getSensorCollection().isRevLimitSwitchClosed()) {
       logger.debug("limit switch closed");
       return true;
     }
@@ -220,8 +220,8 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
 
   @Override
   public void setLimits(int forward, int reverse) {
-    shoulder.configForwardSoftLimitThreshold(forward);
-    shoulder.configReverseSoftLimitThreshold(reverse);
+    //    shoulder.configForwardSoftLimitThreshold(forward);
+    //    shoulder.configReverseSoftLimitThreshold(reverse);
   }
 
   public void setPosition(ShoulderPosition position) {

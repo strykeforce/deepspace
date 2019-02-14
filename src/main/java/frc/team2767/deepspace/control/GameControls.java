@@ -7,7 +7,6 @@ import frc.team2767.deepspace.command.biscuit.BiscuitZeroCommand;
 import frc.team2767.deepspace.command.elevator.*;
 import frc.team2767.deepspace.command.intake.IntakeZeroCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
-import frc.team2767.deepspace.subsystem.ElevatorSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,32 +25,32 @@ public class GameControls {
     new JoystickButton(joystick, GameControls.Button.Y.id).whenPressed(new BiscuitZeroCommand());
     new JoystickButton(joystick, GameControls.Button.B.id).whenPressed(new IntakeZeroCommand());
 
-//    // Shoulder
-//    new JoystickButton(joystick, GameControls.Shoulder.LEFT.id)
-//        .whenPressed(log(GameControls.Shoulder.LEFT));
-//    new JoystickButton(joystick, GameControls.Shoulder.RIGHT.id)
-//        .whenPressed(new ElevatorStopCommand());
-//
-//    // Triggers
-//    new JoystickButton(joystick, GameControls.Trigger.LEFT.id)
-//        .whenPressed(log(GameControls.Trigger.LEFT));
-//    new JoystickButton(joystick, GameControls.Trigger.RIGHT.id)
-//        .whenPressed(log(GameControls.Trigger.RIGHT));
-//
-//    // Push-buttons
-//    new JoystickButton(joystick, GameControls.Button.A.id)
-//        .whenPressed(new ElevatorOpenLoopDownCommand());
-//    new JoystickButton(joystick, GameControls.Button.B.id)
-//        .whenPressed(new ElevatorPositionCommand(ElevatorSubsystem.Position.STOW));
-//
-//    new JoystickButton(joystick, GameControls.Button.START.id)
-//        .whenPressed(log(GameControls.Button.START));
-//    new JoystickButton(joystick, GameControls.Button.BACK.id)
-//        .whenPressed(log(GameControls.Button.BACK));
-//    new JoystickButton(joystick, GameControls.Button.LEFT.id)
-//        .whenPressed(log(GameControls.Button.LEFT));
-//    new JoystickButton(joystick, GameControls.Button.RIGHT.id)
-//        .whenPressed(log(GameControls.Button.RIGHT));
+    //    // Shoulder
+    //    new JoystickButton(joystick, GameControls.Shoulder.LEFT.id)
+    //        .whenPressed(log(GameControls.Shoulder.LEFT));
+    //    new JoystickButton(joystick, GameControls.Shoulder.RIGHT.id)
+    //        .whenPressed(new ElevatorStopCommand());
+    //
+    //    // Triggers
+    //    new JoystickButton(joystick, GameControls.Trigger.LEFT.id)
+    //        .whenPressed(log(GameControls.Trigger.LEFT));
+    //    new JoystickButton(joystick, GameControls.Trigger.RIGHT.id)
+    //        .whenPressed(log(GameControls.Trigger.RIGHT));
+    //
+    //    // Push-buttons
+    //    new JoystickButton(joystick, GameControls.Button.A.id)
+    //        .whenPressed(new ElevatorOpenLoopDownCommand());
+    //    new JoystickButton(joystick, GameControls.Button.B.id)
+    //        .whenPressed(new ElevatorPositionCommand(ElevatorSubsystem.Position.STOW));
+    //
+    //    new JoystickButton(joystick, GameControls.Button.START.id)
+    //        .whenPressed(log(GameControls.Button.START));
+    //    new JoystickButton(joystick, GameControls.Button.BACK.id)
+    //        .whenPressed(log(GameControls.Button.BACK));
+    //    new JoystickButton(joystick, GameControls.Button.LEFT.id)
+    //        .whenPressed(log(GameControls.Button.LEFT));
+    //    new JoystickButton(joystick, GameControls.Button.RIGHT.id)
+    //        .whenPressed(log(GameControls.Button.RIGHT));
   }
 
   private <E extends Enum<E>> Command log(E control) {
