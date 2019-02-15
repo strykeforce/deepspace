@@ -31,10 +31,10 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   private int CLOSE_ENOUGH = 8; // FIXME
   private int LOW_ENCODER_LIMIT = -6170; // FIXME
   private int HIGH_ENCODER_LIMIT = 6170; // FIXME
-  private String absoluteZeroKey = KEY_BASE + "ABS_ZERO";
-  private String lowLimitKey = KEY_BASE + "LOW_LIMIT";
-  private String highLimitKey = KEY_BASE + "HIGH_LIMIT";
-  private String closeEnoughKey = KEY_BASE + "CLOSE_ENOUGH";
+  private String absoluteZeroKey = KEY_BASE + "absolute_zero";
+  private String lowLimitKey = KEY_BASE + "lower_limit";
+  private String highLimitKey = KEY_BASE + "upper_limit";
+  private String closeEnoughKey = KEY_BASE + "close_enough";
   private Position plannedPosition = Position.UP;
   private BiscuitGamePiece gamePiece;
 

@@ -17,18 +17,18 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   private final int SHOULDER_ID = 20;
   private final int ROLLER_ID = 21;
   private final int STABLE_THRESH = 4;
-  private final String PREFS_NAME = "IntakeSubsytem/Settings/";
+  private final String PREFS_NAME = "IntakeSubsystem/Settings/";
   private final String K_CLOSE_ENOUGH = PREFS_NAME + "close_enough";
   private final String SHOULDER_UP_POSITION = PREFS_NAME + "up_position";
   private final String SHOULDER_ZERO_POSITION = PREFS_NAME + "zero_position";
   private final String SHOULDER_LOAD_POSITION = PREFS_NAME + "load_position";
   private final String ROLLER_OUT_OUTPUT = PREFS_NAME + "roller_out_output";
-  private final String ROLLER_IN_OPUTPUT = PREFS_NAME + "roller_in_output";
-  private final String SHOULDER_UP_OUPTUT = PREFS_NAME + "shoulder_up_output";
-  private final String SHOULDER_DOWN_OUPUT = PREFS_NAME + "shoulder_down_output";
+  private final String ROLLER_IN_OUTPUT = PREFS_NAME + "roller_in_output";
+  private final String SHOULDER_UP_OUTPUT = PREFS_NAME + "shoulder_up_output";
+  private final String SHOULDER_DOWN_OUTPUT = PREFS_NAME + "shoulder_down_output";
   private final String K_FORWARD_SOFT_LIMIT = PREFS_NAME + "shoulder_forward_soft_limit";
   private final String K_REVERSE_SOFT_LIMIT = PREFS_NAME + "shoulder_reverse_soft_limit";
-  private final int BACKUP = 0;
+  private final int BACKUP = 2767;
   private int kCloseEnough;
   private int kShoulderUpPosition;
   private int kShoulderZeroPosition;
@@ -65,11 +65,11 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
 
   @SuppressWarnings("Duplicates")
   private void intakePreferences() {
-    if (!preferences.containsKey(SHOULDER_DOWN_OUPUT)) {
-      preferences.putInt(SHOULDER_DOWN_OUPUT, BACKUP);
+    if (!preferences.containsKey(SHOULDER_DOWN_OUTPUT)) {
+      preferences.putInt(SHOULDER_DOWN_OUTPUT, BACKUP);
     }
-    if (!preferences.containsKey(SHOULDER_UP_OUPTUT)) {
-      preferences.putInt(SHOULDER_UP_OUPTUT, BACKUP);
+    if (!preferences.containsKey(SHOULDER_UP_OUTPUT)) {
+      preferences.putInt(SHOULDER_UP_OUTPUT, BACKUP);
     }
     if (!preferences.containsKey(SHOULDER_ZERO_POSITION)) {
       preferences.putInt(SHOULDER_ZERO_POSITION, BACKUP);
@@ -80,8 +80,8 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     if (!preferences.containsKey(SHOULDER_UP_POSITION)) {
       preferences.putInt(SHOULDER_UP_POSITION, BACKUP);
     }
-    if (!preferences.containsKey(ROLLER_IN_OPUTPUT)) {
-      preferences.putInt(ROLLER_IN_OPUTPUT, BACKUP);
+    if (!preferences.containsKey(ROLLER_IN_OUTPUT)) {
+      preferences.putInt(ROLLER_IN_OUTPUT, BACKUP);
     }
     if (!preferences.containsKey(ROLLER_OUT_OUTPUT)) {
       preferences.putInt(ROLLER_OUT_OUTPUT, BACKUP);
@@ -97,12 +97,12 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     }
 
     // need to make the backups actually relevant
-    kShoulderDownOutput = preferences.getInt(SHOULDER_DOWN_OUPUT, BACKUP);
-    kShoulderUpOutput = preferences.getInt(SHOULDER_UP_OUPTUT, BACKUP);
+    kShoulderDownOutput = preferences.getInt(SHOULDER_DOWN_OUTPUT, BACKUP);
+    kShoulderUpOutput = preferences.getInt(SHOULDER_UP_OUTPUT, BACKUP);
     kShoulderZeroPosition = preferences.getInt(SHOULDER_ZERO_POSITION, BACKUP);
     kShoulderLoadPosition = preferences.getInt(SHOULDER_LOAD_POSITION, BACKUP);
     kShoulderUpPosition = preferences.getInt(SHOULDER_UP_POSITION, BACKUP);
-    kRollerIn = preferences.getInt(ROLLER_IN_OPUTPUT, BACKUP);
+    kRollerIn = preferences.getInt(ROLLER_IN_OUTPUT, BACKUP);
     kRollerOut = preferences.getDouble(ROLLER_OUT_OUTPUT, BACKUP);
     kCloseEnough = preferences.getInt(K_CLOSE_ENOUGH, BACKUP);
     kForwardShoulderSoftLimit = preferences.getInt(K_FORWARD_SOFT_LIMIT, BACKUP);
