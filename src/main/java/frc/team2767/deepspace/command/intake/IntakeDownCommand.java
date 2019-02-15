@@ -7,8 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class IntakeDownCommand extends InstantCommand {
+
   private static final IntakeSubsystem INTAKE = Robot.INTAKE;
-  private Logger logger = LoggerFactory.getLogger(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public IntakeDownCommand() {
     requires(INTAKE);

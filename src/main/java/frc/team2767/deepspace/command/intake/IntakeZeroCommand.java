@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 
 public class IntakeZeroCommand extends Command {
 
-  private final IntakeSubsystem INTAKE = Robot.INTAKE;
-  private Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static final IntakeSubsystem INTAKE = Robot.INTAKE;
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public IntakeZeroCommand() {
     requires(INTAKE);

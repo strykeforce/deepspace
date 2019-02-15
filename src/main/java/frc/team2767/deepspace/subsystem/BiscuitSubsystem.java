@@ -13,28 +13,30 @@ import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 public class BiscuitSubsystem extends Subsystem implements Limitable {
+
+  private final DriveSubsystem driveSubsystem = Robot.DRIVE;
+  private final TelemetryService telemetryService = Robot.TELEMETRY;
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+  private static Preferences preferences = Preferences.getInstance();
   private static final String KEY_BASE = "BiscuitSubsystem/Position/";
   private static final int BACKUP = 2767;
-  private static Preferences preferences = Preferences.getInstance();
+
   private final int BISCUIT_ID = 40;
   private final int TICKS_PER_REV = 12300;
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
-  public Position plannedPosition = Position.UP;
   public FieldDirections plannedDirection;
-  public BiscuitGamePiece gamePiece;
-  String absoluteZeroKey = KEY_BASE + "ABS_ZERO";
-  String lowLimitKey = KEY_BASE + "LOW_LIMIT";
-  String highLimitKey = KEY_BASE + "HIGH_LIMIT";
-  String closeEnoughKey = KEY_BASE + "CLOSE_ENOUGH";
-  DriveSubsystem driveSubsystem = Robot.DRIVE;
-  TelemetryService telemetryService = Robot.TELEMETRY;
-  int zero = 0;
-  int target = 0;
-  TalonSRX biscuit = new TalonSRX(BISCUIT_ID);
-  TalonSRXConfiguration biscuitConfig = new TalonSRXConfiguration();
+  private int zero = 0;
+  private int target = 0;
+  private TalonSRX biscuit = new TalonSRX(BISCUIT_ID);
   private int CLOSE_ENOUGH = 8; // FIXME
   private int LOW_ENCODER_LIMIT = -6170; // FIXME
   private int HIGH_ENCODER_LIMIT = 6170; // FIXME
+  private String absoluteZeroKey = KEY_BASE + "absolute_zero";
+  private String lowLimitKey = KEY_BASE + "lower_limit";
+  private String highLimitKey = KEY_BASE + "upper_limit";
+  private String closeEnoughKey = KEY_BASE + "close_enough";
+  private Position plannedPosition = Position.UP;
+  private BiscuitGamePiece gamePiece;
 
   private int kForwardLimit;
   private int kReverseLimit;
@@ -46,6 +48,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
         LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
 
     telemetryService.register(biscuit);
+    TalonSRXConfiguration biscuitConfig = new TalonSRXConfiguration();
     biscuitConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
     biscuitConfig.forwardSoftLimitThreshold = HIGH_ENCODER_LIMIT;
     biscuitConfig.reverseSoftLimitThreshold = LOW_ENCODER_LIMIT;
@@ -73,17 +76,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     biscuit.configAllSettings(biscuitConfig);
   }
 
-  public void biscuitPreferences() {
-    if (!preferences.containsKey(closeEnoughKey)) preferences.putInt(closeEnoughKey, BACKUP);
-    if (!preferences.containsKey(absoluteZeroKey)) preferences.putInt(absoluteZeroKey, BACKUP);
-    if (!preferences.containsKey(lowLimitKey)) preferences.putInt(lowLimitKey, BACKUP);
-    if (!preferences.containsKey(highLimitKey)) preferences.putInt(highLimitKey, BACKUP);
-
-    CLOSE_ENOUGH = preferences.getInt(closeEnoughKey, BACKUP);
-    LOW_ENCODER_LIMIT = preferences.getInt(lowLimitKey, BACKUP);
-    HIGH_ENCODER_LIMIT = preferences.getInt(highLimitKey, BACKUP);
-  }
-
   @Override
   protected void initDefaultCommand() {}
 
@@ -98,6 +90,17 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     kReverseLimit = reverse;
     biscuit.configForwardSoftLimitThreshold(forward, 0);
     biscuit.configReverseSoftLimitThreshold(reverse, 0);
+  }
+
+  public void biscuitPreferences() {
+    if (!preferences.containsKey(closeEnoughKey)) preferences.putInt(closeEnoughKey, 8);
+    if (!preferences.containsKey(absoluteZeroKey)) preferences.putInt(absoluteZeroKey, 1413);
+    if (!preferences.containsKey(lowLimitKey)) preferences.putInt(lowLimitKey, -6170);
+    if (!preferences.containsKey(highLimitKey)) preferences.putInt(highLimitKey, 6170);
+
+    CLOSE_ENOUGH = preferences.getInt(closeEnoughKey, BACKUP);
+    LOW_ENCODER_LIMIT = preferences.getInt(lowLimitKey, BACKUP);
+    HIGH_ENCODER_LIMIT = preferences.getInt(highLimitKey, BACKUP);
   }
 
   public void zero() {
@@ -159,7 +162,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     biscuit.set(ControlMode.Position, target);
   }
 
-  public double getGyroAngle() {
+  private double getGyroAngle() {
     AHRS gyro = driveSubsystem.getGyro();
     double angle = gyro.getYaw();
     return angle;

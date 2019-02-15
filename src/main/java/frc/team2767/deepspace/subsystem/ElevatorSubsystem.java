@@ -24,15 +24,15 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   private final TalonSRX elevator = new TalonSRX(ID);
   private final Preferences preferences;
   private final String PREFS_NAME = "ElevatorSubsystem/Settings/";
-  private final String K_UP_ACCEL = PREFS_NAME + "u_accel";
-  private final String K_UP_VELOCITY = PREFS_NAME + "u_velocity";
-  private final String K_DOWN_SLOW_ACCEL = PREFS_NAME + "d_s_accel";
-  private final String K_DOWN_SLOW_VELOCITY = PREFS_NAME + "d_s_velocity";
-  private final String K_DOWN_FAST_ACCEL = PREFS_NAME + "d_f_accel";
-  private final String K_DOWN_FAST_VELOCITY = PREFS_NAME + "d_f_velocity";
-  private final String K_DOWN_VELOCITY_SHIFT_POS = PREFS_NAME + "d_velocity_shift_pos";
-  private final String K_UP_OUTPUT = PREFS_NAME + "u_output";
-  private final String K_DOWN_OUTPUT = PREFS_NAME + "d_output";
+  private final String K_UP_ACCEL = PREFS_NAME + "up_accel";
+  private final String K_UP_VELOCITY = PREFS_NAME + "up_vel";
+  private final String K_DOWN_SLOW_ACCEL = PREFS_NAME + "down_slow_accel";
+  private final String K_DOWN_SLOW_VELOCITY = PREFS_NAME + "down_slow_vel";
+  private final String K_DOWN_FAST_ACCEL = PREFS_NAME + "down_fast_accel";
+  private final String K_DOWN_FAST_VELOCITY = PREFS_NAME + "down_fast_vel";
+  private final String K_DOWN_VELOCITY_SHIFT_POS = PREFS_NAME + "down_vel_shiftpos";
+  private final String K_UP_OUTPUT = PREFS_NAME + "up_output";
+  private final String K_DOWN_OUTPUT = PREFS_NAME + "down_output";
   private final String K_STOP_OUTPUT = PREFS_NAME + "stop_output";
   private final String K_CLOSE_ENOUGH = PREFS_NAME + "close_enough";
   public Position position;
@@ -72,33 +72,33 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   }
 
   private void elevatorPreferences() {
-    if (!preferences.containsKey(K_UP_ACCEL)) preferences.putInt(K_UP_ACCEL, BACKUP);
-    if (!preferences.containsKey(K_UP_VELOCITY)) preferences.putInt(K_UP_VELOCITY, BACKUP);
-    if (!preferences.containsKey(K_DOWN_SLOW_ACCEL)) preferences.putInt(K_DOWN_SLOW_ACCEL, BACKUP);
+    if (!preferences.containsKey(K_UP_ACCEL)) preferences.putInt(K_UP_ACCEL, 5000);
+    if (!preferences.containsKey(K_UP_VELOCITY)) preferences.putInt(K_UP_VELOCITY, 1000);
+    if (!preferences.containsKey(K_DOWN_SLOW_ACCEL)) preferences.putInt(K_DOWN_SLOW_ACCEL, 2000);
     if (!preferences.containsKey(K_DOWN_SLOW_VELOCITY))
-      preferences.putInt(K_DOWN_SLOW_VELOCITY, BACKUP);
-    if (!preferences.containsKey(K_DOWN_FAST_ACCEL)) preferences.putInt(K_DOWN_FAST_ACCEL, BACKUP);
+      preferences.putInt(K_DOWN_SLOW_VELOCITY, 200);
+    if (!preferences.containsKey(K_DOWN_FAST_ACCEL)) preferences.putInt(K_DOWN_FAST_ACCEL, 5000);
     if (!preferences.containsKey(K_DOWN_FAST_VELOCITY))
-      preferences.putInt(K_DOWN_FAST_VELOCITY, BACKUP);
+      preferences.putInt(K_DOWN_FAST_VELOCITY, 1000);
     if (!preferences.containsKey(K_DOWN_VELOCITY_SHIFT_POS))
-      preferences.putInt(K_DOWN_VELOCITY_SHIFT_POS, BACKUP);
-    if (!preferences.containsKey(K_UP_OUTPUT)) preferences.putDouble(K_UP_OUTPUT, BACKUP);
-    if (!preferences.containsKey(K_DOWN_OUTPUT)) preferences.putDouble(K_DOWN_OUTPUT, BACKUP);
-    if (!preferences.containsKey(K_STOP_OUTPUT)) preferences.putDouble(K_STOP_OUTPUT, BACKUP);
-    if (!preferences.containsKey(K_CLOSE_ENOUGH)) preferences.putInt(K_CLOSE_ENOUGH, BACKUP);
+      preferences.putInt(K_DOWN_VELOCITY_SHIFT_POS, 4000);
+    if (!preferences.containsKey(K_UP_OUTPUT)) preferences.putDouble(K_UP_OUTPUT, 0.2);
+    if (!preferences.containsKey(K_DOWN_OUTPUT)) preferences.putDouble(K_DOWN_OUTPUT, -0.2);
+    if (!preferences.containsKey(K_STOP_OUTPUT)) preferences.putDouble(K_STOP_OUTPUT, 0.0);
+    if (!preferences.containsKey(K_CLOSE_ENOUGH)) preferences.putInt(K_CLOSE_ENOUGH, 10);
 
-    // need to make the backups actually relevant
-    kUpAccel = preferences.getInt(K_UP_ACCEL, 0);
-    kUpVelocity = preferences.getInt(K_UP_VELOCITY, 0);
-    kDownSlowAccel = preferences.getInt(K_DOWN_SLOW_ACCEL, 0);
-    kDownSlowVelocity = preferences.getInt(K_DOWN_SLOW_VELOCITY, 0);
-    kDownFastAccel = preferences.getInt(K_DOWN_FAST_ACCEL, 0);
-    kDownFastVelocity = preferences.getInt(K_DOWN_FAST_VELOCITY, 0);
-    kDownVelocityShiftPos = preferences.getInt(K_DOWN_VELOCITY_SHIFT_POS, 0);
-    kUpOutput = preferences.getDouble(K_UP_OUTPUT, 0);
-    kDownOutput = preferences.getDouble(K_DOWN_OUTPUT, 0);
-    kStopOutput = preferences.getDouble(K_STOP_OUTPUT, 0);
-    kCloseEnough = preferences.getInt(K_CLOSE_ENOUGH, 0);
+    kUpAccel = preferences.getInt(K_UP_ACCEL, BACKUP);
+    kUpVelocity = preferences.getInt(K_UP_VELOCITY, BACKUP);
+
+    kDownSlowAccel = preferences.getInt(K_DOWN_SLOW_ACCEL, BACKUP);
+    kDownSlowVelocity = preferences.getInt(K_DOWN_SLOW_VELOCITY, BACKUP);
+    kDownFastAccel = preferences.getInt(K_DOWN_FAST_ACCEL, BACKUP);
+    kDownFastVelocity = preferences.getInt(K_DOWN_FAST_VELOCITY, BACKUP);
+    kDownVelocityShiftPos = preferences.getInt(K_DOWN_VELOCITY_SHIFT_POS, BACKUP);
+    kUpOutput = preferences.getDouble(K_UP_OUTPUT, BACKUP);
+    kDownOutput = preferences.getDouble(K_DOWN_OUTPUT, BACKUP);
+    kStopOutput = preferences.getDouble(K_STOP_OUTPUT, BACKUP);
+    kCloseEnough = preferences.getInt(K_CLOSE_ENOUGH, BACKUP);
 
     logger.info("kUpAccel: {}", kUpAccel);
     logger.info("kUpVelocity: {}", kUpVelocity);
