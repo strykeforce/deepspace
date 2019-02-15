@@ -134,10 +134,10 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     shoulderConfig.slot0.kF = 1;
     shoulderConfig.slot0.integralZone = 0;
     shoulderConfig.slot0.allowableClosedloopError = 0;
-    shoulderConfig.forwardSoftLimitEnable = true;
     shoulderConfig.forwardSoftLimitThreshold = kForwardShoulderSoftLimit;
-    shoulderConfig.reverseSoftLimitEnable = true;
     shoulderConfig.reverseSoftLimitThreshold = kReverseShoulderSoftLimit;
+    shoulderConfig.forwardSoftLimitEnable = true;
+    shoulderConfig.reverseSoftLimitEnable = true;
     shoulderConfig.voltageCompSaturation = 12;
     shoulderConfig.voltageMeasurementFilter = 32;
     shoulderConfig.motionAcceleration = 3000;
@@ -220,8 +220,8 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
 
   @Override
   public void setLimits(int forward, int reverse) {
-    //    shoulder.configForwardSoftLimitThreshold(forward);
-    //    shoulder.configReverseSoftLimitThreshold(reverse);
+    shoulder.configForwardSoftLimitThreshold(forward);
+    shoulder.configReverseSoftLimitThreshold(reverse);
   }
 
   public void setPosition(ShoulderPosition position) {

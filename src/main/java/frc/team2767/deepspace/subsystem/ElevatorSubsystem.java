@@ -116,6 +116,10 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   private void configTalon() {
     TalonSRXConfiguration elevatorConfig = new TalonSRXConfiguration();
     elevatorConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
+
+    elevatorConfig.forwardSoftLimitEnable = true;
+    elevatorConfig.reverseSoftLimitEnable = true;
+
     elevatorConfig.continuousCurrentLimit = 20;
     elevatorConfig.peakCurrentDuration = 40;
     elevatorConfig.peakCurrentLimit = 25;
@@ -150,8 +154,8 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
 
   @Override
   public void setLimits(int forward, int reverse) {
-    kForwardLimit = forward;
-    kReverseLimit = reverse;
+    elevator.configForwardSoftLimitThreshold(forward, 0);
+    elevator.configReverseSoftLimitThreshold(reverse, 0);
   }
 
   public void setPosition(Position position) {
