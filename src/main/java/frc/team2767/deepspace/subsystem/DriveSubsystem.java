@@ -111,9 +111,6 @@ public class DriveSubsystem extends Subsystem {
   }
 
   public AHRS getGyro() {
-    if(swerve.getGyro() == null) {
-      return null;
-    }
     return swerve.getGyro();
   }
 

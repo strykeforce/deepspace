@@ -69,9 +69,9 @@ public class TwistCalculator {
     deltaY = finalY - currentY;
 
     double gyroAngle;
-    if (DRIVE.getGyro() == null) {
-      logger.warn("GYRO not connected");
-      gyroAngle = gyroOverride;
+
+    if (DRIVE == null) {
+      gyroAngle = swerveRotation;
     } else {
       gyroAngle = DRIVE.getGyro().getAngle();
     }

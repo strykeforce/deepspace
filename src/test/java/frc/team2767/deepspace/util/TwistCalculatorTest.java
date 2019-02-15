@@ -1,12 +1,19 @@
 package frc.team2767.deepspace.util;
 
+import frc.team2767.deepspace.subsystem.DriveSubsystem;
 import org.assertj.core.data.Percentage;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TwistCalculatorTest {
+
+  private static final double ACCEPTABLE_RANGE = 1;
+  private static final double ACCEPTABLE_HEADING = 1;
 
   @ParameterizedTest
   @CsvFileSource(resources = "/inputs.csv", numLinesToSkip = 1)
@@ -18,6 +25,7 @@ class TwistCalculatorTest {
       double cameraPositionBearing,
       double swerveRotation,
       double targetYaw,
+      double expectedHeading,
       double expectedRange) {
 
     TwistCalculator twistCalculator =
@@ -28,13 +36,13 @@ class TwistCalculatorTest {
             cameraY,
             cameraPositionBearing,
             swerveRotation,
-            targetYaw,
-            0.0);
+            targetYaw);
 
     assertThat(twistCalculator.getHeading())
-        .isCloseTo(expectedRange, Percentage.withPercentage(0.1));
+        .isCloseTo(expectedHeading, Percentage.withPercentage(ACCEPTABLE_HEADING));
   }
 
+  @Disabled
   @ParameterizedTest
   @CsvFileSource(resources = "/inputs.csv", numLinesToSkip = 1)
   void getRange(
@@ -45,6 +53,7 @@ class TwistCalculatorTest {
       double cameraPositionBearing,
       double swerveRotation,
       double targetYaw,
+      double expectedHeading,
       double expectedRange) {
 
     TwistCalculator twistCalculator =
@@ -55,9 +64,8 @@ class TwistCalculatorTest {
             cameraY,
             cameraPositionBearing,
             swerveRotation,
-            targetYaw,
-            0.0);
+            targetYaw);
 
-    assertThat(twistCalculator.getRange()).isCloseTo(expectedRange, Percentage.withPercentage(0.1));
+    assertThat(twistCalculator.getRange()).isCloseTo(expectedRange, Percentage.withPercentage(ACCEPTABLE_RANGE));
   }
 }
