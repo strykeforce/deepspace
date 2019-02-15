@@ -3,10 +3,12 @@ package frc.team2767.deepspace.control;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team2767.deepspace.command.biscuit.BiscuitPlanCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitZeroCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorZeroCommand;
 import frc.team2767.deepspace.command.intake.IntakeZeroCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
+import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +26,13 @@ public class GameControls {
     new JoystickButton(joystick, GameControls.Button.X.id).whenPressed(new ElevatorZeroCommand());
     new JoystickButton(joystick, GameControls.Button.Y.id).whenPressed(new BiscuitZeroCommand());
     new JoystickButton(joystick, GameControls.Button.B.id).whenPressed(new IntakeZeroCommand());
+
+    if (getDPad() == 7){
+      new BiscuitPlanCommand(BiscuitSubsystem.FieldDirections.PLACE_L);
+    }
+    if (getDPad() == 3){
+      new BiscuitPlanCommand(BiscuitSubsystem.FieldDirections.PLACE_R);
+    }
 
     //    // Shoulder
     //    new JoystickButton(joystick, GameControls.Shoulder.LEFT.id)
