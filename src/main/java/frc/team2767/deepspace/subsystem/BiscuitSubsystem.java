@@ -13,34 +13,31 @@ import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 public class BiscuitSubsystem extends Subsystem implements Limitable {
-  private int CLOSE_ENOUGH = 8; // FIXME
-  private final int BISCUIT_ID = 40;
-  private final int TICKS_PER_REV = 12300;
-  private int LOW_ENCODER_LIMIT = -6170; // FIXME
-  private int HIGH_ENCODER_LIMIT = 6170; // FIXME
-
   private static final String KEY_BASE = "BiscuitSubsystem/Position/";
   private static final int BACKUP = 2767;
   private static Preferences preferences = Preferences.getInstance();
-
+  private final int BISCUIT_ID = 40;
+  private final int TICKS_PER_REV = 12300;
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  public Position plannedPosition = Position.UP;
+  public FieldDirections plannedDirection;
+  public BiscuitGamePiece gamePiece;
   String absoluteZeroKey = KEY_BASE + "ABS_ZERO";
   String lowLimitKey = KEY_BASE + "LOW_LIMIT";
   String highLimitKey = KEY_BASE + "HIGH_LIMIT";
   String closeEnoughKey = KEY_BASE + "CLOSE_ENOUGH";
-
   DriveSubsystem driveSubsystem = Robot.DRIVE;
   TelemetryService telemetryService = Robot.TELEMETRY;
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-  public Position plannedPosition = Position.UP;
-  public FieldDirections plannedDirection;
-  public BiscuitGamePiece gamePiece;
-
   int zero = 0;
   int target = 0;
-
   TalonSRX biscuit = new TalonSRX(BISCUIT_ID);
   TalonSRXConfiguration biscuitConfig = new TalonSRXConfiguration();
+  private int CLOSE_ENOUGH = 8; // FIXME
+  private int LOW_ENCODER_LIMIT = -6170; // FIXME
+  private int HIGH_ENCODER_LIMIT = 6170; // FIXME
+
+  private int kForwardLimit;
+  private int kReverseLimit;
 
   public BiscuitSubsystem() {
     biscuitPreferences();
@@ -76,20 +73,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     biscuit.configAllSettings(biscuitConfig);
   }
 
-  @Override
-  protected void initDefaultCommand() {}
-
-  @Override
-  public void setLimits(int forward, int reverse) {
-    biscuit.configForwardSoftLimitThreshold(forward, 0);
-    biscuit.configReverseSoftLimitThreshold(reverse, 0);
-  }
-
-  @Override
-  public int getPosition() {
-    return biscuit.getSelectedSensorPosition() % TICKS_PER_REV;
-  }
-
   public void biscuitPreferences() {
     if (!preferences.containsKey(closeEnoughKey)) preferences.putInt(closeEnoughKey, BACKUP);
     if (!preferences.containsKey(absoluteZeroKey)) preferences.putInt(absoluteZeroKey, BACKUP);
@@ -99,6 +82,22 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     CLOSE_ENOUGH = preferences.getInt(closeEnoughKey, BACKUP);
     LOW_ENCODER_LIMIT = preferences.getInt(lowLimitKey, BACKUP);
     HIGH_ENCODER_LIMIT = preferences.getInt(highLimitKey, BACKUP);
+  }
+
+  @Override
+  protected void initDefaultCommand() {}
+
+  @Override
+  public int getPosition() {
+    return biscuit.getSelectedSensorPosition() % TICKS_PER_REV;
+  }
+
+  @Override
+  public void setLimits(int forward, int reverse) {
+    kForwardLimit = forward;
+    kReverseLimit = reverse;
+    biscuit.configForwardSoftLimitThreshold(forward, 0);
+    biscuit.configReverseSoftLimitThreshold(reverse, 0);
   }
 
   public void zero() {
@@ -112,12 +111,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     zero = biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF - absoluteZero;
     biscuit.setSelectedSensorPosition(zero);
     logger.info("New relative position = {}", zero);
-  }
-
-  public double getGyroAngle() {
-    AHRS gyro = driveSubsystem.getGyro();
-    double angle = gyro.getYaw();
-    return angle;
   }
 
   public void setPosition() {
@@ -164,6 +157,12 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
         break;
     }
     biscuit.set(ControlMode.Position, target);
+  }
+
+  public double getGyroAngle() {
+    AHRS gyro = driveSubsystem.getGyro();
+    double angle = gyro.getYaw();
+    return angle;
   }
 
   public boolean onTarget() {
