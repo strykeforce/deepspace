@@ -26,7 +26,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   private final int TICKS_PER_REV = 12300;
   public FieldDirections plannedDirection;
   private int zero = 0;
-  private int target = 0;
   private TalonSRX biscuit = new TalonSRX(BISCUIT_ID);
   private int CLOSE_ENOUGH = 8; // FIXME
   private int LOW_ENCODER_LIMIT = -6170; // FIXME
@@ -37,7 +36,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   private String closeEnoughKey = KEY_BASE + "close_enough";
   private Position plannedPosition = Position.UP;
   private BiscuitGamePiece gamePiece;
-
+  private Position target = Position.UP;
   private int kForwardLimit;
   private int kReverseLimit;
 
@@ -116,50 +115,59 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     logger.info("New relative position = {}", zero);
   }
 
-  public void setPosition() {
+  public void manualPosition (Position position){
+    target = position;
+    setPosition(target);
+  }
+
+  public void executePlannedPosition (){
     double angle = getGyroAngle();
     switch (plannedPosition) {
       case PLACE:
         if (plannedDirection == FieldDirections.PLACE_R && Math.abs(angle) < 90
             || plannedDirection == FieldDirections.PLACE_L && Math.abs(angle) > 90) {
-          target = Position.RIGHT.encoderPosition;
+          target = Position.RIGHT;
         } else {
-          target = Position.LEFT.encoderPosition;
+          target = Position.LEFT;
         }
         break;
       case LEVEL_3:
         if (plannedDirection == FieldDirections.PLACE_R && Math.abs(angle) < 90
             || plannedDirection == FieldDirections.PLACE_L && Math.abs(angle) > 90) {
-          if (gamePiece == BiscuitGamePiece.CARGO) target = Position.TILT_UP_R.encoderPosition;
-          if (gamePiece == BiscuitGamePiece.HATCH) target = Position.RIGHT.encoderPosition;
+          if (gamePiece == BiscuitGamePiece.CARGO) target = Position.TILT_UP_R;
+          if (gamePiece == BiscuitGamePiece.HATCH) target = Position.RIGHT;
         } else {
-          if (gamePiece == BiscuitGamePiece.CARGO) target = Position.TILT_UP_L.encoderPosition;
-          if (gamePiece == BiscuitGamePiece.HATCH) target = Position.LEFT.encoderPosition;
+          if (gamePiece == BiscuitGamePiece.CARGO) target = Position.TILT_UP_L;
+          if (gamePiece == BiscuitGamePiece.HATCH) target = Position.LEFT;
         }
         break;
       case PICKUP:
         if (angle > 0) {
-          if (gamePiece == BiscuitGamePiece.CARGO) target = Position.BACK_STOP_L.encoderPosition;
-          if (gamePiece == BiscuitGamePiece.HATCH) target = Position.RIGHT.encoderPosition;
+          if (gamePiece == BiscuitGamePiece.CARGO) target = Position.BACK_STOP_L;
+          if (gamePiece == BiscuitGamePiece.HATCH) target = Position.RIGHT;
         } else {
-          if (gamePiece == BiscuitGamePiece.CARGO) target = Position.BACK_STOP_R.encoderPosition;
-          if (gamePiece == BiscuitGamePiece.HATCH) target = Position.LEFT.encoderPosition;
+          if (gamePiece == BiscuitGamePiece.CARGO) target = Position.BACK_STOP_R;
+          if (gamePiece == BiscuitGamePiece.HATCH) target = Position.LEFT;
         }
         break;
       case DOWN:
         if (biscuit.getSelectedSensorPosition() >= 0) {
-          target = Position.DOWN_L.encoderPosition;
+          target = Position.DOWN_L;
           logger.info("target {}", target);
           logger.info("position {}", biscuit.getSelectedSensorPosition());
         } else {
-          target = Position.DOWN_R.encoderPosition;
+          target = Position.DOWN_R;
         }
         break;
       default:
-        target = plannedPosition.encoderPosition;
+        target = plannedPosition;
         break;
     }
-    biscuit.set(ControlMode.Position, target);
+    setPosition(target);
+  }
+
+  public void setPosition(Position position) {
+    biscuit.set(ControlMode.Position, position.encoderPosition);
   }
 
   private double getGyroAngle() {
@@ -169,7 +177,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   }
 
   public boolean onTarget() {
-    if (Math.abs(biscuit.getSelectedSensorPosition() - target) < CLOSE_ENOUGH) {
+    if (Math.abs(biscuit.getSelectedSensorPosition() - target.encoderPosition) < CLOSE_ENOUGH) {
       return true;
     } else {
       return false;

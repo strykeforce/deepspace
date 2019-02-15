@@ -3,8 +3,10 @@ package frc.team2767.deepspace.control;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team2767.deepspace.command.ZeroAxisCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPlanCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitZeroCommand;
+import frc.team2767.deepspace.command.elevator.ElevatorPlanCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorZeroCommand;
 import frc.team2767.deepspace.command.intake.IntakeZeroCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
@@ -23,9 +25,11 @@ public class GameControls {
   public GameControls(int port) {
     joystick = new Joystick(port);
 
-    new JoystickButton(joystick, GameControls.Button.X.id).whenPressed(new ElevatorZeroCommand());
-    new JoystickButton(joystick, GameControls.Button.Y.id).whenPressed(new BiscuitZeroCommand());
-    new JoystickButton(joystick, GameControls.Button.B.id).whenPressed(new IntakeZeroCommand());
+    new JoystickButton(joystick, Button.START.id).whenPressed(new ZeroAxisCommand());
+
+    new JoystickButton(joystick, GameControls.Button.Y.id).whenPressed(new ElevatorPlanCommand(3));
+    new JoystickButton(joystick, GameControls.Button.B.id).whenPressed(new ElevatorPlanCommand(2));
+    new JoystickButton(joystick, GameControls.Button.A.id).whenPressed(new ElevatorPlanCommand(1));
 
     if (getDPad() == 7){
       new BiscuitPlanCommand(BiscuitSubsystem.FieldDirections.PLACE_L);

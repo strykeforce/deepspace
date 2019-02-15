@@ -36,6 +36,8 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   private final String K_STOP_OUTPUT = PREFS_NAME + "stop_output";
   private final String K_CLOSE_ENOUGH = PREFS_NAME + "close_enough";
   public Position position;
+  public int plannedLevel = 0;
+  public GamePiece currentGamepeice;
   private int kUpAccel;
   private int kUpVelocity;
   private int kDownSlowAccel;
@@ -179,16 +181,16 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     elevator.set(ControlMode.MotionMagic, setpoint);
   }
 
-  public void gamePieceAdjust(GamePiece currentGP, int height) {
+  public void executePlan() {
     Position newPosition;
 
-    if (currentGP.equals(GamePiece.CARGO)) {
-      if (height == 0) newPosition = Position.CARGO_LOW;
-      else if (height == 1) newPosition = Position.CARGO_MEDIUM;
+    if (currentGamepeice.equals(GamePiece.CARGO)) {
+      if (plannedLevel == 0) newPosition = Position.CARGO_LOW;
+      else if (plannedLevel == 1) newPosition = Position.CARGO_MEDIUM;
       else newPosition = Position.CARGO_HIGH;
-    } else if (currentGP.equals(GamePiece.HATCH)) {
-      if (height == 0) newPosition = Position.HATCH_LOW;
-      else if (height == 1) newPosition = Position.HATCH_MEDIUM;
+    } else if (currentGamepeice.equals(GamePiece.HATCH)) {
+      if (plannedLevel == 0) newPosition = Position.HATCH_LOW;
+      else if (plannedLevel == 1) newPosition = Position.HATCH_MEDIUM;
       else newPosition = Position.HATCH_HIGH;
     } else {
       newPosition = Position.STOW;
