@@ -52,8 +52,8 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     biscuitConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
     biscuitConfig.forwardSoftLimitThreshold = HIGH_ENCODER_LIMIT;
     biscuitConfig.reverseSoftLimitThreshold = LOW_ENCODER_LIMIT;
-    biscuitConfig.forwardSoftLimitEnable = false;
-    biscuitConfig.reverseSoftLimitEnable = false;
+    biscuitConfig.forwardSoftLimitEnable = true;
+    biscuitConfig.reverseSoftLimitEnable = true;
 
     biscuitConfig.slot0.kP = 1.0;
     biscuitConfig.slot0.kI = 0.0;
@@ -81,7 +81,8 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
 
   @Override
   public void setLimits(int forward, int reverse) {
-    
+    biscuit.configForwardSoftLimitThreshold(forward, 0);
+    biscuit.configReverseSoftLimitThreshold(reverse, 0);
   }
 
   @Override
