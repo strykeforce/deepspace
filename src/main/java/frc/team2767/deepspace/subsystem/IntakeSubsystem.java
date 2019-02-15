@@ -68,7 +68,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   @SuppressWarnings("Duplicates")
   private void intakePreferences() {
     if (!preferences.containsKey(SHOULDER_DOWN_OUTPUT)) {
-      preferences.putDouble(SHOULDER_DOWN_OUTPUT, 0.2);
+      preferences.putDouble(SHOULDER_DOWN_OUTPUT, -0.2);
     }
     if (!preferences.containsKey(SHOULDER_UP_OUTPUT)) {
       preferences.putDouble(SHOULDER_UP_OUTPUT, 0.2);
