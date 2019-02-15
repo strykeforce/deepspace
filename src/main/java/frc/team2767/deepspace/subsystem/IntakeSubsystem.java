@@ -96,17 +96,16 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
       preferences.putInt(K_REVERSE_SOFT_LIMIT, BACKUP);
     }
 
-    // need to make the backups actually relevant
-    kShoulderDownOutput = preferences.getInt(SHOULDER_DOWN_OUTPUT, BACKUP);
-    kShoulderUpOutput = preferences.getInt(SHOULDER_UP_OUTPUT, BACKUP);
-    kShoulderZeroPosition = preferences.getInt(SHOULDER_ZERO_POSITION, BACKUP);
-    kShoulderLoadPosition = preferences.getInt(SHOULDER_LOAD_POSITION, BACKUP);
-    kShoulderUpPosition = preferences.getInt(SHOULDER_UP_POSITION, BACKUP);
-    kRollerIn = preferences.getInt(ROLLER_IN_OUTPUT, BACKUP);
-    kRollerOut = preferences.getDouble(ROLLER_OUT_OUTPUT, BACKUP);
-    kCloseEnough = preferences.getInt(K_CLOSE_ENOUGH, BACKUP);
-    kForwardShoulderSoftLimit = preferences.getInt(K_FORWARD_SOFT_LIMIT, BACKUP);
-    kReverseShoulderSoftLimit = preferences.getInt(K_REVERSE_SOFT_LIMIT, BACKUP);
+    kShoulderDownOutput = preferences.getDouble(SHOULDER_DOWN_OUTPUT, 0.2);
+    kShoulderUpOutput = preferences.getDouble(SHOULDER_UP_OUTPUT, 0.2);
+    kShoulderZeroPosition = preferences.getInt(SHOULDER_ZERO_POSITION, -200);
+    kShoulderLoadPosition = preferences.getInt(SHOULDER_LOAD_POSITION, 15100);
+    kShoulderUpPosition = preferences.getInt(SHOULDER_UP_POSITION, 0);
+    kRollerIn = preferences.getDouble(ROLLER_IN_OUTPUT, 0.1);
+    kRollerOut = preferences.getDouble(ROLLER_OUT_OUTPUT, 0.1);
+    kCloseEnough = preferences.getInt(K_CLOSE_ENOUGH, 0);
+    kForwardShoulderSoftLimit = preferences.getInt(K_FORWARD_SOFT_LIMIT, 15100);
+    kReverseShoulderSoftLimit = preferences.getInt(K_REVERSE_SOFT_LIMIT, 0);
 
     logger.info("kShoulderDownOutput={}", kShoulderDownOutput);
     logger.info("kShoulderUpOutput={}", kShoulderUpOutput);
