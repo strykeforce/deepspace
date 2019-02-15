@@ -153,6 +153,8 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
 
   @Override
   public void setLimits(int forward, int reverse) {
+    kForwardLimit = forward;
+    kReverseLimit = reverse;
     elevator.configForwardSoftLimitThreshold(forward, 0);
     elevator.configReverseSoftLimitThreshold(reverse, 0);
   }

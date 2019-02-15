@@ -38,6 +38,9 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   private Position plannedPosition = Position.UP;
   private BiscuitGamePiece gamePiece;
 
+  private int kForwardLimit;
+  private int kReverseLimit;
+
   public BiscuitSubsystem() {
     biscuitPreferences();
 
@@ -73,17 +76,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     biscuit.configAllSettings(biscuitConfig);
   }
 
-  public void biscuitPreferences() {
-    if (!preferences.containsKey(closeEnoughKey)) preferences.putInt(closeEnoughKey, 8);
-    if (!preferences.containsKey(absoluteZeroKey)) preferences.putInt(absoluteZeroKey, 1413);
-    if (!preferences.containsKey(lowLimitKey)) preferences.putInt(lowLimitKey, -6170);
-    if (!preferences.containsKey(highLimitKey)) preferences.putInt(highLimitKey, 6170);
-
-    CLOSE_ENOUGH = preferences.getInt(closeEnoughKey, BACKUP);
-    LOW_ENCODER_LIMIT = preferences.getInt(lowLimitKey, BACKUP);
-    HIGH_ENCODER_LIMIT = preferences.getInt(highLimitKey, BACKUP);
-  }
-
   @Override
   protected void initDefaultCommand() {}
 
@@ -94,8 +86,21 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
 
   @Override
   public void setLimits(int forward, int reverse) {
+    kForwardLimit = forward;
+    kReverseLimit = reverse;
     biscuit.configForwardSoftLimitThreshold(forward, 0);
     biscuit.configReverseSoftLimitThreshold(reverse, 0);
+  }
+
+  public void biscuitPreferences() {
+    if (!preferences.containsKey(closeEnoughKey)) preferences.putInt(closeEnoughKey, 8);
+    if (!preferences.containsKey(absoluteZeroKey)) preferences.putInt(absoluteZeroKey, 1413);
+    if (!preferences.containsKey(lowLimitKey)) preferences.putInt(lowLimitKey, -6170);
+    if (!preferences.containsKey(highLimitKey)) preferences.putInt(highLimitKey, 6170);
+
+    CLOSE_ENOUGH = preferences.getInt(closeEnoughKey, BACKUP);
+    LOW_ENCODER_LIMIT = preferences.getInt(lowLimitKey, BACKUP);
+    HIGH_ENCODER_LIMIT = preferences.getInt(highLimitKey, BACKUP);
   }
 
   public void zero() {

@@ -40,6 +40,7 @@ public class SafetySubsystem extends Subsystem {
 
   @Override
   public void periodic() {
+
     biscuitCurrent = BiscuitPosition.of(biscuitSubsystem.getPosition());
     intakeCurrent = IntakePosition.of(intakeSubsystem.getPosition());
     elevatorCurrent = ElevatorPosition.of(elevatorSubsystem.getPosition());
@@ -48,14 +49,20 @@ public class SafetySubsystem extends Subsystem {
     intakeLimit = intakeLimit(biscuitCurrent, elevatorCurrent);
     elevatorLimit = elevatorLimit(biscuitCurrent, intakeCurrent);
 
-    biscuitSubsystem.setLimits(biscuitLimit.forwardLimit, biscuitLimit.reverseLimit);
-    intakeSubsystem.setLimits(intakeLimit.forwardLimit, intakeLimit.reverseLimit);
-
-    if (elevatorLimit == null) {
-      logger.warn("elevator limit null");
+    if (biscuitCurrent.forwardLimit != biscuitLimit.forwardLimit
+        || biscuitCurrent.reverseLimit != biscuitLimit.reverseLimit) {
+      biscuitSubsystem.setLimits(biscuitLimit.forwardLimit, biscuitLimit.reverseLimit);
     }
 
-    elevatorSubsystem.setLimits(elevatorLimit.forwardLimit, elevatorLimit.reverseLimit);
+    if (intakeCurrent.forwardLimit != intakeLimit.forwardLimit
+        || intakeCurrent.reverseLimit != intakeLimit.reverseLimit) {
+      intakeSubsystem.setLimits(intakeLimit.forwardLimit, intakeLimit.reverseLimit);
+    }
+
+    if (elevatorCurrent.forwardLimit != elevatorLimit.forwardLimit
+        || elevatorCurrent.reverseLimit != elevatorLimit.reverseLimit) {
+      elevatorSubsystem.setLimits(elevatorLimit.forwardLimit, elevatorLimit.reverseLimit);
+    }
   }
 
   @NotNull
