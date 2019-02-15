@@ -11,10 +11,12 @@ public class SafetyLogDumpCommand extends InstantCommand {
   private static final SafetySubsystem SAFETY = Robot.SAFETY;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  public SafetyLogDumpCommand() {}
+  public SafetyLogDumpCommand() {
+    setRunWhenDisabled(true);
+  }
 
   @Override
   protected void initialize() {
-    logger.debug("BEGIN SAFETY LOG DUMP\n" + SAFETY.toString());
+    logger.debug("BEGIN SAFETY LOG DUMP\n" + SAFETY.toString() + "\nEND SAFETY LOG DUMP");
   }
 }

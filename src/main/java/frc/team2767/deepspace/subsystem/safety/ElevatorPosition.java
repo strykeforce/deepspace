@@ -1,11 +1,11 @@
 package frc.team2767.deepspace.subsystem.safety;
 
 enum ElevatorPosition {
-  ELEVATOR_4(3270, 41),
-  ELEVATOR_9(3270, 1580),
-  ELEVATOR_10(3270, 2000),
-  ELEVATOR_16(3270, 5250),
-  ELEVATOR_21(3270, 7800);
+  ELEVATOR_4(32000, 0),
+  ELEVATOR_9(32000, 4900),
+  ELEVATOR_10(32000, 7690),
+  ELEVATOR_16(32000, 11799),
+  ELEVATOR_21(32000, 17700);
 
   public final int forwardLimit;
   public final int reverseLimit;
@@ -16,19 +16,19 @@ enum ElevatorPosition {
   }
 
   public static ElevatorPosition of(int position) {
-    if (position > 7800) {
+    if (position > 17700) {
       return ELEVATOR_21;
     }
 
-    if (position > 5250) {
+    if (position > 11799) {
       return ELEVATOR_16;
     }
 
-    if (position > 2000) {
+    if (position > 7690) {
       return ELEVATOR_10;
     }
 
-    if (position > 1580) {
+    if (position > 4900) {
       return ELEVATOR_9;
     }
 
@@ -38,6 +38,6 @@ enum ElevatorPosition {
 
   @Override
   public String toString() {
-    return "forwardLimit=" + forwardLimit + ", reverseLimit=" + reverseLimit;
+    return "elevator: forwardLimit=" + forwardLimit + ", reverseLimit=" + reverseLimit;
   }
 }

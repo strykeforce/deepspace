@@ -50,6 +50,11 @@ public class SafetySubsystem extends Subsystem {
 
     biscuitSubsystem.setLimits(biscuitLimit.forwardLimit, biscuitLimit.reverseLimit);
     intakeSubsystem.setLimits(intakeLimit.forwardLimit, intakeLimit.reverseLimit);
+
+    if (elevatorLimit == null) {
+      logger.warn("elevator limit null");
+    }
+
     elevatorSubsystem.setLimits(elevatorLimit.forwardLimit, elevatorLimit.reverseLimit);
   }
 
@@ -72,7 +77,7 @@ public class SafetySubsystem extends Subsystem {
             biscuitLimit = isLeft ? BISCUIT_90L : BISCUIT_90R;
             break;
           case ELEVATOR_21:
-            biscuitLimit = isLeft ? BISCUIT_180L : BISCUIT_180R;
+            biscuitLimit = BISCUIT_360;
             break;
         }
       case INTAKE_STOW:
@@ -85,8 +90,14 @@ public class SafetySubsystem extends Subsystem {
             biscuitLimit = isLeft ? BISCUIT_90L : BISCUIT_90R;
             break;
           case ELEVATOR_16:
+            if (biscuitCurrent == BISCUIT_180L || biscuitCurrent == BISCUIT_180R) {
+              biscuitLimit = isLeft ? BISCUIT_180L : BISCUIT_180R;
+            } else {
+              biscuitLimit = isLeft ? BISCUIT_90L : BISCUIT_90R;
+            }
+            break;
           case ELEVATOR_21:
-            biscuitLimit = isLeft ? BISCUIT_180L : BISCUIT_180R;
+            biscuitLimit = BISCUIT_360;
             break;
         }
         break;
@@ -103,8 +114,8 @@ public class SafetySubsystem extends Subsystem {
       case ELEVATOR_9:
         switch (biscuitPosition) {
           case BISCUIT_0:
-            intakeLimit = INTAKE_INTAKE;
-            break;
+            //            intakeLimit = INTAKE_INTAKE;
+            //            break;
           case BISCUIT_90L:
           case BISCUIT_90R:
           case BISCUIT_90L_120L:
@@ -165,6 +176,7 @@ public class SafetySubsystem extends Subsystem {
           case BISCUIT_120L_180L:
           case BISCUIT_120R_180R:
           case BISCUIT_180L:
+          case BISCUIT_180R:
             elevatorPosition = ELEVATOR_21;
             break;
         }
@@ -178,14 +190,17 @@ public class SafetySubsystem extends Subsystem {
           case BISCUIT_90R:
             elevatorPosition = ELEVATOR_9;
             break;
+          case BISCUIT_180L:
+          case BISCUIT_180R:
+            elevatorPosition = ELEVATOR_16;
+            break;
           case BISCUIT_90L_120L:
           case BISCUIT_90R_120R:
-          case BISCUIT_120L:
-          case BISCUIT_120R:
           case BISCUIT_120L_180L:
           case BISCUIT_120R_180R:
-          case BISCUIT_180L:
-            elevatorPosition = ELEVATOR_9;
+          case BISCUIT_120L:
+          case BISCUIT_120R:
+            elevatorPosition = ELEVATOR_21;
             break;
         }
         break;
@@ -198,18 +213,29 @@ public class SafetySubsystem extends Subsystem {
 
     return "current="
         + "\n\t"
-        + elevatorCurrent.toString()
+        + elevatorCurrent.name()
+        + "\t"
+        + elevatorSubsystem.getPosition()
         + "\n\t"
-        + intakeCurrent.toString()
+        + intakeCurrent.name()
+        + "\t"
+        + intakeSubsystem.getPosition()
         + "\n\t"
-        + biscuitCurrent.toString()
-        + "limits="
+        + biscuitCurrent.name()
+        + "\t"
+        + biscuitSubsystem.getPosition()
+        + "\nlimits="
         + "\n\t"
+        + elevatorLimit.name()
+        + "\t"
         + elevatorLimit.toString()
         + "\n\t"
+        + intakeLimit.name()
+        + "\t"
         + intakeLimit.toString()
         + "\n\t"
-        + biscuitLimit.toString()
-        + "END SAFETY LOG DUMP";
+        + biscuitLimit.name()
+        + "\t"
+        + biscuitLimit.toString();
   }
 }

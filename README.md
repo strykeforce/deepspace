@@ -31,7 +31,7 @@ CargoCenter | right | 1
 
 Subsystem | CANifier | ID
 --------- | -------- | --
-Trident   | Trident  | 0
+Trident   | trident  | 0
 
 ## DIO
 
@@ -45,3 +45,10 @@ AutonSwitch |  4     | 4
 AutonSwitch |  5     | 5
 Vision      | lights | 6
 
+## PCM
+
+Subsystem | Valve        | Solenoid
+--------- | ------------ | --------
+Vacuum    | trident      | 0
+Vacuum    | vacuum-motor | 1
+Vacuum    | climb        | 2
