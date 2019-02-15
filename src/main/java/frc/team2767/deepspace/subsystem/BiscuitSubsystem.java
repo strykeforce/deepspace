@@ -74,10 +74,10 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   }
 
   public void biscuitPreferences() {
-    if (!preferences.containsKey(closeEnoughKey)) preferences.putInt(closeEnoughKey, BACKUP);
-    if (!preferences.containsKey(absoluteZeroKey)) preferences.putInt(absoluteZeroKey, BACKUP);
-    if (!preferences.containsKey(lowLimitKey)) preferences.putInt(lowLimitKey, BACKUP);
-    if (!preferences.containsKey(highLimitKey)) preferences.putInt(highLimitKey, BACKUP);
+    if (!preferences.containsKey(closeEnoughKey)) preferences.putInt(closeEnoughKey, 8);
+    if (!preferences.containsKey(absoluteZeroKey)) preferences.putInt(absoluteZeroKey, 1413);
+    if (!preferences.containsKey(lowLimitKey)) preferences.putInt(lowLimitKey, -6170);
+    if (!preferences.containsKey(highLimitKey)) preferences.putInt(highLimitKey, 6170);
 
     CLOSE_ENOUGH = preferences.getInt(closeEnoughKey, BACKUP);
     LOW_ENCODER_LIMIT = preferences.getInt(lowLimitKey, BACKUP);

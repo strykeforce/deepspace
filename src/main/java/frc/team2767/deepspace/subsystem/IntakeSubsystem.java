@@ -66,46 +66,46 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   @SuppressWarnings("Duplicates")
   private void intakePreferences() {
     if (!preferences.containsKey(SHOULDER_DOWN_OUTPUT)) {
-      preferences.putInt(SHOULDER_DOWN_OUTPUT, BACKUP);
+      preferences.putDouble(SHOULDER_DOWN_OUTPUT, 0.2);
     }
     if (!preferences.containsKey(SHOULDER_UP_OUTPUT)) {
-      preferences.putInt(SHOULDER_UP_OUTPUT, BACKUP);
+      preferences.putDouble(SHOULDER_UP_OUTPUT, 0.2);
     }
     if (!preferences.containsKey(SHOULDER_ZERO_POSITION)) {
-      preferences.putInt(SHOULDER_ZERO_POSITION, BACKUP);
+      preferences.putInt(SHOULDER_ZERO_POSITION, -200);
     }
     if (!preferences.containsKey(SHOULDER_LOAD_POSITION)) {
-      preferences.putInt(SHOULDER_LOAD_POSITION, BACKUP);
+      preferences.putInt(SHOULDER_LOAD_POSITION, 15100);
     }
     if (!preferences.containsKey(SHOULDER_UP_POSITION)) {
-      preferences.putInt(SHOULDER_UP_POSITION, BACKUP);
+      preferences.putInt(SHOULDER_UP_POSITION, 0);
     }
     if (!preferences.containsKey(ROLLER_IN_OUTPUT)) {
-      preferences.putInt(ROLLER_IN_OUTPUT, BACKUP);
+      preferences.putDouble(ROLLER_IN_OUTPUT, 0.3);
     }
     if (!preferences.containsKey(ROLLER_OUT_OUTPUT)) {
-      preferences.putInt(ROLLER_OUT_OUTPUT, BACKUP);
+      preferences.putDouble(ROLLER_OUT_OUTPUT, 0.3);
     }
     if (!preferences.containsKey(K_CLOSE_ENOUGH)) {
-      preferences.putInt(K_CLOSE_ENOUGH, BACKUP);
+      preferences.putInt(K_CLOSE_ENOUGH, 0);
     }
     if (!preferences.containsKey(K_FORWARD_SOFT_LIMIT)) {
-      preferences.putInt(K_FORWARD_SOFT_LIMIT, BACKUP);
+      preferences.putInt(K_FORWARD_SOFT_LIMIT, 15100);
     }
     if (!preferences.containsKey(K_REVERSE_SOFT_LIMIT)) {
-      preferences.putInt(K_REVERSE_SOFT_LIMIT, BACKUP);
+      preferences.putInt(K_REVERSE_SOFT_LIMIT, 0);
     }
 
-    kShoulderDownOutput = preferences.getDouble(SHOULDER_DOWN_OUTPUT, 0.2);
-    kShoulderUpOutput = preferences.getDouble(SHOULDER_UP_OUTPUT, 0.2);
-    kShoulderZeroPosition = preferences.getInt(SHOULDER_ZERO_POSITION, -200);
-    kShoulderLoadPosition = preferences.getInt(SHOULDER_LOAD_POSITION, 15100);
-    kShoulderUpPosition = preferences.getInt(SHOULDER_UP_POSITION, 0);
-    kRollerIn = preferences.getDouble(ROLLER_IN_OUTPUT, 0.1);
-    kRollerOut = preferences.getDouble(ROLLER_OUT_OUTPUT, 0.1);
-    kCloseEnough = preferences.getInt(K_CLOSE_ENOUGH, 0);
-    kForwardShoulderSoftLimit = preferences.getInt(K_FORWARD_SOFT_LIMIT, 15100);
-    kReverseShoulderSoftLimit = preferences.getInt(K_REVERSE_SOFT_LIMIT, 0);
+    kShoulderDownOutput = preferences.getDouble(SHOULDER_DOWN_OUTPUT, BACKUP);
+    kShoulderUpOutput = preferences.getDouble(SHOULDER_UP_OUTPUT, BACKUP);
+    kShoulderZeroPosition = preferences.getInt(SHOULDER_ZERO_POSITION, BACKUP);
+    kShoulderLoadPosition = preferences.getInt(SHOULDER_LOAD_POSITION, BACKUP);
+    kShoulderUpPosition = preferences.getInt(SHOULDER_UP_POSITION, BACKUP);
+    kRollerIn = preferences.getDouble(ROLLER_IN_OUTPUT, BACKUP);
+    kRollerOut = preferences.getDouble(ROLLER_OUT_OUTPUT, BACKUP);
+    kCloseEnough = preferences.getInt(K_CLOSE_ENOUGH, BACKUP);
+    kForwardShoulderSoftLimit = preferences.getInt(K_FORWARD_SOFT_LIMIT, BACKUP);
+    kReverseShoulderSoftLimit = preferences.getInt(K_REVERSE_SOFT_LIMIT, BACKUP);
 
     logger.info("kShoulderDownOutput={}", kShoulderDownOutput);
     logger.info("kShoulderUpOutput={}", kShoulderUpOutput);
