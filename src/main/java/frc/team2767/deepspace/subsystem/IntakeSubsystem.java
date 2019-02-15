@@ -44,8 +44,10 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   private TalonSRX roller = new TalonSRX(ROLLER_ID);
   private int stableCount;
   private int setpoint;
-  private int kForwardShoulderSoftLimit;
-  private int kReverseShoulderSoftLimit;
+
+  private int kForwardLimit;
+  private int kReverseLimit;
+
   private Preferences preferences;
 
   public IntakeSubsystem() {
@@ -105,8 +107,8 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     kRollerIn = preferences.getInt(ROLLER_IN_OPUTPUT, BACKUP);
     kRollerOut = preferences.getDouble(ROLLER_OUT_OUTPUT, BACKUP);
     kCloseEnough = preferences.getInt(K_CLOSE_ENOUGH, BACKUP);
-    kForwardShoulderSoftLimit = preferences.getInt(K_FORWARD_SOFT_LIMIT, BACKUP);
-    kReverseShoulderSoftLimit = preferences.getInt(K_REVERSE_SOFT_LIMIT, BACKUP);
+    kForwardLimit = preferences.getInt(K_FORWARD_SOFT_LIMIT, BACKUP);
+    kReverseLimit = preferences.getInt(K_REVERSE_SOFT_LIMIT, BACKUP);
 
     logger.info("kShoulderDownOutput={}", kShoulderDownOutput);
     logger.info("kShoulderUpOutput={}", kShoulderUpOutput);
@@ -117,8 +119,8 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     logger.info("kRollerOut={}", kRollerOut);
     logger.info("kUpOutput={}", kShoulderUpOutput);
     logger.info("kCloseEnough={}", kCloseEnough);
-    logger.info("kForwardShoulderSoftLimit={}", kForwardShoulderSoftLimit);
-    logger.info("kReverseShoulderSoftLimit={}", kReverseShoulderSoftLimit);
+    logger.info("kForwardLimit={}", kForwardLimit);
+    logger.info("kReverseLimit={}", kReverseLimit);
   }
 
   @SuppressWarnings("Duplicates")
@@ -134,8 +136,8 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     shoulderConfig.slot0.kF = 1;
     shoulderConfig.slot0.integralZone = 0;
     shoulderConfig.slot0.allowableClosedloopError = 0;
-    shoulderConfig.forwardSoftLimitThreshold = kForwardShoulderSoftLimit;
-    shoulderConfig.reverseSoftLimitThreshold = kReverseShoulderSoftLimit;
+    shoulderConfig.forwardSoftLimitThreshold = kForwardLimit;
+    shoulderConfig.reverseSoftLimitThreshold = kReverseLimit;
     shoulderConfig.forwardSoftLimitEnable = true;
     shoulderConfig.reverseSoftLimitEnable = true;
     shoulderConfig.voltageCompSaturation = 12;
@@ -220,8 +222,8 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
 
   @Override
   public void setLimits(int forward, int reverse) {
-    shoulder.configForwardSoftLimitThreshold(forward);
-    shoulder.configReverseSoftLimitThreshold(reverse);
+    shoulder.configForwardSoftLimitThreshold(forward, 0);
+    shoulder.configReverseSoftLimitThreshold(reverse, 0);
   }
 
   public void setPosition(ShoulderPosition position) {
