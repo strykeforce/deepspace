@@ -80,7 +80,9 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   protected void initDefaultCommand() {}
 
   @Override
-  public void setLimits(int forward, int reverse) {}
+  public void setLimits(int forward, int reverse) {
+    
+  }
 
   @Override
   public int getPosition() {
