@@ -1,13 +1,10 @@
 package frc.team2767.deepspace.util;
 
-import frc.team2767.deepspace.Robot;
-import frc.team2767.deepspace.subsystem.DriveSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TwistCalculator {
 
-  private final DriveSubsystem DRIVE = Robot.DRIVE;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private double cameraX;
   private double cameraY;
@@ -18,7 +15,6 @@ public class TwistCalculator {
   private double cameraPositionBearing;
   private double swerveRotation;
   private double targetYaw;
-  private double gyroOverride;
 
   public TwistCalculator(
       double cameraAngle,
@@ -27,8 +23,7 @@ public class TwistCalculator {
       double cameraY,
       double cameraPositionBearing,
       double swerveRotation,
-      double targetYaw,
-      double gyroOverride) {
+      double targetYaw) {
     this.cameraAngle = cameraAngle;
     this.cameraRange = cameraRange;
     this.cameraX = cameraX;
@@ -36,7 +31,6 @@ public class TwistCalculator {
     this.cameraPositionBearing = cameraPositionBearing;
     this.swerveRotation = swerveRotation;
     this.targetYaw = targetYaw;
-    this.gyroOverride = gyroOverride;
     compute();
   }
 
@@ -68,14 +62,7 @@ public class TwistCalculator {
     deltaX = finalX - currentX;
     deltaY = finalY - currentY;
 
-    double gyroAngle;
-
-    if (DRIVE == null) {
-      gyroAngle = swerveRotation;
-    } else {
-      gyroAngle = DRIVE.getGyro().getAngle();
-    }
-    double initialHeading = cameraPositionBearing + gyroAngle + cameraAngle;
+    double initialHeading = cameraPositionBearing + swerveRotation + cameraAngle;
 
     double headingX = range * Math.cos(Math.toRadians(initialHeading));
     double headingY = range * Math.sin(Math.toRadians(initialHeading));
@@ -87,24 +74,6 @@ public class TwistCalculator {
     finalRange = Math.hypot(xCorrected, yCorrected);
 
     logger.debug("Driving range of {} at {}", finalRange, finalHeading);
-  }
-
-  public TwistCalculator(
-      double cameraAngle,
-      double cameraRange,
-      double cameraX,
-      double cameraY,
-      double cameraPositionBearing,
-      double swerveRotation,
-      double targetYaw) {
-    this.cameraAngle = cameraAngle;
-    this.cameraRange = cameraRange;
-    this.cameraX = cameraX;
-    this.cameraY = cameraY;
-    this.cameraPositionBearing = cameraPositionBearing;
-    this.swerveRotation = swerveRotation;
-    this.targetYaw = targetYaw;
-    compute();
   }
 
   /** @return twist heading */

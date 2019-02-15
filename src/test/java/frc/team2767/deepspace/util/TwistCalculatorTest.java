@@ -1,10 +1,6 @@
 package frc.team2767.deepspace.util;
 
-import frc.team2767.deepspace.subsystem.DriveSubsystem;
 import org.assertj.core.data.Percentage;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 
@@ -42,7 +38,6 @@ class TwistCalculatorTest {
         .isCloseTo(expectedHeading, Percentage.withPercentage(ACCEPTABLE_HEADING));
   }
 
-  @Disabled
   @ParameterizedTest
   @CsvFileSource(resources = "/inputs.csv", numLinesToSkip = 1)
   void getRange(
@@ -66,6 +61,7 @@ class TwistCalculatorTest {
             swerveRotation,
             targetYaw);
 
-    assertThat(twistCalculator.getRange()).isCloseTo(expectedRange, Percentage.withPercentage(ACCEPTABLE_RANGE));
+    assertThat(twistCalculator.getRange())
+        .isCloseTo(expectedRange, Percentage.withPercentage(ACCEPTABLE_RANGE));
   }
 }
