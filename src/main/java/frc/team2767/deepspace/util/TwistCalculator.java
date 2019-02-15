@@ -72,8 +72,6 @@ public class TwistCalculator {
 
     finalHeading = Math.toDegrees(Math.atan2(yCorrected, xCorrected));
     finalRange = Math.hypot(xCorrected, yCorrected);
-
-    logger.debug("Driving range of {} at {}", finalRange, finalHeading);
   }
 
   /** @return twist heading */

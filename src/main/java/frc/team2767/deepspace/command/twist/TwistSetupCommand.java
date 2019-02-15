@@ -59,6 +59,8 @@ public class TwistSetupCommand extends InstantCommand {
                         - cameraDistanceFromRobotEdge)),
             targetYaw);
 
+    logger.debug(
+        "Driving range of {} at {}", twistCalculator.getRange(), twistCalculator.getHeading());
     twist.start();
   }
 }
