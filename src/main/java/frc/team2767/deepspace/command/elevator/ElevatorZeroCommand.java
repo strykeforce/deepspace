@@ -6,7 +6,7 @@ import frc.team2767.deepspace.subsystem.ElevatorSubsystem;
 
 public class ElevatorZeroCommand extends Command {
 
-  private final ElevatorSubsystem ELEVATOR = Robot.ELEVATOR;
+  private static final ElevatorSubsystem ELEVATOR = Robot.ELEVATOR;
 
   public ElevatorZeroCommand() {
     requires(ELEVATOR);

@@ -10,12 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class TeleOpDriveCommand extends Command {
-  private static final double DEADBAND = 0.05;
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static DriverControls controls;
+
+  private static final double DEADBAND = 0.05;
 
   public TeleOpDriveCommand() {
     requires(DRIVE);

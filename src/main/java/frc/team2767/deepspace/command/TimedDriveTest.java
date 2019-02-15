@@ -12,8 +12,6 @@ public class TimedDriveTest extends TimedCommand {
 
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
-  //  private TalonSRX[] talons;
-  private Wheel[] wheels;
 
   public TimedDriveTest(double timeout) {
     super(timeout);
@@ -22,7 +20,7 @@ public class TimedDriveTest extends TimedCommand {
 
   @Override
   protected void initialize() {
-    wheels = DRIVE.getAllWheels();
+    Wheel[] wheels = DRIVE.getAllWheels();
     for (Wheel w : wheels) {
       w.set(0.0, 0.2);
     }

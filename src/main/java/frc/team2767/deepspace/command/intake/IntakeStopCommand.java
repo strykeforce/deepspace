@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 public class IntakeStopCommand extends InstantCommand {
 
   private static final IntakeSubsystem INTAKE = Robot.INTAKE;
-  private Logger logger = LoggerFactory.getLogger(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public IntakeStopCommand() {
     requires(INTAKE);

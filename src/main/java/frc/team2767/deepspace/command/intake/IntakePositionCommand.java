@@ -6,8 +6,7 @@ import frc.team2767.deepspace.subsystem.IntakeSubsystem;
 
 public class IntakePositionCommand extends Command {
 
-  private final IntakeSubsystem INTAKE = Robot.INTAKE;
-
+  private static final IntakeSubsystem INTAKE = Robot.INTAKE;
   private final IntakeSubsystem.ShoulderPosition position;
 
   public IntakePositionCommand(IntakeSubsystem.ShoulderPosition position) {

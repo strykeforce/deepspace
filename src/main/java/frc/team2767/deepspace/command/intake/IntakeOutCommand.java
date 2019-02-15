@@ -5,9 +5,8 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.IntakeSubsystem;
 
 public class IntakeOutCommand extends InstantCommand {
-  private final IntakeSubsystem INTAKE = Robot.INTAKE;
 
-  private final double percent = 0.2;
+  private static final IntakeSubsystem INTAKE = Robot.INTAKE;
 
   public IntakeOutCommand() {
     requires(INTAKE);
@@ -15,6 +14,7 @@ public class IntakeOutCommand extends InstantCommand {
 
   @Override
   protected void initialize() {
+    double percent = 0.2;
     INTAKE.rollerOpenLoop(-percent);
   }
 }

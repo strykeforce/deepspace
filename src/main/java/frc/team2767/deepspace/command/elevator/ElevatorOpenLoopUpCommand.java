@@ -6,7 +6,7 @@ import frc.team2767.deepspace.subsystem.ElevatorSubsystem;
 
 public class ElevatorOpenLoopUpCommand extends InstantCommand {
 
-  private final ElevatorSubsystem ELEVATOR = Robot.ELEVATOR;
+  private static final ElevatorSubsystem ELEVATOR = Robot.ELEVATOR;
 
   public ElevatorOpenLoopUpCommand() {
     requires(ELEVATOR);

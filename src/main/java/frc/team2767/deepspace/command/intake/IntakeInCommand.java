@@ -5,7 +5,8 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.IntakeSubsystem;
 
 public class IntakeInCommand extends InstantCommand {
-  private final IntakeSubsystem INTAKE = Robot.INTAKE;
+
+  private static final IntakeSubsystem INTAKE = Robot.INTAKE;
 
   public IntakeInCommand() {
     requires(INTAKE);
