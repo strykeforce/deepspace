@@ -15,6 +15,6 @@ public class DeactivateValveCommand extends InstantCommand {
 
   @Override
   protected void initialize() {
-    VACUUM.setSolenoid(valve, true);
+    VACUUM.setSolenoid(valve, false);
   }
 }
