@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.ZeroGyroCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitNegativeCommand;
+import frc.team2767.deepspace.command.biscuit.BiscuitPositionCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositiveCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
@@ -52,7 +53,7 @@ public class DriverControls {
     // ZEROS / LOG DUMPS
     new JoystickButton(joystick, Button.RESET.id).whenPressed(new ZeroGyroCommand());
     new JoystickButton(joystick, Button.HAMBURGER.id).whenPressed(new SafetyLogDumpCommand());
-    //    new JoystickButton(joystick, Button.X.id).whenPressed(new BiscuitZeroCommand());
+    new JoystickButton(joystick, Button.X.id).whenPressed(new BiscuitPositionCommand());
 
     // LIGHTS
     new JoystickButton(joystick, Trim.LEFT_X_POS.id).whenPressed(new LightsOnCommand());

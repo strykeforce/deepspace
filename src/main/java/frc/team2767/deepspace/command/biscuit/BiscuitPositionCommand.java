@@ -3,10 +3,13 @@ package frc.team2767.deepspace.command.biscuit;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BiscuitPositionCommand extends Command {
 
   private static final BiscuitSubsystem BISCUIT = Robot.BISCUIT;
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public BiscuitPositionCommand() {
     requires(BISCUIT);
@@ -14,7 +17,8 @@ public class BiscuitPositionCommand extends Command {
 
   @Override
   protected void initialize() {
-    BISCUIT.setPosition();
+    logger.info("BiscuitPosition ran");
+    BISCUIT.executePlan();
   }
 
   @Override
