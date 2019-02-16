@@ -65,6 +65,7 @@ public class VisionSubsystem extends Subsystem {
   }
 
   public void setCamera(Camera camera) {
+    logger.debug("chose {} camera", camera);
     this.camera = camera;
   }
 
