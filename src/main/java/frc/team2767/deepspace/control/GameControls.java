@@ -3,10 +3,12 @@ package frc.team2767.deepspace.control;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team2767.deepspace.command.biscuit.BiscuitZeroCommand;
-import frc.team2767.deepspace.command.elevator.ElevatorZeroCommand;
-import frc.team2767.deepspace.command.intake.IntakeZeroCommand;
+import frc.team2767.deepspace.command.ZeroAxisCommand;
+import frc.team2767.deepspace.command.biscuit.BiscuitSetDirectionCommand;
+import frc.team2767.deepspace.command.elevator.ElevatorPlanCommand;
+import frc.team2767.deepspace.command.log.BiscuitStateLogDumpCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
+import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,9 +23,21 @@ public class GameControls {
   public GameControls(int port) {
     joystick = new Joystick(port);
 
-    new JoystickButton(joystick, GameControls.Button.X.id).whenPressed(new ElevatorZeroCommand());
-    new JoystickButton(joystick, GameControls.Button.Y.id).whenPressed(new BiscuitZeroCommand());
-    new JoystickButton(joystick, GameControls.Button.B.id).whenPressed(new IntakeZeroCommand());
+    new JoystickButton(joystick, Button.START.id).whenPressed(new ZeroAxisCommand());
+
+    DirectionPadRight directionPadRight = new DirectionPadRight(this);
+    DirectionPadLeft directionPadLeft = new DirectionPadLeft(this);
+
+    directionPadRight.whenActive(
+        new BiscuitSetDirectionCommand(BiscuitSubsystem.FieldDirection.RIGHT));
+    directionPadLeft.whenActive(
+        new BiscuitSetDirectionCommand(BiscuitSubsystem.FieldDirection.LEFT));
+
+    new JoystickButton(joystick, GameControls.Button.Y.id).whenPressed(new ElevatorPlanCommand(3));
+    new JoystickButton(joystick, GameControls.Button.B.id).whenPressed(new ElevatorPlanCommand(2));
+    new JoystickButton(joystick, GameControls.Button.A.id).whenPressed(new ElevatorPlanCommand(1));
+    new JoystickButton(joystick, GameControls.Button.X.id)
+        .whenPressed(new BiscuitStateLogDumpCommand());
 
     //    // Shoulder
     //    new JoystickButton(joystick, GameControls.Shoulder.LEFT.id)
@@ -41,7 +55,7 @@ public class GameControls {
     //    new JoystickButton(joystick, GameControls.Button.A.id)
     //        .whenPressed(new ElevatorOpenLoopDownCommand());
     //    new JoystickButton(joystick, GameControls.Button.B.id)
-    //        .whenPressed(new ElevatorPositionCommand(ElevatorSubsystem.Position.STOW));
+    //        .whenPressed(new ElevatorPositionCommand(ElevatorSubsystem.BiscuitPosition.STOW));
     //
     //    new JoystickButton(joystick, GameControls.Button.START.id)
     //        .whenPressed(log(GameControls.Button.START));
