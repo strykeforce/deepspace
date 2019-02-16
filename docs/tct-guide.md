@@ -1,5 +1,5 @@
 # Wheel Zero Guidelines 2019
-######Zeroing the wheels using Thirdcoast Telemetry (TCT)
+###### Zeroing the wheels using Thirdcoast Telemetry (TCT)
 
 * Difficulty: Medium
 * Time (minutes):  5 (first time users), 3 (experienced)
