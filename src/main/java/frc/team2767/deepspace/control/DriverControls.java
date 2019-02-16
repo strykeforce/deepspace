@@ -8,6 +8,7 @@ import frc.team2767.deepspace.command.biscuit.BiscuitNegativeCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositionCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositiveCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
+import frc.team2767.deepspace.command.deliver.DeliverCommandGroup;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
@@ -38,11 +39,7 @@ public class DriverControls {
     new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenActive(new BiscuitNegativeCommand());
     new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenInactive(new BiscuitStopCommand());
 
-    //    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed();
-    //    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenReleased();
-    //
-    //    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed();
-    //    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased();
+        new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id).whenPressed(new DeliverCommandGroup());
 
     //     elevator
     new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenActive(new ElevatorOpenLoopUpCommand());
