@@ -3,7 +3,6 @@ package frc.team2767.deepspace.subsystem;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
-import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team2767.deepspace.Robot;
@@ -17,7 +16,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   private static final String KEY_BASE = "BiscuitSubsystem/BiscuitPosition/";
   private static final int BACKUP = 2767;
   private static Preferences preferences = Preferences.getInstance();
-  private final DriveSubsystem driveSubsystem = Robot.DRIVE;
+  private final DriveSubsystem DRIVE = Robot.DRIVE;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final int BISCUIT_ID = 40;
   private final int TICKS_PER_REV = 12300;
@@ -138,98 +137,128 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     setPosition(targetBiscuitPosition);
   }
 
+  @SuppressWarnings("Duplicates")
   public void executePlan() {
-    double angle = getGyroAngle();
 
+    currentAction = Action.PLACE;
+    targetLevel = Level.THREE;
+    currentGamePiece = GamePiece.CARGO;
+
+    Angle currentAngle;
+    double bearing = DRIVE.getGyro().getAngle();
+
+    if (Math.abs(bearing) <= 90) {
+      currentAngle = Angle.FORWARD;
+    } else {
+      currentAngle = Angle.BACKWARD;
+    }
+
+    logger.debug("level = {} gp = {} action = {}", targetLevel, currentGamePiece, currentAction);
     switch (currentAction) {
       case PLACE:
         if (currentGamePiece == GamePiece.CARGO && targetLevel == Level.THREE) {
+          logger.debug("tilting");
           switch (plannedDirection) {
             case LEFT:
+              switch (currentAngle) {
+                case FORWARD:
+                  targetBiscuitPosition = BiscuitPosition.TILT_UP_L;
+                  break;
+                case BACKWARD:
+                  targetBiscuitPosition = BiscuitPosition.TILT_UP_R;
+                  break;
+              }
             case RIGHT:
-              // gyro logic
+              switch (currentAngle) {
+                case FORWARD:
+                  targetBiscuitPosition = BiscuitPosition.TILT_UP_R;
+                  break;
+                case BACKWARD:
+                  targetBiscuitPosition = BiscuitPosition.TILT_UP_L;
+                  break;
+              }
           }
         } else {
+          logger.debug("not tilting");
           switch (plannedDirection) {
             case LEFT:
+              switch (currentAngle) {
+                case FORWARD:
+                  targetBiscuitPosition = BiscuitPosition.LEFT;
+                  break;
+                case BACKWARD:
+                  targetBiscuitPosition = BiscuitPosition.RIGHT;
+                  break;
+              }
             case RIGHT:
-              // gyro logic
-
+              switch (currentAngle) {
+                case FORWARD:
+                  targetBiscuitPosition = BiscuitPosition.RIGHT;
+                  break;
+                case BACKWARD:
+                  targetBiscuitPosition = BiscuitPosition.LEFT;
+                  break;
+              }
           }
         }
+        break;
 
       case PICKUP:
-        if (currentGamePiece == GamePiece.CARGO) {
-          switch (plannedDirection) {
-            case RIGHT:
-            case LEFT:
-          }
-
-          // gyro logic
+        if (bearing <= 0 && bearing >= -180) {
+          currentAngle = Angle.LEFT;
         } else {
-          switch (plannedDirection) {
-            case RIGHT:
-            case LEFT:
-              // gyro logic
-          }
+          currentAngle = Angle.RIGHT;
+        }
+        logger.debug("picking up");
+        switch (currentGamePiece) {
+          case CARGO:
+            switch (plannedDirection) {
+              case RIGHT:
+                switch (currentAngle) {
+                  case LEFT:
+                    targetBiscuitPosition = BiscuitPosition.BACK_STOP_L;
+                    break;
+                  case RIGHT:
+                    targetBiscuitPosition = BiscuitPosition.BACK_STOP_L;
+                    break;
+                }
+              case LEFT:
+                switch (currentAngle) {
+                  case LEFT:
+                    targetBiscuitPosition = BiscuitPosition.BACK_STOP_R;
+                    break;
+                  case RIGHT:
+                    targetBiscuitPosition = BiscuitPosition.BACK_STOP_R;
+                    break;
+                }
+            }
+
+          case HATCH:
+            switch (plannedDirection) {
+              case RIGHT:
+                switch (currentAngle) {
+                  case LEFT:
+                    targetBiscuitPosition = BiscuitPosition.LEFT;
+                    break;
+                  case RIGHT:
+                    targetBiscuitPosition = BiscuitPosition.RIGHT;
+                    break;
+                }
+              case LEFT:
+                switch (currentAngle) {
+                  case LEFT:
+                    targetBiscuitPosition = BiscuitPosition.LEFT;
+                    break;
+                  case RIGHT:
+                    targetBiscuitPosition = BiscuitPosition.RIGHT;
+                    break;
+                }
+            }
         }
     }
 
-    //    switch (plannedBiscuitPosition) {
-    //      case PLACE:
-    //        if (plannedDirection == FieldDirection.RIGHT && Math.abs(angle) < 90
-    //            || plannedDirection == FieldDirection.LEFT && Math.abs(angle) > 90) {
-    //          targetBiscuitPosition = BiscuitPosition.RIGHT;
-    //        } else {
-    //          targetBiscuitPosition = BiscuitPosition.LEFT;
-    //        }
-    //        break;
-    //      case LEVEL_3:
-    //        if (plannedDirection == FieldDirection.RIGHT && Math.abs(angle) < 90
-    //            || plannedDirection == FieldDirection.LEFT && Math.abs(angle) > 90) {
-    //          if (currentGamePiece == GamePiece.CARGO)
-    //            targetBiscuitPosition = BiscuitPosition.TILT_UP_R;
-    //          if (currentGamePiece == GamePiece.HATCH) targetBiscuitPosition =
-    // BiscuitPosition.RIGHT;
-    //        } else {
-    //          if (currentGamePiece == GamePiece.CARGO)
-    //            targetBiscuitPosition = BiscuitPosition.TILT_UP_L;
-    //          if (currentGamePiece == GamePiece.HATCH) targetBiscuitPosition =
-    // BiscuitPosition.LEFT;
-    //        }
-    //        break;
-    //      case PICKUP:
-    //        if (angle > 0) {
-    //          if (currentGamePiece == GamePiece.CARGO)
-    //            targetBiscuitPosition = BiscuitPosition.BACK_STOP_L;
-    //          if (currentGamePiece == GamePiece.HATCH) targetBiscuitPosition =
-    // BiscuitPosition.RIGHT;
-    //        } else {
-    //          if (currentGamePiece == GamePiece.CARGO)
-    //            targetBiscuitPosition = BiscuitPosition.BACK_STOP_R;
-    //          if (currentGamePiece == GamePiece.HATCH) targetBiscuitPosition =
-    // BiscuitPosition.LEFT;
-    //        }
-    //        break;
-    //      case DOWN:
-    //        if (biscuit.getSelectedSensorPosition() >= 0) {
-    //          targetBiscuitPosition = BiscuitPosition.DOWN_L;
-    //          logger.info("targetBiscuitPosition {}", targetBiscuitPosition);
-    //          logger.info("position {}", biscuit.getSelectedSensorPosition());
-    //        } else {
-    //          targetBiscuitPosition = BiscuitPosition.DOWN_R;
-    //        }
-    //        break;
-    //      default:
-    //        targetBiscuitPosition = plannedBiscuitPosition;
-    //        break;
-    //    }
+    logger.debug("targetPosition = {}", targetBiscuitPosition);
     setPosition(targetBiscuitPosition);
-  }
-
-  private double getGyroAngle() {
-    AHRS gyro = driveSubsystem.getGyro();
-    return (double) gyro.getYaw();
   }
 
   public boolean onTarget() {
@@ -267,6 +296,13 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   }
 
   public enum FieldDirection {
+    LEFT,
+    RIGHT
+  }
+
+  private enum Angle {
+    FORWARD,
+    BACKWARD,
     LEFT,
     RIGHT
   }
