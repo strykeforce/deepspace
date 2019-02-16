@@ -1,23 +1,32 @@
 package frc.team2767.deepspace.command.vision;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
-import frc.team2767.deepspace.Robot;
+import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.subsystem.ElevatorSubsystem;
 import frc.team2767.deepspace.subsystem.VisionSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SelectCameraCommand extends InstantCommand {
+public class SelectCameraCommand extends Command {
 
   private static final Logger logger = LoggerFactory.getLogger(ElevatorSubsystem.class);
-  private static final VisionSubsystem VISION = Robot.VISION;
   VisionSubsystem.Camera camera;
 
-  public SelectCameraCommand() {}
+  public SelectCameraCommand(VisionSubsystem.Camera camera) {
+    this.camera = camera;
+  }
 
   @Override
   protected void initialize() {
+    logger.debug("initialize");
+  }
 
-    VISION.setCamera(camera);
+  @Override
+  protected void execute() {
+    super.execute();
+  }
+
+  @Override
+  protected boolean isFinished() {
+    return false;
   }
 }
