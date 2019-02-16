@@ -16,7 +16,7 @@ public class ElevatorPositionCommand extends Command {
 
   @Override
   protected void initialize() {
-    ELEVATOR.setPosition(position);
+    ELEVATOR.executePlan();
   }
 
   @Override

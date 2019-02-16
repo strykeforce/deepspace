@@ -24,7 +24,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
 
   private final int BISCUIT_ID = 40;
   private final int TICKS_PER_REV = 12300;
-  public FieldDirections plannedDirection;
+  public FieldDirection plannedDirection;
   private int zero = 0;
   private TalonSRX biscuit = new TalonSRX(BISCUIT_ID);
   private int CLOSE_ENOUGH = 8; // FIXME
@@ -115,25 +115,30 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     logger.info("New relative position = {}", zero);
   }
 
-  public void manualPosition (Position position){
+  public void setPlan(FieldDirection direction, Position position) {
+    plannedDirection = direction;
+    plannedPosition = position;
+  }
+
+  public void manualPosition(Position position) {
     target = position;
     setPosition(target);
   }
 
-  public void executePlannedPosition (){
+  public void executePlan() {
     double angle = getGyroAngle();
     switch (plannedPosition) {
       case PLACE:
-        if (plannedDirection == FieldDirections.PLACE_R && Math.abs(angle) < 90
-            || plannedDirection == FieldDirections.PLACE_L && Math.abs(angle) > 90) {
+        if (plannedDirection == FieldDirection.PLACE_R && Math.abs(angle) < 90
+            || plannedDirection == FieldDirection.PLACE_L && Math.abs(angle) > 90) {
           target = Position.RIGHT;
         } else {
           target = Position.LEFT;
         }
         break;
       case LEVEL_3:
-        if (plannedDirection == FieldDirections.PLACE_R && Math.abs(angle) < 90
-            || plannedDirection == FieldDirections.PLACE_L && Math.abs(angle) > 90) {
+        if (plannedDirection == FieldDirection.PLACE_R && Math.abs(angle) < 90
+            || plannedDirection == FieldDirection.PLACE_L && Math.abs(angle) > 90) {
           if (gamePiece == BiscuitGamePiece.CARGO) target = Position.TILT_UP_R;
           if (gamePiece == BiscuitGamePiece.HATCH) target = Position.RIGHT;
         } else {
@@ -167,7 +172,10 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   }
 
   public void setPosition(Position position) {
-    biscuit.set(ControlMode.Position, position.encoderPosition);
+    logger.info("Biscuit setpoint = {}", position);
+    if (position != null) {
+      biscuit.set(ControlMode.Position, position.encoderPosition);
+    }
   }
 
   private double getGyroAngle() {
@@ -221,7 +229,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     }
   }
 
-  public enum FieldDirections {
+  public enum FieldDirection {
     PLACE_L,
     PLACE_R,
   }
