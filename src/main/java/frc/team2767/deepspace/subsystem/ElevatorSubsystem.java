@@ -1,8 +1,5 @@
 package frc.team2767.deepspace.subsystem;
 
-import static com.ctre.phoenix.motorcontrol.ControlMode.Disabled;
-import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
-
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
@@ -14,6 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
+import javax.swing.text.Position;
+
+import static com.ctre.phoenix.motorcontrol.ControlMode.Disabled;
+import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
+
 public class ElevatorSubsystem extends Subsystem implements Limitable {
   private static final int ID = 30;
   private static final int BACKUP = 2767;
@@ -23,12 +25,10 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   private static final int STABLE_THRESH = 1;
   private final TalonSRX elevator = new TalonSRX(ID);
   private final Preferences preferences;
-
+  public int plannedLevel = 0;
   private ElevatorLevel elevatorLevel;
   private Position position;
   private GamePiece currentGamepiece;
-
-  public int plannedLevel = 0;
   private int kUpAccel;
   private int kUpVelocity;
   private int kDownSlowAccel;
@@ -59,10 +59,6 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     elevatorPreferences();
     configTalon();
     logger.info("");
-  }
-
-  public void setElevatorLevel(ElevatorLevel elevatorLevel) {
-    this.elevatorLevel = elevatorLevel;
   }
 
   private void elevatorPreferences() {
@@ -163,6 +159,10 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     telemetryService.register(elevator);
   }
 
+  public void setElevatorLevel(ElevatorLevel elevatorLevel) {
+    this.elevatorLevel = elevatorLevel;
+  }
+
   @Override
   public int getPosition() {
     return elevator.getSelectedSensorPosition(0);
@@ -195,19 +195,48 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   }
 
   public void executePlan() {
-    Position newPosition;
+    Position newPosition = Position.NOTSET;
 
-    if (currentGamepiece.equals(GamePiece.CARGO)) {
-      if (plannedLevel == 0) newPosition = Position.CARGO_LOW;
-      else if (plannedLevel == 1) newPosition = Position.CARGO_MEDIUM;
-      else newPosition = Position.CARGO_HIGH;
-    } else if (currentGamepiece.equals(GamePiece.HATCH)) {
-      if (plannedLevel == 0) newPosition = Position.HATCH_LOW;
-      else if (plannedLevel == 1) newPosition = Position.HATCH_MEDIUM;
-      else newPosition = Position.HATCH_HIGH;
-    } else {
-      newPosition = Position.STOW;
+
+    switch (currentGamepiece) {
+      case HATCH:
+        switch (elevatorLevel) {
+          case ONE:
+            newPosition = Position.HATCH_LOW;
+            break;
+          case TWO:
+            newPosition = Position.HATCH_MEDIUM;
+            break;
+          case THREE:
+            newPosition = Position.HATCH_HIGH;
+            break;
+          case NOTSET:
+            logger.warn("level not set");
+
+        }
+        break;
+      case CARGO:
+        switch (elevatorLevel) {
+          case ONE:
+            newPosition = Position.CARGO_LOW;
+            break;
+          case TWO:
+            newPosition = Position.CARGO_MEDIUM;
+            break;
+          case THREE:
+            newPosition = Position.CARGO_HIGH;
+            break;
+          case NOTSET:
+            logger.warn("level not set");
+            break;
+        }
+        break;
+      case NOTSET:
+        logger.warn("no cargo set");
+        break;
     }
+
+    // stow?
 
     setPosition(newPosition);
   }
@@ -305,6 +334,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   protected void initDefaultCommand() {}
 
   public enum Position {
+    NOTSET,
     HATCH_LOW,
     HATCH_MEDIUM,
     HATCH_HIGH,
