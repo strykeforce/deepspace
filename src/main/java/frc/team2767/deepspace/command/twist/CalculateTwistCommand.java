@@ -20,8 +20,7 @@ public class CalculateTwistCommand extends InstantCommand {
   private double cameraY = -9.0;
   private double targetYaw;
 
-  public CalculateTwistCommand() {
-  }
+  public CalculateTwistCommand() {}
 
   @Override
   protected void initialize() {
@@ -38,7 +37,6 @@ public class CalculateTwistCommand extends InstantCommand {
             cameraPositionBearing,
             DRIVE.getGyro().getAngle(),
             targetYaw);
-
 
     VISION.setCorrectedHeading(twistCalculator.getHeading());
     VISION.setCorrectedRange(twistCalculator.getRange());

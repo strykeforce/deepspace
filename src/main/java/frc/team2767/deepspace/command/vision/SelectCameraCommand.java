@@ -13,8 +13,7 @@ public class SelectCameraCommand extends InstantCommand {
   private static final VisionSubsystem VISION = Robot.VISION;
   VisionSubsystem.Camera camera;
 
-  public SelectCameraCommand() {
-  }
+  public SelectCameraCommand() {}
 
   @Override
   protected void initialize() {

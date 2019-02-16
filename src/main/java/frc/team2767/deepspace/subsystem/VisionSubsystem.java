@@ -80,7 +80,6 @@ public class VisionSubsystem extends Subsystem {
     rawRange = (double) rangeEntry.getNumber(-1.0);
   }
 
-
   public void enableLights(boolean state) {
     lightsOutput.set(!state);
   }
