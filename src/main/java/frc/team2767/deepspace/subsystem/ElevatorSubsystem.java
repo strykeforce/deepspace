@@ -23,21 +23,12 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   private static final int STABLE_THRESH = 1;
   private final TalonSRX elevator = new TalonSRX(ID);
   private final Preferences preferences;
-  private final String PREFS_NAME = "ElevatorSubsystem/Settings/";
-  private final String K_UP_ACCEL = PREFS_NAME + "up_accel";
-  private final String K_UP_VELOCITY = PREFS_NAME + "up_vel";
-  private final String K_DOWN_SLOW_ACCEL = PREFS_NAME + "down_slow_accel";
-  private final String K_DOWN_SLOW_VELOCITY = PREFS_NAME + "down_slow_vel";
-  private final String K_DOWN_FAST_ACCEL = PREFS_NAME + "down_fast_accel";
-  private final String K_DOWN_FAST_VELOCITY = PREFS_NAME + "down_fast_vel";
-  private final String K_DOWN_VELOCITY_SHIFT_POS = PREFS_NAME + "down_vel_shiftpos";
-  private final String K_UP_OUTPUT = PREFS_NAME + "up_output";
-  private final String K_DOWN_OUTPUT = PREFS_NAME + "down_output";
-  private final String K_STOP_OUTPUT = PREFS_NAME + "stop_output";
-  private final String K_CLOSE_ENOUGH = PREFS_NAME + "close_enough";
-  public Position position;
+
+  private ElevatorLevel elevatorLevel;
+  private Position position;
+  private GamePiece currentGamepiece;
+
   public int plannedLevel = 0;
-  public GamePiece currentGamepeice;
   private int kUpAccel;
   private int kUpVelocity;
   private int kDownSlowAccel;
@@ -70,34 +61,61 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     logger.info("");
   }
 
+  public void setElevatorLevel(ElevatorLevel elevatorLevel) {
+    this.elevatorLevel = elevatorLevel;
+  }
+
   private void elevatorPreferences() {
-    if (!preferences.containsKey(K_UP_ACCEL)) preferences.putInt(K_UP_ACCEL, 5000);
-    if (!preferences.containsKey(K_UP_VELOCITY)) preferences.putInt(K_UP_VELOCITY, 1000);
-    if (!preferences.containsKey(K_DOWN_SLOW_ACCEL)) preferences.putInt(K_DOWN_SLOW_ACCEL, 2000);
-    if (!preferences.containsKey(K_DOWN_SLOW_VELOCITY))
-      preferences.putInt(K_DOWN_SLOW_VELOCITY, 200);
-    if (!preferences.containsKey(K_DOWN_FAST_ACCEL)) preferences.putInt(K_DOWN_FAST_ACCEL, 5000);
-    if (!preferences.containsKey(K_DOWN_FAST_VELOCITY))
-      preferences.putInt(K_DOWN_FAST_VELOCITY, 1000);
-    if (!preferences.containsKey(K_DOWN_VELOCITY_SHIFT_POS))
-      preferences.putInt(K_DOWN_VELOCITY_SHIFT_POS, 4000);
-    if (!preferences.containsKey(K_UP_OUTPUT)) preferences.putDouble(K_UP_OUTPUT, 0.2);
-    if (!preferences.containsKey(K_DOWN_OUTPUT)) preferences.putDouble(K_DOWN_OUTPUT, -0.2);
-    if (!preferences.containsKey(K_STOP_OUTPUT)) preferences.putDouble(K_STOP_OUTPUT, 0.0);
-    if (!preferences.containsKey(K_CLOSE_ENOUGH)) preferences.putInt(K_CLOSE_ENOUGH, 10);
 
-    kUpAccel = preferences.getInt(K_UP_ACCEL, BACKUP);
-    kUpVelocity = preferences.getInt(K_UP_VELOCITY, BACKUP);
+    String PREFS_NAME = "ElevatorSubsystem/Settings/";
+    String k_UP_ACCEL = PREFS_NAME + "up_accel";
+    if (!preferences.containsKey(k_UP_ACCEL)) preferences.putInt(k_UP_ACCEL, 5000);
 
-    kDownSlowAccel = preferences.getInt(K_DOWN_SLOW_ACCEL, BACKUP);
-    kDownSlowVelocity = preferences.getInt(K_DOWN_SLOW_VELOCITY, BACKUP);
-    kDownFastAccel = preferences.getInt(K_DOWN_FAST_ACCEL, BACKUP);
-    kDownFastVelocity = preferences.getInt(K_DOWN_FAST_VELOCITY, BACKUP);
-    kDownVelocityShiftPos = preferences.getInt(K_DOWN_VELOCITY_SHIFT_POS, BACKUP);
-    kUpOutput = preferences.getDouble(K_UP_OUTPUT, BACKUP);
-    kDownOutput = preferences.getDouble(K_DOWN_OUTPUT, BACKUP);
-    kStopOutput = preferences.getDouble(K_STOP_OUTPUT, BACKUP);
-    kCloseEnough = preferences.getInt(K_CLOSE_ENOUGH, BACKUP);
+    String k_UP_VELOCITY = PREFS_NAME + "up_vel";
+    if (!preferences.containsKey(k_UP_VELOCITY)) preferences.putInt(k_UP_VELOCITY, 1000);
+
+    String k_DOWN_SLOW_ACCEL = PREFS_NAME + "down_slow_accel";
+    if (!preferences.containsKey(k_DOWN_SLOW_ACCEL)) preferences.putInt(k_DOWN_SLOW_ACCEL, 2000);
+
+    String k_DOWN_SLOW_VELOCITY = PREFS_NAME + "down_slow_vel";
+    if (!preferences.containsKey(k_DOWN_SLOW_VELOCITY))
+      preferences.putInt(k_DOWN_SLOW_VELOCITY, 200);
+
+    String k_DOWN_FAST_ACCEL = PREFS_NAME + "down_fast_accel";
+    if (!preferences.containsKey(k_DOWN_FAST_ACCEL)) preferences.putInt(k_DOWN_FAST_ACCEL, 5000);
+
+    String k_DOWN_FAST_VELOCITY = PREFS_NAME + "down_fast_vel";
+    if (!preferences.containsKey(k_DOWN_FAST_VELOCITY))
+      preferences.putInt(k_DOWN_FAST_VELOCITY, 1000);
+
+    String k_DOWN_VELOCITY_SHIFT_POS = PREFS_NAME + "down_vel_shiftpos";
+    if (!preferences.containsKey(k_DOWN_VELOCITY_SHIFT_POS))
+      preferences.putInt(k_DOWN_VELOCITY_SHIFT_POS, 4000);
+
+    String k_UP_OUTPUT = PREFS_NAME + "up_output";
+    if (!preferences.containsKey(k_UP_OUTPUT)) preferences.putDouble(k_UP_OUTPUT, 0.2);
+
+    String k_DOWN_OUTPUT = PREFS_NAME + "down_output";
+    if (!preferences.containsKey(k_DOWN_OUTPUT)) preferences.putDouble(k_DOWN_OUTPUT, -0.2);
+
+    String k_STOP_OUTPUT = PREFS_NAME + "stop_output";
+    if (!preferences.containsKey(k_STOP_OUTPUT)) preferences.putDouble(k_STOP_OUTPUT, 0.0);
+
+    String k_CLOSE_ENOUGH = PREFS_NAME + "close_enough";
+    if (!preferences.containsKey(k_CLOSE_ENOUGH)) preferences.putInt(k_CLOSE_ENOUGH, 10);
+
+    kUpAccel = preferences.getInt(k_UP_ACCEL, BACKUP);
+    kUpVelocity = preferences.getInt(k_UP_VELOCITY, BACKUP);
+
+    kDownSlowAccel = preferences.getInt(k_DOWN_SLOW_ACCEL, BACKUP);
+    kDownSlowVelocity = preferences.getInt(k_DOWN_SLOW_VELOCITY, BACKUP);
+    kDownFastAccel = preferences.getInt(k_DOWN_FAST_ACCEL, BACKUP);
+    kDownFastVelocity = preferences.getInt(k_DOWN_FAST_VELOCITY, BACKUP);
+    kDownVelocityShiftPos = preferences.getInt(k_DOWN_VELOCITY_SHIFT_POS, BACKUP);
+    kUpOutput = preferences.getDouble(k_UP_OUTPUT, BACKUP);
+    kDownOutput = preferences.getDouble(k_DOWN_OUTPUT, BACKUP);
+    kStopOutput = preferences.getDouble(k_STOP_OUTPUT, BACKUP);
+    kCloseEnough = preferences.getInt(k_CLOSE_ENOUGH, BACKUP);
 
     logger.info("kUpAccel: {}", kUpAccel);
     logger.info("kUpVelocity: {}", kUpVelocity);
@@ -179,11 +197,11 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   public void executePlan() {
     Position newPosition;
 
-    if (currentGamepeice.equals(GamePiece.CARGO)) {
+    if (currentGamepiece.equals(GamePiece.CARGO)) {
       if (plannedLevel == 0) newPosition = Position.CARGO_LOW;
       else if (plannedLevel == 1) newPosition = Position.CARGO_MEDIUM;
       else newPosition = Position.CARGO_HIGH;
-    } else if (currentGamepeice.equals(GamePiece.HATCH)) {
+    } else if (currentGamepiece.equals(GamePiece.HATCH)) {
       if (plannedLevel == 0) newPosition = Position.HATCH_LOW;
       else if (plannedLevel == 1) newPosition = Position.HATCH_MEDIUM;
       else newPosition = Position.HATCH_HIGH;
@@ -310,10 +328,5 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   public enum Direction {
     UP,
     DOWN;
-  }
-
-  public enum GamePiece {
-    HATCH,
-    CARGO;
   }
 }

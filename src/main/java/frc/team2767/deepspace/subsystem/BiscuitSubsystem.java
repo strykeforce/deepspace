@@ -1,5 +1,7 @@
 package frc.team2767.deepspace.subsystem;
 
+import static frc.team2767.deepspace.subsystem.ElevatorLevel.NOTSET;
+
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
@@ -13,28 +15,27 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 public class BiscuitSubsystem extends Subsystem implements Limitable {
 
-  private static final String KEY_BASE = "BiscuitSubsystem/BiscuitPosition/";
+  private static final String KEY_BASE = "BiscuitSubsystem/Position/";
   private static final int BACKUP = 2767;
   private static Preferences preferences = Preferences.getInstance();
   private final DriveSubsystem DRIVE = Robot.DRIVE;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final int BISCUIT_ID = 40;
   private final int TICKS_PER_REV = 12300;
+  private FieldDirection targetDirection = FieldDirection.NOTSET;
   private int zero = 0;
   private TalonSRX biscuit = new TalonSRX(BISCUIT_ID);
-  private int CLOSE_ENOUGH = 8; // FIXME
+  private int CLOSE_ENOUGH = 50; // FIXME
   private int LOW_ENCODER_LIMIT = -6170; // FIXME
   private int HIGH_ENCODER_LIMIT = 6170; // FIXME
   private String absoluteZeroKey = KEY_BASE + "absolute_zero";
   private String lowLimitKey = KEY_BASE + "lower_limit";
   private String highLimitKey = KEY_BASE + "upper_limit";
   private String closeEnoughKey = KEY_BASE + "close_enough";
-
-  public FieldDirection targetDirection = FieldDirection.NOTSET;
   private GamePiece currentGamePiece = GamePiece.NOTSET;
   private BiscuitPosition targetBiscuitPosition = BiscuitPosition.NOTSET;
   private Action currentAction = Action.NOTSET;
-  private Level targetLevel = Level.NOTSET;
+  private ElevatorLevel targetLevel = NOTSET;
 
   public BiscuitSubsystem() {
     biscuitPreferences();
@@ -125,9 +126,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
 
   public void setPosition(BiscuitPosition biscuitPosition) {
     logger.info("biscuit setpoint = {}", biscuitPosition);
-    if (biscuitPosition != null) {
-      biscuit.set(ControlMode.MotionMagic, biscuitPosition.encoderPosition);
-    }
+    biscuit.set(ControlMode.MotionMagic, biscuitPosition.encoderPosition);
   }
 
   public void zero() {
@@ -173,7 +172,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     this.currentAction = currentAction;
   }
 
-  public void setTargetLevel(Level targetLevel) {
+  public void setTargetLevel(ElevatorLevel targetLevel) {
     logger.debug("setting target level to = {}", targetLevel);
     this.targetLevel = targetLevel;
   }
@@ -181,7 +180,8 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   @SuppressWarnings("Duplicates")
   public void executePlan() {
     Angle currentAngle;
-    double bearing = DRIVE.getGyro().getAngle();
+    double bearing = DRIVE.getGyro().getYaw();
+    logger.debug("gyro angle = {}", DRIVE.getGyro().getYaw());
 
     if (Math.abs(bearing) <= 90) {
       currentAngle = Angle.FORWARD;
@@ -192,7 +192,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     logger.debug("level = {} gp = {} action = {}", targetLevel, currentGamePiece, currentAction);
     switch (currentAction) {
       case PLACE:
-        if (currentGamePiece == GamePiece.CARGO && targetLevel == Level.THREE) {
+        if (currentGamePiece == GamePiece.CARGO && targetLevel == ElevatorLevel.THREE) {
           logger.debug("tilting");
           switch (targetDirection) {
             case LEFT:
@@ -204,6 +204,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
                   targetBiscuitPosition = BiscuitPosition.TILT_UP_R;
                   break;
               }
+              break;
             case RIGHT:
               switch (currentAngle) {
                 case FORWARD:
@@ -226,6 +227,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
                   targetBiscuitPosition = BiscuitPosition.RIGHT;
                   break;
               }
+              break;
             case RIGHT:
               switch (currentAngle) {
                 case FORWARD:
@@ -246,60 +248,41 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
           currentAngle = Angle.RIGHT;
         }
         logger.debug("picking up");
+
         switch (currentGamePiece) {
           case CARGO:
-            switch (targetDirection) {
-              case RIGHT:
-                switch (currentAngle) {
-                  case LEFT:
-                    targetBiscuitPosition = BiscuitPosition.BACK_STOP_L;
-                    break;
-                  case RIGHT:
-                    targetBiscuitPosition = BiscuitPosition.BACK_STOP_L;
-                    break;
-                }
+            switch (currentAngle) {
               case LEFT:
-                switch (currentAngle) {
-                  case LEFT:
-                    targetBiscuitPosition = BiscuitPosition.BACK_STOP_R;
-                    break;
-                  case RIGHT:
-                    targetBiscuitPosition = BiscuitPosition.BACK_STOP_R;
-                    break;
-                }
+                targetBiscuitPosition = BiscuitPosition.BACK_STOP_R;
+                break;
+              case RIGHT:
+                targetBiscuitPosition = BiscuitPosition.BACK_STOP_L;
+                break;
             }
+            break;
 
           case HATCH:
-            switch (targetDirection) {
-              case RIGHT:
-                switch (currentAngle) {
-                  case LEFT:
-                    targetBiscuitPosition = BiscuitPosition.LEFT;
-                    break;
-                  case RIGHT:
-                    targetBiscuitPosition = BiscuitPosition.RIGHT;
-                    break;
-                }
+            switch (currentAngle) {
               case LEFT:
-                switch (currentAngle) {
-                  case LEFT:
-                    targetBiscuitPosition = BiscuitPosition.LEFT;
-                    break;
-                  case RIGHT:
-                    targetBiscuitPosition = BiscuitPosition.RIGHT;
-                    break;
-                }
+                targetBiscuitPosition = BiscuitPosition.LEFT;
+                break;
+              case RIGHT:
+                targetBiscuitPosition = BiscuitPosition.RIGHT;
+                break;
             }
         }
     }
 
-    logger.debug("targetPosition = {}", targetBiscuitPosition);
     setPosition(targetBiscuitPosition);
   }
 
   public boolean onTarget() {
     if (Math.abs(biscuit.getSelectedSensorPosition() - targetBiscuitPosition.encoderPosition)
         < CLOSE_ENOUGH) {
+      logger.debug(
+          "current = {} target = {}",
+          biscuit.getSelectedSensorPosition(),
+          targetBiscuitPosition.encoderPosition);
       logger.debug("on targetBiscuitPosition");
       return true;
     }
@@ -315,36 +298,12 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     biscuit.set(ControlMode.PercentOutput, 0);
   }
 
-  public enum GamePiece {
-    CARGO,
-    HATCH,
-    NOTSET
-  }
-
-  public enum Action {
-    PICKUP,
-    PLACE,
-    NOTSET
-  }
-
-  public enum Level {
-    ONE,
-    TWO,
-    THREE,
-    NOTSET
-  }
-
-  public enum FieldDirection {
-    LEFT,
-    RIGHT,
-    NOTSET
-  }
-
   private enum Angle {
     FORWARD,
     BACKWARD,
     LEFT,
-    RIGHT
+    RIGHT,
+    NOTSET
   }
 
   public enum BiscuitPosition {
