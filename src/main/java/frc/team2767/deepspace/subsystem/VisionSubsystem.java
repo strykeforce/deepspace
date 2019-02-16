@@ -33,4 +33,10 @@ public class VisionSubsystem extends Subsystem {
 
   @Override
   protected void initDefaultCommand() {}
+
+  public enum Camera {
+    LEFT,
+    RIGHT,
+    NOTSET
+  }
 }
