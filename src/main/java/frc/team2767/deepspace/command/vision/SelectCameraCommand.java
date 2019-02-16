@@ -21,16 +21,15 @@ public class SelectCameraCommand extends InstantCommand {
 
   @Override
   protected void initialize() {
+    logger.debug("initialize");
     VisionSubsystem.Camera camera;
 
-    if (-90 < DRIVE.getGyro().getAngle() && DRIVE.getGyro().getAngle() < 90) {
+    if (Math.abs(DRIVE.getGyro().getYaw()) < 90) {
       camera = VisionSubsystem.Camera.LEFT;
     } else {
       camera = VisionSubsystem.Camera.RIGHT;
     }
 
     VISION.setCamera(camera);
-
-    logger.debug("initialize");
   }
 }
