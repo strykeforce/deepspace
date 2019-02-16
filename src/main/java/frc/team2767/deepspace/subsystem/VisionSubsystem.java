@@ -12,15 +12,17 @@ public class VisionSubsystem extends Subsystem {
 
   private static final Logger logger = LoggerFactory.getLogger(ElevatorSubsystem.class);
   private final DigitalOutput lightsOutput = new DigitalOutput(0);
-  NetworkTableEntry bearingEntry;
-  NetworkTableEntry rangeEntry;
-  private NetworkTable table = NetworkTableInstance.getDefault().getTable("Pyeye");
-  private FieldDirection direction = FieldDirection.NOTSET;
-  private ElevatorLevel elevatorLevel = ElevatorLevel.NOTSET;
   private final double cameraPositionBearing = -90.0;
   private final double CAMERA_X = 0.0;
   private final double CAMERA_Y = -9.0;
 
+  NetworkTableEntry bearingEntry;
+  NetworkTableEntry rangeEntry;
+  private NetworkTable table = NetworkTableInstance.getDefault().getTable("Pyeye");
+
+  private FieldDirection direction = FieldDirection.NOTSET;
+  private ElevatorLevel elevatorLevel = ElevatorLevel.NOTSET;
+  private Camera camera = Camera.NOTSET;
   private double rawRange;
   private double rawBearing;
 
@@ -28,8 +30,6 @@ public class VisionSubsystem extends Subsystem {
   private double correctedHeading;
 
   private double targetYaw;
-
-  private Camera camera;
 
   public VisionSubsystem() {
     lightsOutput.set(true);
@@ -99,7 +99,7 @@ public class VisionSubsystem extends Subsystem {
     lightsOutput.set(!state);
   }
 
-  public void setDirection(FieldDirection direction) {
+  public void setFieldDirection(FieldDirection direction) {
     this.direction = direction;
     logger.debug("set direction to {}", direction);
   }

@@ -53,14 +53,6 @@ public class GameControls {
     //    new JoystickButton(joystick, GameControls.Trigger.RIGHT.id)
     //        .whenPressed(log(GameControls.Trigger.RIGHT));
     //
-    //    // Push-buttons
-    //    new JoystickButton(joystick, GameControls.Button.A.id)
-    //        .whenPressed(new ElevatorOpenLoopDownCommand());
-    //    new JoystickButton(joystick, GameControls.Button.B.id)
-    //        .whenPressed(new ElevatorPositionCommand(ElevatorSubsystem.BiscuitPosition.STOW));
-    //
-    //    new JoystickButton(joystick, GameControls.Button.START.id)
-    //        .whenPressed(log(GameControls.Button.START));
     //    new JoystickButton(joystick, GameControls.Button.BACK.id)
     //        .whenPressed(log(GameControls.Button.BACK));
     //    new JoystickButton(joystick, GameControls.Button.LEFT.id)

@@ -21,6 +21,6 @@ public class SelectFieldDirectionCommand extends InstantCommand {
   @Override
   protected void initialize() {
     BISCUIT.setFieldDirection(direction);
-    VISION.setDirection(direction);
+    VISION.setFieldDirection(direction);
   }
 }

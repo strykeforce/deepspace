@@ -14,12 +14,16 @@ public class SelectCameraCommand extends InstantCommand {
   private static final VisionSubsystem VISION = Robot.VISION;
   private final Logger logger = LoggerFactory.getLogger(ElevatorSubsystem.class);
 
-  public SelectCameraCommand() {}
+  public SelectCameraCommand() {
+    requires(DRIVE);
+    requires(VISION);
+  }
 
   @Override
   protected void initialize() {
     VisionSubsystem.Camera camera;
-    if (-180 < DRIVE.getGyro().getAngle() && DRIVE.getGyro().getAngle() < 0) {
+
+    if (-90 < DRIVE.getGyro().getAngle() && DRIVE.getGyro().getAngle() < 90) {
       camera = VisionSubsystem.Camera.LEFT;
     } else {
       camera = VisionSubsystem.Camera.RIGHT;
