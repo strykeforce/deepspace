@@ -133,14 +133,23 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   public void zero() {
     if (!preferences.containsKey(absoluteZeroKey)) preferences.putInt(absoluteZeroKey, BACKUP);
     int absoluteZero = preferences.getInt(absoluteZeroKey, BACKUP);
-    logger.info("Preferences zero = {}", absoluteZero);
-    logger.info("Relative position = {}", biscuit.getSelectedSensorPosition());
-    logger.info(
-        "Absolute position = {}", biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF);
 
-    zero = biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF - absoluteZero;
-    biscuit.setSelectedSensorPosition(zero);
-    logger.info("New relative position = {}", zero);
+    if (!biscuit.getSensorCollection().isFwdLimitSwitchClosed()) {
+      logger.info("Preferences zero = {}", absoluteZero);
+      logger.info("Relative position = {}", biscuit.getSelectedSensorPosition());
+      logger.info(
+          "Absolute position = {}", biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF);
+
+      zero = biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF - absoluteZero;
+      biscuit.setSelectedSensorPosition(zero);
+      logger.info("New relative position = {}", zero);
+    } else {
+      logger.warn("Biscuit zero failed");
+      biscuit.configPeakOutputForward(0, 0);
+      biscuit.configPeakOutputReverse(0, 0);
+    }
+    biscuit.configForwardLimitSwitchSource(
+        LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
   }
 
   public void setFieldDirection(FieldDirection direction) {
