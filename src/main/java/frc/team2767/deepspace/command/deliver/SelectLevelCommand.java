@@ -1,4 +1,4 @@
-package frc.team2767.deepspace.command.controls;
+package frc.team2767.deepspace.command.deliver;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team2767.deepspace.Robot;
