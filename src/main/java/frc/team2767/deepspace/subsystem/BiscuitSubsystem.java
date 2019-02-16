@@ -101,13 +101,13 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
         + "\n\t"
         + "current game piece = "
         + currentGamePiece.name()
-        + "\t\n"
+        + "\n\t"
         + "target level = "
         + targetLevel.name()
         + "\n\t"
         + "target direction = "
         + targetDirection.name()
-        + "\t\n"
+        + "\n\t"
         + "target position = "
         + targetBiscuitPosition.name();
   }
