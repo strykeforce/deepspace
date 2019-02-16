@@ -6,7 +6,7 @@ import frc.team2767.deepspace.control.Controls;
 import frc.team2767.deepspace.subsystem.*;
 import frc.team2767.deepspace.subsystem.health.HealthCheckSubsystem;
 import frc.team2767.deepspace.subsystem.safety.SafetySubsystem;
-import frc.team2767.deepspace.subsystem.safety.VacuumSubsystem;
+import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryController;
