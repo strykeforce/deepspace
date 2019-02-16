@@ -13,7 +13,9 @@ import frc.team2767.deepspace.command.vacuum.PressureSetCommand;
 import frc.team2767.deepspace.command.vacuum.VacuumStopCommand;
 import frc.team2767.deepspace.command.vision.LightsOffCommand;
 import frc.team2767.deepspace.command.vision.LightsOnCommand;
-import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
+import frc.team2767.deepspace.subsystem.Action;
+import frc.team2767.deepspace.subsystem.ElevatorLevel;
+import frc.team2767.deepspace.subsystem.GamePiece;
 import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,22 +69,11 @@ public class SmartDashboardControls {
 
     SmartDashboard.putData(
         "Pit/3CU",
-        new BiscuitSetStatesCommand(
-            BiscuitSubsystem.Level.THREE,
-            BiscuitSubsystem.GamePiece.CARGO,
-            BiscuitSubsystem.Action.PICKUP));
+        new BiscuitSetStatesCommand(ElevatorLevel.THREE, GamePiece.CARGO, Action.PICKUP));
     SmartDashboard.putData(
-        "Pit/2HU",
-        new BiscuitSetStatesCommand(
-            BiscuitSubsystem.Level.TWO,
-            BiscuitSubsystem.GamePiece.HATCH,
-            BiscuitSubsystem.Action.PICKUP));
+        "Pit/2HU", new BiscuitSetStatesCommand(ElevatorLevel.TWO, GamePiece.HATCH, Action.PICKUP));
     SmartDashboard.putData(
-        "Pit/2CP",
-        new BiscuitSetStatesCommand(
-            BiscuitSubsystem.Level.TWO,
-            BiscuitSubsystem.GamePiece.CARGO,
-            BiscuitSubsystem.Action.PLACE));
+        "Pit/2CP", new BiscuitSetStatesCommand(ElevatorLevel.TWO, GamePiece.CARGO, Action.PLACE));
     logger.debug("creating test commands");
   }
 

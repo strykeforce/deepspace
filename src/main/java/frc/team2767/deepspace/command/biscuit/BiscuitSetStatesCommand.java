@@ -2,48 +2,46 @@ package frc.team2767.deepspace.command.biscuit;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team2767.deepspace.Robot;
+import frc.team2767.deepspace.subsystem.Action;
 import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
+import frc.team2767.deepspace.subsystem.ElevatorLevel;
+import frc.team2767.deepspace.subsystem.GamePiece;
 
 public class BiscuitSetStatesCommand extends InstantCommand {
 
   private static final BiscuitSubsystem BISCUIT = Robot.BISCUIT;
 
-  private BiscuitSubsystem.Level level;
-  private BiscuitSubsystem.GamePiece gamePiece;
-  private BiscuitSubsystem.Action action;
+  private ElevatorLevel level;
+  private GamePiece gamePiece;
+  private Action action;
 
-  public BiscuitSetStatesCommand(BiscuitSubsystem.GamePiece gamePiece) {
+  public BiscuitSetStatesCommand(GamePiece gamePiece) {
     this(null, gamePiece, null);
   }
 
-  public BiscuitSetStatesCommand(
-      BiscuitSubsystem.Level level,
-      BiscuitSubsystem.GamePiece gamePiece,
-      BiscuitSubsystem.Action action) {
+  public BiscuitSetStatesCommand(ElevatorLevel level, GamePiece gamePiece, Action action) {
     this.level = level;
     this.gamePiece = gamePiece;
     this.action = action;
   }
 
-  public BiscuitSetStatesCommand(BiscuitSubsystem.Action action) {
+  public BiscuitSetStatesCommand(Action action) {
     this(null, null, action);
   }
 
-  public BiscuitSetStatesCommand(BiscuitSubsystem.Level level) {
+  public BiscuitSetStatesCommand(ElevatorLevel level) {
     this(level, null, null);
   }
 
-  public BiscuitSetStatesCommand(BiscuitSubsystem.Level level, BiscuitSubsystem.Action action) {
+  public BiscuitSetStatesCommand(ElevatorLevel level, Action action) {
     this(level, null, action);
   }
 
-  public BiscuitSetStatesCommand(
-      BiscuitSubsystem.GamePiece gamePiece, BiscuitSubsystem.Action action) {
+  public BiscuitSetStatesCommand(GamePiece gamePiece, Action action) {
     this(null, gamePiece, action);
   }
 
-  public BiscuitSetStatesCommand(
-      BiscuitSubsystem.Level level, BiscuitSubsystem.GamePiece gamePiece) {
+  public BiscuitSetStatesCommand(ElevatorLevel level, GamePiece gamePiece) {
     this(level, gamePiece, null);
   }
 
