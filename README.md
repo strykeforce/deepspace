@@ -50,5 +50,5 @@ Vision      | lights | 6
 Subsystem | Valve        | Solenoid
 --------- | ------------ | --------
 Vacuum    | trident      | 0
-Vacuum    | vacuum-motor | 1
+Vacuum    | pump         | 1
 Vacuum    | climb        | 2

@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team2767.deepspace.control.Controls;
 import frc.team2767.deepspace.subsystem.*;
+import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 import frc.team2767.deepspace.subsystem.health.HealthCheckSubsystem;
 import frc.team2767.deepspace.subsystem.safety.SafetySubsystem;
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ public class Robot extends TimedRobot {
   public static IntakeSubsystem INTAKE;
   public static HealthCheckSubsystem HEALTHCHECK;
   public static SafetySubsystem SAFETY;
+  public static VacuumSubsystem VACUUM;
 
   public static Controls CONTROLS;
 
@@ -37,6 +39,7 @@ public class Robot extends TimedRobot {
     INTAKE = new IntakeSubsystem();
     SAFETY = new SafetySubsystem();
     HEALTHCHECK = new HealthCheckSubsystem();
+    VACUUM = new VacuumSubsystem();
 
     // Controls initialize Commands so this should be instantiated last to prevent
     // NullPointerExceptions in commands that require() Subsystems above.
