@@ -39,8 +39,8 @@ public class DriverControls {
     new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenActive(new BiscuitNegativeCommand());
     new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenInactive(new BiscuitStopCommand());
 
-        new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id).whenPressed(new DeliverCommandGroup());
-g
+    new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id).whenPressed(new DeliverCommandGroup());
+
     //     elevator
     new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenActive(new ElevatorOpenLoopUpCommand());
     new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenInactive(new ElevatorStopCommand());

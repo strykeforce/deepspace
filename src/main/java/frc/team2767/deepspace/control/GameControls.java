@@ -10,7 +10,6 @@ import frc.team2767.deepspace.command.log.BiscuitStateLogDumpCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.subsystem.ElevatorLevel;
 import frc.team2767.deepspace.subsystem.FieldDirection;
-import frc.team2767.deepspace.subsystem.FieldDirection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
