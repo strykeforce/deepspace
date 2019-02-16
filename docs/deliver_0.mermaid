@@ -1,0 +1,33 @@
+sequenceDiagram
+participant DriveTeam
+participant Commands
+participant Vision
+participant Biscuit
+participant Elevator
+participant Drive
+participant Pyeye
+DriveTeam ->> +Commands:SelectSideCommand
+Commands->> Biscuit: L/R
+Commands->> -Vision: L/R
+Vision -->> DriveTeam: display side
+DriveTeam ->> +Commands:SelectLevelCommand
+Commands->> Biscuit: level
+Commands->> Elevator: level
+Commands->> -Vision: level
+Vision -->> DriveTeam: display level
+
+DriveTeam ->> +Commands: DeliverCommand
+
+Commands ->> +Vision: select camera
+
+Vision ->> Pyeye: select camera
+activate Pyeye
+Pyeye -->> Vision: target acquired
+deactivate Pyeye
+Vision -->> -Commands: target acquired
+Commands ->> Biscuit: set position
+
+Commands ->> Elevator: set position
+
+Commands ->> Vision: get target
+Commands ->> -Drive: twist
