@@ -15,16 +15,14 @@ public class CalculateTwistCommand extends InstantCommand {
   private static final VisionSubsystem VISION = Robot.VISION;
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
 
-  private double cameraPositionBearing = -90.0;
-  private double cameraX = 0.0;
-  private double cameraY = -9.0;
-  private double targetYaw;
-
-  public CalculateTwistCommand() {}
+  public CalculateTwistCommand() {
+    requires(DRIVE);
+    requires(VISION);
+  }
 
   @Override
   protected void initialize() {
-    targetYaw = VISION.getTargetYaw();
+    double targetYaw = VISION.getTargetYaw();
     logger.debug("pyeye bearing={} range={}", VISION.getRawBearing(), VISION.getRawRange());
     logger.debug("current gyro = {}", DRIVE.getGyro().getAngle());
 
@@ -32,9 +30,9 @@ public class CalculateTwistCommand extends InstantCommand {
         new TwistCalculator(
             VISION.getRawBearing(),
             VISION.getRawRange(),
-            cameraX,
-            cameraY,
-            cameraPositionBearing,
+            VISION.getCameraX(),
+            VISION.getCameraY(),
+            VISION.getCameraPositionBearing(),
             DRIVE.getGyro().getAngle(),
             targetYaw);
 

@@ -11,18 +11,21 @@ import org.slf4j.LoggerFactory;
 public class SelectCameraCommand extends InstantCommand {
 
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
+  private static final VisionSubsystem VISION = Robot.VISION;
   private final Logger logger = LoggerFactory.getLogger(ElevatorSubsystem.class);
-  VisionSubsystem.Camera camera;
 
   public SelectCameraCommand() {}
 
   @Override
   protected void initialize() {
+    VisionSubsystem.Camera camera;
     if (-180 < DRIVE.getGyro().getAngle() && DRIVE.getGyro().getAngle() < 0) {
       camera = VisionSubsystem.Camera.LEFT;
     } else {
       camera = VisionSubsystem.Camera.RIGHT;
     }
+
+    VISION.setCamera(camera);
 
     logger.debug("initialize");
   }

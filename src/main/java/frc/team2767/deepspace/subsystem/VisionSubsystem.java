@@ -17,6 +17,9 @@ public class VisionSubsystem extends Subsystem {
   private NetworkTable table = NetworkTableInstance.getDefault().getTable("Pyeye");
   private FieldDirection direction = FieldDirection.NOTSET;
   private ElevatorLevel elevatorLevel = ElevatorLevel.NOTSET;
+  private final double cameraPositionBearing = -90.0;
+  private final double CAMERA_X = 0.0;
+  private final double CAMERA_Y = -9.0;
 
   private double rawRange;
   private double rawBearing;
@@ -48,6 +51,18 @@ public class VisionSubsystem extends Subsystem {
     this.correctedHeading = correctedBearing;
   }
 
+  public double getCameraPositionBearing() {
+    return cameraPositionBearing;
+  }
+
+  public double getCameraX() {
+    return CAMERA_X;
+  }
+
+  public double getCameraY() {
+    return CAMERA_Y;
+  }
+
   public double getTargetYaw() {
     return targetYaw;
   }
@@ -67,10 +82,9 @@ public class VisionSubsystem extends Subsystem {
   public void setCamera(Camera camera) {
     logger.debug("chose {} camera", camera);
     this.camera = camera;
-  }
-
-  public Camera whichCamera() {
-    return camera;
+    NetworkTableInstance networkTableInstance = NetworkTableInstance.getDefault();
+    NetworkTableEntry cameraID = networkTableInstance.getEntry("camera_id");
+    cameraID.setNumber(camera.id);
   }
 
   public void queryPyeye() {
@@ -107,8 +121,14 @@ public class VisionSubsystem extends Subsystem {
   protected void initDefaultCommand() {}
 
   public enum Camera {
-    LEFT,
-    RIGHT,
-    NOTSET
+    LEFT(0),
+    RIGHT(1),
+    NOTSET(-1);
+
+    int id;
+
+    Camera(int i) {
+      id = i;
+    }
   }
 }

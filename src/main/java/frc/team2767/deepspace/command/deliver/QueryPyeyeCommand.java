@@ -12,6 +12,10 @@ public class QueryPyeyeCommand extends Command {
   private static final VisionSubsystem VISION = Robot.VISION;
   private static final Logger logger = LoggerFactory.getLogger(ElevatorSubsystem.class);
 
+  public QueryPyeyeCommand() {
+    requires(VISION);
+  }
+
   @Override
   protected void initialize() {
     logger.debug("Looking for target");
