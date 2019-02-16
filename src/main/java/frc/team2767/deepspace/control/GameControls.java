@@ -4,8 +4,9 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.ZeroAxisCommand;
-import frc.team2767.deepspace.command.biscuit.BiscuitPlacePlanCommand;
+import frc.team2767.deepspace.command.biscuit.BiscuitSetDirectionCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorPlanCommand;
+import frc.team2767.deepspace.command.log.BiscuitStateLogDumpCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 import org.slf4j.Logger;
@@ -25,18 +26,18 @@ public class GameControls {
     new JoystickButton(joystick, Button.START.id).whenPressed(new ZeroAxisCommand());
 
     DirectionPadRight directionPadRight = new DirectionPadRight(this);
-    directionPadRight.whenActive(new BiscuitPlacePlanCommand(BiscuitSubsystem.FieldDirection.LEFT));
+    DirectionPadLeft directionPadLeft = new DirectionPadLeft(this);
+
+    directionPadRight.whenActive(
+        new BiscuitSetDirectionCommand(BiscuitSubsystem.FieldDirection.RIGHT));
+    directionPadLeft.whenActive(
+        new BiscuitSetDirectionCommand(BiscuitSubsystem.FieldDirection.LEFT));
 
     new JoystickButton(joystick, GameControls.Button.Y.id).whenPressed(new ElevatorPlanCommand(3));
     new JoystickButton(joystick, GameControls.Button.B.id).whenPressed(new ElevatorPlanCommand(2));
     new JoystickButton(joystick, GameControls.Button.A.id).whenPressed(new ElevatorPlanCommand(1));
-    joystick.getDirectionDegrees();
-    if (getDPad() > 0 && getDPad() < 180) {
-      new BiscuitPlacePlanCommand(BiscuitSubsystem.FieldDirection.LEFT);
-    }
-    if (getDPad() == 3) {
-      new BiscuitPlacePlanCommand(BiscuitSubsystem.FieldDirection.RIGHT);
-    }
+    new JoystickButton(joystick, GameControls.Button.X.id)
+        .whenPressed(new BiscuitStateLogDumpCommand());
 
     //    // Shoulder
     //    new JoystickButton(joystick, GameControls.Shoulder.LEFT.id)

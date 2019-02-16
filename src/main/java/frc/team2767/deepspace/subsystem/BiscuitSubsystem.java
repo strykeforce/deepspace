@@ -20,7 +20,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final int BISCUIT_ID = 40;
   private final int TICKS_PER_REV = 12300;
-  public FieldDirection plannedDirection;
   private int zero = 0;
   private TalonSRX biscuit = new TalonSRX(BISCUIT_ID);
   private int CLOSE_ENOUGH = 8; // FIXME
@@ -31,11 +30,11 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   private String highLimitKey = KEY_BASE + "upper_limit";
   private String closeEnoughKey = KEY_BASE + "close_enough";
 
-  private BiscuitPosition plannedBiscuitPosition; // left or right
-  private GamePiece currentGamePiece;
-  private BiscuitPosition targetBiscuitPosition;
-  private Action currentAction;
-  private Level targetLevel;
+  public FieldDirection targetDirection = FieldDirection.NOTSET;
+  private GamePiece currentGamePiece = GamePiece.NOTSET;
+  private BiscuitPosition targetBiscuitPosition = BiscuitPosition.NOTSET;
+  private Action currentAction = Action.NOTSET;
+  private Level targetLevel = Level.NOTSET;
 
   public BiscuitSubsystem() {
     biscuitPreferences();
@@ -97,6 +96,23 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   protected void initDefaultCommand() {}
 
   @Override
+  public String toString() {
+    return "states="
+        + "\n\t"
+        + "current game piece = "
+        + currentGamePiece.name()
+        + "\t\n"
+        + "target level = "
+        + targetLevel.name()
+        + "\n\t"
+        + "target direction = "
+        + targetDirection.name()
+        + "\t\n"
+        + "target position = "
+        + targetBiscuitPosition.name();
+  }
+
+  @Override
   public int getPosition() {
     return biscuit.getSelectedSensorPosition() % TICKS_PER_REV;
   }
@@ -127,9 +143,9 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     logger.info("New relative position = {}", zero);
   }
 
-  public void setPlan(FieldDirection direction, BiscuitPosition biscuitPosition) {
-    plannedDirection = direction;
-    plannedBiscuitPosition = biscuitPosition;
+  public void setFieldDirection(FieldDirection direction) {
+    logger.debug("setting field direction to {}", direction);
+    targetDirection = direction;
   }
 
   public void manualPosition(BiscuitPosition biscuitPosition) {
@@ -137,13 +153,24 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     setPosition(targetBiscuitPosition);
   }
 
+  public void setCurrentGamePiece(GamePiece currentGamePiece) {
+    logger.debug("setting game piece to = {}", currentGamePiece);
+    this.currentGamePiece = currentGamePiece;
+  }
+
+  public void setCurrentAction(Action currentAction) {
+    logger.debug("setting current action to = {}", currentAction);
+
+    this.currentAction = currentAction;
+  }
+
+  public void setTargetLevel(Level targetLevel) {
+    logger.debug("setting target level to = {}", targetLevel);
+    this.targetLevel = targetLevel;
+  }
+
   @SuppressWarnings("Duplicates")
   public void executePlan() {
-
-    currentAction = Action.PLACE;
-    targetLevel = Level.THREE;
-    currentGamePiece = GamePiece.CARGO;
-
     Angle currentAngle;
     double bearing = DRIVE.getGyro().getAngle();
 
@@ -158,7 +185,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
       case PLACE:
         if (currentGamePiece == GamePiece.CARGO && targetLevel == Level.THREE) {
           logger.debug("tilting");
-          switch (plannedDirection) {
+          switch (targetDirection) {
             case LEFT:
               switch (currentAngle) {
                 case FORWARD:
@@ -180,7 +207,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
           }
         } else {
           logger.debug("not tilting");
-          switch (plannedDirection) {
+          switch (targetDirection) {
             case LEFT:
               switch (currentAngle) {
                 case FORWARD:
@@ -212,7 +239,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
         logger.debug("picking up");
         switch (currentGamePiece) {
           case CARGO:
-            switch (plannedDirection) {
+            switch (targetDirection) {
               case RIGHT:
                 switch (currentAngle) {
                   case LEFT:
@@ -234,7 +261,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
             }
 
           case HATCH:
-            switch (plannedDirection) {
+            switch (targetDirection) {
               case RIGHT:
                 switch (currentAngle) {
                   case LEFT:
@@ -281,23 +308,27 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
 
   public enum GamePiece {
     CARGO,
-    HATCH
+    HATCH,
+    NOTSET
   }
 
   public enum Action {
     PICKUP,
-    PLACE
+    PLACE,
+    NOTSET
   }
 
   public enum Level {
     ONE,
     TWO,
-    THREE
+    THREE,
+    NOTSET
   }
 
   public enum FieldDirection {
     LEFT,
-    RIGHT
+    RIGHT,
+    NOTSET
   }
 
   private enum Angle {
@@ -317,7 +348,8 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     BACK_STOP_R,
     TILT_UP_L,
     TILT_UP_R,
-    DOWN;
+    DOWN,
+    NOTSET;
 
     final int encoderPosition;
 

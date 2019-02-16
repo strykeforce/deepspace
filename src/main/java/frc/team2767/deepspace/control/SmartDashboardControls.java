@@ -1,6 +1,7 @@
 package frc.team2767.deepspace.control;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team2767.deepspace.command.biscuit.BiscuitSetStatesCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
@@ -12,6 +13,7 @@ import frc.team2767.deepspace.command.vacuum.PressureSetCommand;
 import frc.team2767.deepspace.command.vacuum.VacuumStopCommand;
 import frc.team2767.deepspace.command.vision.LightsOffCommand;
 import frc.team2767.deepspace.command.vision.LightsOnCommand;
+import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,9 @@ import org.slf4j.LoggerFactory;
 public class SmartDashboardControls {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  //  private SendableChooser level;
+  //  private SendableChooser action;
+  //  private SendableChooser gamePiece;
 
   public SmartDashboardControls() {
     addMatchCommands();
@@ -42,7 +47,42 @@ public class SmartDashboardControls {
   }
 
   private void addTestCommands() {
+    //    level = new SendableChooser();
+    //    action = new SendableChooser();
+    //    gamePiece = new SendableChooser();
+    //
+    //    level.addOption("Level 3", BiscuitSubsystem.Level.THREE);
+    //    level.addOption("Level 2", BiscuitSubsystem.Level.TWO);
+    //    level.addOption("Level 1", BiscuitSubsystem.Level.ONE);
+    //
+    //    action.addOption("Pickup", BiscuitSubsystem.Action.PICKUP);
+    //    action.addOption("Place", BiscuitSubsystem.Action.PLACE);
+    //
+    //    gamePiece.addOption("Hatch", BiscuitSubsystem.GamePiece.HATCH);
+    //    gamePiece.addOption("Cargo", BiscuitSubsystem.GamePiece.CARGO);
+    //
+    //    SmartDashboard.putData("Pit/Level", level);
+    //    SmartDashboard.putData("Pit/Action", action);
+    //    SmartDashboard.putData("Pit/GamePiece", gamePiece);
 
+    SmartDashboard.putData(
+        "Pit/3CU",
+        new BiscuitSetStatesCommand(
+            BiscuitSubsystem.Level.THREE,
+            BiscuitSubsystem.GamePiece.CARGO,
+            BiscuitSubsystem.Action.PICKUP));
+    SmartDashboard.putData(
+        "Pit/2HU",
+        new BiscuitSetStatesCommand(
+            BiscuitSubsystem.Level.TWO,
+            BiscuitSubsystem.GamePiece.HATCH,
+            BiscuitSubsystem.Action.PICKUP));
+    SmartDashboard.putData(
+        "Pit/2CP",
+        new BiscuitSetStatesCommand(
+            BiscuitSubsystem.Level.TWO,
+            BiscuitSubsystem.GamePiece.CARGO,
+            BiscuitSubsystem.Action.PLACE));
     logger.debug("creating test commands");
   }
 
@@ -79,4 +119,6 @@ public class SmartDashboardControls {
     SmartDashboard.putData(
         "Pit/Vacuum/Climb", new PressureSetCommand(VacuumSubsystem.VacuumPressure.CLIMB));
   }
+
+  private void addStatesCommand() {}
 }
