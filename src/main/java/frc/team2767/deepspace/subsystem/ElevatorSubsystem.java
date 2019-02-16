@@ -58,9 +58,6 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   private long positionStartTime;
   private int stableCount;
 
-  private int kForwardLimit;
-  private int kReverseLimit;
-
   public ElevatorSubsystem() {
     this.preferences = Preferences.getInstance();
 
@@ -155,8 +152,6 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
 
   @Override
   public void setLimits(int forward, int reverse) {
-    kForwardLimit = forward;
-    kReverseLimit = reverse;
     elevator.configForwardSoftLimitThreshold(forward, 0);
     elevator.configReverseSoftLimitThreshold(reverse, 0);
   }
@@ -300,7 +295,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     CARGO_MEDIUM,
     CARGO_HIGH;
 
-    private static final String KEY_BASE = "ElevatorSubsystem/Position/";
+    private static final String KEY_BASE = "ElevatorSubsystem/BiscuitPosition/";
 
     final int position;
 

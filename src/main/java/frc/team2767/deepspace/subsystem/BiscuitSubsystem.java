@@ -14,14 +14,11 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 public class BiscuitSubsystem extends Subsystem implements Limitable {
 
-  private final DriveSubsystem driveSubsystem = Robot.DRIVE;
-  private final TelemetryService telemetryService = Robot.TELEMETRY;
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-  private static Preferences preferences = Preferences.getInstance();
-  private static final String KEY_BASE = "BiscuitSubsystem/Position/";
+  private static final String KEY_BASE = "BiscuitSubsystem/BiscuitPosition/";
   private static final int BACKUP = 2767;
-
+  private static Preferences preferences = Preferences.getInstance();
+  private final DriveSubsystem driveSubsystem = Robot.DRIVE;
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final int BISCUIT_ID = 40;
   private final int TICKS_PER_REV = 12300;
   public FieldDirection plannedDirection;
@@ -34,19 +31,32 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   private String lowLimitKey = KEY_BASE + "lower_limit";
   private String highLimitKey = KEY_BASE + "upper_limit";
   private String closeEnoughKey = KEY_BASE + "close_enough";
-  private Position plannedPosition = Position.UP;
-  private BiscuitGamePiece gamePiece;
-  private Position target = Position.UP;
-  private int kForwardLimit;
-  private int kReverseLimit;
+
+  private BiscuitPosition plannedBiscuitPosition; // left or right
+  private GamePiece currentGamePiece;
+  private BiscuitPosition targetBiscuitPosition;
+  private Action currentAction;
+  private Level targetLevel;
 
   public BiscuitSubsystem() {
     biscuitPreferences();
-
+    configTalon();
     biscuit.configForwardLimitSwitchSource(
         LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
+  }
 
-    telemetryService.register(biscuit);
+  public void biscuitPreferences() {
+    if (!preferences.containsKey(closeEnoughKey)) preferences.putInt(closeEnoughKey, 50);
+    if (!preferences.containsKey(absoluteZeroKey)) preferences.putInt(absoluteZeroKey, 1413);
+    if (!preferences.containsKey(lowLimitKey)) preferences.putInt(lowLimitKey, -6170);
+    if (!preferences.containsKey(highLimitKey)) preferences.putInt(highLimitKey, 6170);
+
+    CLOSE_ENOUGH = preferences.getInt(closeEnoughKey, BACKUP);
+    LOW_ENCODER_LIMIT = preferences.getInt(lowLimitKey, BACKUP);
+    HIGH_ENCODER_LIMIT = preferences.getInt(highLimitKey, BACKUP);
+  }
+
+  private void configTalon() {
     TalonSRXConfiguration biscuitConfig = new TalonSRXConfiguration();
     biscuitConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
     biscuitConfig.forwardSoftLimitThreshold = HIGH_ENCODER_LIMIT;
@@ -58,11 +68,14 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     biscuitConfig.slot0.kI = 0.0;
     biscuitConfig.slot0.kD = 0.0;
     biscuitConfig.slot0.kF = 0.65;
-    biscuitConfig.slot0.integralZone = 0;
 
+    //    biscuitConfig.slot0.allowableClosedloopError = 0;
+
+    biscuitConfig.slot0.integralZone = 0;
     biscuitConfig.peakCurrentDuration = 40;
     biscuitConfig.peakCurrentLimit = 25;
     biscuitConfig.continuousCurrentLimit = 20;
+
     biscuitConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms;
     biscuitConfig.velocityMeasurementWindow = 64;
 
@@ -72,7 +85,13 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     biscuitConfig.motionCruiseVelocity = 1_000;
     biscuitConfig.motionAcceleration = 2_000;
 
+    biscuit.enableCurrentLimit(true);
+    biscuit.enableVoltageCompensation(true);
     biscuit.configAllSettings(biscuitConfig);
+
+    TelemetryService telemetryService = Robot.TELEMETRY;
+    telemetryService.stop();
+    telemetryService.register(biscuit);
   }
 
   @Override
@@ -85,21 +104,15 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
 
   @Override
   public void setLimits(int forward, int reverse) {
-    kForwardLimit = forward;
-    kReverseLimit = reverse;
     biscuit.configForwardSoftLimitThreshold(forward, 0);
     biscuit.configReverseSoftLimitThreshold(reverse, 0);
   }
 
-  public void biscuitPreferences() {
-    if (!preferences.containsKey(closeEnoughKey)) preferences.putInt(closeEnoughKey, 8);
-    if (!preferences.containsKey(absoluteZeroKey)) preferences.putInt(absoluteZeroKey, 1413);
-    if (!preferences.containsKey(lowLimitKey)) preferences.putInt(lowLimitKey, -6170);
-    if (!preferences.containsKey(highLimitKey)) preferences.putInt(highLimitKey, 6170);
-
-    CLOSE_ENOUGH = preferences.getInt(closeEnoughKey, BACKUP);
-    LOW_ENCODER_LIMIT = preferences.getInt(lowLimitKey, BACKUP);
-    HIGH_ENCODER_LIMIT = preferences.getInt(highLimitKey, BACKUP);
+  public void setPosition(BiscuitPosition biscuitPosition) {
+    logger.info("biscuit setpoint = {}", biscuitPosition);
+    if (biscuitPosition != null) {
+      biscuit.set(ControlMode.MotionMagic, biscuitPosition.encoderPosition);
+    }
   }
 
   public void zero() {
@@ -115,81 +128,118 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     logger.info("New relative position = {}", zero);
   }
 
-  public void setPlan(FieldDirection direction, Position position) {
+  public void setPlan(FieldDirection direction, BiscuitPosition biscuitPosition) {
     plannedDirection = direction;
-    plannedPosition = position;
+    plannedBiscuitPosition = biscuitPosition;
   }
 
-  public void manualPosition(Position position) {
-    target = position;
-    setPosition(target);
+  public void manualPosition(BiscuitPosition biscuitPosition) {
+    targetBiscuitPosition = biscuitPosition;
+    setPosition(targetBiscuitPosition);
   }
 
   public void executePlan() {
     double angle = getGyroAngle();
-    switch (plannedPosition) {
-      case PLACE:
-        if (plannedDirection == FieldDirection.PLACE_R && Math.abs(angle) < 90
-            || plannedDirection == FieldDirection.PLACE_L && Math.abs(angle) > 90) {
-          target = Position.RIGHT;
-        } else {
-          target = Position.LEFT;
-        }
-        break;
-      case LEVEL_3:
-        if (plannedDirection == FieldDirection.PLACE_R && Math.abs(angle) < 90
-            || plannedDirection == FieldDirection.PLACE_L && Math.abs(angle) > 90) {
-          if (gamePiece == BiscuitGamePiece.CARGO) target = Position.TILT_UP_R;
-          if (gamePiece == BiscuitGamePiece.HATCH) target = Position.RIGHT;
-        } else {
-          if (gamePiece == BiscuitGamePiece.CARGO) target = Position.TILT_UP_L;
-          if (gamePiece == BiscuitGamePiece.HATCH) target = Position.LEFT;
-        }
-        break;
-      case PICKUP:
-        if (angle > 0) {
-          if (gamePiece == BiscuitGamePiece.CARGO) target = Position.BACK_STOP_L;
-          if (gamePiece == BiscuitGamePiece.HATCH) target = Position.RIGHT;
-        } else {
-          if (gamePiece == BiscuitGamePiece.CARGO) target = Position.BACK_STOP_R;
-          if (gamePiece == BiscuitGamePiece.HATCH) target = Position.LEFT;
-        }
-        break;
-      case DOWN:
-        if (biscuit.getSelectedSensorPosition() >= 0) {
-          target = Position.DOWN_L;
-          logger.info("target {}", target);
-          logger.info("position {}", biscuit.getSelectedSensorPosition());
-        } else {
-          target = Position.DOWN_R;
-        }
-        break;
-      default:
-        target = plannedPosition;
-        break;
-    }
-    setPosition(target);
-  }
 
-  public void setPosition(Position position) {
-    logger.info("Biscuit setpoint = {}", position);
-    if (position != null) {
-      biscuit.set(ControlMode.Position, position.encoderPosition);
+    switch (currentAction) {
+      case PLACE:
+        if (currentGamePiece == GamePiece.CARGO && targetLevel == Level.THREE) {
+          switch (plannedDirection) {
+            case LEFT:
+            case RIGHT:
+              // gyro logic
+          }
+        } else {
+          switch (plannedDirection) {
+            case LEFT:
+            case RIGHT:
+              // gyro logic
+
+          }
+        }
+
+      case PICKUP:
+        if (currentGamePiece == GamePiece.CARGO) {
+          switch (plannedDirection) {
+            case RIGHT:
+            case LEFT:
+          }
+
+          // gyro logic
+        } else {
+          switch (plannedDirection) {
+            case RIGHT:
+            case LEFT:
+              // gyro logic
+          }
+        }
     }
+
+    //    switch (plannedBiscuitPosition) {
+    //      case PLACE:
+    //        if (plannedDirection == FieldDirection.RIGHT && Math.abs(angle) < 90
+    //            || plannedDirection == FieldDirection.LEFT && Math.abs(angle) > 90) {
+    //          targetBiscuitPosition = BiscuitPosition.RIGHT;
+    //        } else {
+    //          targetBiscuitPosition = BiscuitPosition.LEFT;
+    //        }
+    //        break;
+    //      case LEVEL_3:
+    //        if (plannedDirection == FieldDirection.RIGHT && Math.abs(angle) < 90
+    //            || plannedDirection == FieldDirection.LEFT && Math.abs(angle) > 90) {
+    //          if (currentGamePiece == GamePiece.CARGO)
+    //            targetBiscuitPosition = BiscuitPosition.TILT_UP_R;
+    //          if (currentGamePiece == GamePiece.HATCH) targetBiscuitPosition =
+    // BiscuitPosition.RIGHT;
+    //        } else {
+    //          if (currentGamePiece == GamePiece.CARGO)
+    //            targetBiscuitPosition = BiscuitPosition.TILT_UP_L;
+    //          if (currentGamePiece == GamePiece.HATCH) targetBiscuitPosition =
+    // BiscuitPosition.LEFT;
+    //        }
+    //        break;
+    //      case PICKUP:
+    //        if (angle > 0) {
+    //          if (currentGamePiece == GamePiece.CARGO)
+    //            targetBiscuitPosition = BiscuitPosition.BACK_STOP_L;
+    //          if (currentGamePiece == GamePiece.HATCH) targetBiscuitPosition =
+    // BiscuitPosition.RIGHT;
+    //        } else {
+    //          if (currentGamePiece == GamePiece.CARGO)
+    //            targetBiscuitPosition = BiscuitPosition.BACK_STOP_R;
+    //          if (currentGamePiece == GamePiece.HATCH) targetBiscuitPosition =
+    // BiscuitPosition.LEFT;
+    //        }
+    //        break;
+    //      case DOWN:
+    //        if (biscuit.getSelectedSensorPosition() >= 0) {
+    //          targetBiscuitPosition = BiscuitPosition.DOWN_L;
+    //          logger.info("targetBiscuitPosition {}", targetBiscuitPosition);
+    //          logger.info("position {}", biscuit.getSelectedSensorPosition());
+    //        } else {
+    //          targetBiscuitPosition = BiscuitPosition.DOWN_R;
+    //        }
+    //        break;
+    //      default:
+    //        targetBiscuitPosition = plannedBiscuitPosition;
+    //        break;
+    //    }
+    setPosition(targetBiscuitPosition);
   }
 
   private double getGyroAngle() {
     AHRS gyro = driveSubsystem.getGyro();
-    double angle = gyro.getYaw();
-    return angle;
+    return (double) gyro.getYaw();
   }
 
   public boolean onTarget() {
-    if (Math.abs(biscuit.getSelectedSensorPosition() - target.encoderPosition) < CLOSE_ENOUGH) {
+    if (Math.abs(biscuit.getSelectedSensorPosition() - targetBiscuitPosition.encoderPosition)
+        < CLOSE_ENOUGH) {
+      logger.debug("on targetBiscuitPosition");
       return true;
-    } else {
-      return false;
     }
+
+    return false;
   }
 
   public void runOpenLoop(double power) {
@@ -200,12 +250,28 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     biscuit.set(ControlMode.PercentOutput, 0);
   }
 
-  public enum BiscuitGamePiece {
+  public enum GamePiece {
     CARGO,
-    HATCH;
+    HATCH
   }
 
-  public enum Position {
+  public enum Action {
+    PICKUP,
+    PLACE
+  }
+
+  public enum Level {
+    ONE,
+    TWO,
+    THREE
+  }
+
+  public enum FieldDirection {
+    LEFT,
+    RIGHT
+  }
+
+  public enum BiscuitPosition {
     UP,
     DOWN_L,
     DOWN_R,
@@ -215,22 +281,14 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     BACK_STOP_R,
     TILT_UP_L,
     TILT_UP_R,
-    DOWN,
-    PLACE,
-    LEVEL_3,
-    PICKUP;
+    DOWN;
 
     final int encoderPosition;
 
-    Position() {
+    BiscuitPosition() {
       String positionKey = KEY_BASE + this.name();
       if (!preferences.containsKey(positionKey)) preferences.putInt(positionKey, BACKUP);
       this.encoderPosition = preferences.getInt(positionKey, BACKUP);
     }
-  }
-
-  public enum FieldDirection {
-    PLACE_L,
-    PLACE_R,
   }
 }

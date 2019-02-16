@@ -6,13 +6,13 @@ import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BiscuitPlanCommand extends InstantCommand {
+public class BiscuitPlacePlanCommand extends InstantCommand {
 
   private static final BiscuitSubsystem BISCUIT = Robot.BISCUIT;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private BiscuitSubsystem.FieldDirection direction;
 
-  public BiscuitPlanCommand(BiscuitSubsystem.FieldDirection direction) {
+  public BiscuitPlacePlanCommand(BiscuitSubsystem.FieldDirection direction) {
     this.direction = direction;
     requires(BISCUIT);
   }
@@ -20,6 +20,6 @@ public class BiscuitPlanCommand extends InstantCommand {
   @Override
   protected void initialize() {
     logger.info("BiscuitPlan = {}", direction);
-    BISCUIT.setPlan(BiscuitSubsystem.FieldDirection.PLACE_L, BiscuitSubsystem.Position.LEFT);
+    BISCUIT.setPlan(BiscuitSubsystem.FieldDirection.LEFT, BiscuitSubsystem.BiscuitPosition.LEFT);
   }
 }

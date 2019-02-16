@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.ZeroAxisCommand;
-import frc.team2767.deepspace.command.biscuit.BiscuitPlanCommand;
+import frc.team2767.deepspace.command.biscuit.BiscuitPlacePlanCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorPlanCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
@@ -24,18 +24,18 @@ public class GameControls {
 
     new JoystickButton(joystick, Button.START.id).whenPressed(new ZeroAxisCommand());
 
-    DirectionPad directionPad = new DirectionPad(this);
-    directionPad.whenActive(new BiscuitPlanCommand(BiscuitSubsystem.FieldDirection.PLACE_L));
+    DirectionPadRight directionPadRight = new DirectionPadRight(this);
+    directionPadRight.whenActive(new BiscuitPlacePlanCommand(BiscuitSubsystem.FieldDirection.LEFT));
 
     new JoystickButton(joystick, GameControls.Button.Y.id).whenPressed(new ElevatorPlanCommand(3));
     new JoystickButton(joystick, GameControls.Button.B.id).whenPressed(new ElevatorPlanCommand(2));
     new JoystickButton(joystick, GameControls.Button.A.id).whenPressed(new ElevatorPlanCommand(1));
     joystick.getDirectionDegrees();
     if (getDPad() > 0 && getDPad() < 180) {
-      new BiscuitPlanCommand(BiscuitSubsystem.FieldDirection.PLACE_L);
+      new BiscuitPlacePlanCommand(BiscuitSubsystem.FieldDirection.LEFT);
     }
     if (getDPad() == 3) {
-      new BiscuitPlanCommand(BiscuitSubsystem.FieldDirection.PLACE_R);
+      new BiscuitPlacePlanCommand(BiscuitSubsystem.FieldDirection.RIGHT);
     }
 
     //    // Shoulder
@@ -54,7 +54,7 @@ public class GameControls {
     //    new JoystickButton(joystick, GameControls.Button.A.id)
     //        .whenPressed(new ElevatorOpenLoopDownCommand());
     //    new JoystickButton(joystick, GameControls.Button.B.id)
-    //        .whenPressed(new ElevatorPositionCommand(ElevatorSubsystem.Position.STOW));
+    //        .whenPressed(new ElevatorPositionCommand(ElevatorSubsystem.BiscuitPosition.STOW));
     //
     //    new JoystickButton(joystick, GameControls.Button.START.id)
     //        .whenPressed(log(GameControls.Button.START));
