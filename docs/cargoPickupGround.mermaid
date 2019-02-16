@@ -1,0 +1,47 @@
+sequenceDiagram
+participant Driver
+participant Command
+Participant Intake
+Participant Coconut
+Participant Elevator
+Participant Biscuit
+Participant Vision
+Participant Vacuum
+Participant Trident
+
+
+Driver ->> +Command: rightShoulderDown
+Command ->> + Intake: setPosition(LOAD)
+Intake -->> -Command: onTarget()
+Command ->> Coconut: setPosition(OPEN)
+Command ->> -Intake: rollerOpenLoop(SPEED)
+
+
+Driver ->> +Command: rightShoulderUp
+Command -X Biscuit: setAction(PLACE)
+Command -X Vision: setAction(PLACE)
+Vision --X Driver: displayAction
+Command -X Biscuit: setGamepiece(CARGO)
+Command -X Elevator: setGamepiece(CARGO)
+Command -X Vision: setGamepiece(CARGO)
+Vision -X Driver: displayGamepiece
+Command ->>+ Intake: setPosition(STOW)
+Intake -->> -Command: onTarget()
+Command ->> Intake: rollerOpenLoop(STOP)
+Command ->> Coconut: setPosition(CLOSE)
+Command ->> +Elevator: setPosition(MID_CARGO)
+Elevator -->> -Command: onTarget()
+Command ->> +Biscuit: setPosition(DOWN)
+Biscuit -->> -Command: onTarget()
+Command ->> Vacuum: setPressure(CARGO)
+Command ->> Vacuum: setSolenoid(TRIDENT)
+Command ->> Elevator: openLoopMove(DOWN)
+Trident -->> Command: isCompressed()
+Command ->> Elevator: stop()
+Command ->> +Elevator: setPos(MID_CARGO)
+Elevator -->> -Command: onTarget()
+Command ->> +Biscuit: setPosition(UP)
+Biscuit -->> -Command: onTarget()
+Command ->> +Elevator: setPosition(STOW)
+Elevator -->> -Command: onTarget()
+deactivate Command
