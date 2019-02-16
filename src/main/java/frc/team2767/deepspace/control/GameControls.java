@@ -8,7 +8,7 @@ import frc.team2767.deepspace.command.biscuit.BiscuitSetDirectionCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorPlanCommand;
 import frc.team2767.deepspace.command.log.BiscuitStateLogDumpCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
-import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
+import frc.team2767.deepspace.subsystem.FieldDirection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,10 +28,8 @@ public class GameControls {
     DirectionPadRight directionPadRight = new DirectionPadRight(this);
     DirectionPadLeft directionPadLeft = new DirectionPadLeft(this);
 
-    directionPadRight.whenActive(
-        new BiscuitSetDirectionCommand(BiscuitSubsystem.FieldDirection.RIGHT));
-    directionPadLeft.whenActive(
-        new BiscuitSetDirectionCommand(BiscuitSubsystem.FieldDirection.LEFT));
+    directionPadRight.whenActive(new BiscuitSetDirectionCommand(FieldDirection.RIGHT));
+    directionPadLeft.whenActive(new BiscuitSetDirectionCommand(FieldDirection.LEFT));
 
     new JoystickButton(joystick, GameControls.Button.Y.id).whenPressed(new ElevatorPlanCommand(3));
     new JoystickButton(joystick, GameControls.Button.B.id).whenPressed(new ElevatorPlanCommand(2));

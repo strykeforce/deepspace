@@ -1,5 +1,7 @@
 package frc.team2767.deepspace.subsystem;
 
+import static frc.team2767.deepspace.subsystem.ElevatorLevel.NOTSET;
+
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
@@ -20,6 +22,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final int BISCUIT_ID = 40;
   private final int TICKS_PER_REV = 12300;
+  public FieldDirection targetDirection = FieldDirection.NOTSET;
   private int zero = 0;
   private TalonSRX biscuit = new TalonSRX(BISCUIT_ID);
   private int CLOSE_ENOUGH = 8; // FIXME
@@ -29,12 +32,10 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   private String lowLimitKey = KEY_BASE + "lower_limit";
   private String highLimitKey = KEY_BASE + "upper_limit";
   private String closeEnoughKey = KEY_BASE + "close_enough";
-
-  public FieldDirection targetDirection = FieldDirection.NOTSET;
   private GamePiece currentGamePiece = GamePiece.NOTSET;
   private BiscuitPosition targetBiscuitPosition = BiscuitPosition.NOTSET;
   private Action currentAction = Action.NOTSET;
-  private Level targetLevel = Level.NOTSET;
+  private ElevatorLevel targetLevel = NOTSET;
 
   public BiscuitSubsystem() {
     biscuitPreferences();
@@ -173,7 +174,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     this.currentAction = currentAction;
   }
 
-  public void setTargetLevel(Level targetLevel) {
+  public void setTargetLevel(ElevatorLevel targetLevel) {
     logger.debug("setting target level to = {}", targetLevel);
     this.targetLevel = targetLevel;
   }
@@ -192,7 +193,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     logger.debug("level = {} gp = {} action = {}", targetLevel, currentGamePiece, currentAction);
     switch (currentAction) {
       case PLACE:
-        if (currentGamePiece == GamePiece.CARGO && targetLevel == Level.THREE) {
+        if (currentGamePiece == GamePiece.CARGO && targetLevel == ElevatorLevel.THREE) {
           logger.debug("tilting");
           switch (targetDirection) {
             case LEFT:
@@ -313,31 +314,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
 
   public void stop() {
     biscuit.set(ControlMode.PercentOutput, 0);
-  }
-
-  public enum GamePiece {
-    CARGO,
-    HATCH,
-    NOTSET
-  }
-
-  public enum Action {
-    PICKUP,
-    PLACE,
-    NOTSET
-  }
-
-  public enum Level {
-    ONE,
-    TWO,
-    THREE,
-    NOTSET
-  }
-
-  public enum FieldDirection {
-    LEFT,
-    RIGHT,
-    NOTSET
   }
 
   private enum Angle {
