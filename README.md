@@ -33,6 +33,10 @@ Subsystem | CANifier | ID
 --------- | -------- | --
 Trident   | trident  | 0
 
+Pin # | Name | Attached To
+----- | ---- | -----------
+8     | LIMF | compression output
+
 ## DIO
 
 Subsystem   | I/O    | DIO
