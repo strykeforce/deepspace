@@ -24,5 +24,6 @@ public class SetGamePieceCommand extends InstantCommand {
   @Override
   protected void initialize() {
     BISCUIT.setCurrentGamePiece(gamePiece);
+    ELEVATOR.setCurrentGamepiece(gamePiece);
   }
 }

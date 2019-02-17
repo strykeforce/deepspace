@@ -1,5 +1,8 @@
 package frc.team2767.deepspace.subsystem;
 
+import static com.ctre.phoenix.motorcontrol.ControlMode.Disabled;
+import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
+
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
@@ -7,14 +10,10 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.safety.Limitable;
+import javax.swing.text.Position;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
-
-import javax.swing.text.Position;
-
-import static com.ctre.phoenix.motorcontrol.ControlMode.Disabled;
-import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
 
 public class ElevatorSubsystem extends Subsystem implements Limitable {
   private static final int ID = 30;
@@ -197,7 +196,6 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   public void executePlan() {
     Position newPosition = Position.NOTSET;
 
-
     switch (currentGamepiece) {
       case HATCH:
         switch (elevatorLevel) {
@@ -212,7 +210,6 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
             break;
           case NOTSET:
             logger.warn("level not set");
-
         }
         break;
       case CARGO:
@@ -330,6 +327,10 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     elevator.set(PercentOutput, kStopOutput);
   }
 
+  public void setCurrentGamepiece(GamePiece currentGamepiece) {
+    this.currentGamepiece = currentGamepiece;
+  }
+
   @Override
   protected void initDefaultCommand() {}
 
@@ -343,7 +344,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     CARGO_MEDIUM,
     CARGO_HIGH;
 
-    private static final String KEY_BASE = "ElevatorSubsystem/BiscuitPosition/";
+    private static final String KEY_BASE = "ElevatorSubsystem/Position/";
 
     final int position;
 
