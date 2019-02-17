@@ -3,22 +3,22 @@
 ## Talons
 
 Subsystem    | Talon   | ID | PDP
------------- | ------- | -- | ---
-Drive        | azimuth | 0  | 11
-Drive        | azimuth | 1  | 9
-Drive        | azimuth | 2  | 10
-Drive        | azimuth | 3  | 8
-Drive        | drive   | 10 | 14
-Drive        | drive   | 11 | 13
-Drive        | drive   | 12 | 15
-Drive        | drive   | 13 | 12
-Intake       | arm     | 20 | 4
-Intake       | rollers | 21 | 5
-Elevator     | elevator| 30 | 0
-Biscuit      | rotate  | 40 | 7
-Climb        | master  | 50 | 
-Climb        | slave   | 51 | 
-Vacuum       | vacuum  | 60 | 1
+------------ | ----------- | -- | ---
+Drive        | azimuth     | 0  | 11
+Drive        | azimuth     | 1  | 9
+Drive        | azimuth     | 2  | 10
+Drive        | azimuth     | 3  | 8
+Drive        | drive       | 10 | 14
+Drive        | drive       | 11 | 13
+Drive        | drive       | 12 | 15
+Drive        | drive       | 13 | 12
+Intake       | shoulder    | 20 | 4
+Intake       | rollers     | 21 | 5
+Elevator     | elevator    | 30 | 0
+Biscuit      | rotate      | 40 | 7
+Climb        | leftSlave   | 50 | 2
+Climb        | rightMaster | 51 | 3
+Vacuum       | vacuum      | 60 | 1
 
 ## Servos
 
@@ -32,6 +32,10 @@ CargoCenter | right | 1
 Subsystem | CANifier | ID
 --------- | -------- | --
 Trident   | trident  | 0
+
+Pin # | Name | Attached To
+----- | ---- | -----------
+8     | LIMF | compression output
 
 ## DIO
 
