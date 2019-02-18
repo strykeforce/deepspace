@@ -6,19 +6,21 @@ import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BiscuitPositionCommand extends Command {
+public class BiscuitSetPositionCommand extends Command {
 
   private static final BiscuitSubsystem BISCUIT = Robot.BISCUIT;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private final BiscuitSubsystem.BiscuitPosition position;
 
-  public BiscuitPositionCommand() {
+  public BiscuitSetPositionCommand(BiscuitSubsystem.BiscuitPosition position) {
+    this.position = position;
     requires(BISCUIT);
   }
 
   @Override
   protected void initialize() {
-    logger.info("BiscuitPosition ran");
-    BISCUIT.executePlan();
+    logger.info("setting position to {}", position);
+    BISCUIT.setPosition(position);
   }
 
   @Override

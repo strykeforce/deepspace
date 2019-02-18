@@ -36,8 +36,8 @@ public class SmartDashboardControls {
 
   private void addMatchCommands() {
     logger.debug("creating match commands");
-    SmartDashboard.putData("Game/IntakeIn", new IntakeInCommand());
-    SmartDashboard.putData("Game/IntakeOut", new IntakeOutCommand());
+    SmartDashboard.putData("Game/IntakeIn", new RollerInCommand());
+    SmartDashboard.putData("Game/IntakeOut", new RollerOutCommand());
   }
 
   private void addPitCommands() {
@@ -94,7 +94,7 @@ public class SmartDashboardControls {
 
   private void addIntakeCommands() {
     SmartDashboard.putData("Pit/IntakeOut", new IntakeDownCommand());
-    SmartDashboard.putData("Pit/IntakeStop", new IntakeStopCommand());
+    SmartDashboard.putData("Pit/IntakeStop", new ShoulderStopCommand());
     SmartDashboard.putData("Pit/IntakeIn", new IntakeUpCommand());
   }
 
@@ -115,7 +115,7 @@ public class SmartDashboardControls {
     SmartDashboard.putData(
         "Pit/VacuumHatch", new PressureSetCommand(VacuumSubsystem.VacuumPressure.HATCH));
     SmartDashboard.putData(
-        "Pit/Vacuum/Ball", new PressureSetCommand(VacuumSubsystem.VacuumPressure.BALL));
+        "Pit/Vacuum/Ball", new PressureSetCommand(VacuumSubsystem.VacuumPressure.CARGO));
     SmartDashboard.putData(
         "Pit/Vacuum/Climb", new PressureSetCommand(VacuumSubsystem.VacuumPressure.CLIMB));
   }

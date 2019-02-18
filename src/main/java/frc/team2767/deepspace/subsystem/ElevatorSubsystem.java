@@ -305,6 +305,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   protected void initDefaultCommand() {}
 
   public enum Position {
+    CARGO_PICKUP, // FIXME: add position to preferences
     HATCH_LOW,
     HATCH_MEDIUM,
     HATCH_HIGH,
@@ -313,7 +314,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     CARGO_MEDIUM,
     CARGO_HIGH;
 
-    private static final String KEY_BASE = "ElevatorSubsystem/BiscuitPosition/";
+    private static final String KEY_BASE = "ElevatorSubsystem/BiscuitPosition/"; // FIXME
 
     final int position;
 

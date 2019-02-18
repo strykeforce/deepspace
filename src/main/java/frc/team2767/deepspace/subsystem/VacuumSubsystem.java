@@ -94,7 +94,7 @@ public class VacuumSubsystem extends Subsystem {
 
   private int getPressureFor(VacuumPressure pressure) {
     switch (pressure) {
-      case BALL:
+      case CARGO:
         return ballPressure;
       case CLIMB:
         return climbPressure;
@@ -125,7 +125,7 @@ public class VacuumSubsystem extends Subsystem {
 
   public enum VacuumPressure {
     HATCH,
-    BALL,
+    CARGO,
     CLIMB
   }
 
