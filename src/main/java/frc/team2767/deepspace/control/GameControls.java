@@ -4,12 +4,16 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.ZeroAxisCommand;
-import frc.team2767.deepspace.command.log.BiscuitStateLogDumpCommand;
+import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
+import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
+import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
+import frc.team2767.deepspace.command.intake.IntakeDownCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
-import frc.team2767.deepspace.command.sequences.CoconutPickupCommandGroup;
 import frc.team2767.deepspace.command.states.SetFieldDirectionCommand;
 import frc.team2767.deepspace.command.states.SetLevelCommand;
+import frc.team2767.deepspace.control.trigger.*;
 import frc.team2767.deepspace.subsystem.ElevatorLevel;
+import frc.team2767.deepspace.subsystem.ElevatorSubsystem;
 import frc.team2767.deepspace.subsystem.FieldDirection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,39 +33,52 @@ public class GameControls {
 
     DirectionPadRight directionPadRight = new DirectionPadRight(this);
     DirectionPadLeft directionPadLeft = new DirectionPadLeft(this);
+    DirectionPadAny directionPadAny = new DirectionPadAny(this);
+
+    RightStickDown rightStickDown = new RightStickDown(this);
+    RightStickUp rightStickUp = new RightStickUp(this);
+
+    LeftStickLeft leftStickLeft = new LeftStickLeft(this);
+    LeftStickRight leftStickRight = new LeftStickRight(this);
 
     directionPadRight.whenActive(new SetFieldDirectionCommand(FieldDirection.RIGHT));
     directionPadLeft.whenActive(new SetFieldDirectionCommand(FieldDirection.LEFT));
 
+    directionPadAny.whenActive(new IntakeDownCommand());
+
+    //
+    // COMP CONFIG
+    //
+
+    // CLIMB
+
+    //    new JoystickButton(joystick, GameControls.Button.BACK.id)
+    //            .whenPressed(new DeployClimberCommand());
+    //    new JoystickButton(joystick, Button.START.id).whenPressed(new RunClimb());
+
+    // ELEVATOR
+
+    new JoystickButton(joystick, GameControls.Button.X.id)
+        .whenPressed(new ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition.STOW));
     new JoystickButton(joystick, GameControls.Button.Y.id)
         .whenPressed(new SetLevelCommand(ElevatorLevel.THREE));
     new JoystickButton(joystick, GameControls.Button.B.id)
         .whenPressed(new SetLevelCommand(ElevatorLevel.TWO));
     new JoystickButton(joystick, GameControls.Button.A.id)
         .whenPressed(new SetLevelCommand(ElevatorLevel.ONE));
-    new JoystickButton(joystick, GameControls.Button.X.id)
-        .whenPressed(new BiscuitStateLogDumpCommand());
 
-    new JoystickButton(joystick, GameControls.Button.BACK.id)
-        .whenPressed(new CoconutPickupCommandGroup());
+    rightStickUp.whenActive(new ElevatorOpenLoopUpCommand());
+    rightStickDown.whenActive(new ElevatorOpenLoopDownCommand());
 
-    //    // Shoulder
-    //    new JoystickButton(joystick, GameControls.Shoulder.LEFT.id)
-    //        .whenPressed(log(GameControls.Shoulder.LEFT));
+    // FIELD DIRECTION STATE
+    leftStickLeft.whenActive(new SetFieldDirectionCommand(FieldDirection.LEFT));
+    leftStickRight.whenActive(new SetFieldDirectionCommand(FieldDirection.RIGHT));
+    //
+    //    // LOADING
     //    new JoystickButton(joystick, GameControls.Shoulder.RIGHT.id)
-    //        .whenPressed(new ElevatorStopCommand());
-    //
-    //    // Triggers
-    //    new JoystickButton(joystick, GameControls.Trigger.LEFT.id)
-    //        .whenPressed(log(GameControls.Trigger.LEFT));
-    //    new JoystickButton(joystick, GameControls.Trigger.RIGHT.id)
-    //        .whenPressed(log(GameControls.Trigger.RIGHT));
-    //
-
-    //    new JoystickButton(joystick, GameControls.Button.LEFT.id)
-    //        .whenPressed(log(GameControls.Button.LEFT));
-    //    new JoystickButton(joystick, GameControls.Button.RIGHT.id)
-    //        .whenPressed(log(GameControls.Button.RIGHT));
+    //            .whenPressed(new LoadingStationBall());
+    //    new JoystickButton(joystick, GameControls.Shoulder.LEFT.id)
+    //            .whenPressed(new LoadingStationHatch);
   }
 
   private <E extends Enum<E>> Command log(E control) {
