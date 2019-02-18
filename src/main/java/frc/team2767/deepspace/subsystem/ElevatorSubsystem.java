@@ -20,7 +20,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
 
   private static final Logger logger = LoggerFactory.getLogger(ElevatorSubsystem.class);
   private static final int TIMEOUT = 10;
-  private static final int STABLE_THRESH = 1;
+  private static final int STABLE_THRESH = 4;
   private final TalonSRX elevator = new TalonSRX(ID);
   private final Preferences preferences;
 
@@ -177,7 +177,11 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   public void setElevatorPosition(ElevatorPosition elevatorPosition) {
     setpoint = elevatorPosition.position;
     startPosition = elevator.getSelectedSensorPosition(0);
-    logger.info("setting elevatorPosition = {}, starting at {}", elevatorPosition, startPosition);
+    logger.info(
+        "setting elevatorPosition = {} ({}), starting at {}",
+        setpoint,
+        elevatorPosition,
+        startPosition);
 
     upward = setpoint > startPosition;
 
@@ -189,6 +193,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
       adjustVelocity();
     }
 
+    stableCount = 0;
     checkEncoder = true;
     positionStartTime = System.nanoTime();
     elevator.set(ControlMode.MotionMagic, setpoint);
@@ -217,7 +222,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
 
     if (checkEncoder) {
       long elapsed = System.nanoTime() - positionStartTime;
-      if (elapsed < 200e6) return;
+      if (elapsed < 400e7) return;
 
       if (Math.abs(position - startPosition) == 0) {
         elevator.set(Disabled, 0);
@@ -316,7 +321,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     CARGO_MEDIUM,
     CARGO_HIGH;
 
-    private static final String KEY_BASE = "ElevatorSubsystem/BiscuitPosition/"; // FIXME
+    private static final String KEY_BASE = "ElevatorSubsystem/Position/";
 
     final int position;
 

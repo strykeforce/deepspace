@@ -11,12 +11,9 @@ import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
-import frc.team2767.deepspace.command.intake.IntakeDownCommand;
-import frc.team2767.deepspace.command.intake.IntakeUpCommand;
-import frc.team2767.deepspace.command.intake.ShoulderStopCommand;
+import frc.team2767.deepspace.command.intake.*;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.log.SafetyLogDumpCommand;
-import frc.team2767.deepspace.command.sequences.DeliverCommandGroup;
 import frc.team2767.deepspace.command.vision.LightsOffCommand;
 import frc.team2767.deepspace.command.vision.LightsOnCommand;
 import org.slf4j.Logger;
@@ -39,7 +36,8 @@ public class DriverControls {
     new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenActive(new BiscuitNegativeCommand());
     new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenInactive(new BiscuitStopCommand());
 
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed(new DeliverCommandGroup());
+    new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id).whenPressed(new RollerInCommand());
+    new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id).whenReleased(new RollerStopCommand());
 
     //     elevator
     new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenActive(new ElevatorOpenLoopUpCommand());

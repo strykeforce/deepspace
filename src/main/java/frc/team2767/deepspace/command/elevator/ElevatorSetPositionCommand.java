@@ -19,7 +19,6 @@ public class ElevatorSetPositionCommand extends InstantCommand {
 
   @Override
   protected void initialize() {
-    logger.info("setting position to {}", position);
     ELEVATOR.setElevatorPosition(position);
   }
 

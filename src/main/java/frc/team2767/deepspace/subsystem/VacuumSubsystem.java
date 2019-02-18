@@ -6,8 +6,10 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.team2767.deepspace.Robot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 public class VacuumSubsystem extends Subsystem {
 
@@ -64,6 +66,10 @@ public class VacuumSubsystem extends Subsystem {
     vacuum.enableCurrentLimit(true);
     vacuum.enableVoltageCompensation(true);
     logger.debug("configured vacuum talon");
+
+    TelemetryService telemetryService = Robot.TELEMETRY;
+    telemetryService.stop();
+    telemetryService.register(vacuum);
   }
 
   public void setSolenoid(Valve valve, boolean state) {

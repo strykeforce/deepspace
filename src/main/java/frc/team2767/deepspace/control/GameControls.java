@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.ZeroAxisCommand;
 import frc.team2767.deepspace.command.log.BiscuitStateLogDumpCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
+import frc.team2767.deepspace.command.sequences.CoconutPickupCommandGroup;
 import frc.team2767.deepspace.command.states.SetFieldDirectionCommand;
 import frc.team2767.deepspace.command.states.SetLevelCommand;
 import frc.team2767.deepspace.subsystem.ElevatorLevel;
@@ -41,6 +42,9 @@ public class GameControls {
     new JoystickButton(joystick, GameControls.Button.X.id)
         .whenPressed(new BiscuitStateLogDumpCommand());
 
+    new JoystickButton(joystick, GameControls.Button.BACK.id)
+        .whenPressed(new CoconutPickupCommandGroup());
+
     //    // Shoulder
     //    new JoystickButton(joystick, GameControls.Shoulder.LEFT.id)
     //        .whenPressed(log(GameControls.Shoulder.LEFT));
@@ -53,8 +57,7 @@ public class GameControls {
     //    new JoystickButton(joystick, GameControls.Trigger.RIGHT.id)
     //        .whenPressed(log(GameControls.Trigger.RIGHT));
     //
-    //    new JoystickButton(joystick, GameControls.Button.BACK.id)
-    //        .whenPressed(log(GameControls.Button.BACK));
+
     //    new JoystickButton(joystick, GameControls.Button.LEFT.id)
     //        .whenPressed(log(GameControls.Button.LEFT));
     //    new JoystickButton(joystick, GameControls.Button.RIGHT.id)

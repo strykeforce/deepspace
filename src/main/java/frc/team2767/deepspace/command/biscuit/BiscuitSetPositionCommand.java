@@ -19,7 +19,6 @@ public class BiscuitSetPositionCommand extends Command {
 
   @Override
   protected void initialize() {
-    logger.info("setting position to {}", position);
     BISCUIT.setPosition(position);
   }
 
