@@ -14,7 +14,7 @@ public class RollerOutCommand extends InstantCommand {
 
   @Override
   protected void initialize() {
-    double percent = 0.2;
+    double percent = 1.0;
     INTAKE.rollerOpenLoop(-percent);
   }
 }

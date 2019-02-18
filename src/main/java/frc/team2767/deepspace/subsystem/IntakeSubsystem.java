@@ -68,25 +68,25 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   @SuppressWarnings("Duplicates")
   private void intakePreferences() {
     if (!preferences.containsKey(SHOULDER_DOWN_OUTPUT)) {
-      preferences.putDouble(SHOULDER_DOWN_OUTPUT, -0.2);
+      preferences.putDouble(SHOULDER_DOWN_OUTPUT, -0.4);
     }
     if (!preferences.containsKey(SHOULDER_UP_OUTPUT)) {
-      preferences.putDouble(SHOULDER_UP_OUTPUT, 0.2);
+      preferences.putDouble(SHOULDER_UP_OUTPUT, 0.4);
     }
     if (!preferences.containsKey(SHOULDER_ZERO_POSITION)) {
       preferences.putInt(SHOULDER_ZERO_POSITION, -200);
     }
     if (!preferences.containsKey(SHOULDER_LOAD_POSITION)) {
-      preferences.putInt(SHOULDER_LOAD_POSITION, 15100);
+      preferences.putInt(SHOULDER_LOAD_POSITION, 14586);
     }
     if (!preferences.containsKey(SHOULDER_UP_POSITION)) {
       preferences.putInt(SHOULDER_UP_POSITION, 0);
     }
     if (!preferences.containsKey(ROLLER_IN_OUTPUT)) {
-      preferences.putDouble(ROLLER_IN_OUTPUT, 0.3);
+      preferences.putDouble(ROLLER_IN_OUTPUT, 1.0);
     }
     if (!preferences.containsKey(ROLLER_OUT_OUTPUT)) {
-      preferences.putDouble(ROLLER_OUT_OUTPUT, 0.3);
+      preferences.putDouble(ROLLER_OUT_OUTPUT, 1.0);
     }
     if (!preferences.containsKey(K_CLOSE_ENOUGH)) {
       preferences.putInt(K_CLOSE_ENOUGH, 0);
@@ -146,19 +146,9 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
 
     TalonSRXConfiguration rollerConfig = new TalonSRXConfiguration();
     rollerConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
-    rollerConfig.continuousCurrentLimit = 0;
-    rollerConfig.peakCurrentDuration = 0;
+    rollerConfig.continuousCurrentLimit = 10;
     rollerConfig.peakCurrentLimit = 0;
-    rollerConfig.slot0.kP = 0;
-    rollerConfig.slot0.kI = 0;
-    rollerConfig.slot0.kD = 0;
-    rollerConfig.slot0.kF = 0;
-    rollerConfig.slot0.integralZone = 0;
-    rollerConfig.slot0.allowableClosedloopError = 0;
-    rollerConfig.voltageCompSaturation = 0;
-    rollerConfig.voltageMeasurementFilter = 0;
-    rollerConfig.motionAcceleration = 0;
-    rollerConfig.motionCruiseVelocity = 0;
+    rollerConfig.peakCurrentDuration = 0;
 
     shoulder.configForwardSoftLimitEnable(true);
     shoulder.configAllSettings(shoulderConfig);
@@ -228,7 +218,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   public void setPosition(ShoulderPosition position) {
     logger.debug("setting shoulder position={}", position);
     setpoint = getPositionSetpoint(position);
-    shoulder.set(ControlMode.Position, getPositionSetpoint(position));
+    shoulder.set(ControlMode.MotionMagic, getPositionSetpoint(position));
   }
 
   private int getPositionSetpoint(ShoulderPosition position) {
@@ -261,7 +251,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
 
   /** @param setpoint TalonSRX setpoint */
   public void rollerOpenLoop(double setpoint) {
-    logger.debug("rollers open loop at ", setpoint);
+    logger.debug("rollers open loop at {}", setpoint);
     roller.set(ControlMode.PercentOutput, setpoint);
   }
 

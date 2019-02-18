@@ -14,6 +14,6 @@ public class RollerInCommand extends InstantCommand {
 
   @Override
   protected void initialize() {
-    INTAKE.rollerOpenLoop(0.2);
+    INTAKE.rollerOpenLoop(1.0);
   }
 }

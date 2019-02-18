@@ -47,7 +47,7 @@ public class GameControls {
     directionPadAny.whenActive(new IntakeDownCommand());
 
     //
-    // COMP CONFIG
+    // COMP CONFIG DO NOT CHANGE
     //
 
     // CLIMB
@@ -79,6 +79,10 @@ public class GameControls {
     //            .whenPressed(new LoadingStationBall());
     //    new JoystickButton(joystick, GameControls.Shoulder.LEFT.id)
     //            .whenPressed(new LoadingStationHatch);
+
+    //
+    // END COMP CONFIG
+    //
   }
 
   private <E extends Enum<E>> Command log(E control) {
