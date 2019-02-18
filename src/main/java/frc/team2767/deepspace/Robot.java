@@ -25,6 +25,7 @@ public class Robot extends TimedRobot {
   public static HealthCheckSubsystem HEALTHCHECK;
   public static SafetySubsystem SAFETY;
   public static VacuumSubsystem VACUUM;
+  public static CoconutSubsystem COCONUT;
 
   public static Controls CONTROLS;
 
@@ -40,6 +41,7 @@ public class Robot extends TimedRobot {
     SAFETY = new SafetySubsystem();
     HEALTHCHECK = new HealthCheckSubsystem();
     VACUUM = new VacuumSubsystem();
+    COCONUT = new CoconutSubsystem();
 
     // Controls initialize Commands so this should be instantiated last to prevent
     // NullPointerExceptions in commands that require() Subsystems above.
