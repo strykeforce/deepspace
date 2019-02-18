@@ -215,7 +215,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   }
 
   @Override
-  public int getPosition() {
+  public int getElevatorPosition() {
     return shoulder.getSelectedSensorPosition();
   }
 

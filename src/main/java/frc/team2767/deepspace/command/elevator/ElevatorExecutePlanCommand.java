@@ -4,13 +4,13 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.ElevatorSubsystem;
 
-public class ElevatorPositionCommand extends Command {
+public class ElevatorExecutePlanCommand extends Command {
 
   private static final ElevatorSubsystem ELEVATOR = Robot.ELEVATOR;
-  private ElevatorSubsystem.Position position;
+  private ElevatorSubsystem.ElevatorPosition elevatorPosition;
 
-  public ElevatorPositionCommand(ElevatorSubsystem.Position position) {
-    this.position = position;
+  public ElevatorExecutePlanCommand(ElevatorSubsystem.ElevatorPosition elevatorPosition) {
+    this.elevatorPosition = elevatorPosition;
     requires(ELEVATOR);
   }
 

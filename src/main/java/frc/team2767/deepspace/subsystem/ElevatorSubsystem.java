@@ -25,7 +25,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   private final Preferences preferences;
 
   private ElevatorLevel elevatorLevel;
-  private Position position;
+  private ElevatorPosition elevatorPosition;
   private GamePiece currentGamepiece;
 
   public int plannedLevel = 0;
@@ -164,7 +164,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   }
 
   @Override
-  public int getPosition() {
+  public int getElevatorPosition() {
     return elevator.getSelectedSensorPosition(0);
   }
 
@@ -174,10 +174,10 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     elevator.configReverseSoftLimitThreshold(reverse, 0);
   }
 
-  public void setPosition(Position position) {
-    setpoint = position.position;
+  public void setElevatorPosition(ElevatorPosition elevatorPosition) {
+    setpoint = elevatorPosition.position;
     startPosition = elevator.getSelectedSensorPosition(0);
-    logger.info("setting position = {}, starting at {}", position, startPosition);
+    logger.info("setting elevatorPosition = {}, starting at {}", elevatorPosition, startPosition);
 
     upward = setpoint > startPosition;
 
@@ -195,21 +195,21 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   }
 
   public void executePlan() {
-    Position newPosition;
+    ElevatorPosition newElevatorPosition;
 
     if (currentGamepiece.equals(GamePiece.CARGO)) {
-      if (plannedLevel == 0) newPosition = Position.CARGO_LOW;
-      else if (plannedLevel == 1) newPosition = Position.CARGO_MEDIUM;
-      else newPosition = Position.CARGO_HIGH;
+      if (plannedLevel == 0) newElevatorPosition = ElevatorPosition.CARGO_LOW;
+      else if (plannedLevel == 1) newElevatorPosition = ElevatorPosition.CARGO_MEDIUM;
+      else newElevatorPosition = ElevatorPosition.CARGO_HIGH;
     } else if (currentGamepiece.equals(GamePiece.HATCH)) {
-      if (plannedLevel == 0) newPosition = Position.HATCH_LOW;
-      else if (plannedLevel == 1) newPosition = Position.HATCH_MEDIUM;
-      else newPosition = Position.HATCH_HIGH;
+      if (plannedLevel == 0) newElevatorPosition = ElevatorPosition.HATCH_LOW;
+      else if (plannedLevel == 1) newElevatorPosition = ElevatorPosition.HATCH_MEDIUM;
+      else newElevatorPosition = ElevatorPosition.HATCH_HIGH;
     } else {
-      newPosition = Position.STOW;
+      newElevatorPosition = ElevatorPosition.STOW;
     }
 
-    setPosition(newPosition);
+    setElevatorPosition(newElevatorPosition);
   }
 
   public void adjustVelocity() {
@@ -233,7 +233,8 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     if (checkFast && position > kDownVelocityShiftPos) {
       elevator.configMotionCruiseVelocity(kDownFastVelocity, 0);
       elevator.configMotionAcceleration(kDownFastAccel, 0);
-      logger.debug("frontTalon velocity = fast ({}) position = {}", kDownFastVelocity, position);
+      logger.debug(
+          "frontTalon velocity = fast ({}) elevatorPosition = {}", kDownFastVelocity, position);
       checkFast = false;
       return;
     }
@@ -241,7 +242,8 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     if (checkSlow && position < kDownVelocityShiftPos) {
       elevator.configMotionCruiseVelocity(kDownSlowVelocity, 0);
       elevator.configMotionAcceleration(kDownSlowAccel, 0);
-      logger.debug("frontTalon velocity = slow ({}) position = {}", kDownSlowVelocity, position);
+      logger.debug(
+          "frontTalon velocity = slow ({}) elevatorPosition = {}", kDownSlowVelocity, position);
       checkFast = checkSlow = false;
     }
   }
@@ -263,7 +265,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     elevator.configReverseLimitSwitchSource(
         LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
 
-    logger.info("positioning to zero position");
+    logger.info("positioning to zero elevatorPosition");
     elevator.set(PercentOutput, kDownOutput);
   }
 
@@ -278,7 +280,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     elevator.setSelectedSensorPosition(zero);
 
     // elevator.set(ControlMode.MotionMagic, setpoint);
-    logger.info("lift position zeroed to = {}", zero);
+    logger.info("lift elevatorPosition zeroed to = {}", zero);
 
     elevator.configPeakCurrentLimit(25);
     elevator.enableCurrentLimit(true);
@@ -297,15 +299,15 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   }
 
   public void stop() {
-    logger.info("lift stop at position {}", elevator.getSelectedSensorPosition(0));
+    logger.info("lift stop at elevatorPosition {}", elevator.getSelectedSensorPosition(0));
     elevator.set(PercentOutput, kStopOutput);
   }
 
   @Override
   protected void initDefaultCommand() {}
 
-  public enum Position {
-    CARGO_PICKUP, // FIXME: add position to preferences
+  public enum ElevatorPosition {
+    CARGO_PICKUP, // FIXME: add elevatorPosition to preferences
     HATCH_LOW,
     HATCH_MEDIUM,
     HATCH_HIGH,
@@ -318,7 +320,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
 
     final int position;
 
-    Position() {
+    ElevatorPosition() {
       Preferences preferences = Preferences.getInstance();
       String key = KEY_BASE + this.name();
       if (!preferences.containsKey(key)) preferences.putInt(key, BACKUP);

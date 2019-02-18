@@ -25,9 +25,9 @@ activate Pyeye
 Pyeye -->> Vision: target acquired
 deactivate Pyeye
 Vision -->> -Commands: target acquired
-Commands ->> Biscuit: set position
+Commands ->> Biscuit: set elevatorPosition
 
-Commands ->> Elevator: set position
+Commands ->> Elevator: set elevatorPosition
 
 Commands ->> Vision: get target
 Commands ->> -Drive: twist
