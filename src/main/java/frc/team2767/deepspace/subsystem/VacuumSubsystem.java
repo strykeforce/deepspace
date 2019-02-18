@@ -6,8 +6,10 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.team2767.deepspace.Robot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 public class VacuumSubsystem extends Subsystem {
 
@@ -17,7 +19,7 @@ public class VacuumSubsystem extends Subsystem {
   private final int hatchPressure = 600;
   private final int climbPressure = 900;
 
-  private int goodEnough;
+  private int goodEnough = 100;
 
   private Solenoid tridentSolenoid;
   private Solenoid climbSolenoid;
@@ -64,6 +66,10 @@ public class VacuumSubsystem extends Subsystem {
     vacuum.enableCurrentLimit(true);
     vacuum.enableVoltageCompensation(true);
     logger.debug("configured vacuum talon");
+
+    TelemetryService telemetryService = Robot.TELEMETRY;
+    telemetryService.stop();
+    telemetryService.register(vacuum);
   }
 
   public void setSolenoid(Valve valve, boolean state) {
@@ -94,7 +100,7 @@ public class VacuumSubsystem extends Subsystem {
 
   private int getPressureFor(VacuumPressure pressure) {
     switch (pressure) {
-      case BALL:
+      case CARGO:
         return ballPressure;
       case CLIMB:
         return climbPressure;
@@ -111,6 +117,7 @@ public class VacuumSubsystem extends Subsystem {
   }
 
   public void setPressure(VacuumPressure setpoint) {
+    this.currentPressureSetpoint = setpoint;
     logger.debug("setting pressure to {}", currentPressureSetpoint);
     vacuum.set(ControlMode.Position, getPressureFor(setpoint));
   }
@@ -125,7 +132,7 @@ public class VacuumSubsystem extends Subsystem {
 
   public enum VacuumPressure {
     HATCH,
-    BALL,
+    CARGO,
     CLIMB
   }
 

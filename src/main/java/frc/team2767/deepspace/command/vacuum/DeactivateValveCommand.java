@@ -7,14 +7,20 @@ import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 public class DeactivateValveCommand extends InstantCommand {
 
   private static final VacuumSubsystem VACUUM = Robot.VACUUM;
-  private VacuumSubsystem.Valve valve;
+  private VacuumSubsystem.Valve[] valves;
 
   public DeactivateValveCommand(VacuumSubsystem.Valve valve) {
-    this.valve = valve;
+    this(new VacuumSubsystem.Valve[] {valve});
+  }
+
+  public DeactivateValveCommand(VacuumSubsystem.Valve[] valves) {
+    this.valves = valves;
   }
 
   @Override
   protected void initialize() {
-    VACUUM.setSolenoid(valve, false);
+    for (VacuumSubsystem.Valve v : valves) {
+      VACUUM.setSolenoid(v, false);
+    }
   }
 }

@@ -4,11 +4,11 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.IntakeSubsystem;
 
-public class IntakeOutCommand extends InstantCommand {
+public class RollerOutCommand extends InstantCommand {
 
   private static final IntakeSubsystem INTAKE = Robot.INTAKE;
 
-  public IntakeOutCommand() {
+  public RollerOutCommand() {
     requires(INTAKE);
   }
 

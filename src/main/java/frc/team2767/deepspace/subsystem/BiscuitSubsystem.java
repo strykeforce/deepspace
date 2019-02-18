@@ -125,7 +125,8 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   }
 
   public void setPosition(BiscuitPosition biscuitPosition) {
-    logger.info("biscuit setpoint = {}", biscuitPosition);
+    targetBiscuitPosition = biscuitPosition;
+    logger.info("biscuit setpoint = {} at {}", biscuitPosition, biscuitPosition.encoderPosition);
     biscuit.set(ControlMode.MotionMagic, biscuitPosition.encoderPosition);
   }
 

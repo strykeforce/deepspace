@@ -1,6 +1,5 @@
 package frc.team2767.deepspace.subsystem;
 
-import static com.ctre.phoenix.motorcontrol.ControlMode.Disabled;
 import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
 
 import com.ctre.phoenix.motorcontrol.*;
@@ -10,7 +9,6 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.safety.Limitable;
-import javax.swing.text.Position;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
@@ -21,12 +19,12 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
 
   private static final Logger logger = LoggerFactory.getLogger(ElevatorSubsystem.class);
   private static final int TIMEOUT = 10;
-  private static final int STABLE_THRESH = 1;
+  private static final int STABLE_THRESH = 4;
   private final TalonSRX elevator = new TalonSRX(ID);
   private final Preferences preferences;
   public int plannedLevel = 0;
   private ElevatorLevel elevatorLevel;
-  private Position position;
+  private ElevatorPosition elevatorPosition;
   private GamePiece currentGamepiece;
   private int kUpAccel;
   private int kUpVelocity;
@@ -39,7 +37,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   private double kDownOutput;
   private double kStopOutput;
   private int kCloseEnough;
-  private boolean checkEncoder;
+  private boolean checkEncoder = true;
   private boolean upward;
   private boolean checkSlow;
   private boolean checkFast;
@@ -97,7 +95,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     if (!preferences.containsKey(k_STOP_OUTPUT)) preferences.putDouble(k_STOP_OUTPUT, 0.0);
 
     String k_CLOSE_ENOUGH = PREFS_NAME + "close_enough";
-    if (!preferences.containsKey(k_CLOSE_ENOUGH)) preferences.putInt(k_CLOSE_ENOUGH, 10);
+    if (!preferences.containsKey(k_CLOSE_ENOUGH)) preferences.putInt(k_CLOSE_ENOUGH, 100);
 
     kUpAccel = preferences.getInt(k_UP_ACCEL, BACKUP);
     kUpVelocity = preferences.getInt(k_UP_VELOCITY, BACKUP);
@@ -173,40 +171,20 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     elevator.configReverseSoftLimitThreshold(reverse, 0);
   }
 
-  public void setPosition(Position position) {
-    setpoint = position.position;
-    startPosition = elevator.getSelectedSensorPosition(0);
-    logger.info("setting position = {}, starting at {}", position, startPosition);
-
-    upward = setpoint > startPosition;
-
-    if (upward) {
-      elevator.configMotionCruiseVelocity(kUpVelocity, 0);
-      elevator.configMotionAcceleration(kUpAccel, 0);
-    } else {
-      checkFast = checkSlow = true;
-      adjustVelocity();
-    }
-
-    checkEncoder = true;
-    positionStartTime = System.nanoTime();
-    elevator.set(ControlMode.MotionMagic, setpoint);
-  }
-
   public void executePlan() {
-    Position newPosition = Position.NOTSET;
+    ElevatorPosition newPosition = ElevatorPosition.NOTSET;
 
     switch (currentGamepiece) {
       case HATCH:
         switch (elevatorLevel) {
           case ONE:
-            newPosition = Position.HATCH_LOW;
+            newPosition = ElevatorPosition.HATCH_LOW;
             break;
           case TWO:
-            newPosition = Position.HATCH_MEDIUM;
+            newPosition = ElevatorPosition.HATCH_MEDIUM;
             break;
           case THREE:
-            newPosition = Position.HATCH_HIGH;
+            newPosition = ElevatorPosition.HATCH_HIGH;
             break;
           case NOTSET:
             logger.warn("level not set");
@@ -215,13 +193,13 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
       case CARGO:
         switch (elevatorLevel) {
           case ONE:
-            newPosition = Position.CARGO_LOW;
+            newPosition = ElevatorPosition.CARGO_LOW;
             break;
           case TWO:
-            newPosition = Position.CARGO_MEDIUM;
+            newPosition = ElevatorPosition.CARGO_MEDIUM;
             break;
           case THREE:
-            newPosition = Position.CARGO_HIGH;
+            newPosition = ElevatorPosition.CARGO_HIGH;
             break;
           case NOTSET:
             logger.warn("level not set");
@@ -235,31 +213,65 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
 
     // stow?
 
-    setPosition(newPosition);
+    setElevatorPosition(newPosition);
+  }
+
+  public void setElevatorPosition(ElevatorPosition elevatorPosition) {
+    setpoint = elevatorPosition.position;
+    startPosition = elevator.getSelectedSensorPosition(0);
+    logger.info(
+        "setting elevatorPosition = {} ({}), starting at {}",
+        setpoint,
+        elevatorPosition,
+        startPosition);
+
+    upward = setpoint > startPosition;
+
+    if (upward) {
+      elevator.configMotionCruiseVelocity(kUpVelocity, 0);
+      elevator.configMotionAcceleration(kUpAccel, 0);
+    } else {
+      checkFast = checkSlow = true;
+      adjustVelocity();
+    }
+
+    stableCount = 0;
+    checkEncoder = true;
+    positionStartTime = System.nanoTime();
+    elevator.set(ControlMode.MotionMagic, setpoint);
   }
 
   public void adjustVelocity() {
     int position = elevator.getSelectedSensorPosition(0);
 
-    if (checkEncoder) {
-      long elapsed = System.nanoTime() - positionStartTime;
-      if (elapsed < 200e6) return;
-
-      if (Math.abs(position - startPosition) == 0) {
-        elevator.set(Disabled, 0);
-        if (setpoint != 0) logger.error("no encoder movement detected in {} ms", elapsed / 1e6);
-        setpoint = position;
-        positionStartTime += elapsed;
-        return;
-      } else checkEncoder = false;
-    }
+    //    if (checkEncoder) {
+    //      long elapsed = System.nanoTime() - positionStartTime;
+    //      if (elapsed < 200e8) return;
+    //
+    //      if (Math.abs(position - startPosition) == 0) {
+    //        elevator.set(Disabled, 0);
+    //        logger.debug(
+    //            "|position - startPosition| = |{} - {}| = {}",
+    //            position,
+    //            startPosition,
+    //            Math.abs(position - startPosition));
+    //
+    //        if (setpoint != 0) {
+    //          logger.error("no encoder movement detected in {} ms", elapsed / 1e6);
+    //        }
+    //        setpoint = position;
+    //        positionStartTime += elapsed;
+    //        return;
+    //      } else checkEncoder = false;
+    //    }
 
     if (upward) return;
 
     if (checkFast && position > kDownVelocityShiftPos) {
       elevator.configMotionCruiseVelocity(kDownFastVelocity, 0);
       elevator.configMotionAcceleration(kDownFastAccel, 0);
-      logger.debug("frontTalon velocity = fast ({}) position = {}", kDownFastVelocity, position);
+      logger.debug(
+          "frontTalon velocity = fast ({}) elevatorPosition = {}", kDownFastVelocity, position);
       checkFast = false;
       return;
     }
@@ -267,7 +279,8 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     if (checkSlow && position < kDownVelocityShiftPos) {
       elevator.configMotionCruiseVelocity(kDownSlowVelocity, 0);
       elevator.configMotionAcceleration(kDownSlowAccel, 0);
-      logger.debug("frontTalon velocity = slow ({}) position = {}", kDownSlowVelocity, position);
+      logger.debug(
+          "frontTalon velocity = slow ({}) elevatorPosition = {}", kDownSlowVelocity, position);
       checkFast = checkSlow = false;
     }
   }
@@ -289,7 +302,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     elevator.configReverseLimitSwitchSource(
         LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
 
-    logger.info("positioning to zero position");
+    logger.info("positioning to zero elevatorPosition");
     elevator.set(PercentOutput, kDownOutput);
   }
 
@@ -304,7 +317,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     elevator.setSelectedSensorPosition(zero);
 
     // elevator.set(ControlMode.MotionMagic, setpoint);
-    logger.info("lift position zeroed to = {}", zero);
+    logger.info("lift elevatorPosition zeroed to = {}", zero);
 
     elevator.configPeakCurrentLimit(25);
     elevator.enableCurrentLimit(true);
@@ -323,7 +336,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   }
 
   public void stop() {
-    logger.info("lift stop at position {}", elevator.getSelectedSensorPosition(0));
+    logger.info("lift stop at elevatorPosition {}", elevator.getSelectedSensorPosition(0));
     elevator.set(PercentOutput, kStopOutput);
   }
 
@@ -334,9 +347,10 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   @Override
   protected void initDefaultCommand() {}
 
-  public enum Position {
-    NOTSET,
+  public enum ElevatorPosition {
+    CARGO_PICKUP, // FIXME: add elevatorPosition to preferences
     HATCH_LOW,
+    NOTSET,
     HATCH_MEDIUM,
     HATCH_HIGH,
     STOW,
@@ -348,7 +362,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
 
     final int position;
 
-    Position() {
+    ElevatorPosition() {
       Preferences preferences = Preferences.getInstance();
       String key = KEY_BASE + this.name();
       if (!preferences.containsKey(key)) preferences.putInt(key, BACKUP);
@@ -358,6 +372,6 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
 
   public enum Direction {
     UP,
-    DOWN;
+    DOWN
   }
 }
