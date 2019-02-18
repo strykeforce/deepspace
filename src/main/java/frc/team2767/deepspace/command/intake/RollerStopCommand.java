@@ -1,34 +1,22 @@
 package frc.team2767.deepspace.command.intake;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.IntakeSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class IntakeZeroCommand extends Command {
+public class RollerStopCommand extends InstantCommand {
 
   private static final IntakeSubsystem INTAKE = Robot.INTAKE;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  public IntakeZeroCommand() {
+  public RollerStopCommand() {
     requires(INTAKE);
   }
 
   @Override
   protected void initialize() {
-    logger.debug("zeroing shoulder");
-    INTAKE.shoulderToZero();
-  }
-
-  @Override
-  protected boolean isFinished() {
-    return INTAKE.onZero() || isTimedOut();
-  }
-
-  @Override
-  protected void end() {
-    logger.debug("finished zeroing");
-    INTAKE.shoulderZeroWithLimitSwitch();
+    INTAKE.rollerStop();
   }
 }
