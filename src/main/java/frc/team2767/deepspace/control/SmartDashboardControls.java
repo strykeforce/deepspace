@@ -1,6 +1,7 @@
 package frc.team2767.deepspace.control;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
@@ -15,6 +16,7 @@ import frc.team2767.deepspace.command.vacuum.VacuumStopCommand;
 import frc.team2767.deepspace.command.vision.LightsOffCommand;
 import frc.team2767.deepspace.command.vision.LightsOnCommand;
 import frc.team2767.deepspace.subsystem.Action;
+import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 import frc.team2767.deepspace.subsystem.GamePiece;
 import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 import org.slf4j.Logger;
@@ -77,6 +79,8 @@ public class SmartDashboardControls {
     //        "Pit/2CP", new SetStatesCommand(ElevatorLevel.TWO, GamePiece.CARGO,
     // Action.PLACE));
 
+    SmartDashboard.putData(
+        "Game/SetDown", new BiscuitSetPositionCommand(BiscuitSubsystem.BiscuitPosition.DOWN_L));
     SmartDashboard.putData("Pit/SetPickup", new SetActionCommand(Action.PICKUP));
     SmartDashboard.putData("Pit/SetPlace", new SetActionCommand(Action.PLACE));
 
@@ -107,9 +111,17 @@ public class SmartDashboardControls {
   private void addVacuumCommands() {
 
     SmartDashboard.putData(
-        "Pit/TridentValveActivate", new ActivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
+        "Pit/TridentValveActivate",
+        new ActivateValveCommand(
+            new VacuumSubsystem.Valve[] {
+              VacuumSubsystem.Valve.TRIDENT, VacuumSubsystem.Valve.PUMP
+            }));
     SmartDashboard.putData(
-        "Pit/TridentValveDeactivate", new DeactivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
+        "Pit/TridentValveDeactivate",
+        new DeactivateValveCommand(
+            new VacuumSubsystem.Valve[] {
+              VacuumSubsystem.Valve.TRIDENT, VacuumSubsystem.Valve.PUMP
+            }));
 
     SmartDashboard.putData("Pit/VacuumStop", new VacuumStopCommand());
     SmartDashboard.putData(

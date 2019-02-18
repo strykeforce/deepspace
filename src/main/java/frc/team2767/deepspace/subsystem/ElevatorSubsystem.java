@@ -1,6 +1,5 @@
 package frc.team2767.deepspace.subsystem;
 
-import static com.ctre.phoenix.motorcontrol.ControlMode.Disabled;
 import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
 
 import com.ctre.phoenix.motorcontrol.*;
@@ -23,12 +22,10 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   private static final int STABLE_THRESH = 4;
   private final TalonSRX elevator = new TalonSRX(ID);
   private final Preferences preferences;
-
+  public int plannedLevel = 0;
   private ElevatorLevel elevatorLevel;
   private ElevatorPosition elevatorPosition;
   private GamePiece currentGamepiece;
-
-  public int plannedLevel = 0;
   private int kUpAccel;
   private int kUpVelocity;
   private int kDownSlowAccel;
@@ -40,7 +37,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   private double kDownOutput;
   private double kStopOutput;
   private int kCloseEnough;
-  private boolean checkEncoder;
+  private boolean checkEncoder = true;
   private boolean upward;
   private boolean checkSlow;
   private boolean checkFast;
@@ -59,10 +56,6 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     elevatorPreferences();
     configTalon();
     logger.info("");
-  }
-
-  public void setElevatorLevel(ElevatorLevel elevatorLevel) {
-    this.elevatorLevel = elevatorLevel;
   }
 
   private void elevatorPreferences() {
@@ -102,7 +95,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     if (!preferences.containsKey(k_STOP_OUTPUT)) preferences.putDouble(k_STOP_OUTPUT, 0.0);
 
     String k_CLOSE_ENOUGH = PREFS_NAME + "close_enough";
-    if (!preferences.containsKey(k_CLOSE_ENOUGH)) preferences.putInt(k_CLOSE_ENOUGH, 10);
+    if (!preferences.containsKey(k_CLOSE_ENOUGH)) preferences.putInt(k_CLOSE_ENOUGH, 100);
 
     kUpAccel = preferences.getInt(k_UP_ACCEL, BACKUP);
     kUpVelocity = preferences.getInt(k_UP_VELOCITY, BACKUP);
@@ -163,6 +156,10 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     telemetryService.register(elevator);
   }
 
+  public void setElevatorLevel(ElevatorLevel elevatorLevel) {
+    this.elevatorLevel = elevatorLevel;
+  }
+
   @Override
   public int getPosition() {
     return elevator.getSelectedSensorPosition(0);
@@ -172,6 +169,24 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   public void setLimits(int forward, int reverse) {
     elevator.configForwardSoftLimitThreshold(forward, 0);
     elevator.configReverseSoftLimitThreshold(reverse, 0);
+  }
+
+  public void executePlan() {
+    ElevatorPosition newElevatorPosition;
+
+    if (currentGamepiece.equals(GamePiece.CARGO)) {
+      if (plannedLevel == 0) newElevatorPosition = ElevatorPosition.CARGO_LOW;
+      else if (plannedLevel == 1) newElevatorPosition = ElevatorPosition.CARGO_MEDIUM;
+      else newElevatorPosition = ElevatorPosition.CARGO_HIGH;
+    } else if (currentGamepiece.equals(GamePiece.HATCH)) {
+      if (plannedLevel == 0) newElevatorPosition = ElevatorPosition.HATCH_LOW;
+      else if (plannedLevel == 1) newElevatorPosition = ElevatorPosition.HATCH_MEDIUM;
+      else newElevatorPosition = ElevatorPosition.HATCH_HIGH;
+    } else {
+      newElevatorPosition = ElevatorPosition.STOW;
+    }
+
+    setElevatorPosition(newElevatorPosition);
   }
 
   public void setElevatorPosition(ElevatorPosition elevatorPosition) {
@@ -199,39 +214,29 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     elevator.set(ControlMode.MotionMagic, setpoint);
   }
 
-  public void executePlan() {
-    ElevatorPosition newElevatorPosition;
-
-    if (currentGamepiece.equals(GamePiece.CARGO)) {
-      if (plannedLevel == 0) newElevatorPosition = ElevatorPosition.CARGO_LOW;
-      else if (plannedLevel == 1) newElevatorPosition = ElevatorPosition.CARGO_MEDIUM;
-      else newElevatorPosition = ElevatorPosition.CARGO_HIGH;
-    } else if (currentGamepiece.equals(GamePiece.HATCH)) {
-      if (plannedLevel == 0) newElevatorPosition = ElevatorPosition.HATCH_LOW;
-      else if (plannedLevel == 1) newElevatorPosition = ElevatorPosition.HATCH_MEDIUM;
-      else newElevatorPosition = ElevatorPosition.HATCH_HIGH;
-    } else {
-      newElevatorPosition = ElevatorPosition.STOW;
-    }
-
-    setElevatorPosition(newElevatorPosition);
-  }
-
   public void adjustVelocity() {
     int position = elevator.getSelectedSensorPosition(0);
 
-    if (checkEncoder) {
-      long elapsed = System.nanoTime() - positionStartTime;
-      if (elapsed < 400e7) return;
-
-      if (Math.abs(position - startPosition) == 0) {
-        elevator.set(Disabled, 0);
-        if (setpoint != 0) logger.error("no encoder movement detected in {} ms", elapsed / 1e6);
-        setpoint = position;
-        positionStartTime += elapsed;
-        return;
-      } else checkEncoder = false;
-    }
+    //    if (checkEncoder) {
+    //      long elapsed = System.nanoTime() - positionStartTime;
+    //      if (elapsed < 200e8) return;
+    //
+    //      if (Math.abs(position - startPosition) == 0) {
+    //        elevator.set(Disabled, 0);
+    //        logger.debug(
+    //            "|position - startPosition| = |{} - {}| = {}",
+    //            position,
+    //            startPosition,
+    //            Math.abs(position - startPosition));
+    //
+    //        if (setpoint != 0) {
+    //          logger.error("no encoder movement detected in {} ms", elapsed / 1e6);
+    //        }
+    //        setpoint = position;
+    //        positionStartTime += elapsed;
+    //        return;
+    //      } else checkEncoder = false;
+    //    }
 
     if (upward) return;
 

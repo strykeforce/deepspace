@@ -19,7 +19,7 @@ public class VacuumSubsystem extends Subsystem {
   private final int hatchPressure = 600;
   private final int climbPressure = 900;
 
-  private int goodEnough;
+  private int goodEnough = 100;
 
   private Solenoid tridentSolenoid;
   private Solenoid climbSolenoid;
@@ -117,6 +117,7 @@ public class VacuumSubsystem extends Subsystem {
   }
 
   public void setPressure(VacuumPressure setpoint) {
+    this.currentPressureSetpoint = setpoint;
     logger.debug("setting pressure to {}", currentPressureSetpoint);
     vacuum.set(ControlMode.Position, getPressureFor(setpoint));
   }
