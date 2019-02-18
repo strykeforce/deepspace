@@ -15,7 +15,7 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 public class BiscuitSubsystem extends Subsystem implements Limitable {
 
-  private static final String KEY_BASE = "BiscuitSubsystem/ElevatorPosition/";
+  private static final String KEY_BASE = "BiscuitSubsystem/Position/";
   private static final int BACKUP = 2767;
   private static Preferences preferences = Preferences.getInstance();
   private final DriveSubsystem DRIVE = Robot.DRIVE;
@@ -114,7 +114,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   }
 
   @Override
-  public int getElevatorPosition() {
+  public int getPosition() {
     return biscuit.getSelectedSensorPosition() % TICKS_PER_REV;
   }
 

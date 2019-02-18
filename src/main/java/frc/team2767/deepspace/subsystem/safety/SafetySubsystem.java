@@ -41,9 +41,9 @@ public class SafetySubsystem extends Subsystem {
   @Override
   public void periodic() {
 
-    biscuitCurrent = BiscuitPosition.of(biscuitSubsystem.getElevatorPosition());
-    intakeCurrent = IntakePosition.of(intakeSubsystem.getElevatorPosition());
-    elevatorCurrent = ElevatorPosition.of(elevatorSubsystem.getElevatorPosition());
+    biscuitCurrent = BiscuitPosition.of(biscuitSubsystem.getPosition());
+    intakeCurrent = IntakePosition.of(intakeSubsystem.getPosition());
+    elevatorCurrent = ElevatorPosition.of(elevatorSubsystem.getPosition());
 
     biscuitLimit = biscuitLimit(biscuitCurrent, intakeCurrent, elevatorCurrent);
     intakeLimit = intakeLimit(biscuitCurrent, elevatorCurrent);
@@ -222,15 +222,15 @@ public class SafetySubsystem extends Subsystem {
         + "\n\t"
         + elevatorCurrent.name()
         + "\t"
-        + elevatorSubsystem.getElevatorPosition()
+        + elevatorSubsystem.getPosition()
         + "\n\t"
         + intakeCurrent.name()
         + "\t"
-        + intakeSubsystem.getElevatorPosition()
+        + intakeSubsystem.getPosition()
         + "\n\t"
         + biscuitCurrent.name()
         + "\t"
-        + biscuitSubsystem.getElevatorPosition()
+        + biscuitSubsystem.getPosition()
         + "\nlimits="
         + "\n\t"
         + elevatorLimit.name()
