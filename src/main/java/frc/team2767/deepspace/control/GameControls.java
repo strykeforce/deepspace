@@ -4,10 +4,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.ZeroAxisCommand;
-import frc.team2767.deepspace.command.deliver.SelectFieldDirectionCommand;
-import frc.team2767.deepspace.command.deliver.SelectLevelCommand;
 import frc.team2767.deepspace.command.log.BiscuitStateLogDumpCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
+import frc.team2767.deepspace.command.states.SetFieldDirectionCommand;
+import frc.team2767.deepspace.command.states.SetLevelCommand;
 import frc.team2767.deepspace.subsystem.ElevatorLevel;
 import frc.team2767.deepspace.subsystem.FieldDirection;
 import org.slf4j.Logger;
@@ -29,15 +29,15 @@ public class GameControls {
     DirectionPadRight directionPadRight = new DirectionPadRight(this);
     DirectionPadLeft directionPadLeft = new DirectionPadLeft(this);
 
-    directionPadRight.whenActive(new SelectFieldDirectionCommand(FieldDirection.RIGHT));
-    directionPadLeft.whenActive(new SelectFieldDirectionCommand(FieldDirection.LEFT));
+    directionPadRight.whenActive(new SetFieldDirectionCommand(FieldDirection.RIGHT));
+    directionPadLeft.whenActive(new SetFieldDirectionCommand(FieldDirection.LEFT));
 
     new JoystickButton(joystick, GameControls.Button.Y.id)
-        .whenPressed(new SelectLevelCommand(ElevatorLevel.THREE));
+        .whenPressed(new SetLevelCommand(ElevatorLevel.THREE));
     new JoystickButton(joystick, GameControls.Button.B.id)
-        .whenPressed(new SelectLevelCommand(ElevatorLevel.TWO));
+        .whenPressed(new SetLevelCommand(ElevatorLevel.TWO));
     new JoystickButton(joystick, GameControls.Button.A.id)
-        .whenPressed(new SelectLevelCommand(ElevatorLevel.ONE));
+        .whenPressed(new SetLevelCommand(ElevatorLevel.ONE));
     new JoystickButton(joystick, GameControls.Button.X.id)
         .whenPressed(new BiscuitStateLogDumpCommand());
 

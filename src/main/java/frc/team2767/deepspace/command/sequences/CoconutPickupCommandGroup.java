@@ -1,9 +1,11 @@
-package frc.team2767.deepspace.command.deliver;
+package frc.team2767.deepspace.command.sequences;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorPositionCommand;
 import frc.team2767.deepspace.command.intake.RollerStopCommand;
+import frc.team2767.deepspace.command.states.SetActionCommand;
+import frc.team2767.deepspace.command.states.SetGamePieceCommand;
 import frc.team2767.deepspace.command.vacuum.ActivateValveCommand;
 import frc.team2767.deepspace.command.vacuum.PressureSetCommand;
 import frc.team2767.deepspace.subsystem.*;
