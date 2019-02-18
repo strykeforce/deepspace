@@ -172,21 +172,48 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   }
 
   public void executePlan() {
-    ElevatorPosition newElevatorPosition;
+    ElevatorPosition newPosition = ElevatorPosition.NOTSET;
 
-    if (currentGamepiece.equals(GamePiece.CARGO)) {
-      if (plannedLevel == 0) newElevatorPosition = ElevatorPosition.CARGO_LOW;
-      else if (plannedLevel == 1) newElevatorPosition = ElevatorPosition.CARGO_MEDIUM;
-      else newElevatorPosition = ElevatorPosition.CARGO_HIGH;
-    } else if (currentGamepiece.equals(GamePiece.HATCH)) {
-      if (plannedLevel == 0) newElevatorPosition = ElevatorPosition.HATCH_LOW;
-      else if (plannedLevel == 1) newElevatorPosition = ElevatorPosition.HATCH_MEDIUM;
-      else newElevatorPosition = ElevatorPosition.HATCH_HIGH;
-    } else {
-      newElevatorPosition = ElevatorPosition.STOW;
+    switch (currentGamepiece) {
+      case HATCH:
+        switch (elevatorLevel) {
+          case ONE:
+            newPosition = ElevatorPosition.HATCH_LOW;
+            break;
+          case TWO:
+            newPosition = ElevatorPosition.HATCH_MEDIUM;
+            break;
+          case THREE:
+            newPosition = ElevatorPosition.HATCH_HIGH;
+            break;
+          case NOTSET:
+            logger.warn("level not set");
+        }
+        break;
+      case CARGO:
+        switch (elevatorLevel) {
+          case ONE:
+            newPosition = ElevatorPosition.CARGO_LOW;
+            break;
+          case TWO:
+            newPosition = ElevatorPosition.CARGO_MEDIUM;
+            break;
+          case THREE:
+            newPosition = ElevatorPosition.CARGO_HIGH;
+            break;
+          case NOTSET:
+            logger.warn("level not set");
+            break;
+        }
+        break;
+      case NOTSET:
+        logger.warn("no cargo set");
+        break;
     }
 
-    setElevatorPosition(newElevatorPosition);
+    // stow?
+
+    setElevatorPosition(newPosition);
   }
 
   public void setElevatorPosition(ElevatorPosition elevatorPosition) {
@@ -313,12 +340,17 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     elevator.set(PercentOutput, kStopOutput);
   }
 
+  public void setCurrentGamepiece(GamePiece currentGamepiece) {
+    this.currentGamepiece = currentGamepiece;
+  }
+
   @Override
   protected void initDefaultCommand() {}
 
   public enum ElevatorPosition {
     CARGO_PICKUP, // FIXME: add elevatorPosition to preferences
     HATCH_LOW,
+    NOTSET,
     HATCH_MEDIUM,
     HATCH_HIGH,
     STOW,
@@ -340,6 +372,6 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
 
   public enum Direction {
     UP,
-    DOWN;
+    DOWN
   }
 }

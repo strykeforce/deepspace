@@ -7,10 +7,8 @@ import frc.team2767.deepspace.subsystem.ElevatorSubsystem;
 public class ElevatorExecutePlanCommand extends Command {
 
   private static final ElevatorSubsystem ELEVATOR = Robot.ELEVATOR;
-  private ElevatorSubsystem.ElevatorPosition elevatorPosition;
 
-  public ElevatorExecutePlanCommand(ElevatorSubsystem.ElevatorPosition elevatorPosition) {
-    this.elevatorPosition = elevatorPosition;
+  public ElevatorExecutePlanCommand() {
     requires(ELEVATOR);
   }
 
