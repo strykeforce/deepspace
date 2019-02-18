@@ -7,7 +7,7 @@ import frc.team2767.deepspace.command.elevator.ElevatorPositionCommand;
 public class PositionCommandGroup extends CommandGroup {
 
   public PositionCommandGroup() {
-    addParallel(new BiscuitPositionCommand());
-    addParallel(new ElevatorPositionCommand());
+    addSequential(new ElevatorPositionCommand());
+    addSequential(new BiscuitPositionCommand());
   }
 }
