@@ -3,6 +3,7 @@ package frc.team2767.deepspace.command.sequences;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
+import frc.team2767.deepspace.command.coconut.CoconutCloseCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
 import frc.team2767.deepspace.command.intake.IntakePositionCommand;
 import frc.team2767.deepspace.command.intake.RollerStopCommand;
@@ -29,7 +30,7 @@ public class CoconutPickupCommandGroup extends CommandGroup {
             addSequential(new SetGamePieceCommand(GamePiece.CARGO));
             addSequential(new IntakePositionCommand(IntakeSubsystem.ShoulderPosition.UP));
             addSequential(new RollerStopCommand());
-            // addSequential(new CoconutCloseCommand()); FIXME: need to add coconut (Arjav?)
+            addSequential(new CoconutCloseCommand());
             addSequential(
                 new ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition.CARGO_MEDIUM));
             addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.BiscuitPosition.DOWN_R));
@@ -43,7 +44,7 @@ public class CoconutPickupCommandGroup extends CommandGroup {
             new VacuumSubsystem.Valve[] {
               VacuumSubsystem.Valve.PUMP, VacuumSubsystem.Valve.TRIDENT
             }));
-    addSequential(new WaitCommand(2.0));
+    addSequential(new WaitCommand(5.0));
     addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition.CARGO_MEDIUM));
     addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.BiscuitPosition.UP));
     //        addSequential(new
