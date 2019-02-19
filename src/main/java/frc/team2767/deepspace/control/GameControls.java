@@ -11,6 +11,7 @@ import frc.team2767.deepspace.command.intake.IntakeDownCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.states.SetFieldDirectionCommand;
 import frc.team2767.deepspace.command.states.SetLevelCommand;
+import frc.team2767.deepspace.command.teleop.PlayerHatchCommandGroup;
 import frc.team2767.deepspace.control.trigger.*;
 import frc.team2767.deepspace.subsystem.ElevatorLevel;
 import frc.team2767.deepspace.subsystem.ElevatorSubsystem;
@@ -77,8 +78,8 @@ public class GameControls {
     //    // LOADING
     //    new JoystickButton(joystick, GameControls.Shoulder.RIGHT.id)
     //            .whenPressed(new LoadingStationBall());
-    //    new JoystickButton(joystick, GameControls.Shoulder.LEFT.id)
-    //            .whenPressed(new LoadingStationHatch);
+    new JoystickButton(joystick, GameControls.Shoulder.LEFT.id)
+        .whenPressed(new PlayerHatchCommandGroup());
 
     //
     // END COMP CONFIG

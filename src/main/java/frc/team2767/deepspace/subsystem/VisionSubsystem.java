@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 public class VisionSubsystem extends Subsystem {
 
   private static final Logger logger = LoggerFactory.getLogger(ElevatorSubsystem.class);
-  private final DigitalOutput lightsOutput = new DigitalOutput(0);
+  private final DigitalOutput lightsOutput = new DigitalOutput(6);
   private final double cameraPositionBearing = -90.0;
   private final double CAMERA_X = 0.0;
   private final double CAMERA_Y = -9.0;
