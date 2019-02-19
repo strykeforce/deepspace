@@ -9,6 +9,7 @@ public class LightsOnCommand extends InstantCommand {
   private static final VisionSubsystem VISION = Robot.VISION;
 
   public LightsOnCommand() {
+    setRunWhenDisabled(true);
     requires(VISION);
   }
 

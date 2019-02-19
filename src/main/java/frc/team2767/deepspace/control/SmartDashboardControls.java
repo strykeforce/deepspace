@@ -1,6 +1,7 @@
 package frc.team2767.deepspace.control;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team2767.deepspace.command.ZeroAxisCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
@@ -35,6 +36,7 @@ public class SmartDashboardControls {
     logger.debug("creating match commands");
     SmartDashboard.putData("Game/IntakeIn", new RollerInCommand());
     SmartDashboard.putData("Game/IntakeOut", new RollerOutCommand());
+    SmartDashboard.putData("Game/zeroAll", new ZeroAxisCommand());
   }
 
   private void addPitCommands() {

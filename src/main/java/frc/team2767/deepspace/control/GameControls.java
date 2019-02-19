@@ -7,6 +7,7 @@ import frc.team2767.deepspace.command.ZeroAxisCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
+import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
 import frc.team2767.deepspace.command.intake.IntakeDownCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.states.SetFieldDirectionCommand;
@@ -69,6 +70,8 @@ public class GameControls {
         .whenPressed(new SetLevelCommand(ElevatorLevel.ONE));
 
     rightStickUp.whenActive(new ElevatorOpenLoopUpCommand());
+    rightStickUp.whenInactive(new ElevatorStopCommand());
+    rightStickDown.whenInactive(new ElevatorStopCommand());
     rightStickDown.whenActive(new ElevatorOpenLoopDownCommand());
 
     // FIELD DIRECTION STATE

@@ -19,10 +19,8 @@ import frc.team2767.deepspace.command.log.SafetyLogDumpCommand;
 import frc.team2767.deepspace.command.sequences.CoconutPickupCommandGroup;
 import frc.team2767.deepspace.command.teleop.CargoGroundPickupCommandGroup;
 import frc.team2767.deepspace.command.teleop.StowAllCommandGroup;
-import frc.team2767.deepspace.command.vacuum.DeactivateValveCommand;
 import frc.team2767.deepspace.command.vision.LightsOffCommand;
 import frc.team2767.deepspace.command.vision.LightsOnCommand;
-import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,12 +45,12 @@ public class DriverControls {
     new JoystickButton(joystick, Toggle.LEFT_TOGGLE.id).whenPressed(new StowAllCommandGroup());
     new JoystickButton(joystick, Toggle.LEFT_TOGGLE.id).whenReleased(new StowAllCommandGroup());
 
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id)
-        .whenPressed(
-            new DeactivateValveCommand(
-                new VacuumSubsystem.Valve[] {
-                  VacuumSubsystem.Valve.TRIDENT, VacuumSubsystem.Valve.PUMP
-                }));
+    //    new JoystickButton(joystick, Shoulder.LEFT_UP.id)
+    //        .whenPressed(
+    //            new DeactivateValveCommand(
+    //                new VacuumSubsystem.Valve[] {
+    //                  VacuumSubsystem.Valve.TRIDENT, VacuumSubsystem.Valve.PUMP
+    //                }));
 
     // biscuit
     new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenActive(new BiscuitPositiveCommand());

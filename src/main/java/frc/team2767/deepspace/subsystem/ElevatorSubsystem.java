@@ -312,7 +312,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
 
   public void zeroPosition() {
     elevator.selectProfileSlot(0, 0);
-    int absoluteZero = 46;
+    int absoluteZero = 555;
     int zero = elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF - absoluteZero;
     elevator.setSelectedSensorPosition(zero);
 
