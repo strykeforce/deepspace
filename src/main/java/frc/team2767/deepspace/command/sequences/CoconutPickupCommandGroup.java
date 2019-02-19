@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
+import frc.team2767.deepspace.command.intake.IntakePositionCommand;
 import frc.team2767.deepspace.command.intake.RollerStopCommand;
 import frc.team2767.deepspace.command.states.SetActionCommand;
 import frc.team2767.deepspace.command.states.SetGamePieceCommand;
@@ -26,6 +27,7 @@ public class CoconutPickupCommandGroup extends CommandGroup {
             addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.BiscuitPosition.UP));
             addSequential(new SetActionCommand(Action.PLACE));
             addSequential(new SetGamePieceCommand(GamePiece.CARGO));
+            addSequential(new IntakePositionCommand(IntakeSubsystem.ShoulderPosition.UP));
             addSequential(new RollerStopCommand());
             // addSequential(new CoconutCloseCommand()); FIXME: need to add coconut (Arjav?)
             addSequential(

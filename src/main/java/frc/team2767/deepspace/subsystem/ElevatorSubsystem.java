@@ -141,7 +141,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     elevatorConfig.velocityMeasurementWindow = 64;
     elevatorConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms;
     elevatorConfig.slot0.allowableClosedloopError = 0;
-    elevatorConfig.forwardSoftLimitThreshold = 31_000;
+    elevatorConfig.forwardSoftLimitThreshold = 35_195; //FIXME different for comp/proto
     elevatorConfig.voltageCompSaturation = 12;
     elevatorConfig.voltageMeasurementFilter = 32;
     elevatorConfig.motionAcceleration = 2000;
