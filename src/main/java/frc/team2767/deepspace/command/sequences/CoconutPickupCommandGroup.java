@@ -10,27 +10,23 @@ import frc.team2767.deepspace.command.intake.RollerStopCommand;
 import frc.team2767.deepspace.command.states.SetActionCommand;
 import frc.team2767.deepspace.command.states.SetGamePieceCommand;
 import frc.team2767.deepspace.command.vacuum.ActivateValveCommand;
-import frc.team2767.deepspace.command.vacuum.DeactivateValveCommand;
+import frc.team2767.deepspace.command.vacuum.PressureAccumulateCommandGroup;
 import frc.team2767.deepspace.command.vacuum.PressureSetCommand;
 import frc.team2767.deepspace.subsystem.*;
 
 public class CoconutPickupCommandGroup extends CommandGroup {
 
   public CoconutPickupCommandGroup() {
-    addSequential(
-        new DeactivateValveCommand(
-            new VacuumSubsystem.Valve[] {
-              VacuumSubsystem.Valve.PUMP, VacuumSubsystem.Valve.TRIDENT
-            }));
+    addSequential(new PressureAccumulateCommandGroup());
+    addSequential(new RollerStopCommand());
     addSequential(
         new CommandGroup() {
           {
             addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.BiscuitPosition.UP));
-            addSequential(new SetActionCommand(Action.PLACE));
-            addSequential(new SetGamePieceCommand(GamePiece.CARGO));
-            addSequential(new IntakePositionCommand(IntakeSubsystem.ShoulderPosition.UP));
-            addSequential(new RollerStopCommand());
-            addSequential(new CoconutCloseCommand());
+            addParallel(new SetActionCommand(Action.PLACE));
+            addParallel(new SetGamePieceCommand(GamePiece.CARGO));
+            addParallel(new IntakePositionCommand(IntakeSubsystem.ShoulderPosition.MIDDLE), 1.5);
+            addParallel(new CoconutCloseCommand());
             addSequential(
                 new ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition.CARGO_MEDIUM));
             addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.BiscuitPosition.DOWN_R));
@@ -44,7 +40,7 @@ public class CoconutPickupCommandGroup extends CommandGroup {
             new VacuumSubsystem.Valve[] {
               VacuumSubsystem.Valve.PUMP, VacuumSubsystem.Valve.TRIDENT
             }));
-    addSequential(new WaitCommand(5.0));
+    addSequential(new WaitCommand(1.5));
     addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition.CARGO_MEDIUM));
     addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.BiscuitPosition.UP));
     //        addSequential(new

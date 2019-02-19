@@ -227,6 +227,8 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
         return kShoulderUpPosition;
       case LOAD:
         return kShoulderLoadPosition;
+      case MIDDLE:
+        return 6000; // temp
       default:
         logger.warn("Invalid shoulder position");
         return 0;
@@ -262,6 +264,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
 
   public enum ShoulderPosition {
     UP,
+    MIDDLE,
     LOAD
   }
 }

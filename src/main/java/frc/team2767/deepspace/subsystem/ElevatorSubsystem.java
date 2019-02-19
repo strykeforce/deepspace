@@ -145,7 +145,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     elevatorConfig.voltageCompSaturation = 12;
     elevatorConfig.voltageMeasurementFilter = 32;
     elevatorConfig.motionAcceleration = 2000;
-    elevatorConfig.motionCruiseVelocity = 200;
+    elevatorConfig.motionCruiseVelocity = 1500;
 
     elevator.configAllSettings(elevatorConfig);
     elevator.enableCurrentLimit(true);
