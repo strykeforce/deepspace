@@ -4,16 +4,21 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.ZeroGyroCommand;
-import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitNegativeCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositiveCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
-import frc.team2767.deepspace.command.intake.*;
+import frc.team2767.deepspace.command.intake.IntakeDownCommand;
+import frc.team2767.deepspace.command.intake.IntakeUpCommand;
+import frc.team2767.deepspace.command.intake.ShoulderStopCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.log.SafetyLogDumpCommand;
+import frc.team2767.deepspace.command.sequences.CoconutPickupCommandGroup;
+import frc.team2767.deepspace.command.teleop.CargoGroundPickupCommandGroup;
+import frc.team2767.deepspace.command.teleop.PositionExecuteCommandGroup;
+import frc.team2767.deepspace.command.teleop.StowAllCommandGroup;
 import frc.team2767.deepspace.command.vision.LightsOffCommand;
 import frc.team2767.deepspace.command.vision.LightsOnCommand;
 import org.slf4j.Logger;
@@ -30,14 +35,28 @@ public class DriverControls {
   DriverControls(int port) {
     joystick = new Joystick(port);
 
+    // intake pickup
+    new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id)
+        .whenPressed(new CargoGroundPickupCommandGroup());
+    new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id)
+        .whenReleased(new CoconutPickupCommandGroup());
+
+    // stow
+    new JoystickButton(joystick, Toggle.LEFT_TOGGLE.id).whenPressed(new StowAllCommandGroup());
+    new JoystickButton(joystick, Toggle.LEFT_TOGGLE.id).whenReleased(new StowAllCommandGroup());
+
+    //    new JoystickButton(joystick, Shoulder.LEFT_UP.id)
+    //        .whenPressed(
+    //            new DeactivateValveCommand(
+    //                new VacuumSubsystem.Valve[] {
+    //                  VacuumSubsystem.Valve.TRIDENT, VacuumSubsystem.Valve.PUMP
+    //                }));
+
     // biscuit
     new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenActive(new BiscuitPositiveCommand());
     new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenInactive(new BiscuitStopCommand());
     new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenActive(new BiscuitNegativeCommand());
     new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenInactive(new BiscuitStopCommand());
-
-    new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id).whenPressed(new RollerInCommand());
-    new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id).whenReleased(new RollerStopCommand());
 
     //     elevator
     new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenActive(new ElevatorOpenLoopUpCommand());
@@ -48,7 +67,7 @@ public class DriverControls {
     // ZEROS / LOG DUMPS
     new JoystickButton(joystick, Button.RESET.id).whenPressed(new ZeroGyroCommand());
     new JoystickButton(joystick, Button.HAMBURGER.id).whenPressed(new SafetyLogDumpCommand());
-    new JoystickButton(joystick, Button.X.id).whenPressed(new BiscuitExecutePlanCommand());
+    new JoystickButton(joystick, Button.X.id).whenPressed(new PositionExecuteCommandGroup());
 
     // LIGHTS
     new JoystickButton(joystick, Trim.LEFT_X_POS.id).whenPressed(new LightsOnCommand());
@@ -119,6 +138,16 @@ public class DriverControls {
     private final int id;
 
     Shoulder(int id) {
+      this.id = id;
+    }
+  }
+
+  public enum Toggle {
+    LEFT_TOGGLE(1);
+
+    private final int id;
+
+    Toggle(int id) {
       this.id = id;
     }
   }

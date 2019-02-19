@@ -141,11 +141,11 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     elevatorConfig.velocityMeasurementWindow = 64;
     elevatorConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms;
     elevatorConfig.slot0.allowableClosedloopError = 0;
-    elevatorConfig.forwardSoftLimitThreshold = 31_000;
+    elevatorConfig.forwardSoftLimitThreshold = 32_000; // FIXME different for comp/proto
     elevatorConfig.voltageCompSaturation = 12;
     elevatorConfig.voltageMeasurementFilter = 32;
     elevatorConfig.motionAcceleration = 2000;
-    elevatorConfig.motionCruiseVelocity = 200;
+    elevatorConfig.motionCruiseVelocity = 1500;
 
     elevator.configAllSettings(elevatorConfig);
     elevator.enableCurrentLimit(true);
@@ -312,7 +312,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
 
   public void zeroPosition() {
     elevator.selectProfileSlot(0, 0);
-    int absoluteZero = 46;
+    int absoluteZero = 2061;
     int zero = elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF - absoluteZero;
     elevator.setSelectedSensorPosition(zero);
 
