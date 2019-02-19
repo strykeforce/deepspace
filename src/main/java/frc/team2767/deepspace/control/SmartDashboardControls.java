@@ -2,17 +2,14 @@ package frc.team2767.deepspace.control;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.command.ZeroAxisCommand;
-import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
-import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
-import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorZeroCommand;
 import frc.team2767.deepspace.command.intake.*;
 import frc.team2767.deepspace.command.states.SetActionCommand;
 import frc.team2767.deepspace.command.states.SetGamePieceCommand;
 import frc.team2767.deepspace.command.vacuum.ActivateValveCommand;
-import frc.team2767.deepspace.command.vacuum.DeactivateValveCommand;
+import frc.team2767.deepspace.command.vacuum.PressureAccumulateCommandGroup;
 import frc.team2767.deepspace.command.vacuum.PressureSetCommand;
-import frc.team2767.deepspace.command.vacuum.VacuumStopCommand;
+import frc.team2767.deepspace.command.vacuum.StopPumpCommandGroup;
 import frc.team2767.deepspace.command.vision.LightsOffCommand;
 import frc.team2767.deepspace.command.vision.LightsOnCommand;
 import frc.team2767.deepspace.subsystem.Action;
@@ -34,8 +31,6 @@ public class SmartDashboardControls {
 
   private void addMatchCommands() {
     logger.debug("creating match commands");
-    SmartDashboard.putData("Game/IntakeIn", new RollerInCommand());
-    SmartDashboard.putData("Game/IntakeOut", new RollerOutCommand());
     SmartDashboard.putData("Game/zeroAll", new ZeroAxisCommand());
   }
 
@@ -61,33 +56,25 @@ public class SmartDashboardControls {
   }
 
   private void addIntakeCommands() {
-    SmartDashboard.putData("Pit/IntakeOut", new IntakeDownCommand());
-    SmartDashboard.putData("Pit/IntakeStop", new ShoulderStopCommand());
-    SmartDashboard.putData("Pit/IntakeIn", new IntakeUpCommand());
+    //    SmartDashboard.putData("Pit/IntakeOut", new IntakeDownCommand());
+    //    SmartDashboard.putData("Pit/IntakeStop", new ShoulderStopCommand());
+    //    SmartDashboard.putData("Pit/IntakeIn", new IntakeUpCommand());
   }
 
   private void addElevatorCommands() {
-    SmartDashboard.putData("Pit/ElevatorUp", new ElevatorOpenLoopUpCommand());
-    SmartDashboard.putData("Pit/ElevatorStop", new ElevatorStopCommand());
-    SmartDashboard.putData("Pit/ElevatorDown", new ElevatorOpenLoopDownCommand());
+    //    SmartDashboard.putData("Pit/ElevatorUp", new ElevatorOpenLoopUpCommand());
+    //    SmartDashboard.putData("Pit/ElevatorStop", new ElevatorStopCommand());
+    //    SmartDashboard.putData("Pit/ElevatorDown", new ElevatorOpenLoopDownCommand());
   }
 
   private void addVacuumCommands() {
 
     SmartDashboard.putData(
         "Pit/TridentValveActivate",
-        new ActivateValveCommand(
-            new VacuumSubsystem.Valve[] {
-              VacuumSubsystem.Valve.TRIDENT, VacuumSubsystem.Valve.PUMP
-            }));
-    SmartDashboard.putData(
-        "Pit/TridentValveDeactivate",
-        new DeactivateValveCommand(
-            new VacuumSubsystem.Valve[] {
-              VacuumSubsystem.Valve.TRIDENT, VacuumSubsystem.Valve.PUMP
-            }));
+        new ActivateValveCommand(new VacuumSubsystem.Valve[] {VacuumSubsystem.Valve.TRIDENT}));
+    SmartDashboard.putData("Pit/BuildPressure", new PressureAccumulateCommandGroup());
 
-    SmartDashboard.putData("Pit/VacuumStop", new VacuumStopCommand());
+    SmartDashboard.putData("Pit/VacuumStop", new StopPumpCommandGroup());
     SmartDashboard.putData(
         "Pit/Vacuum/Climb", new PressureSetCommand(VacuumSubsystem.VacuumPressure.CLIMB));
 
@@ -96,6 +83,4 @@ public class SmartDashboardControls {
     SmartDashboard.putData(
         "Pit/Vacuum/Cargo", new PressureSetCommand(VacuumSubsystem.VacuumPressure.CARGO));
   }
-
-  private void addStatesCommand() {}
 }
