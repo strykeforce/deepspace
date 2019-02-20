@@ -1,4 +1,4 @@
-package frc.team2767.deepspace.command.teleop;
+package frc.team2767.deepspace.command.sequences;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
@@ -22,5 +22,7 @@ public class PlayerCargoCommandGroup extends CommandGroup {
     addSequential(new BiscuitExecutePlanCommand());
     addSequential(new CoconutOpenCommand());
     addParallel(new RollerOutCommand(0.3));
+
+    addSequential(new SetActionCommand(Action.PLACE));
   }
 }
