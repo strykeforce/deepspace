@@ -89,7 +89,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
       preferences.putDouble(ROLLER_OUT_OUTPUT, 1.0);
     }
     if (!preferences.containsKey(K_CLOSE_ENOUGH)) {
-      preferences.putInt(K_CLOSE_ENOUGH, 0);
+      preferences.putInt(K_CLOSE_ENOUGH, 20);
     }
     if (!preferences.containsKey(K_FORWARD_SOFT_LIMIT)) {
       preferences.putInt(K_FORWARD_SOFT_LIMIT, 15100);
@@ -229,6 +229,8 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
         return kShoulderLoadPosition;
       case MIDDLE:
         return 6000; // temp
+      case CARGO_PLAYER:
+        return 3268;
       default:
         logger.warn("Invalid shoulder position");
         return 0;
@@ -265,6 +267,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   public enum ShoulderPosition {
     UP,
     MIDDLE,
+    CARGO_PLAYER,
     LOAD
   }
 }

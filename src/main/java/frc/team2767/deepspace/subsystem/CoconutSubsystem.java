@@ -28,7 +28,7 @@ public class CoconutSubsystem extends Subsystem {
   private void coconutPreferences() {
     String PREFS_NAME = "CoconutSubsystem/Settings/";
     String OPEN_LEFT = PREFS_NAME + "open_left";
-    if (!preferences.containsKey(OPEN_LEFT)) preferences.putDouble(OPEN_LEFT, 0.52);
+    if (!preferences.containsKey(OPEN_LEFT)) preferences.putDouble(OPEN_LEFT, 0.48);
 
     String OPEN_RIGHT = PREFS_NAME + "open_right";
     if (!preferences.containsKey(OPEN_RIGHT)) preferences.putDouble(OPEN_RIGHT, 0.74);

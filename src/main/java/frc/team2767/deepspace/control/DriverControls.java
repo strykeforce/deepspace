@@ -10,17 +10,16 @@ import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
-import frc.team2767.deepspace.command.intake.IntakeDownCommand;
-import frc.team2767.deepspace.command.intake.IntakeUpCommand;
-import frc.team2767.deepspace.command.intake.ShoulderStopCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.log.SafetyLogDumpCommand;
+import frc.team2767.deepspace.command.sequences.CargoGroundPickupCommandGroup;
 import frc.team2767.deepspace.command.sequences.CoconutPickupCommandGroup;
-import frc.team2767.deepspace.command.teleop.CargoGroundPickupCommandGroup;
-import frc.team2767.deepspace.command.teleop.PositionExecuteCommandGroup;
-import frc.team2767.deepspace.command.teleop.StowAllCommandGroup;
+import frc.team2767.deepspace.command.sequences.PositionExecuteCommandGroup;
+import frc.team2767.deepspace.command.sequences.StowAllCommandGroup;
+import frc.team2767.deepspace.command.vacuum.DeactivateValveCommand;
 import frc.team2767.deepspace.command.vision.LightsOffCommand;
 import frc.team2767.deepspace.command.vision.LightsOnCommand;
+import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +51,8 @@ public class DriverControls {
     //                  VacuumSubsystem.Valve.TRIDENT, VacuumSubsystem.Valve.PUMP
     //                }));
 
+    new JoystickButton(joystick, Button.DOWN.id).whenPressed(new CoconutPickupCommandGroup());
+
     // biscuit
     new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenActive(new BiscuitPositiveCommand());
     new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenInactive(new BiscuitStopCommand());
@@ -74,10 +75,13 @@ public class DriverControls {
     new JoystickButton(joystick, Trim.LEFT_X_NEG.id).whenPressed(new LightsOffCommand());
 
     // shoulder
-    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(new IntakeDownCommand());
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed(new IntakeUpCommand());
-    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenReleased(new ShoulderStopCommand());
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased(new ShoulderStopCommand());
+    //    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(new IntakeDownCommand());
+    new JoystickButton(joystick, Shoulder.LEFT_UP.id)
+        .whenPressed(new DeactivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
+
+    //    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenReleased(new
+    // ShoulderStopCommand());
+    //    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased(new ShoulderStopCommand());
   }
 
   private <E extends Enum<E>> Command log(E control) {

@@ -32,6 +32,8 @@ public class VacuumSubsystem extends Subsystem {
     tridentSolenoid = new Solenoid(0, Valve.TRIDENT.ID);
     pumpSolenoid = new Solenoid(0, Valve.PUMP.ID);
     climbSolenoid = new Solenoid(0, Valve.CLIMB.ID);
+
+    pumpSolenoid.set(true);
     configTalon();
   }
 
@@ -72,6 +74,18 @@ public class VacuumSubsystem extends Subsystem {
     telemetryService.register(vacuum);
   }
 
+  public Solenoid getTridentSolenoid() {
+    return tridentSolenoid;
+  }
+
+  public Solenoid getPumpSolenoid() {
+    return pumpSolenoid;
+  }
+
+  public Solenoid getClimbSolenoid() {
+    return climbSolenoid;
+  }
+
   public void setSolenoid(Valve valve, boolean state) {
     logger.debug("setting {} to {}", valve, state);
     switch (valve) {
@@ -98,7 +112,7 @@ public class VacuumSubsystem extends Subsystem {
     return false;
   }
 
-  private int getPressureFor(VacuumPressure pressure) {
+  public int getPressureFor(VacuumPressure pressure) {
     switch (pressure) {
       case CARGO:
         return ballPressure;
@@ -110,6 +124,11 @@ public class VacuumSubsystem extends Subsystem {
         logger.warn("pressure state legal");
         return 0;
     }
+  }
+
+  public void runOpenLoop(double setpoint) {
+    logger.debug("running vacuum at {}", setpoint);
+    vacuum.set(ControlMode.PercentOutput, setpoint);
   }
 
   public int getPressure() {

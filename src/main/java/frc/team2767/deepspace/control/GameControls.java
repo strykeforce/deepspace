@@ -6,17 +6,19 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.ZeroAxisCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
-import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
-import frc.team2767.deepspace.command.intake.IntakeDownCommand;
+import frc.team2767.deepspace.command.intake.RollerOutCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
+import frc.team2767.deepspace.command.sequences.PlayerCargoCommandGroup;
+import frc.team2767.deepspace.command.sequences.PlayerHatchCommandGroup;
+import frc.team2767.deepspace.command.sequences.StowAllCommandGroup;
 import frc.team2767.deepspace.command.states.SetFieldDirectionCommand;
 import frc.team2767.deepspace.command.states.SetLevelCommand;
-import frc.team2767.deepspace.command.teleop.PlayerHatchCommandGroup;
+import frc.team2767.deepspace.command.vacuum.DeactivateValveCommand;
 import frc.team2767.deepspace.control.trigger.*;
 import frc.team2767.deepspace.subsystem.ElevatorLevel;
-import frc.team2767.deepspace.subsystem.ElevatorSubsystem;
 import frc.team2767.deepspace.subsystem.FieldDirection;
+import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +48,10 @@ public class GameControls {
     directionPadRight.whenActive(new SetFieldDirectionCommand(FieldDirection.RIGHT));
     directionPadLeft.whenActive(new SetFieldDirectionCommand(FieldDirection.LEFT));
 
-    directionPadAny.whenActive(new IntakeDownCommand());
+    directionPadAny.whenActive(new RollerOutCommand());
 
+    new JoystickButton(joystick, Trigger.LEFT.id)
+        .whenPressed(new DeactivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
     //
     // COMP CONFIG DO NOT CHANGE
     //
@@ -60,8 +64,7 @@ public class GameControls {
 
     // ELEVATOR
 
-    new JoystickButton(joystick, GameControls.Button.X.id)
-        .whenPressed(new ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition.STOW));
+    new JoystickButton(joystick, GameControls.Button.X.id).whenPressed(new StowAllCommandGroup());
     new JoystickButton(joystick, GameControls.Button.Y.id)
         .whenPressed(new SetLevelCommand(ElevatorLevel.THREE));
     new JoystickButton(joystick, GameControls.Button.B.id)
@@ -79,8 +82,8 @@ public class GameControls {
     leftStickRight.whenActive(new SetFieldDirectionCommand(FieldDirection.RIGHT));
     //
     //    // LOADING
-    //    new JoystickButton(joystick, GameControls.Shoulder.RIGHT.id)
-    //            .whenPressed(new LoadingStationBall());
+    new JoystickButton(joystick, GameControls.Shoulder.RIGHT.id)
+        .whenPressed(new PlayerCargoCommandGroup());
     new JoystickButton(joystick, GameControls.Shoulder.LEFT.id)
         .whenPressed(new PlayerHatchCommandGroup());
 

@@ -33,7 +33,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   private String highLimitKey = KEY_BASE + "upper_limit";
   private String closeEnoughKey = KEY_BASE + "close_enough";
   private GamePiece currentGamePiece = GamePiece.NOTSET;
-  private BiscuitPosition targetBiscuitPosition = BiscuitPosition.NOTSET;
+  private int targetBiscuitPosition = BiscuitPosition.NOTSET.encoderPosition;
   private Action currentAction = Action.NOTSET;
   private ElevatorLevel targetLevel = NOTSET;
 
@@ -110,7 +110,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
         + targetDirection.name()
         + "\n\t"
         + "target position = "
-        + targetBiscuitPosition.name();
+        + targetBiscuitPosition;
   }
 
   @Override
@@ -125,9 +125,15 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   }
 
   public void setPosition(BiscuitPosition biscuitPosition) {
-    targetBiscuitPosition = biscuitPosition;
+    targetBiscuitPosition = biscuitPosition.encoderPosition;
     logger.info("biscuit setpoint = {} at {}", biscuitPosition, biscuitPosition.encoderPosition);
     biscuit.set(ControlMode.MotionMagic, biscuitPosition.encoderPosition);
+  }
+
+  public void setPosition(int biscuitPosition) {
+    targetBiscuitPosition = biscuitPosition;
+    logger.info("biscuit setpoint = {} at {}", biscuitPosition, biscuitPosition);
+    biscuit.set(ControlMode.MotionMagic, biscuitPosition);
   }
 
   public void zero() {
@@ -155,11 +161,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   public void setFieldDirection(FieldDirection direction) {
     logger.debug("setting field direction to {}", direction);
     targetDirection = direction;
-  }
-
-  public void manualPosition(BiscuitPosition biscuitPosition) {
-    targetBiscuitPosition = biscuitPosition;
-    setPosition(targetBiscuitPosition);
   }
 
   public void setCurrentGamePiece(GamePiece currentGamePiece) {
@@ -199,20 +200,20 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
             case LEFT:
               switch (currentAngle) {
                 case FORWARD:
-                  targetBiscuitPosition = BiscuitPosition.TILT_UP_L;
+                  targetBiscuitPosition = BiscuitPosition.TILT_UP_L.encoderPosition;
                   break;
                 case BACKWARD:
-                  targetBiscuitPosition = BiscuitPosition.TILT_UP_R;
+                  targetBiscuitPosition = BiscuitPosition.TILT_UP_R.encoderPosition;
                   break;
               }
               break;
             case RIGHT:
               switch (currentAngle) {
                 case FORWARD:
-                  targetBiscuitPosition = BiscuitPosition.TILT_UP_R;
+                  targetBiscuitPosition = BiscuitPosition.TILT_UP_R.encoderPosition;
                   break;
                 case BACKWARD:
-                  targetBiscuitPosition = BiscuitPosition.TILT_UP_L;
+                  targetBiscuitPosition = BiscuitPosition.TILT_UP_L.encoderPosition;
                   break;
               }
           }
@@ -222,20 +223,20 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
             case LEFT:
               switch (currentAngle) {
                 case FORWARD:
-                  targetBiscuitPosition = BiscuitPosition.LEFT;
+                  targetBiscuitPosition = BiscuitPosition.LEFT.encoderPosition;
                   break;
                 case BACKWARD:
-                  targetBiscuitPosition = BiscuitPosition.RIGHT;
+                  targetBiscuitPosition = BiscuitPosition.RIGHT.encoderPosition;
                   break;
               }
               break;
             case RIGHT:
               switch (currentAngle) {
                 case FORWARD:
-                  targetBiscuitPosition = BiscuitPosition.RIGHT;
+                  targetBiscuitPosition = BiscuitPosition.RIGHT.encoderPosition;
                   break;
                 case BACKWARD:
-                  targetBiscuitPosition = BiscuitPosition.LEFT;
+                  targetBiscuitPosition = BiscuitPosition.LEFT.encoderPosition;
                   break;
               }
           }
@@ -254,10 +255,10 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
           case CARGO:
             switch (currentAngle) {
               case LEFT:
-                targetBiscuitPosition = BiscuitPosition.BACK_STOP_R;
+                targetBiscuitPosition = BiscuitPosition.BACK_STOP_R.encoderPosition;
                 break;
               case RIGHT:
-                targetBiscuitPosition = BiscuitPosition.BACK_STOP_L;
+                targetBiscuitPosition = BiscuitPosition.BACK_STOP_L.encoderPosition;
                 break;
             }
             break;
@@ -265,10 +266,10 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
           case HATCH:
             switch (currentAngle) {
               case LEFT:
-                targetBiscuitPosition = BiscuitPosition.LEFT;
+                targetBiscuitPosition = BiscuitPosition.LEFT.encoderPosition;
                 break;
               case RIGHT:
-                targetBiscuitPosition = BiscuitPosition.RIGHT;
+                targetBiscuitPosition = BiscuitPosition.RIGHT.encoderPosition;
                 break;
             }
         }
@@ -278,12 +279,9 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   }
 
   public boolean onTarget() {
-    if (Math.abs(biscuit.getSelectedSensorPosition() - targetBiscuitPosition.encoderPosition)
-        < CLOSE_ENOUGH) {
+    if (Math.abs(biscuit.getSelectedSensorPosition() - targetBiscuitPosition) < CLOSE_ENOUGH) {
       logger.debug(
-          "current = {} target = {}",
-          biscuit.getSelectedSensorPosition(),
-          targetBiscuitPosition.encoderPosition);
+          "current = {} target = {}", biscuit.getSelectedSensorPosition(), targetBiscuitPosition);
       logger.debug("on targetBiscuitPosition");
       return true;
     }

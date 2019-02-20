@@ -1,5 +1,7 @@
 package frc.team2767.deepspace.subsystem;
 
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -15,11 +17,10 @@ public class VisionSubsystem extends Subsystem {
   private final double cameraPositionBearing = -90.0;
   private final double CAMERA_X = 0.0;
   private final double CAMERA_Y = -9.0;
-
+  private final UsbCamera usbCamera;
   NetworkTableEntry bearingEntry;
   NetworkTableEntry rangeEntry;
   private NetworkTable table = NetworkTableInstance.getDefault().getTable("Pyeye");
-
   private FieldDirection direction = FieldDirection.NOTSET;
   private ElevatorLevel elevatorLevel = ElevatorLevel.NOTSET;
   private Camera camera = Camera.NOTSET;
@@ -32,6 +33,10 @@ public class VisionSubsystem extends Subsystem {
   private double targetYaw;
 
   public VisionSubsystem() {
+
+    CameraServer cameraServer = CameraServer.getInstance();
+    usbCamera = cameraServer.startAutomaticCapture();
+    logger.debug("camera is connected = {}", usbCamera.isConnected());
     lightsOutput.set(true);
   }
 
