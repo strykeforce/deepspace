@@ -6,10 +6,7 @@ import frc.team2767.deepspace.command.ZeroAxisCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorZeroCommand;
 import frc.team2767.deepspace.command.states.SetActionCommand;
 import frc.team2767.deepspace.command.states.SetGamePieceCommand;
-import frc.team2767.deepspace.command.vacuum.ActivateValveCommand;
-import frc.team2767.deepspace.command.vacuum.PressureAccumulateCommandGroup;
-import frc.team2767.deepspace.command.vacuum.PressureSetCommand;
-import frc.team2767.deepspace.command.vacuum.StopPumpCommandGroup;
+import frc.team2767.deepspace.command.vacuum.*;
 import frc.team2767.deepspace.command.vision.LightsOffCommand;
 import frc.team2767.deepspace.command.vision.LightsOnCommand;
 import frc.team2767.deepspace.subsystem.Action;
@@ -72,6 +69,7 @@ public class SmartDashboardControls {
 
   private void addVacuumCommands() {
 
+    SmartDashboard.putData("Vacuum/cool", new VacuumCooldownCommandGroup());
     SmartDashboard.putData(
         "Pit/TridentValveActivate",
         new ActivateValveCommand(new VacuumSubsystem.Valve[] {VacuumSubsystem.Valve.TRIDENT}));

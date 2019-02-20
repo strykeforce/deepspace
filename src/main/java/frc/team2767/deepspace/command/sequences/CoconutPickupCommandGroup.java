@@ -1,6 +1,7 @@
 package frc.team2767.deepspace.command.sequences;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
 import frc.team2767.deepspace.command.coconut.CoconutCloseCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
@@ -40,6 +41,7 @@ public class CoconutPickupCommandGroup extends CommandGroup {
 
     //    addSequential(new BiscuitWiggleCommand());
     addSequential(new WaitForPressureCommand(VacuumSubsystem.VacuumPressure.CARGO));
+    addSequential(new WaitCommand(0.5));
     addSequential(new LogCommand("opening valves"));
     addSequential(
         new ActivateValveCommand(
@@ -47,8 +49,10 @@ public class CoconutPickupCommandGroup extends CommandGroup {
               VacuumSubsystem.Valve.PUMP, VacuumSubsystem.Valve.TRIDENT
             }));
     addSequential(new LogCommand("opened valves"));
+    addSequential(new WaitCommand(1.0));
     addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition.CARGO_MEDIUM));
     addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.BiscuitPosition.UP));
+    addSequential(new SetActionCommand(Action.PLACE));
     //        addSequential(new
     // ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition.STOW));
   }

@@ -32,6 +32,8 @@ public class VacuumSubsystem extends Subsystem {
     tridentSolenoid = new Solenoid(0, Valve.TRIDENT.ID);
     pumpSolenoid = new Solenoid(0, Valve.PUMP.ID);
     climbSolenoid = new Solenoid(0, Valve.CLIMB.ID);
+
+    pumpSolenoid.set(true);
     configTalon();
   }
 
@@ -122,6 +124,11 @@ public class VacuumSubsystem extends Subsystem {
         logger.warn("pressure state legal");
         return 0;
     }
+  }
+
+  public void runOpenLoop(double setpoint) {
+    logger.debug("running vacuum at {}", setpoint);
+    vacuum.set(ControlMode.PercentOutput, setpoint);
   }
 
   public int getPressure() {
