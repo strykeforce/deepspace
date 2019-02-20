@@ -72,6 +72,18 @@ public class VacuumSubsystem extends Subsystem {
     telemetryService.register(vacuum);
   }
 
+  public Solenoid getTridentSolenoid() {
+    return tridentSolenoid;
+  }
+
+  public Solenoid getPumpSolenoid() {
+    return pumpSolenoid;
+  }
+
+  public Solenoid getClimbSolenoid() {
+    return climbSolenoid;
+  }
+
   public void setSolenoid(Valve valve, boolean state) {
     logger.debug("setting {} to {}", valve, state);
     switch (valve) {
@@ -98,7 +110,7 @@ public class VacuumSubsystem extends Subsystem {
     return false;
   }
 
-  private int getPressureFor(VacuumPressure pressure) {
+  public int getPressureFor(VacuumPressure pressure) {
     switch (pressure) {
       case CARGO:
         return ballPressure;

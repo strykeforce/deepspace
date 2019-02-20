@@ -89,7 +89,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
       preferences.putDouble(ROLLER_OUT_OUTPUT, 1.0);
     }
     if (!preferences.containsKey(K_CLOSE_ENOUGH)) {
-      preferences.putInt(K_CLOSE_ENOUGH, 0);
+      preferences.putInt(K_CLOSE_ENOUGH, 20);
     }
     if (!preferences.containsKey(K_FORWARD_SOFT_LIMIT)) {
       preferences.putInt(K_FORWARD_SOFT_LIMIT, 15100);

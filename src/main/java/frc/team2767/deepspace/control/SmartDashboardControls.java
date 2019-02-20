@@ -1,9 +1,9 @@
 package frc.team2767.deepspace.control;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.command.ZeroAxisCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorZeroCommand;
-import frc.team2767.deepspace.command.intake.*;
 import frc.team2767.deepspace.command.states.SetActionCommand;
 import frc.team2767.deepspace.command.states.SetGamePieceCommand;
 import frc.team2767.deepspace.command.vacuum.ActivateValveCommand;
@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 public class SmartDashboardControls {
 
+  private static final VacuumSubsystem VACUUM = Robot.VACUUM;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public SmartDashboardControls() {
@@ -32,6 +33,8 @@ public class SmartDashboardControls {
   private void addMatchCommands() {
     logger.debug("creating match commands");
     SmartDashboard.putData("Game/zeroAll", new ZeroAxisCommand());
+    SmartDashboard.putData("Game/tridentSol", VACUUM.getTridentSolenoid());
+    SmartDashboard.putData("Game/pumpSol", VACUUM.getPumpSolenoid());
   }
 
   private void addPitCommands() {

@@ -12,7 +12,7 @@ enum BiscuitPosition {
   BISCUIT_120L_180L(6044, 4196),
   BISCUIT_120R_180R(-4196, -6044),
   BISCUIT_180L(6244, 6044),
-  BISCUIT_180R(-6044, -6244),
+  BISCUIT_180R(-6044, -6644),
   BISCUIT_360(6244, -6244);
 
   public final int forwardLimit;
