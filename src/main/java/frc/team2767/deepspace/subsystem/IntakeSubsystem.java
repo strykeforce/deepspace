@@ -19,21 +19,23 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   private final int ROLLER_ID = 21;
   private final int STABLE_THRESH = 4;
   private final String PREFS_NAME = "IntakeSubsystem/Settings/";
-  private final String K_CLOSE_ENOUGH = PREFS_NAME + "close_enough";
+  private final String CLOSE_ENOUGH = PREFS_NAME + "close_enough";
   private final String SHOULDER_UP_POSITION = PREFS_NAME + "up_position";
   private final String SHOULDER_ZERO_POSITION = PREFS_NAME + "zero_position";
   private final String SHOULDER_LOAD_POSITION = PREFS_NAME + "load_position";
+  private final String SHOULDER_CARGO_PLAYER_POSITION = PREFS_NAME + "cargo_player_position";
   private final String ROLLER_OUT_OUTPUT = PREFS_NAME + "roller_out_output";
   private final String ROLLER_IN_OUTPUT = PREFS_NAME + "roller_in_output";
   private final String SHOULDER_UP_OUTPUT = PREFS_NAME + "shoulder_up_output";
   private final String SHOULDER_DOWN_OUTPUT = PREFS_NAME + "shoulder_down_output";
-  private final String K_FORWARD_SOFT_LIMIT = PREFS_NAME + "shoulder_forward_soft_limit";
-  private final String K_REVERSE_SOFT_LIMIT = PREFS_NAME + "shoulder_reverse_soft_limit";
+  private final String FORWARD_SOFT_LIMIT = PREFS_NAME + "shoulder_forward_soft_limit";
+  private final String REVERSE_SOFT_LIMIT = PREFS_NAME + "shoulder_reverse_soft_limit";
   private final int BACKUP = 2767;
   private int kCloseEnough;
   private int kShoulderUpPosition;
   private int kShoulderZeroPosition;
   private int kShoulderLoadPosition;
+  private int kShoulderCargoPlayerPosition;
   private double kRollerOut;
   private double kRollerIn;
   private double kShoulderUpOutput;
@@ -68,59 +70,15 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
 
   @SuppressWarnings("Duplicates")
   private void intakePreferences() {
-    if (!preferences.containsKey(SHOULDER_DOWN_OUTPUT)) {
-      preferences.putDouble(SHOULDER_DOWN_OUTPUT, -0.4);
-    }
-    if (!preferences.containsKey(SHOULDER_UP_OUTPUT)) {
-      preferences.putDouble(SHOULDER_UP_OUTPUT, 0.4);
-    }
-    if (!preferences.containsKey(SHOULDER_ZERO_POSITION)) {
-      preferences.putInt(SHOULDER_ZERO_POSITION, -200);
-    }
-    if (!preferences.containsKey(SHOULDER_LOAD_POSITION)) {
-      preferences.putInt(SHOULDER_LOAD_POSITION, 14586);
-    }
-    if (!preferences.containsKey(SHOULDER_UP_POSITION)) {
-      preferences.putInt(SHOULDER_UP_POSITION, 0);
-    }
-    if (!preferences.containsKey(ROLLER_IN_OUTPUT)) {
-      preferences.putDouble(ROLLER_IN_OUTPUT, 1.0);
-    }
-    if (!preferences.containsKey(ROLLER_OUT_OUTPUT)) {
-      preferences.putDouble(ROLLER_OUT_OUTPUT, 1.0);
-    }
-    if (!preferences.containsKey(K_CLOSE_ENOUGH)) {
-      preferences.putInt(K_CLOSE_ENOUGH, 20);
-    }
-    if (!preferences.containsKey(K_FORWARD_SOFT_LIMIT)) {
-      preferences.putInt(K_FORWARD_SOFT_LIMIT, 15100);
-    }
-    if (!preferences.containsKey(K_REVERSE_SOFT_LIMIT)) {
-      preferences.putInt(K_REVERSE_SOFT_LIMIT, 0);
-    }
-
-    kShoulderDownOutput = preferences.getDouble(SHOULDER_DOWN_OUTPUT, BACKUP);
-    kShoulderUpOutput = preferences.getDouble(SHOULDER_UP_OUTPUT, BACKUP);
-    kShoulderZeroPosition = preferences.getInt(SHOULDER_ZERO_POSITION, BACKUP);
-    kShoulderLoadPosition = preferences.getInt(SHOULDER_LOAD_POSITION, BACKUP);
-    kShoulderUpPosition = preferences.getInt(SHOULDER_UP_POSITION, BACKUP);
-    kRollerIn = preferences.getDouble(ROLLER_IN_OUTPUT, BACKUP);
-    kRollerOut = preferences.getDouble(ROLLER_OUT_OUTPUT, BACKUP);
-    kCloseEnough = preferences.getInt(K_CLOSE_ENOUGH, BACKUP);
-    kForwardLimit = preferences.getInt(K_FORWARD_SOFT_LIMIT, BACKUP);
-    kReverseLimit = preferences.getInt(K_REVERSE_SOFT_LIMIT, BACKUP);
-
-    logger.info("kShoulderDownOutput={}", kShoulderDownOutput);
-    logger.info("kShoulderUpOutput={}", kShoulderUpOutput);
-    logger.info("kShoulderZeroPosition={}", kShoulderZeroPosition);
-    logger.info("kShoulderLoadPosition={}", kShoulderLoadPosition);
-    logger.info("kShoulderUpPosition={}", kShoulderUpPosition);
-    logger.info("kRollerIn={}", kRollerIn);
-    logger.info("kRollerOut={}", kRollerOut);
-    logger.info("kUpOutput={}", kShoulderUpOutput);
-    logger.info("kCloseEnough={}", kCloseEnough);
-    logger.info("kForwardLimit={}", kForwardLimit);
-    logger.info("kReverseLimit={}", kReverseLimit);
+    kShoulderDownOutput = getPreference(SHOULDER_DOWN_OUTPUT, -0.4);
+    kShoulderUpOutput = getPreference(SHOULDER_UP_OUTPUT, 0.4);
+    kShoulderZeroPosition = (int) getPreference(SHOULDER_ZERO_POSITION, -200);
+    kShoulderLoadPosition = (int) getPreference(SHOULDER_LOAD_POSITION, 14586);
+    kShoulderUpPosition = (int) getPreference(SHOULDER_UP_POSITION, 0);
+    kShoulderCargoPlayerPosition = (int) getPreference(SHOULDER_CARGO_PLAYER_POSITION, 3268);
+    kCloseEnough = (int) getPreference(CLOSE_ENOUGH, 20);
+    kForwardLimit = (int) getPreference(FORWARD_SOFT_LIMIT, 15100);
+    kReverseLimit = (int) getPreference(REVERSE_SOFT_LIMIT, 0);
   }
 
   @SuppressWarnings("Duplicates")
@@ -168,6 +126,18 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     telemetryService.register(new TalonItem(roller, "IntakeRoller"));
   }
 
+  @SuppressWarnings("Duplicates")
+  private double getPreference(String name, double defaultValue) {
+    String prefName = PREFS_NAME + name;
+    Preferences preferences = Preferences.getInstance();
+    if (!preferences.containsKey(name)) {
+      preferences.putDouble(prefName, defaultValue);
+    }
+    double pref = preferences.getDouble(name, BACKUP);
+    logger.info("{}={}", name, pref);
+    return pref;
+  }
+
   @Override
   protected void initDefaultCommand() {}
 
@@ -182,8 +152,8 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   }
 
   public void shoulderZeroWithLimitSwitch() {
-    logger.debug("shoulder zeroing with limit switch");
     shoulder.setSelectedSensorPosition(kShoulderZeroPosition);
+    logger.debug("shoulder zeroed with limit switch to {}", shoulder.getSelectedSensorPosition());
   }
 
   public void shoulderToZero() {
@@ -231,7 +201,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
       case MIDDLE:
         return 6000; // temp
       case CARGO_PLAYER:
-        return 3268;
+        return kShoulderCargoPlayerPosition;
       default:
         logger.warn("Invalid shoulder position");
         return 0;
