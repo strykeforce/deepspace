@@ -23,8 +23,6 @@ public class TwistCommand extends Command {
     double heading = VISION.getCorrectedHeading();
     int distance = (int) (DriveSubsystem.TICKS_PER_INCH * VISION.getCorrectedRange());
     double targetYaw = VISION.getTargetYaw();
-
-    logger.debug("heading={} distance={} targetYaw={}", heading, distance, targetYaw);
     DRIVE.startTwist(heading, distance, targetYaw);
   }
 
@@ -35,7 +33,6 @@ public class TwistCommand extends Command {
 
   @Override
   protected void interrupted() {
-    logger.debug("twist command interrupted");
     DRIVE.interruptTwist();
   }
 }

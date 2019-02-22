@@ -15,26 +15,26 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 
 public class BiscuitSubsystem extends Subsystem implements Limitable {
 
-  private static final String KEY_BASE = "BiscuitSubsystem/Position/";
+  private static final String PREFS = "BiscuitSubsystem/Position/";
   private static final int BACKUP = 2767;
-  private static Preferences preferences = Preferences.getInstance();
   private final DriveSubsystem DRIVE = Robot.DRIVE;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final int BISCUIT_ID = 40;
   private final int TICKS_PER_REV = 12300;
-  private FieldDirection targetDirection = FieldDirection.NOTSET;
-  private TalonSRX biscuit = new TalonSRX(BISCUIT_ID);
-  private int CLOSE_ENOUGH = 50;
-  private int LOW_ENCODER_LIMIT = -6170;
-  private int HIGH_ENCODER_LIMIT = 6170;
-  private String absoluteZeroKey = KEY_BASE + "absolute_zero";
-  private String lowLimitKey = KEY_BASE + "lower_limit";
-  private String highLimitKey = KEY_BASE + "upper_limit";
-  private String closeEnoughKey = KEY_BASE + "close_enough";
-  private GamePiece currentGamePiece = GamePiece.NOTSET;
+  private final String ABSOLUTE_ZERO = PREFS + "absolute_zero";
+  private final String LOW_LIMIT = PREFS + "lower_limit";
+  private final String UPPER_LIMIT = PREFS + "upper_limit";
+  private final String CLOSE_ENOUGH = PREFS + "close_enough";
+  private int kCloseEnough = 50; // FIXME
+  private int kLowerLimit = -6170; // FIXME
+  private int kUpperLimit = 6170; // FIXME
+  private int kAbsoluteZero;
   private int targetBiscuitPosition = BiscuitPosition.NOTSET.encoderPosition;
+  private GamePiece currentGamePiece = GamePiece.NOTSET;
   private Action currentAction = Action.NOTSET;
   private ElevatorLevel targetLevel = NOTSET;
+  private FieldDirection targetDirection = FieldDirection.NOTSET;
+  private TalonSRX biscuit = new TalonSRX(BISCUIT_ID);
 
   public BiscuitSubsystem() {
     biscuitPreferences();
@@ -44,21 +44,17 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   }
 
   public void biscuitPreferences() {
-    if (!preferences.containsKey(closeEnoughKey)) preferences.putInt(closeEnoughKey, 50);
-    if (!preferences.containsKey(absoluteZeroKey)) preferences.putInt(absoluteZeroKey, 1413);
-    if (!preferences.containsKey(lowLimitKey)) preferences.putInt(lowLimitKey, -6170);
-    if (!preferences.containsKey(highLimitKey)) preferences.putInt(highLimitKey, 6170);
-
-    CLOSE_ENOUGH = preferences.getInt(closeEnoughKey, BACKUP);
-    LOW_ENCODER_LIMIT = preferences.getInt(lowLimitKey, BACKUP);
-    HIGH_ENCODER_LIMIT = preferences.getInt(highLimitKey, BACKUP);
+    kAbsoluteZero = (int) getPreference(ABSOLUTE_ZERO, 1413);
+    kCloseEnough = (int) getPreference(CLOSE_ENOUGH, 50);
+    kLowerLimit = (int) getPreference(LOW_LIMIT, -6170);
+    kUpperLimit = (int) getPreference(UPPER_LIMIT, 6170);
   }
 
   private void configTalon() {
     TalonSRXConfiguration biscuitConfig = new TalonSRXConfiguration();
     biscuitConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
-    biscuitConfig.forwardSoftLimitThreshold = HIGH_ENCODER_LIMIT;
-    biscuitConfig.reverseSoftLimitThreshold = LOW_ENCODER_LIMIT;
+    biscuitConfig.forwardSoftLimitThreshold = kUpperLimit;
+    biscuitConfig.reverseSoftLimitThreshold = kLowerLimit;
     biscuitConfig.forwardSoftLimitEnable = true;
     biscuitConfig.reverseSoftLimitEnable = true;
 
@@ -90,6 +86,18 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
     telemetryService.register(biscuit);
+  }
+
+  @SuppressWarnings("Duplicates")
+  private double getPreference(String name, double defaultValue) {
+    String prefName = PREFS + name;
+    Preferences preferences = Preferences.getInstance();
+    if (!preferences.containsKey(prefName)) {
+      preferences.putDouble(prefName, defaultValue);
+    }
+    double pref = preferences.getDouble(name, BACKUP);
+    logger.info("{}={}", name, pref);
+    return pref;
   }
 
   @Override
@@ -136,16 +144,13 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   }
 
   public void zero() {
-    if (!preferences.containsKey(absoluteZeroKey)) preferences.putInt(absoluteZeroKey, BACKUP);
-    int absoluteZero = preferences.getInt(absoluteZeroKey, BACKUP);
-
     if (!biscuit.getSensorCollection().isFwdLimitSwitchClosed()) {
-      logger.info("Preferences zero = {}", absoluteZero);
+      logger.info("Preferences zero = {}", kAbsoluteZero);
       logger.info("Relative position = {}", biscuit.getSelectedSensorPosition());
       logger.info(
           "Absolute position = {}", biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF);
 
-      int zero = biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF - absoluteZero;
+      int zero = biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF - kAbsoluteZero;
       biscuit.setSelectedSensorPosition(zero);
       logger.info("New relative position = {}", zero);
     } else {
@@ -180,9 +185,13 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
 
   @SuppressWarnings("Duplicates")
   public void executePlan() {
+    logger.debug(
+        "plan running: level = {} gp = {} action = {}",
+        targetLevel,
+        currentGamePiece,
+        currentAction);
     Angle currentAngle;
     double bearing = DRIVE.getGyro().getYaw();
-    logger.debug("gyro angle = {}", DRIVE.getGyro().getYaw());
 
     if (Math.abs(bearing) <= 90) {
       currentAngle = Angle.FORWARD;
@@ -190,11 +199,9 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
       currentAngle = Angle.BACKWARD;
     }
 
-    logger.debug("level = {} gp = {} action = {}", targetLevel, currentGamePiece, currentAction);
     switch (currentAction) {
       case PLACE:
         if (currentGamePiece == GamePiece.CARGO && targetLevel == ElevatorLevel.THREE) {
-          logger.debug("tilting");
           switch (targetDirection) {
             case LEFT:
               switch (currentAngle) {
@@ -217,7 +224,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
               }
           }
         } else {
-          logger.debug("not tilting");
           switch (targetDirection) {
             case LEFT:
               switch (currentAngle) {
@@ -248,8 +254,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
         } else {
           currentAngle = Angle.RIGHT;
         }
-        logger.debug("picking up");
-
         switch (currentGamePiece) {
           case CARGO:
             switch (currentAngle) {
@@ -261,7 +265,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
                 break;
             }
             break;
-
           case HATCH:
             switch (currentAngle) {
               case LEFT:
@@ -278,7 +281,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   }
 
   public boolean onTarget() {
-    if (Math.abs(biscuit.getSelectedSensorPosition() - targetBiscuitPosition) < CLOSE_ENOUGH) {
+    if (Math.abs(biscuit.getSelectedSensorPosition() - targetBiscuitPosition) < kCloseEnough) {
       logger.debug(
           "current = {} target = {}", biscuit.getSelectedSensorPosition(), targetBiscuitPosition);
       logger.debug("on targetBiscuitPosition");
@@ -320,7 +323,8 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     final int encoderPosition;
 
     BiscuitPosition() {
-      String positionKey = KEY_BASE + this.name();
+      Preferences preferences = Preferences.getInstance();
+      String positionKey = PREFS + this.name();
       if (!preferences.containsKey(positionKey)) preferences.putInt(positionKey, BACKUP);
       this.encoderPosition = preferences.getInt(positionKey, BACKUP);
     }
