@@ -16,6 +16,8 @@ public class VacuumSubsystem extends Subsystem {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private static Preferences preferences = Preferences.getInstance();
+  String PREFS_NAME = "VacuumSubsystem/Settings/";
+  int BACKUP = 2767;
   private final int VACUUM_ID = 60;
   private int ballPressure = 500;
   private int hatchPressure = 600;
@@ -78,19 +80,20 @@ public class VacuumSubsystem extends Subsystem {
   }
 
   private void vacuumPreferences() {
-    String PREFS_NAME = "VacuumSubsystem/Settings/";
-    String k_BALL_PRESSURE = PREFS_NAME + "ball_pressure";
-    if (!preferences.containsKey(k_BALL_PRESSURE)) preferences.putInt(k_BALL_PRESSURE, 500);
+    ballPressure = (int) getPreference("ball_pressure", 500);
+    hatchPressure = (int) getPreference("hatch_pressure", 600);
+    climbPressure = (int) getPreference("climb_pressure", 900);
+  }
 
-    String k_HATCH_PRESSURE = PREFS_NAME + "hatch_pressure";
-    if (!preferences.containsKey(k_HATCH_PRESSURE)) preferences.putInt(k_HATCH_PRESSURE, 600);
-
-    String k_CLIMB_PRESSURE = PREFS_NAME + "climb_pressure";
-    if (!preferences.containsKey(k_CLIMB_PRESSURE)) preferences.putInt(k_CLIMB_PRESSURE, 900);
-
-    ballPressure = preferences.getInt(k_BALL_PRESSURE, 500);
-    hatchPressure = preferences.getInt(k_HATCH_PRESSURE, 600);
-    climbPressure = preferences.getInt(k_CLIMB_PRESSURE, 900);
+  private double getPreference(String name, double defaultValue) {
+    String prefName = PREFS_NAME + name;
+    Preferences preferences = Preferences.getInstance();
+    if (!preferences.containsKey(name)) {
+      preferences.putDouble(prefName, defaultValue);
+    }
+    double pref = preferences.getDouble(name, BACKUP);
+    logger.info("{}={}", name, pref);
+    return pref;
   }
 
   public Solenoid getTridentSolenoid() {

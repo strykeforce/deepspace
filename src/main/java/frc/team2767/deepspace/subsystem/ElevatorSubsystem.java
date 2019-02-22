@@ -60,30 +60,18 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   }
 
   private void elevatorPreferences() {
-
-    String UP_ACCEL = PREFS_NAME + "up_accel";
-    String UP_VELOCITY = PREFS_NAME + "up_vel";
-    String DOWN_SLOW_ACCEL = PREFS_NAME + "down_slow_accel";
-    String DOWN_SLOW_VELOCITY = PREFS_NAME + "down_slow_vel";
-    String DOWN_FAST_ACCEL = PREFS_NAME + "down_fast_accel";
-    String DOWN_FAST_VELOCITY = PREFS_NAME + "down_fast_vel";
-    String DOWN_VELOCITY_SHIFT_POS = PREFS_NAME + "down_vel_shiftpos";
-    String UP_OUTPUT = PREFS_NAME + "up_output";
-    String CLOSE_ENOUGH = PREFS_NAME + "close_enough";
-    String DOWN_OUTPUT = PREFS_NAME + "down_output";
-    String STOP_OUTPUT = PREFS_NAME + "stop_output";
-
-    kUpAccel = (int) getPreference(UP_ACCEL, 5000);
-    kUpVelocity = (int) getPreference(UP_VELOCITY, 1000);
-    kDownSlowAccel = (int) getPreference(DOWN_SLOW_ACCEL, 2000);
-    kDownSlowVelocity = (int) getPreference(DOWN_SLOW_VELOCITY, 200);
-    kDownFastAccel = (int) getPreference(DOWN_FAST_ACCEL, 5000);
-    kDownFastVelocity = (int) getPreference(DOWN_FAST_VELOCITY, 1000);
-    kDownVelocityShiftPos = (int) getPreference(DOWN_VELOCITY_SHIFT_POS, 4000);
-    kUpOutput = getPreference(UP_OUTPUT, 0.2);
-    kDownOutput = getPreference(DOWN_OUTPUT, -0.2);
-    kStopOutput = getPreference(STOP_OUTPUT, 0.0);
-    kCloseEnough = (int) getPreference(CLOSE_ENOUGH, 100);
+    kUpAccel = (int) getPreference("up_accel", 5000);
+    kUpVelocity = (int) getPreference("up_vel", 1000);
+    kDownSlowAccel = (int) getPreference("down_slow_accel", 2000);
+    kDownSlowVelocity = (int) getPreference("down_fast_accel", 200);
+    kDownFastAccel = (int) getPreference("down_fast_accel", 5000);
+    kDownFastVelocity = (int) getPreference("down_fast_vel", 1000);
+    kDownVelocityShiftPos = (int) getPreference("down_vel_shiftpos", 4000);
+    kUpOutput = getPreference("up_output", 0.2);
+    kDownOutput = getPreference("down_output", -0.2);
+    kStopOutput = getPreference("absolute_zero", 0.0);
+    kCloseEnough = (int) getPreference("close_enough", 100);
+    kAbsoluteZero = (int) getPreference("absolute_zero", 1854);
   }
 
   private void configTalon() {

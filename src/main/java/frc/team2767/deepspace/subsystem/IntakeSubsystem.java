@@ -74,6 +74,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     kShoulderZeroPosition = (int) getPreference(SHOULDER_ZERO_POSITION, -200);
     kShoulderLoadPosition = (int) getPreference(SHOULDER_LOAD_POSITION, 14586);
     kShoulderUpPosition = (int) getPreference(SHOULDER_UP_POSITION, 0);
+    kShoulderCargoPlayerPosition = (int) getPreference(SHOULDER_CARGO_PLAYER_POSITION, 3268);
     kCloseEnough = (int) getPreference(CLOSE_ENOUGH, 20);
     kForwardLimit = (int) getPreference(FORWARD_SOFT_LIMIT, 15100);
     kReverseLimit = (int) getPreference(REVERSE_SOFT_LIMIT, 0);
