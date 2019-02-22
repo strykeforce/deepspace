@@ -125,7 +125,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
       preferences.putDouble(prefName, defaultValue);
     }
     double pref = preferences.getDouble(name, BACKUP);
-    logger.info("{}={}", name, kShoulderDownOutput);
+    logger.info("{}={}", name, pref);
     return pref;
   }
 
