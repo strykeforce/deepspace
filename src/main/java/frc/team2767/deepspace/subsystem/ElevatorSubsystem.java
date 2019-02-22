@@ -17,9 +17,10 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   private static final int ID = 30;
   private static final int BACKUP = 2767;
 
-  private static final Logger logger = LoggerFactory.getLogger(ElevatorSubsystem.class);
-  private static final int TIMEOUT = 10;
-  private static final int STABLE_THRESH = 4;
+  private final Logger logger = LoggerFactory.getLogger(ElevatorSubsystem.class);
+  private final int TIMEOUT = 10;
+  private final int STABLE_THRESH = 4;
+  private final String PREFS_NAME = "ElevatorSubsystem/Settings/";
   private final TalonSRX elevator = new TalonSRX(ID);
   private final Preferences preferences;
   public int plannedLevel = 0;
@@ -60,67 +61,41 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
 
   private void elevatorPreferences() {
 
-    String PREFS_NAME = "ElevatorSubsystem/Settings/";
-    String k_UP_ACCEL = PREFS_NAME + "up_accel";
-    if (!preferences.containsKey(k_UP_ACCEL)) preferences.putInt(k_UP_ACCEL, 5000);
+    String UP_ACCEL = PREFS_NAME + "up_accel";
+    String UP_VELOCITY = PREFS_NAME + "up_vel";
+    String DOWN_SLOW_ACCEL = PREFS_NAME + "down_slow_accel";
+    String DOWN_SLOW_VELOCITY = PREFS_NAME + "down_slow_vel";
+    String DOWN_FAST_ACCEL = PREFS_NAME + "down_fast_accel";
+    String DOWN_FAST_VELOCITY = PREFS_NAME + "down_fast_vel";
+    String DOWN_VELOCITY_SHIFT_POS = PREFS_NAME + "down_vel_shiftpos";
+    String UP_OUTPUT = PREFS_NAME + "up_output";
+    String CLOSE_ENOUGH = PREFS_NAME + "close_enough";
+    String DOWN_OUTPUT = PREFS_NAME + "down_output";
+    String STOP_OUTPUT = PREFS_NAME + "stop_output";
 
-    String k_UP_VELOCITY = PREFS_NAME + "up_vel";
-    if (!preferences.containsKey(k_UP_VELOCITY)) preferences.putInt(k_UP_VELOCITY, 1000);
+    kUpAccel = (int) getPreference(UP_ACCEL, 5000);
+    kUpVelocity = (int) getPreference(UP_VELOCITY, 1000);
+    kDownSlowAccel = (int) getPreference(DOWN_SLOW_ACCEL, 2000);
+    kDownSlowVelocity = (int) getPreference(DOWN_SLOW_VELOCITY, 200);
+    kDownFastAccel = (int) getPreference(DOWN_FAST_ACCEL, 5000);
+    kDownFastVelocity = (int) getPreference(DOWN_FAST_VELOCITY, 1000);
+    kDownVelocityShiftPos = (int) getPreference(DOWN_VELOCITY_SHIFT_POS, 4000);
+    kUpOutput = getPreference(UP_OUTPUT, 0.2);
+    kDownOutput = getPreference(DOWN_OUTPUT, -0.2);
+    kStopOutput = getPreference(STOP_OUTPUT, 0.0);
+    kCloseEnough = (int) getPreference(CLOSE_ENOUGH, 100);
+  }
 
-    String k_DOWN_SLOW_ACCEL = PREFS_NAME + "down_slow_accel";
-    if (!preferences.containsKey(k_DOWN_SLOW_ACCEL)) preferences.putInt(k_DOWN_SLOW_ACCEL, 2000);
-
-    String k_DOWN_SLOW_VELOCITY = PREFS_NAME + "down_slow_vel";
-    if (!preferences.containsKey(k_DOWN_SLOW_VELOCITY))
-      preferences.putInt(k_DOWN_SLOW_VELOCITY, 200);
-
-    String k_DOWN_FAST_ACCEL = PREFS_NAME + "down_fast_accel";
-    if (!preferences.containsKey(k_DOWN_FAST_ACCEL)) preferences.putInt(k_DOWN_FAST_ACCEL, 5000);
-
-    String k_DOWN_FAST_VELOCITY = PREFS_NAME + "down_fast_vel";
-    if (!preferences.containsKey(k_DOWN_FAST_VELOCITY))
-      preferences.putInt(k_DOWN_FAST_VELOCITY, 1000);
-
-    String k_DOWN_VELOCITY_SHIFT_POS = PREFS_NAME + "down_vel_shiftpos";
-    if (!preferences.containsKey(k_DOWN_VELOCITY_SHIFT_POS))
-      preferences.putInt(k_DOWN_VELOCITY_SHIFT_POS, 4000);
-
-    String k_UP_OUTPUT = PREFS_NAME + "up_output";
-    if (!preferences.containsKey(k_UP_OUTPUT)) preferences.putDouble(k_UP_OUTPUT, 0.2);
-
-    String k_DOWN_OUTPUT = PREFS_NAME + "down_output";
-    if (!preferences.containsKey(k_DOWN_OUTPUT)) preferences.putDouble(k_DOWN_OUTPUT, -0.2);
-
-    String k_STOP_OUTPUT = PREFS_NAME + "stop_output";
-    if (!preferences.containsKey(k_STOP_OUTPUT)) preferences.putDouble(k_STOP_OUTPUT, 0.0);
-
-    String k_CLOSE_ENOUGH = PREFS_NAME + "close_enough";
-    if (!preferences.containsKey(k_CLOSE_ENOUGH)) preferences.putInt(k_CLOSE_ENOUGH, 100);
-
-    kUpAccel = preferences.getInt(k_UP_ACCEL, BACKUP);
-    kUpVelocity = preferences.getInt(k_UP_VELOCITY, BACKUP);
-
-    kDownSlowAccel = preferences.getInt(k_DOWN_SLOW_ACCEL, BACKUP);
-    kDownSlowVelocity = preferences.getInt(k_DOWN_SLOW_VELOCITY, BACKUP);
-    kDownFastAccel = preferences.getInt(k_DOWN_FAST_ACCEL, BACKUP);
-    kDownFastVelocity = preferences.getInt(k_DOWN_FAST_VELOCITY, BACKUP);
-    kDownVelocityShiftPos = preferences.getInt(k_DOWN_VELOCITY_SHIFT_POS, BACKUP);
-    kUpOutput = preferences.getDouble(k_UP_OUTPUT, BACKUP);
-    kDownOutput = preferences.getDouble(k_DOWN_OUTPUT, BACKUP);
-    kStopOutput = preferences.getDouble(k_STOP_OUTPUT, BACKUP);
-    kCloseEnough = preferences.getInt(k_CLOSE_ENOUGH, BACKUP);
-
-    logger.info("kUpAccel: {}", kUpAccel);
-    logger.info("kUpVelocity: {}", kUpVelocity);
-    logger.info("kDownSlowAccel: {}", kDownSlowAccel);
-    logger.info("kDownSlowVelocity: {}", kDownSlowVelocity);
-    logger.info("kDownFastAccel: {}", kDownFastAccel);
-    logger.info("kDownFastVelocity: {}", kDownFastVelocity);
-    logger.info("kDownVelocityShiftPos: {}", kDownVelocityShiftPos);
-    logger.info("kUpOutput: {}", kUpOutput);
-    logger.info("kDownOutput: {}", kDownOutput);
-    logger.info("kStopOutput: {}", kStopOutput);
-    logger.info("kCloseEnough: {}", kCloseEnough);
+  @SuppressWarnings("Duplicates")
+  private double getPreference(String name, double defaultValue) {
+    String prefName = PREFS_NAME + name;
+    Preferences preferences = Preferences.getInstance();
+    if (!preferences.containsKey(name)) {
+      preferences.putDouble(prefName, defaultValue);
+    }
+    double pref = preferences.getDouble(name, BACKUP);
+    logger.info("{}={}", name, pref);
+    return pref;
   }
 
   private void configTalon() {

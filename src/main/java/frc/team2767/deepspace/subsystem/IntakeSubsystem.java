@@ -118,6 +118,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     telemetryService.register(roller);
   }
 
+  @SuppressWarnings("Duplicates")
   private double getPreference(String name, double defaultValue) {
     String prefName = PREFS_NAME + name;
     Preferences preferences = Preferences.getInstance();
@@ -125,7 +126,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
       preferences.putDouble(prefName, defaultValue);
     }
     double pref = preferences.getDouble(name, BACKUP);
-    logger.info("{}={}", name, kShoulderDownOutput);
+    logger.info("{}={}", name, pref);
     return pref;
   }
 
