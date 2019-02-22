@@ -20,6 +20,7 @@ import org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode;
 import org.strykeforce.thirdcoast.swerve.SwerveDriveConfig;
 import org.strykeforce.thirdcoast.swerve.Wheel;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
+import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
 public class DriveSubsystem extends Subsystem {
 
@@ -182,8 +183,8 @@ public class DriveSubsystem extends Subsystem {
       //      driveTalon.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, 10);
       //      driveTalon.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0 5, 10);
 
-      telemetryService.register(yawTalon);
-      telemetryService.register(driveTalon);
+      telemetryService.register(new TalonItem(yawTalon, "Azimuth " + i));
+      telemetryService.register(new TalonItem(driveTalon, "Drive " + (i + 10)));
 
       Wheel wheel = new Wheel(yawTalon, driveTalon, DRIVE_SETPOINT_MAX);
       wheels[i] = wheel;

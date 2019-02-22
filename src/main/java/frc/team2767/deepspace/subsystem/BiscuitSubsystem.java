@@ -12,6 +12,7 @@ import frc.team2767.deepspace.subsystem.safety.Limitable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
+import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
 public class BiscuitSubsystem extends Subsystem implements Limitable {
 
@@ -90,7 +91,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
 
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
-    telemetryService.register(biscuit);
+    telemetryService.register(new TalonItem(biscuit, "Biscuit"));
   }
 
   @Override

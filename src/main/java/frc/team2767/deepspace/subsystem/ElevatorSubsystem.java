@@ -12,6 +12,7 @@ import frc.team2767.deepspace.subsystem.safety.Limitable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
+import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
 public class ElevatorSubsystem extends Subsystem implements Limitable {
   private static final int ID = 30;
@@ -153,7 +154,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
 
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
-    telemetryService.register(elevator);
+    telemetryService.register(new TalonItem(elevator, "Elevator"));
   }
 
   public void setElevatorLevel(ElevatorLevel elevatorLevel) {
@@ -312,7 +313,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
 
   public void zeroPosition() {
     elevator.selectProfileSlot(0, 0);
-    int absoluteZero = 2061;
+    int absoluteZero = 1917; // FIXME put in preferences Comp: 2061
     int zero = elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF - absoluteZero;
     elevator.setSelectedSensorPosition(zero);
 

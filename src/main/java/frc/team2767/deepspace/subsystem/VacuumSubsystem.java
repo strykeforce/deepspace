@@ -10,6 +10,7 @@ import frc.team2767.deepspace.Robot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
+import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
 public class VacuumSubsystem extends Subsystem {
 
@@ -71,7 +72,7 @@ public class VacuumSubsystem extends Subsystem {
 
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
-    telemetryService.register(vacuum);
+    telemetryService.register(new TalonItem(vacuum, "Vacuum"));
   }
 
   public Solenoid getTridentSolenoid() {

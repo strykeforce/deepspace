@@ -11,6 +11,7 @@ import frc.team2767.deepspace.subsystem.safety.Limitable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
+import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
 public class IntakeSubsystem extends Subsystem implements Limitable {
 
@@ -163,8 +164,8 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
 
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
-    telemetryService.register(shoulder);
-    telemetryService.register(roller);
+    telemetryService.register(new TalonItem(shoulder, "IntakeShoulder"));
+    telemetryService.register(new TalonItem(roller, "IntakeRoller"));
   }
 
   @Override
