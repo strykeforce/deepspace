@@ -21,10 +21,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final int BISCUIT_ID = 40;
   private final int TICKS_PER_REV = 12300;
-  private final String ABSOLUTE_ZERO = PREFS + "absolute_zero";
-  private final String LOW_LIMIT = PREFS + "lower_limit";
-  private final String UPPER_LIMIT = PREFS + "upper_limit";
-  private final String CLOSE_ENOUGH = PREFS + "close_enough";
   private int kCloseEnough = 50; // FIXME
   private int kLowerLimit = -6170; // FIXME
   private int kUpperLimit = 6170; // FIXME
@@ -44,10 +40,10 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   }
 
   public void biscuitPreferences() {
-    kAbsoluteZero = (int) getPreference(ABSOLUTE_ZERO, 1413);
-    kCloseEnough = (int) getPreference(CLOSE_ENOUGH, 50);
-    kLowerLimit = (int) getPreference(LOW_LIMIT, -6170);
-    kUpperLimit = (int) getPreference(UPPER_LIMIT, 6170);
+    kAbsoluteZero = (int) getPreference("absolute_zero", 1413);
+    kCloseEnough = (int) getPreference("close_enough", 50);
+    kLowerLimit = (int) getPreference("lower_limit", -6170);
+    kUpperLimit = (int) getPreference("upper_limit", 6170);
   }
 
   private void configTalon() {
