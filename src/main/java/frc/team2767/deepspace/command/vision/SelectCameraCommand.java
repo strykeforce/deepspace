@@ -17,7 +17,6 @@ public class SelectCameraCommand extends InstantCommand {
 
   @Override
   protected void initialize() {
-    logger.debug("initialize");
     float gyro = DRIVE.getGyro().getYaw();
 
     VISION.selectCamera(gyro);
