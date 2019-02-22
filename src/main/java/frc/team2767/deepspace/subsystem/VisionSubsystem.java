@@ -84,6 +84,18 @@ public class VisionSubsystem extends Subsystem {
     return false;
   }
 
+  public void selectCamera(float gyro) {
+    VisionSubsystem.Camera camera;
+
+    if (Math.abs(gyro) < 90 && direction == FieldDirection.LEFT
+        || Math.abs(gyro) > 90 && direction == FieldDirection.RIGHT) {
+      camera = VisionSubsystem.Camera.LEFT;
+    } else {
+      camera = VisionSubsystem.Camera.RIGHT;
+    }
+    setCamera(camera);
+  }
+
   public void setCamera(Camera camera) {
     logger.debug("chose {} camera", camera);
     this.camera = camera;
