@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team2767.deepspace.Robot;
@@ -14,10 +15,13 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 public class VacuumSubsystem extends Subsystem {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static Preferences preferences = Preferences.getInstance();
+  String PREFS_NAME = "VacuumSubsystem/Settings/";
+  int BACKUP = 2767;
   private final int VACUUM_ID = 60;
-  private final int ballPressure = 500;
-  private final int hatchPressure = 600;
-  private final int climbPressure = 900;
+  private int ballPressure = 500;
+  private int hatchPressure = 600;
+  private int climbPressure = 900;
 
   private int goodEnough = 100;
 
@@ -35,6 +39,7 @@ public class VacuumSubsystem extends Subsystem {
 
     pumpSolenoid.set(true);
     configTalon();
+    vacuumPreferences();
   }
 
   //        Count	  psi	  in Hg
@@ -72,6 +77,23 @@ public class VacuumSubsystem extends Subsystem {
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
     telemetryService.register(vacuum);
+  }
+
+  private void vacuumPreferences() {
+    ballPressure = (int) getPreference("ball_pressure", 500);
+    hatchPressure = (int) getPreference("hatch_pressure", 600);
+    climbPressure = (int) getPreference("climb_pressure", 900);
+  }
+
+  private double getPreference(String name, double defaultValue) {
+    String prefName = PREFS_NAME + name;
+    Preferences preferences = Preferences.getInstance();
+    if (!preferences.containsKey(name)) {
+      preferences.putDouble(prefName, defaultValue);
+    }
+    double pref = preferences.getDouble(name, BACKUP);
+    logger.info("{}={}", name, pref);
+    return pref;
   }
 
   public Solenoid getTridentSolenoid() {
