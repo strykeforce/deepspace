@@ -22,6 +22,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   private final String SHOULDER_UP_POSITION = PREFS_NAME + "up_position";
   private final String SHOULDER_ZERO_POSITION = PREFS_NAME + "zero_position";
   private final String SHOULDER_LOAD_POSITION = PREFS_NAME + "load_position";
+  private final String SHOULDER_CARGO_PLAYER_POSITION = PREFS_NAME + "cargo_player_position";
   private final String ROLLER_OUT_OUTPUT = PREFS_NAME + "roller_out_output";
   private final String ROLLER_IN_OUTPUT = PREFS_NAME + "roller_in_output";
   private final String SHOULDER_UP_OUTPUT = PREFS_NAME + "shoulder_up_output";
@@ -33,6 +34,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   private int kShoulderUpPosition;
   private int kShoulderZeroPosition;
   private int kShoulderLoadPosition;
+  private int kShoulderCargoPlayerPosition;
   private double kRollerOut;
   private double kRollerIn;
   private double kShoulderUpOutput;
@@ -82,6 +84,9 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     if (!preferences.containsKey(SHOULDER_UP_POSITION)) {
       preferences.putInt(SHOULDER_UP_POSITION, 0);
     }
+    if (!preferences.containsKey(SHOULDER_CARGO_PLAYER_POSITION)) {
+      preferences.putInt(SHOULDER_CARGO_PLAYER_POSITION, 3268);
+    }
     if (!preferences.containsKey(ROLLER_IN_OUTPUT)) {
       preferences.putDouble(ROLLER_IN_OUTPUT, 1.0);
     }
@@ -103,6 +108,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     kShoulderZeroPosition = preferences.getInt(SHOULDER_ZERO_POSITION, BACKUP);
     kShoulderLoadPosition = preferences.getInt(SHOULDER_LOAD_POSITION, BACKUP);
     kShoulderUpPosition = preferences.getInt(SHOULDER_UP_POSITION, BACKUP);
+    kShoulderCargoPlayerPosition = preferences.getInt(SHOULDER_UP_POSITION, BACKUP);
     kRollerIn = preferences.getDouble(ROLLER_IN_OUTPUT, BACKUP);
     kRollerOut = preferences.getDouble(ROLLER_OUT_OUTPUT, BACKUP);
     kCloseEnough = preferences.getInt(K_CLOSE_ENOUGH, BACKUP);
@@ -114,6 +120,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     logger.info("kShoulderZeroPosition={}", kShoulderZeroPosition);
     logger.info("kShoulderLoadPosition={}", kShoulderLoadPosition);
     logger.info("kShoulderUpPosition={}", kShoulderUpPosition);
+    logger.info("kShoulderCargoPlayerPosition={}", kShoulderCargoPlayerPosition);
     logger.info("kRollerIn={}", kRollerIn);
     logger.info("kRollerOut={}", kRollerOut);
     logger.info("kUpOutput={}", kShoulderUpOutput);
@@ -230,7 +237,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
       case MIDDLE:
         return 6000; // temp
       case CARGO_PLAYER:
-        return 3268;
+        return kShoulderCargoPlayerPosition;
       default:
         logger.warn("Invalid shoulder position");
         return 0;

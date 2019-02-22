@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team2767.deepspace.Robot;
@@ -14,10 +15,11 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 public class VacuumSubsystem extends Subsystem {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static Preferences preferences = Preferences.getInstance();
   private final int VACUUM_ID = 60;
-  private final int ballPressure = 500;
-  private final int hatchPressure = 600;
-  private final int climbPressure = 900;
+  private int ballPressure = 500;
+  private int hatchPressure = 600;
+  private int climbPressure = 900;
 
   private int goodEnough = 100;
 
@@ -35,6 +37,7 @@ public class VacuumSubsystem extends Subsystem {
 
     pumpSolenoid.set(true);
     configTalon();
+    vacuumPreferences();
   }
 
   //        Count	  psi	  in Hg
@@ -72,6 +75,22 @@ public class VacuumSubsystem extends Subsystem {
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
     telemetryService.register(vacuum);
+  }
+
+  private void vacuumPreferences() {
+    String PREFS_NAME = "VacuumSubsystem/Settings/";
+    String k_BALL_PRESSURE = PREFS_NAME + "ball_pressure";
+    if (!preferences.containsKey(k_BALL_PRESSURE)) preferences.putInt(k_BALL_PRESSURE, 500);
+
+    String k_HATCH_PRESSURE = PREFS_NAME + "hatch_pressure";
+    if (!preferences.containsKey(k_HATCH_PRESSURE)) preferences.putInt(k_HATCH_PRESSURE, 600);
+
+    String k_CLIMB_PRESSURE = PREFS_NAME + "climb_pressure";
+    if (!preferences.containsKey(k_CLIMB_PRESSURE)) preferences.putInt(k_CLIMB_PRESSURE, 900);
+
+    ballPressure = preferences.getInt(k_BALL_PRESSURE, 500);
+    hatchPressure = preferences.getInt(k_HATCH_PRESSURE, 600);
+    climbPressure = preferences.getInt(k_CLIMB_PRESSURE, 900);
   }
 
   public Solenoid getTridentSolenoid() {

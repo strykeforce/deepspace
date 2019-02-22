@@ -23,11 +23,10 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   private final int BISCUIT_ID = 40;
   private final int TICKS_PER_REV = 12300;
   private FieldDirection targetDirection = FieldDirection.NOTSET;
-  private int zero = 0;
   private TalonSRX biscuit = new TalonSRX(BISCUIT_ID);
-  private int CLOSE_ENOUGH = 50; // FIXME
-  private int LOW_ENCODER_LIMIT = -6170; // FIXME
-  private int HIGH_ENCODER_LIMIT = 6170; // FIXME
+  private int CLOSE_ENOUGH = 50;
+  private int LOW_ENCODER_LIMIT = -6170;
+  private int HIGH_ENCODER_LIMIT = 6170;
   private String absoluteZeroKey = KEY_BASE + "absolute_zero";
   private String lowLimitKey = KEY_BASE + "lower_limit";
   private String highLimitKey = KEY_BASE + "upper_limit";
@@ -146,7 +145,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
       logger.info(
           "Absolute position = {}", biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF);
 
-      zero = biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF - absoluteZero;
+      int zero = biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF - absoluteZero;
       biscuit.setSelectedSensorPosition(zero);
       logger.info("New relative position = {}", zero);
     } else {

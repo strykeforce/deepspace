@@ -22,7 +22,6 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   private static final int STABLE_THRESH = 4;
   private final TalonSRX elevator = new TalonSRX(ID);
   private final Preferences preferences;
-  public int plannedLevel = 0;
   private ElevatorLevel elevatorLevel;
   private ElevatorPosition elevatorPosition;
   private GamePiece currentGamepiece;
@@ -37,6 +36,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   private double kDownOutput;
   private double kStopOutput;
   private int kCloseEnough;
+  private int kAbsoluteZero;
   private boolean checkEncoder = true;
   private boolean upward;
   private boolean checkSlow;
@@ -97,6 +97,9 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     String k_CLOSE_ENOUGH = PREFS_NAME + "close_enough";
     if (!preferences.containsKey(k_CLOSE_ENOUGH)) preferences.putInt(k_CLOSE_ENOUGH, 100);
 
+    String k_ABSOLUTE_ZERO = PREFS_NAME + "abs_zero";
+    if (!preferences.containsKey(k_ABSOLUTE_ZERO)) preferences.putInt(k_ABSOLUTE_ZERO, 2100);
+
     kUpAccel = preferences.getInt(k_UP_ACCEL, BACKUP);
     kUpVelocity = preferences.getInt(k_UP_VELOCITY, BACKUP);
 
@@ -109,6 +112,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     kDownOutput = preferences.getDouble(k_DOWN_OUTPUT, BACKUP);
     kStopOutput = preferences.getDouble(k_STOP_OUTPUT, BACKUP);
     kCloseEnough = preferences.getInt(k_CLOSE_ENOUGH, BACKUP);
+    kAbsoluteZero = preferences.getInt(k_ABSOLUTE_ZERO, BACKUP);
 
     logger.info("kUpAccel: {}", kUpAccel);
     logger.info("kUpVelocity: {}", kUpVelocity);
@@ -121,6 +125,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     logger.info("kDownOutput: {}", kDownOutput);
     logger.info("kStopOutput: {}", kStopOutput);
     logger.info("kCloseEnough: {}", kCloseEnough);
+    logger.info("kAbsoluteZero: {}", kAbsoluteZero);
   }
 
   private void configTalon() {
@@ -312,8 +317,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
 
   public void zeroPosition() {
     elevator.selectProfileSlot(0, 0);
-    int absoluteZero = 2061;
-    int zero = elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF - absoluteZero;
+    int zero = elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF - kAbsoluteZero;
     elevator.setSelectedSensorPosition(zero);
 
     // elevator.set(ControlMode.MotionMagic, setpoint);
