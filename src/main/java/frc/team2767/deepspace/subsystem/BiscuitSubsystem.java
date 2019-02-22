@@ -92,7 +92,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   private double getPreference(String name, double defaultValue) {
     String prefName = PREFS + name;
     Preferences preferences = Preferences.getInstance();
-    if (!preferences.containsKey(name)) {
+    if (!preferences.containsKey(prefName)) {
       preferences.putDouble(prefName, defaultValue);
     }
     double pref = preferences.getDouble(name, BACKUP);
