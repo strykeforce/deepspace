@@ -17,7 +17,6 @@ public class ShoulderZeroCommand extends Command {
 
   @Override
   protected void initialize() {
-    logger.debug("zeroing shoulder");
     INTAKE.shoulderToZero();
   }
 
@@ -28,7 +27,6 @@ public class ShoulderZeroCommand extends Command {
 
   @Override
   protected void end() {
-    logger.debug("finished zeroing");
     INTAKE.shoulderZeroWithLimitSwitch();
   }
 }

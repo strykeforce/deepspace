@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 public class ElevatorSetPositionCommand extends InstantCommand {
 
   private static final ElevatorSubsystem ELEVATOR = Robot.ELEVATOR;
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final ElevatorSubsystem.ElevatorPosition position;
 
   public ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition position) {

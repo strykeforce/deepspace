@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 public class BiscuitExecutePlanCommand extends Command {
 
   private static final BiscuitSubsystem BISCUIT = Robot.BISCUIT;
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public BiscuitExecutePlanCommand() {
     requires(BISCUIT);
@@ -17,7 +16,6 @@ public class BiscuitExecutePlanCommand extends Command {
 
   @Override
   protected void initialize() {
-    logger.info("BiscuitPosition ran");
     BISCUIT.executePlan();
   }
 

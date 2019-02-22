@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 public class DirectionPadAny extends Trigger {
 
   private final GameControls controls;
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public DirectionPadAny(GameControls controls) {
     this.controls = controls;

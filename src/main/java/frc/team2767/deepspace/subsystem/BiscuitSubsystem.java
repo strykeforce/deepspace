@@ -1,7 +1,5 @@
 package frc.team2767.deepspace.subsystem;
 
-import static frc.team2767.deepspace.subsystem.ElevatorLevel.NOTSET;
-
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
@@ -12,6 +10,8 @@ import frc.team2767.deepspace.subsystem.safety.Limitable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
+
+import static frc.team2767.deepspace.subsystem.ElevatorLevel.NOTSET;
 
 public class BiscuitSubsystem extends Subsystem implements Limitable {
 
@@ -181,9 +181,13 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
 
   @SuppressWarnings("Duplicates")
   public void executePlan() {
+    logger.debug(
+        "plan running: level = {} gp = {} action = {}",
+        targetLevel,
+        currentGamePiece,
+        currentAction);
     Angle currentAngle;
     double bearing = DRIVE.getGyro().getYaw();
-    logger.debug("gyro angle = {}", DRIVE.getGyro().getYaw());
 
     if (Math.abs(bearing) <= 90) {
       currentAngle = Angle.FORWARD;
@@ -191,11 +195,9 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
       currentAngle = Angle.BACKWARD;
     }
 
-    logger.debug("level = {} gp = {} action = {}", targetLevel, currentGamePiece, currentAction);
     switch (currentAction) {
       case PLACE:
         if (currentGamePiece == GamePiece.CARGO && targetLevel == ElevatorLevel.THREE) {
-          logger.debug("tilting");
           switch (targetDirection) {
             case LEFT:
               switch (currentAngle) {
@@ -218,7 +220,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
               }
           }
         } else {
-          logger.debug("not tilting");
           switch (targetDirection) {
             case LEFT:
               switch (currentAngle) {
@@ -249,8 +250,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
         } else {
           currentAngle = Angle.RIGHT;
         }
-        logger.debug("picking up");
-
         switch (currentGamePiece) {
           case CARGO:
             switch (currentAngle) {
@@ -262,7 +261,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
                 break;
             }
             break;
-
           case HATCH:
             switch (currentAngle) {
               case LEFT:

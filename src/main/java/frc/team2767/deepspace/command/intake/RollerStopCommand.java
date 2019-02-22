@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 public class RollerStopCommand extends InstantCommand {
 
   private static final IntakeSubsystem INTAKE = Robot.INTAKE;
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public RollerStopCommand() {
     requires(INTAKE);

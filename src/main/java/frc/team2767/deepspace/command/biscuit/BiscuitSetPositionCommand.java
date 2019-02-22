@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 public class BiscuitSetPositionCommand extends Command {
 
   private static final BiscuitSubsystem BISCUIT = Robot.BISCUIT;
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final BiscuitSubsystem.BiscuitPosition position;
 
   public BiscuitSetPositionCommand(BiscuitSubsystem.BiscuitPosition position) {

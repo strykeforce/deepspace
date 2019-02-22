@@ -22,8 +22,6 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   private final String SHOULDER_UP_POSITION = PREFS_NAME + "up_position";
   private final String SHOULDER_ZERO_POSITION = PREFS_NAME + "zero_position";
   private final String SHOULDER_LOAD_POSITION = PREFS_NAME + "load_position";
-  private final String ROLLER_OUT_OUTPUT = PREFS_NAME + "roller_out_output";
-  private final String ROLLER_IN_OUTPUT = PREFS_NAME + "roller_in_output";
   private final String SHOULDER_UP_OUTPUT = PREFS_NAME + "shoulder_up_output";
   private final String SHOULDER_DOWN_OUTPUT = PREFS_NAME + "shoulder_down_output";
   private final String FORWARD_SOFT_LIMIT = PREFS_NAME + "shoulder_forward_soft_limit";
@@ -33,8 +31,6 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   private int kShoulderUpPosition;
   private int kShoulderZeroPosition;
   private int kShoulderLoadPosition;
-  private double kRollerOut;
-  private double kRollerIn;
   private double kShoulderUpOutput;
   private double kShoulderDownOutput;
 
@@ -72,8 +68,6 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     kShoulderZeroPosition = (int) getPreference(SHOULDER_ZERO_POSITION, -200);
     kShoulderLoadPosition = (int) getPreference(SHOULDER_LOAD_POSITION, 14586);
     kShoulderUpPosition = (int) getPreference(SHOULDER_UP_POSITION, 0);
-    kRollerIn = getPreference(ROLLER_IN_OUTPUT, 1.0);
-    kRollerOut = getPreference(ROLLER_OUT_OUTPUT, 1.0);
     kCloseEnough = (int) getPreference(CLOSE_ENOUGH, 20);
     kForwardLimit = (int) getPreference(FORWARD_SOFT_LIMIT, 15100);
     kReverseLimit = (int) getPreference(REVERSE_SOFT_LIMIT, 0);
@@ -149,8 +143,8 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   }
 
   public void shoulderZeroWithLimitSwitch() {
-    logger.debug("shoulder zeroing with limit switch");
     shoulder.setSelectedSensorPosition(kShoulderZeroPosition);
+    logger.debug("shoulder zeroed with limit switch to {}", shoulder.getSelectedSensorPosition());
   }
 
   public void shoulderToZero() {

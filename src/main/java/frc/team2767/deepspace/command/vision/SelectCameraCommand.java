@@ -12,7 +12,6 @@ public class SelectCameraCommand extends InstantCommand {
 
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VisionSubsystem VISION = Robot.VISION;
-  private final Logger logger = LoggerFactory.getLogger(ElevatorSubsystem.class);
 
   public SelectCameraCommand() {
     requires(DRIVE);
@@ -21,7 +20,6 @@ public class SelectCameraCommand extends InstantCommand {
 
   @Override
   protected void initialize() {
-    logger.debug("initialize");
     VisionSubsystem.Camera camera;
 
     if (Math.abs(DRIVE.getGyro().getYaw()) < 90) {
