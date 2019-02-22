@@ -15,6 +15,7 @@ import frc.team2767.deepspace.command.sequences.StowAllCommandGroup;
 import frc.team2767.deepspace.command.states.SetFieldDirectionCommand;
 import frc.team2767.deepspace.command.states.SetLevelCommand;
 import frc.team2767.deepspace.command.vacuum.DeactivateValveCommand;
+import frc.team2767.deepspace.command.vision.SelectCameraCommand;
 import frc.team2767.deepspace.control.trigger.*;
 import frc.team2767.deepspace.subsystem.ElevatorLevel;
 import frc.team2767.deepspace.subsystem.FieldDirection;
@@ -57,7 +58,8 @@ public class GameControls {
     //
 
     // CLIMB
-
+    new JoystickButton(joystick, GameControls.Button.BACK.id)
+        .whenPressed(new SelectCameraCommand());
     //    new JoystickButton(joystick, GameControls.Button.BACK.id)
     //            .whenPressed(new DeployClimberCommand());
     //    new JoystickButton(joystick, Button.START.id).whenPressed(new RunClimb());

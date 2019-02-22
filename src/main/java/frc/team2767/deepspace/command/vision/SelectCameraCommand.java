@@ -17,14 +17,8 @@ public class SelectCameraCommand extends InstantCommand {
 
   @Override
   protected void initialize() {
-    VisionSubsystem.Camera camera;
+    float gyro = DRIVE.getGyro().getYaw();
 
-    if (Math.abs(DRIVE.getGyro().getYaw()) < 90) {
-      camera = VisionSubsystem.Camera.LEFT;
-    } else {
-      camera = VisionSubsystem.Camera.RIGHT;
-    }
-
-    VISION.setCamera(camera);
+    VISION.selectCamera(gyro);
   }
 }
