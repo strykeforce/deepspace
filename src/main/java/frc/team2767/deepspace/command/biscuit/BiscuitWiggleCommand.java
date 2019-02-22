@@ -23,7 +23,6 @@ public class BiscuitWiggleCommand extends Command {
 
   @Override
   protected void initialize() {
-    logger.debug("wiggle init");
     downR = BISCUIT.getPosition();
   }
 
@@ -48,6 +47,5 @@ public class BiscuitWiggleCommand extends Command {
   @Override
   protected void end() {
     BISCUIT.setPosition(downR);
-    logger.debug("wiggle end");
   }
 }

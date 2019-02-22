@@ -24,7 +24,7 @@ public final class TeleOpDriveCommand extends Command {
   @Override
   protected void initialize() {
     controls = Robot.CONTROLS.getDriverControls();
-    logger.debug("telop drive init");
+    logger.debug("teleop drive init");
     DRIVE.setDriveMode(TELEOP);
   }
 
