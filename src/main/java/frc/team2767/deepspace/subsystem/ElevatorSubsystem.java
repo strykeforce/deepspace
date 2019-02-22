@@ -1,7 +1,5 @@
 package frc.team2767.deepspace.subsystem;
 
-import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
-
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
@@ -12,6 +10,8 @@ import frc.team2767.deepspace.subsystem.safety.Limitable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
+
+import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
 
 public class ElevatorSubsystem extends Subsystem implements Limitable {
   private static final int ID = 30;
@@ -86,18 +86,6 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     kCloseEnough = (int) getPreference(CLOSE_ENOUGH, 100);
   }
 
-  @SuppressWarnings("Duplicates")
-  private double getPreference(String name, double defaultValue) {
-    String prefName = PREFS_NAME + name;
-    Preferences preferences = Preferences.getInstance();
-    if (!preferences.containsKey(name)) {
-      preferences.putDouble(prefName, defaultValue);
-    }
-    double pref = preferences.getDouble(name, BACKUP);
-    logger.info("{}={}", name, pref);
-    return pref;
-  }
-
   private void configTalon() {
     TalonSRXConfiguration elevatorConfig = new TalonSRXConfiguration();
     elevatorConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
@@ -129,6 +117,18 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
     telemetryService.register(elevator);
+  }
+
+  @SuppressWarnings("Duplicates")
+  private double getPreference(String name, double defaultValue) {
+    String prefName = PREFS_NAME + name;
+    Preferences preferences = Preferences.getInstance();
+    if (!preferences.containsKey(name)) {
+      preferences.putDouble(prefName, defaultValue);
+    }
+    double pref = preferences.getDouble(name, BACKUP);
+    logger.info("{}={}", name, pref);
+    return pref;
   }
 
   public void setElevatorLevel(ElevatorLevel elevatorLevel) {
