@@ -12,6 +12,7 @@ import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
 import frc.team2767.deepspace.command.intake.IntakeDownCommand;
 import frc.team2767.deepspace.command.intake.IntakeUpCommand;
+import frc.team2767.deepspace.command.intake.ShoulderStopCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.log.SafetyLogDumpCommand;
 import frc.team2767.deepspace.command.sequences.CargoGroundPickupCommandGroup;
@@ -70,6 +71,8 @@ public class DriverControls {
     // intake
     new JoystickButton(joystick, Trim.RIGHT_X_POS.id).whenPressed(new IntakeUpCommand());
     new JoystickButton(joystick, Trim.RIGHT_X_NEG.id).whenPressed(new IntakeDownCommand());
+    new JoystickButton(joystick, Trim.RIGHT_X_POS.id).whenReleased(new ShoulderStopCommand());
+    new JoystickButton(joystick, Trim.RIGHT_X_NEG.id).whenReleased(new ShoulderStopCommand());
 
     // ZEROS / LOG DUMPS
     new JoystickButton(joystick, Button.RESET.id).whenPressed(new ZeroGyroCommand());

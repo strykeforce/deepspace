@@ -47,7 +47,8 @@ public class CoconutPickupCommandGroup extends CommandGroup {
         new ActivateValveCommand(
             new VacuumSubsystem.Valve[] {
               VacuumSubsystem.Valve.PUMP, VacuumSubsystem.Valve.TRIDENT
-            }));
+            }),
+        5);
     addSequential(new LogCommand("opened valves"));
     addSequential(new WaitCommand(1.0));
     addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition.CARGO_MEDIUM));
