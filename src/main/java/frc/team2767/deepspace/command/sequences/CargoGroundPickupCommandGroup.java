@@ -13,7 +13,7 @@ import frc.team2767.deepspace.subsystem.IntakeSubsystem;
 public class CargoGroundPickupCommandGroup extends CommandGroup {
 
   public CargoGroundPickupCommandGroup() {
-    addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.UP));
+    addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.kUp));
     addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition.CARGO_MEDIUM));
     addSequential(new RollerInCommand());
     addParallel(new CoconutOpenCommand());

@@ -25,14 +25,14 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   private final int BISCUIT_ID = 40;
   private final int TICKS_PER_REV = 12300;
   private final double TICKS_PER_DEGREE = 34.1;
-  public static double UP;
-  public static double LEFT;
-  public static double RIGHT;
-  public static double BACK_STOP_L;
-  public static double BACK_STOP_R;
-  public static double TILT_UP_L;
-  public static double TILT_UP_R;
-  public static double DOWN;
+  public static double kUp;
+  public static double kLeft;
+  public static double kRight;
+  public static double kBackStopL;
+  public static double kBackStopR;
+  public static double kTiltUpL;
+  public static double kTiltUpR;
+  public static double kDown;
   private int kCloseEnough = 50; // FIXME
   private int kLowerLimit = -6170; // FIXME
   private int kUpperLimit = 6170; // FIXME
@@ -57,14 +57,14 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     kLowerLimit = (int) getPreference("lower_limit", -6170);
     kUpperLimit = (int) getPreference("upper_limit", 6170);
 
-    UP = getPreference("Up", 0);
-    DOWN = getPreference("Down_R", 180);
-    LEFT = getPreference("Left", -90);
-    RIGHT = getPreference("Right", 90);
-    BACK_STOP_L = getPreference("Backstop_L", -135);
-    BACK_STOP_R = getPreference("Backstop_R", 135);
-    TILT_UP_L = getPreference("Tilt_up_L", -75);
-    TILT_UP_R = getPreference("Tilt_up_R", 75);
+    kUp = getPreference("up", 0);
+    kDown = getPreference("down_R", 180);
+    kLeft = getPreference("left", -90);
+    kRight = getPreference("right", 90);
+    kBackStopL = getPreference("backstop_L", -135);
+    kBackStopR = getPreference("backstop_R", 135);
+    kTiltUpL = getPreference("tilt_up_L", -75);
+    kTiltUpR = getPreference("tilt_up_R", 75);
   }
 
   private void configTalon() {
@@ -219,20 +219,20 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
             case LEFT:
               switch (currentAngle) {
                 case FORWARD:
-                  targetBiscuitPosition = TILT_UP_L;
+                  targetBiscuitPosition = kTiltUpL;
                   break;
                 case BACKWARD:
-                  targetBiscuitPosition = TILT_UP_R;
+                  targetBiscuitPosition = kTiltUpR;
                   break;
               }
               break;
             case RIGHT:
               switch (currentAngle) {
                 case FORWARD:
-                  targetBiscuitPosition = TILT_UP_R;
+                  targetBiscuitPosition = kTiltUpR;
                   break;
                 case BACKWARD:
-                  targetBiscuitPosition = TILT_UP_L;
+                  targetBiscuitPosition = kTiltUpL;
                   break;
               }
           }
@@ -241,20 +241,20 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
             case LEFT:
               switch (currentAngle) {
                 case FORWARD:
-                  targetBiscuitPosition = LEFT;
+                  targetBiscuitPosition = kLeft;
                   break;
                 case BACKWARD:
-                  targetBiscuitPosition = RIGHT;
+                  targetBiscuitPosition = kRight;
                   break;
               }
               break;
             case RIGHT:
               switch (currentAngle) {
                 case FORWARD:
-                  targetBiscuitPosition = RIGHT;
+                  targetBiscuitPosition = kRight;
                   break;
                 case BACKWARD:
-                  targetBiscuitPosition = LEFT;
+                  targetBiscuitPosition = kLeft;
                   break;
               }
           }
@@ -271,20 +271,20 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
           case CARGO:
             switch (currentAngle) {
               case LEFT:
-                targetBiscuitPosition = BACK_STOP_R;
+                targetBiscuitPosition = kBackStopR;
                 break;
               case RIGHT:
-                targetBiscuitPosition = BACK_STOP_L;
+                targetBiscuitPosition = kBackStopL;
                 break;
             }
             break;
           case HATCH:
             switch (currentAngle) {
               case LEFT:
-                targetBiscuitPosition = LEFT;
+                targetBiscuitPosition = kLeft;
                 break;
               case RIGHT:
-                targetBiscuitPosition = RIGHT;
+                targetBiscuitPosition = kRight;
                 break;
             }
         }
