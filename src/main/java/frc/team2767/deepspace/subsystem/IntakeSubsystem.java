@@ -19,27 +19,14 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   private final int ROLLER_ID = 21;
   private final int STABLE_THRESH = 4;
   private final String PREFS_NAME = "IntakeSubsystem/Settings/";
-  private final String CLOSE_ENOUGH = PREFS_NAME + "close_enough";
-  private final String SHOULDER_UP_POSITION = PREFS_NAME + "up_position";
-  private final String SHOULDER_ZERO_POSITION = PREFS_NAME + "zero_position";
-  private final String SHOULDER_LOAD_POSITION = PREFS_NAME + "load_position";
-  private final String SHOULDER_CARGO_PLAYER_POSITION = PREFS_NAME + "cargo_player_position";
-  private final String ROLLER_OUT_OUTPUT = PREFS_NAME + "roller_out_output";
-  private final String ROLLER_IN_OUTPUT = PREFS_NAME + "roller_in_output";
-  private final String SHOULDER_UP_OUTPUT = PREFS_NAME + "shoulder_up_output";
-  private final String SHOULDER_DOWN_OUTPUT = PREFS_NAME + "shoulder_down_output";
-  private final String FORWARD_SOFT_LIMIT = PREFS_NAME + "shoulder_forward_soft_limit";
-  private final String REVERSE_SOFT_LIMIT = PREFS_NAME + "shoulder_reverse_soft_limit";
   private final int BACKUP = 2767;
+  private final double TICKS_PER_DEGREE = 54.6;
   private int kCloseEnough;
-  private int kShoulderUpPosition;
-  private int kShoulderZeroPosition;
-  private int kShoulderLoadPosition;
-  private int kShoulderCargoPlayerPosition;
-  private double kRollerOut;
-  private double kRollerIn;
-  private double kShoulderUpOutput;
-  private double kShoulderDownOutput;
+  public static double kUpPosition;
+  public static double kZeroPosition;
+  public static double kMiddlePosition;
+  public static double kLoadPosition;
+  public static double kCargoPlayerPosition;
 
   private Logger logger = LoggerFactory.getLogger(this.getClass());
   private TalonSRX shoulder = new TalonSRX(SHOULDER_ID);
@@ -51,10 +38,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   private int kForwardLimit;
   private int kReverseLimit;
 
-  private Preferences preferences;
-
   public IntakeSubsystem() {
-    this.preferences = Preferences.getInstance();
 
     if (shoulder == null) {
       logger.error("Shoulder not present");
@@ -70,15 +54,14 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
 
   @SuppressWarnings("Duplicates")
   private void intakePreferences() {
-    kShoulderDownOutput = getPreference(SHOULDER_DOWN_OUTPUT, -0.4);
-    kShoulderUpOutput = getPreference(SHOULDER_UP_OUTPUT, 0.4);
-    kShoulderZeroPosition = (int) getPreference(SHOULDER_ZERO_POSITION, -200);
-    kShoulderLoadPosition = (int) getPreference(SHOULDER_LOAD_POSITION, 14586);
-    kShoulderUpPosition = (int) getPreference(SHOULDER_UP_POSITION, 0);
-    kShoulderCargoPlayerPosition = (int) getPreference(SHOULDER_CARGO_PLAYER_POSITION, 3268);
-    kCloseEnough = (int) getPreference(CLOSE_ENOUGH, 20);
-    kForwardLimit = (int) getPreference(FORWARD_SOFT_LIMIT, 15100);
-    kReverseLimit = (int) getPreference(REVERSE_SOFT_LIMIT, 0);
+    kZeroPosition = getPreference("zero_position", -3.66);
+    kLoadPosition = getPreference("load_position", 267.14);
+    kMiddlePosition = getPreference("middle_position", 11);
+    kUpPosition = getPreference("up_position", 0);
+    kCargoPlayerPosition = getPreference("cargo_player_position", 59.85);
+    kCloseEnough = (int) getPreference("close_enough", 20);
+    kForwardLimit = (int) getPreference("shoulder_forward_soft_limit", 15100);
+    kReverseLimit = (int) getPreference("shoulder_reverse_soft_limit", 0);
   }
 
   @SuppressWarnings("Duplicates")
@@ -157,7 +140,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
 
   public void shoulderZeroWithLimitSwitch() {
     if (shoulder.getSensorCollection().isRevLimitSwitchClosed()) {
-      shoulder.setSelectedSensorPosition(kShoulderZeroPosition);
+      shoulder.setSelectedSensorPosition((int) kZeroPosition);
       logger.debug("shoulder zeroed with limit switch to {}", shoulder.getSelectedSensorPosition());
     } else {
       logger.error("Intake zero failed - intake not in stowed position");
@@ -182,26 +165,14 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     shoulder.configReverseSoftLimitThreshold(reverse, 0);
   }
 
-  public void setPosition(ShoulderPosition position) {
-    logger.debug("setting shoulder position={}", position);
-    setpoint = getPositionSetpoint(position);
-    shoulder.set(ControlMode.MotionMagic, getPositionSetpoint(position));
+  public double getPosition() {
+    return shoulder.getSelectedSensorPosition() / TICKS_PER_DEGREE;
   }
 
-  private int getPositionSetpoint(ShoulderPosition position) {
-    switch (position) {
-      case UP:
-        return kShoulderUpPosition;
-      case LOAD:
-        return kShoulderLoadPosition;
-      case MIDDLE:
-        return 6000; // temp
-      case CARGO_PLAYER:
-        return kShoulderCargoPlayerPosition;
-      default:
-        logger.warn("Invalid shoulder position");
-        return 0;
-    }
+  public void setPosition(double angle) {
+    setpoint = (int) (angle * TICKS_PER_DEGREE);
+    logger.debug("setting shoulder position={}", setpoint);
+    shoulder.set(ControlMode.MotionMagic, setpoint);
   }
 
   @SuppressWarnings("Duplicates")
@@ -229,12 +200,5 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   public void rollerStop() {
     logger.debug("roller stop");
     roller.set(ControlMode.PercentOutput, 0.0);
-  }
-
-  public enum ShoulderPosition {
-    UP,
-    MIDDLE,
-    CARGO_PLAYER,
-    LOAD
   }
 }
