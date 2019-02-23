@@ -7,16 +7,16 @@ import frc.team2767.deepspace.subsystem.IntakeSubsystem;
 public class IntakePositionCommand extends Command {
 
   private static final IntakeSubsystem INTAKE = Robot.INTAKE;
-  private final IntakeSubsystem.ShoulderPosition position;
+  private final double angle;
 
-  public IntakePositionCommand(IntakeSubsystem.ShoulderPosition position) {
-    this.position = position;
+  public IntakePositionCommand(double angle) {
+    this.angle = angle;
     requires(INTAKE);
   }
 
   @Override
   protected void initialize() {
-    INTAKE.setPosition(position);
+    INTAKE.setPosition(angle);
   }
 
   @Override

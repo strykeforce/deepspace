@@ -27,7 +27,7 @@ public class CoconutPickupCommandGroup extends CommandGroup {
             addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.kUpPosition));
             addParallel(new SetActionCommand(Action.PLACE));
             addParallel(new SetGamePieceCommand(GamePiece.CARGO));
-            addParallel(new IntakePositionCommand(IntakeSubsystem.ShoulderPosition.MIDDLE));
+            addParallel(new IntakePositionCommand(IntakeSubsystem.kMiddlePosition));
             addParallel(new CoconutCloseCommand());
           }
         });

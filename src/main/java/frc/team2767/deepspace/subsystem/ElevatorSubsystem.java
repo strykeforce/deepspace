@@ -24,7 +24,6 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   private final int STABLE_THRESH = 4;
   private final String PREFS_NAME = "ElevatorSubsystem/Settings/";
   private final TalonSRX elevator = new TalonSRX(ID);
-  private final Preferences preferences;
   private final double TICKS_PER_INCH = 512;
   private ElevatorLevel elevatorLevel;
   private GamePiece currentGamepiece;
@@ -59,7 +58,6 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   public static double kCargoHighPosition;
 
   public ElevatorSubsystem() {
-    this.preferences = Preferences.getInstance();
 
     if (elevator == null) {
       logger.error("Talon not present");
@@ -80,11 +78,9 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     kDownVelocityShiftPos = (int) getPreference("down_vel_shiftpos", 4000);
     kUpOutput = getPreference("up_output", 0.2);
     kDownOutput = getPreference("down_output", -0.2);
-    logger.info("Elevator down output = {}", kDownOutput);
     kStopOutput = getPreference("absolute_zero", 0.0);
     kCloseEnough = (int) getPreference("close_enough", 100);
     kAbsoluteZero = (int) getPreference("absolute_zero", 1854);
-    logger.info("Elevator absolut zero = {}", kAbsoluteZero);
 
     kCargoPickupPosition = getPreference("cargo_pickup", 24.8);
     kHatchLowPosition = getPreference("hatch_low", 9.4);
