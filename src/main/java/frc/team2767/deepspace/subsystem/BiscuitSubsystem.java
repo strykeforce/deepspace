@@ -89,6 +89,8 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     biscuitConfig.peakCurrentDuration = 40;
     biscuitConfig.peakCurrentLimit = 25;
     biscuitConfig.continuousCurrentLimit = 20;
+    biscuitConfig.peakOutputForward = 1.0;
+    biscuitConfig.peakOutputReverse = -1.0;
 
     biscuitConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms;
     biscuitConfig.velocityMeasurementWindow = 64;

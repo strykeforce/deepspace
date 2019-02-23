@@ -88,6 +88,8 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     shoulderConfig.continuousCurrentLimit = 5;
     shoulderConfig.peakCurrentDuration = 40;
     shoulderConfig.peakCurrentLimit = 10;
+    shoulderConfig.peakOutputForward = 1.0;
+    shoulderConfig.peakOutputReverse = -1.0;
     shoulderConfig.slot0.kP = 4;
     shoulderConfig.slot0.kI = 0;
     shoulderConfig.slot0.kD = 60;
