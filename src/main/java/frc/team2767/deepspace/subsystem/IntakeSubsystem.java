@@ -152,8 +152,14 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   }
 
   public void shoulderZeroWithLimitSwitch() {
-    shoulder.setSelectedSensorPosition(kShoulderZeroPosition);
-    logger.debug("shoulder zeroed with limit switch to {}", shoulder.getSelectedSensorPosition());
+    if (shoulder.getSensorCollection().isRevLimitSwitchClosed()) {
+      shoulder.setSelectedSensorPosition(kShoulderZeroPosition);
+      logger.debug("shoulder zeroed with limit switch to {}", shoulder.getSelectedSensorPosition());
+    } else {
+      logger.error("Intake zero failed");
+      shoulder.configPeakOutputForward(0, 0);
+      shoulder.configPeakOutputReverse(0, 0);
+    }
   }
 
   public void shoulderToZero() {

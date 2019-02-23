@@ -263,6 +263,23 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     return false;
   }
 
+  public void safeZero() {
+    if (elevator.getSensorCollection().isRevLimitSwitchClosed()) {
+      logger.info("Preferences zero = {}", kAbsoluteZero);
+      logger.info("Relative position = {}", elevator.getSelectedSensorPosition());
+      logger.info(
+          "Absolute position = {}", elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF);
+
+      int zero = elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF - kAbsoluteZero;
+      elevator.setSelectedSensorPosition(zero);
+      logger.info("New relative position = {}", zero);
+    } else {
+      logger.error("Elevator zero failed");
+      elevator.configPeakOutputForward(0, 0);
+      elevator.configPeakOutputReverse(0, 0);
+    }
+  }
+
   public void positionToZero() {
     elevator.configPeakCurrentLimit(2);
     elevator.configReverseLimitSwitchSource(

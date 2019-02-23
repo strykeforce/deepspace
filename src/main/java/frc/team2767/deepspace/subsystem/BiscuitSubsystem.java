@@ -151,7 +151,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
       biscuit.setSelectedSensorPosition(zero);
       logger.info("New relative position = {}", zero);
     } else {
-      logger.warn("Biscuit zero failed");
+      logger.error("Intake zero failed");
       biscuit.configPeakOutputForward(0, 0);
       biscuit.configPeakOutputReverse(0, 0);
     }
