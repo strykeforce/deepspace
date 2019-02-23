@@ -24,9 +24,9 @@ public class PlayerHatchCommandGroup extends CommandGroup {
     addSequential(new PositionExecuteCommandGroup());
     addSequential(new IntakePositionCommand(IntakeSubsystem.kUpPosition));
 
-    addSequential(new PressureSetCommand(VacuumSubsystem.VacuumPressure.HATCH));
+    addSequential(new PressureSetCommand(VacuumSubsystem.kHatchPressure));
     // vacuum
-    addSequential(new WaitForPressureCommand(VacuumSubsystem.VacuumPressure.HATCH));
+    addSequential(new WaitForPressureCommand(VacuumSubsystem.kHatchPressure));
 
     addSequential(new SetActionCommand(Action.PLACE));
   }

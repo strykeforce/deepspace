@@ -35,12 +35,12 @@ public class CoconutPickupCommandGroup extends CommandGroup {
     addSequential(new LogCommand("exiting command group"));
     addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kCargoMediumPosition));
     addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.kDownPosition));
-    addParallel(new PressureSetCommand(VacuumSubsystem.VacuumPressure.CARGO));
+    addParallel(new PressureSetCommand(VacuumSubsystem.kBallPressure));
 
     addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kCargoPickupPosition));
 
     //    addSequential(new BiscuitWiggleCommand());
-    addSequential(new WaitForPressureCommand(VacuumSubsystem.VacuumPressure.CARGO));
+    addSequential(new WaitForPressureCommand(VacuumSubsystem.kBallPressure));
     addSequential(new WaitCommand(0.5));
     addSequential(new LogCommand("opening valves"));
     addSequential(

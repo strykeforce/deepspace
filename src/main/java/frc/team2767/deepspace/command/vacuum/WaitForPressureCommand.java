@@ -7,15 +7,15 @@ import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 public class WaitForPressureCommand extends Command {
 
   private static final VacuumSubsystem VACUUM = Robot.VACUUM;
-  private VacuumSubsystem.VacuumPressure pressure;
+  private double pressure;
 
-  public WaitForPressureCommand(VacuumSubsystem.VacuumPressure pressure) {
+  public WaitForPressureCommand(double pressure) {
     this.pressure = pressure;
     requires(VACUUM);
   }
 
   @Override
   protected boolean isFinished() {
-    return VACUUM.onTarget();
+    return VACUUM.onTarget(pressure);
   }
 }

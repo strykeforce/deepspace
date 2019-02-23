@@ -7,9 +7,9 @@ import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 public class PressureSetCommand extends Command {
 
   private static final VacuumSubsystem VACUUM = Robot.VACUUM;
-  private VacuumSubsystem.VacuumPressure pressure;
+  private double pressure;
 
-  public PressureSetCommand(VacuumSubsystem.VacuumPressure pressure) {
+  public PressureSetCommand(double pressure) {
     this.pressure = pressure;
   }
 
@@ -20,6 +20,6 @@ public class PressureSetCommand extends Command {
 
   @Override
   protected boolean isFinished() {
-    return VACUUM.onTarget();
+    return VACUUM.onTarget(pressure);
   }
 }

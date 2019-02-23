@@ -20,7 +20,6 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   private final int STABLE_THRESH = 4;
   private final String PREFS_NAME = "IntakeSubsystem/Settings/";
   private final int BACKUP = 2767;
-  private final double TICKS_PER_DEGREE = 54.6;
   private int kCloseEnough;
   public static double kUpPosition;
   public static double kZeroPosition;
@@ -166,11 +165,11 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   }
 
   public double getPosition() {
-    return shoulder.getSelectedSensorPosition() / TICKS_PER_DEGREE;
+    return -0.003376 * shoulder.getSelectedSensorPosition() + 109.03793;
   }
 
   public void setPosition(double angle) {
-    setpoint = (int) (angle * TICKS_PER_DEGREE);
+    setpoint = (int) (32301 - angle * -296);
     logger.debug("setting shoulder position={}", setpoint);
     shoulder.set(ControlMode.MotionMagic, setpoint);
   }

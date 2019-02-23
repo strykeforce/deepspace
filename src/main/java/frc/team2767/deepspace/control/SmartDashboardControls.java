@@ -77,11 +77,11 @@ public class SmartDashboardControls {
 
     SmartDashboard.putData("Pit/VacuumStop", new StopPumpCommandGroup());
     SmartDashboard.putData(
-        "Pit/Vacuum/Climb", new PressureSetCommand(VacuumSubsystem.VacuumPressure.CLIMB));
+        "Pit/Vacuum/Climb", new PressureSetCommand(VacuumSubsystem.kClimbPressure));
 
     SmartDashboard.putData(
-        "Pit/Vacuum/Hatch", new PressureSetCommand(VacuumSubsystem.VacuumPressure.HATCH));
+        "Pit/Vacuum/Hatch", new PressureSetCommand(VacuumSubsystem.kHatchPressure));
     SmartDashboard.putData(
-        "Pit/Vacuum/Cargo", new PressureSetCommand(VacuumSubsystem.VacuumPressure.CARGO));
+        "Pit/Vacuum/Cargo", new PressureSetCommand(VacuumSubsystem.kBallPressure));
   }
 }
