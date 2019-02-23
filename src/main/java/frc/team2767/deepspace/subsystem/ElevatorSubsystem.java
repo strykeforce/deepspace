@@ -129,7 +129,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   }
 
   @Override
-  public int getPosition() {
+  public int getTicks() {
     return elevator.getSelectedSensorPosition(0);
   }
 

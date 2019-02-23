@@ -6,7 +6,6 @@ import frc.team2767.deepspace.subsystem.*;
 
 public class SetStatesCommand extends InstantCommand {
 
-  private static final BiscuitSubsystem BISCUIT = Robot.BISCUIT;
   private static final ElevatorSubsystem ELEVATOR = Robot.ELEVATOR;
   private static final VisionSubsystem VISION = Robot.VISION;
 
@@ -23,7 +22,7 @@ public class SetStatesCommand extends InstantCommand {
     this.gamePiece = gamePiece;
     this.action = action;
 
-    requires(BISCUIT);
+    requires(VISION);
   }
 
   public SetStatesCommand(Action action) {
@@ -48,12 +47,10 @@ public class SetStatesCommand extends InstantCommand {
 
   @Override
   protected void initialize() {
-    BISCUIT.setTargetLevel(level);
-    BISCUIT.setCurrentGamePiece(gamePiece);
-    BISCUIT.setCurrentAction(action);
+    VISION.setElevatorLevel(level);
+    VISION.setGamePiece(gamePiece);
+    VISION.setAction(action);
 
     ELEVATOR.setElevatorLevel(level);
-
-    VISION.setElevatorLevel(level);
   }
 }

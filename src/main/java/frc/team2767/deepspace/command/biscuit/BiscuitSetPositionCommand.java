@@ -7,16 +7,16 @@ import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 public class BiscuitSetPositionCommand extends Command {
 
   private static final BiscuitSubsystem BISCUIT = Robot.BISCUIT;
-  private final BiscuitSubsystem.BiscuitPosition position;
+  private final double angle;
 
-  public BiscuitSetPositionCommand(BiscuitSubsystem.BiscuitPosition position) {
-    this.position = position;
+  public BiscuitSetPositionCommand(double angle) {
+    this.angle = angle;
     requires(BISCUIT);
   }
 
   @Override
   protected void initialize() {
-    BISCUIT.setPosition(position);
+    BISCUIT.setPosition(angle);
   }
 
   @Override

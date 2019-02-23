@@ -16,6 +16,6 @@ public class WaitForIntakeEncoderCommand extends Command {
 
   @Override
   protected boolean isFinished() {
-    return INTAKE.getPosition() > position;
+    return INTAKE.getTicks() > position;
   }
 }

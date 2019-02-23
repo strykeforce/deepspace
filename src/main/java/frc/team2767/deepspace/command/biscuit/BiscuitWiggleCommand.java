@@ -23,7 +23,7 @@ public class BiscuitWiggleCommand extends Command {
 
   @Override
   protected void initialize() {
-    downR = BISCUIT.getPosition();
+    downR = BISCUIT.getTicks();
   }
 
   @Override

@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.safety.Limitable;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
@@ -19,14 +20,24 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   private static final String PREFS = "BiscuitSubsystem/Position/";
   private static final int BACKUP = 2767;
   private final DriveSubsystem DRIVE = Robot.DRIVE;
+  private final VisionSubsystem VISION = Robot.VISION;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final int BISCUIT_ID = 40;
   private final int TICKS_PER_REV = 12300;
+  private final double TICKS_PER_DEGREE = 34.1;
+  public static double UP;
+  public static double LEFT;
+  public static double RIGHT;
+  public static double BACK_STOP_L;
+  public static double BACK_STOP_R;
+  public static double TILT_UP_L;
+  public static double TILT_UP_R;
+  public static double DOWN;
   private int kCloseEnough = 50; // FIXME
   private int kLowerLimit = -6170; // FIXME
   private int kUpperLimit = 6170; // FIXME
   private int kAbsoluteZero;
-  private int targetBiscuitPosition = BiscuitPosition.NOTSET.encoderPosition;
+  private double targetBiscuitPosition = 0;
   private GamePiece currentGamePiece = GamePiece.NOTSET;
   private Action currentAction = Action.NOTSET;
   private ElevatorLevel targetLevel = NOTSET;
@@ -45,6 +56,15 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     kCloseEnough = (int) getPreference("close_enough", 50);
     kLowerLimit = (int) getPreference("lower_limit", -6170);
     kUpperLimit = (int) getPreference("upper_limit", 6170);
+
+    UP = getPreference("Up", 0);
+    DOWN = getPreference("Down_R", 180);
+    LEFT = getPreference("Left", -90);
+    RIGHT = getPreference("Right", 90);
+    BACK_STOP_L = getPreference("Backstop_L", -135);
+    BACK_STOP_R = getPreference("Backstop_R", 135);
+    TILT_UP_L = getPreference("Tilt_up_L", -75);
+    TILT_UP_R = getPreference("Tilt_up_R", 75);
   }
 
   private void configTalon() {
@@ -120,7 +140,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   }
 
   @Override
-  public int getPosition() {
+  public int getTicks() {
     return biscuit.getSelectedSensorPosition() % TICKS_PER_REV;
   }
 
@@ -130,16 +150,22 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     biscuit.configReverseSoftLimitThreshold(reverse, 0);
   }
 
-  public void setPosition(BiscuitPosition biscuitPosition) {
-    targetBiscuitPosition = biscuitPosition.encoderPosition;
-    logger.info("biscuit setpoint = {} at {}", biscuitPosition, biscuitPosition.encoderPosition);
-    biscuit.set(ControlMode.MotionMagic, biscuitPosition.encoderPosition);
+  public double getPosition() {
+    int position = biscuit.getSelectedSensorPosition() % TICKS_PER_REV;
+    return position / TICKS_PER_DEGREE;
   }
 
-  public void setPosition(int biscuitPosition) {
-    targetBiscuitPosition = biscuitPosition;
-    logger.info("biscuit setpoint = {} at {}", biscuitPosition, biscuitPosition);
-    biscuit.set(ControlMode.MotionMagic, biscuitPosition);
+  public void setPosition(double angle) {
+    if (angle == 180 && getPosition() < 0) {
+      angle = -180;
+    }
+    int encoderPosition = (int) (angle * TICKS_PER_DEGREE);
+    logger.info("biscuit setpoint = {} degrees at {}", angle, encoderPosition);
+    biscuit.set(ControlMode.MotionMagic, encoderPosition);
+  }
+
+  public List getTalons() {
+    return List.of(biscuit);
   }
 
   public void zero() {
@@ -163,29 +189,13 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
         LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
   }
 
-  public void setFieldDirection(FieldDirection direction) {
-    logger.debug("setting field direction to {}", direction);
-    targetDirection = direction;
-  }
-
-  public void setCurrentGamePiece(GamePiece currentGamePiece) {
-    logger.debug("setting game piece to = {}", currentGamePiece);
-    this.currentGamePiece = currentGamePiece;
-  }
-
-  public void setCurrentAction(Action currentAction) {
-    logger.debug("setting current action to = {}", currentAction);
-
-    this.currentAction = currentAction;
-  }
-
-  public void setTargetLevel(ElevatorLevel targetLevel) {
-    logger.debug("setting target level to = {}", targetLevel);
-    this.targetLevel = targetLevel;
-  }
-
   @SuppressWarnings("Duplicates")
   public void executePlan() {
+    targetLevel = VISION.elevatorLevel;
+    currentGamePiece = VISION.gamePiece;
+    currentAction = VISION.action;
+    targetDirection = VISION.direction;
+
     logger.debug(
         "plan running: level = {} gp = {} action = {}",
         targetLevel,
@@ -207,20 +217,20 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
             case LEFT:
               switch (currentAngle) {
                 case FORWARD:
-                  targetBiscuitPosition = BiscuitPosition.TILT_UP_L.encoderPosition;
+                  targetBiscuitPosition = TILT_UP_L;
                   break;
                 case BACKWARD:
-                  targetBiscuitPosition = BiscuitPosition.TILT_UP_R.encoderPosition;
+                  targetBiscuitPosition = TILT_UP_R;
                   break;
               }
               break;
             case RIGHT:
               switch (currentAngle) {
                 case FORWARD:
-                  targetBiscuitPosition = BiscuitPosition.TILT_UP_R.encoderPosition;
+                  targetBiscuitPosition = TILT_UP_R;
                   break;
                 case BACKWARD:
-                  targetBiscuitPosition = BiscuitPosition.TILT_UP_L.encoderPosition;
+                  targetBiscuitPosition = TILT_UP_L;
                   break;
               }
           }
@@ -229,20 +239,20 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
             case LEFT:
               switch (currentAngle) {
                 case FORWARD:
-                  targetBiscuitPosition = BiscuitPosition.LEFT.encoderPosition;
+                  targetBiscuitPosition = LEFT;
                   break;
                 case BACKWARD:
-                  targetBiscuitPosition = BiscuitPosition.RIGHT.encoderPosition;
+                  targetBiscuitPosition = RIGHT;
                   break;
               }
               break;
             case RIGHT:
               switch (currentAngle) {
                 case FORWARD:
-                  targetBiscuitPosition = BiscuitPosition.RIGHT.encoderPosition;
+                  targetBiscuitPosition = RIGHT;
                   break;
                 case BACKWARD:
-                  targetBiscuitPosition = BiscuitPosition.LEFT.encoderPosition;
+                  targetBiscuitPosition = LEFT;
                   break;
               }
           }
@@ -259,20 +269,20 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
           case CARGO:
             switch (currentAngle) {
               case LEFT:
-                targetBiscuitPosition = BiscuitPosition.BACK_STOP_R.encoderPosition;
+                targetBiscuitPosition = BACK_STOP_R;
                 break;
               case RIGHT:
-                targetBiscuitPosition = BiscuitPosition.BACK_STOP_L.encoderPosition;
+                targetBiscuitPosition = BACK_STOP_L;
                 break;
             }
             break;
           case HATCH:
             switch (currentAngle) {
               case LEFT:
-                targetBiscuitPosition = BiscuitPosition.LEFT.encoderPosition;
+                targetBiscuitPosition = LEFT;
                 break;
               case RIGHT:
-                targetBiscuitPosition = BiscuitPosition.RIGHT.encoderPosition;
+                targetBiscuitPosition = RIGHT;
                 break;
             }
         }
@@ -306,28 +316,5 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     LEFT,
     RIGHT,
     NOTSET
-  }
-
-  public enum BiscuitPosition {
-    UP,
-    DOWN_L,
-    DOWN_R,
-    LEFT,
-    RIGHT,
-    BACK_STOP_L,
-    BACK_STOP_R,
-    TILT_UP_L,
-    TILT_UP_R,
-    DOWN,
-    NOTSET;
-
-    final int encoderPosition;
-
-    BiscuitPosition() {
-      Preferences preferences = Preferences.getInstance();
-      String positionKey = PREFS + this.name();
-      if (!preferences.containsKey(positionKey)) preferences.putInt(positionKey, BACKUP);
-      this.encoderPosition = preferences.getInt(positionKey, BACKUP);
-    }
   }
 }

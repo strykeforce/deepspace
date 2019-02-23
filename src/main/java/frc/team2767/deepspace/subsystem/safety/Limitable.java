@@ -2,7 +2,7 @@ package frc.team2767.deepspace.subsystem.safety;
 
 public interface Limitable {
 
-  int getPosition();
+  int getTicks();
 
   void setLimits(int forward, int reverse);
 }

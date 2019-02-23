@@ -9,9 +9,8 @@ import frc.team2767.deepspace.subsystem.ElevatorSubsystem;
 import frc.team2767.deepspace.subsystem.IntakeSubsystem;
 
 public class StowAllCommandGroup extends CommandGroup {
-
   public StowAllCommandGroup() {
-    addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.BiscuitPosition.UP));
+    addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.UP));
     addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition.STOW));
     addSequential(new IntakePositionCommand(IntakeSubsystem.ShoulderPosition.UP));
   }
