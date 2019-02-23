@@ -13,5 +13,5 @@
 * setter for position in real-world units
     * `void setPosition(double position)`
 * getter that returns a list of all talons in subsystem
-    *`java.util.List getTalons()`
+    * `java.util.List getTalons()`
 * cleanup enums - replace with public static final doubles in subsystem
