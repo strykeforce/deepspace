@@ -251,7 +251,6 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     }
   }
 
-  @SuppressWarnings("Duplicates")
   public boolean onTarget() {
     int error = setpoint - elevator.getSelectedSensorPosition(0);
     if (Math.abs(error) > kCloseEnough) stableCount = 0;
@@ -264,21 +263,21 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   }
 
   public void safeZero() {
-    if (elevator.getSensorCollection().isRevLimitSwitchClosed()) {
-      logger.info("Preferences zero = {}", kAbsoluteZero);
-      logger.info("Relative position = {}", elevator.getSelectedSensorPosition());
-      logger.info(
-          "Absolute position = {}", elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF);
+        if (elevator.getSensorCollection().isRevLimitSwitchClosed()) {
+            logger.info("Preferences zero = {}", kAbsoluteZero);
+            logger.info("Relative position = {}", elevator.getSelectedSensorPosition());
+            logger.info(
+                    "Absolute position = {}", elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF);
 
-      int zero = elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF - kAbsoluteZero;
-      elevator.setSelectedSensorPosition(zero);
-      logger.info("New relative position = {}", zero);
-    } else {
-      logger.error("Elevator zero failed");
-      elevator.configPeakOutputForward(0, 0);
-      elevator.configPeakOutputReverse(0, 0);
+            int offset = elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF - kAbsoluteZero;
+            elevator.setSelectedSensorPosition(offset);
+            logger.info("New relative position = {}", offset);
+        } else {
+            logger.error("Elevator zero failed - elevator not at bottom");
+            elevator.configPeakOutputForward(0, 0);
+            elevator.configPeakOutputReverse(0, 0);
+        }
     }
-  }
 
   public void positionToZero() {
     elevator.configPeakCurrentLimit(2);
