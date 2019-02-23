@@ -43,9 +43,8 @@ public class DriverControls {
     new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id)
         .whenReleased(new CoconutPickupCommandGroup());
 
-    // stow
-    new JoystickButton(joystick, Toggle.LEFT_TOGGLE.id).whenPressed(new StowAllCommandGroup());
-    new JoystickButton(joystick, Toggle.LEFT_TOGGLE.id).whenReleased(new StowAllCommandGroup());
+    // left toggle
+    // cancel vision
 
     //    new JoystickButton(joystick, Shoulder.LEFT_UP.id)
     //        .whenPressed(
@@ -54,7 +53,7 @@ public class DriverControls {
     //                  VacuumSubsystem.Valve.TRIDENT, VacuumSubsystem.Valve.PUMP
     //                }));
 
-    new JoystickButton(joystick, Button.DOWN.id).whenPressed(new CoconutPickupCommandGroup());
+    new JoystickButton(joystick, Button.DOWN.id).whenPressed(new StowAllCommandGroup());
 
     // biscuit
     new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenPressed(new BiscuitPositiveCommand());
@@ -84,13 +83,10 @@ public class DriverControls {
     new JoystickButton(joystick, Trim.LEFT_X_NEG.id).whenPressed(new LightsOffCommand());
 
     // shoulder
-    //    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(new IntakeDownCommand());
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id)
+    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id)
         .whenPressed(new DeactivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
-
-    //    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenReleased(new
-    // ShoulderStopCommand());
-    //    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased(new ShoulderStopCommand());
+    new JoystickButton(joystick, Shoulder.LEFT_UP.id)
+        .whenPressed(new PositionExecuteCommandGroup());
   }
 
   private <E extends Enum<E>> Command log(E control) {
