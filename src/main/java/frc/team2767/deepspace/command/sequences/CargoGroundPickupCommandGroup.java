@@ -14,7 +14,7 @@ public class CargoGroundPickupCommandGroup extends CommandGroup {
 
   public CargoGroundPickupCommandGroup() {
     addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.kUpPosition));
-    addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition.CARGO_MEDIUM));
+    addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kCargoMediumPosition));
     addSequential(new RollerInCommand());
     addParallel(new CoconutOpenCommand());
     addSequential(new IntakePositionCommand(IntakeSubsystem.ShoulderPosition.LOAD));

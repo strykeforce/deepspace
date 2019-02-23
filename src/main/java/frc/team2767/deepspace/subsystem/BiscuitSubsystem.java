@@ -23,7 +23,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   private final VisionSubsystem VISION = Robot.VISION;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final int BISCUIT_ID = 40;
-  private final int TICKS_PER_REV = 12300;
+  private final int TICKS_PER_REV = 3072;
   private final double TICKS_PER_DEGREE = 34.1;
   public static double kUpPosition;
   public static double kLeftPosition;

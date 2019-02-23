@@ -6,7 +6,6 @@ import frc.team2767.deepspace.subsystem.*;
 
 public class SetStatesCommand extends InstantCommand {
 
-  private static final ElevatorSubsystem ELEVATOR = Robot.ELEVATOR;
   private static final VisionSubsystem VISION = Robot.VISION;
 
   private ElevatorLevel level;
@@ -50,7 +49,5 @@ public class SetStatesCommand extends InstantCommand {
     VISION.setElevatorLevel(level);
     VISION.setGamePiece(gamePiece);
     VISION.setAction(action);
-
-    ELEVATOR.setElevatorLevel(level);
   }
 }

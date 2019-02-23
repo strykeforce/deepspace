@@ -33,11 +33,11 @@ public class CoconutPickupCommandGroup extends CommandGroup {
         });
 
     addSequential(new LogCommand("exiting command group"));
-    addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition.CARGO_MEDIUM));
+    addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kCargoMediumPosition));
     addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.kDownPosition));
     addParallel(new PressureSetCommand(VacuumSubsystem.VacuumPressure.CARGO));
 
-    addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition.CARGO_PICKUP));
+    addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kCargoPickupPosition));
 
     //    addSequential(new BiscuitWiggleCommand());
     addSequential(new WaitForPressureCommand(VacuumSubsystem.VacuumPressure.CARGO));
@@ -51,10 +51,10 @@ public class CoconutPickupCommandGroup extends CommandGroup {
         5);
     addSequential(new LogCommand("opened valves"));
     addSequential(new WaitCommand(1.0));
-    addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition.CARGO_MEDIUM));
+    addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kCargoMediumPosition));
     addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.kUpPosition));
     addSequential(new SetActionCommand(Action.PLACE));
     //        addSequential(new
-    // ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition.STOW));
+    // ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition.kStowPosition));
   }
 }
