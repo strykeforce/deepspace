@@ -56,16 +56,16 @@ public class DriverControls {
     new JoystickButton(joystick, Button.DOWN.id).whenPressed(new CoconutPickupCommandGroup());
 
     // biscuit
-    new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenActive(new BiscuitPositiveCommand());
-    new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenInactive(new BiscuitStopCommand());
-    new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenActive(new BiscuitNegativeCommand());
-    new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenInactive(new BiscuitStopCommand());
+    new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenPressed(new BiscuitPositiveCommand());
+    new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenReleased(new BiscuitStopCommand());
+    new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenPressed(new BiscuitNegativeCommand());
+    new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenReleased(new BiscuitStopCommand());
 
     //     elevator
-    new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenActive(new ElevatorOpenLoopUpCommand());
-    new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenInactive(new ElevatorStopCommand());
-    new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenInactive(new ElevatorStopCommand());
-    new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenActive(new ElevatorOpenLoopDownCommand());
+    new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenPressed(new ElevatorOpenLoopUpCommand());
+    new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenReleased(new ElevatorStopCommand());
+    new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenReleased(new ElevatorStopCommand());
+    new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenPressed(new ElevatorOpenLoopDownCommand());
 
     // intake
     new JoystickButton(joystick, Trim.RIGHT_X_POS.id).whenPressed(new IntakeUpCommand());

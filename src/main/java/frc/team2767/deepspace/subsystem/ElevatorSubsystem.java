@@ -70,9 +70,11 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     kDownVelocityShiftPos = (int) getPreference("down_vel_shiftpos", 4000);
     kUpOutput = getPreference("up_output", 0.2);
     kDownOutput = getPreference("down_output", -0.2);
+    logger.info("Elevator down output = {}", kDownOutput);
     kStopOutput = getPreference("absolute_zero", 0.0);
     kCloseEnough = (int) getPreference("close_enough", 100);
     kAbsoluteZero = (int) getPreference("absolute_zero", 1854);
+    logger.info("Elevator absolut zero = {}", kAbsoluteZero);
   }
 
   private void configTalon() {
@@ -112,10 +114,10 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   private double getPreference(String name, double defaultValue) {
     String prefName = PREFS_NAME + name;
     Preferences preferences = Preferences.getInstance();
-    if (!preferences.containsKey(name)) {
+    if (!preferences.containsKey(prefName)) {
       preferences.putDouble(prefName, defaultValue);
     }
-    double pref = preferences.getDouble(name, BACKUP);
+    double pref = preferences.getDouble(prefName, BACKUP);
     logger.info("{}={}", name, pref);
     return pref;
   }
@@ -300,7 +302,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
 
   public void stop() {
     logger.info("lift stop at elevatorPosition {}", elevator.getSelectedSensorPosition(0));
-    elevator.set(PercentOutput, kStopOutput);
+    elevator.set(PercentOutput, 0);
   }
 
   public void setCurrentGamepiece(GamePiece currentGamepiece) {
