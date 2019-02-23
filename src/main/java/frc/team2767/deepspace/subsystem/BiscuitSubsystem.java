@@ -82,8 +82,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     biscuitConfig.slot0.kD = 0.0;
     biscuitConfig.slot0.kF = 0.65;
 
-    // FIXME
-    //    biscuitConfig.slot0.allowableClosedloopError = 0;
+    biscuitConfig.slot0.allowableClosedloopError = 0;
 
     biscuitConfig.slot0.integralZone = 0;
     biscuitConfig.peakCurrentDuration = 40;
@@ -143,7 +142,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
 
   @Override
   public int getTicks() {
-    return biscuit.getSelectedSensorPosition() % TICKS_PER_REV;
+    return biscuit.getSelectedSensorPosition();
   }
 
   @Override
@@ -153,8 +152,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   }
 
   public double getPosition() {
-    int position = biscuit.getSelectedSensorPosition() % TICKS_PER_REV;
-    return position / TICKS_PER_DEGREE;
+    return biscuit.getSelectedSensorPosition() / TICKS_PER_DEGREE;
   }
 
   public void setPosition(double angle) {
