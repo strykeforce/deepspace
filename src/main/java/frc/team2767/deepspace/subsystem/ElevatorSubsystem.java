@@ -12,6 +12,7 @@ import frc.team2767.deepspace.subsystem.safety.Limitable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
+import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
 public class ElevatorSubsystem extends Subsystem implements Limitable {
   private static final int ID = 30;
@@ -69,9 +70,11 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     kDownVelocityShiftPos = (int) getPreference("down_vel_shiftpos", 4000);
     kUpOutput = getPreference("up_output", 0.2);
     kDownOutput = getPreference("down_output", -0.2);
+    logger.info("Elevator down output = {}", kDownOutput);
     kStopOutput = getPreference("absolute_zero", 0.0);
     kCloseEnough = (int) getPreference("close_enough", 100);
     kAbsoluteZero = (int) getPreference("absolute_zero", 1854);
+    logger.info("Elevator absolut zero = {}", kAbsoluteZero);
   }
 
   private void configTalon() {
@@ -104,17 +107,17 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
 
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
-    telemetryService.register(elevator);
+    telemetryService.register(new TalonItem(elevator, "Elevator"));
   }
 
   @SuppressWarnings("Duplicates")
   private double getPreference(String name, double defaultValue) {
     String prefName = PREFS_NAME + name;
     Preferences preferences = Preferences.getInstance();
-    if (!preferences.containsKey(name)) {
+    if (!preferences.containsKey(prefName)) {
       preferences.putDouble(prefName, defaultValue);
     }
-    double pref = preferences.getDouble(name, BACKUP);
+    double pref = preferences.getDouble(prefName, BACKUP);
     logger.info("{}={}", name, pref);
     return pref;
   }
@@ -248,7 +251,6 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     }
   }
 
-  @SuppressWarnings("Duplicates")
   public boolean onTarget() {
     int error = setpoint - elevator.getSelectedSensorPosition(0);
     if (Math.abs(error) > kCloseEnough) stableCount = 0;
@@ -258,6 +260,23 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
       return true;
     }
     return false;
+  }
+
+  public void safeZero() {
+    if (elevator.getSensorCollection().isRevLimitSwitchClosed()) {
+      logger.info("Preferences zero = {}", kAbsoluteZero);
+      logger.info("Relative position = {}", elevator.getSelectedSensorPosition());
+      logger.info(
+          "Absolute position = {}", elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF);
+
+      int offset = elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF - kAbsoluteZero;
+      elevator.setSelectedSensorPosition(offset);
+      logger.info("New relative position = {}", offset);
+    } else {
+      logger.error("Elevator zero failed - elevator not at bottom");
+      elevator.configPeakOutputForward(0, 0);
+      elevator.configPeakOutputReverse(0, 0);
+    }
   }
 
   public void positionToZero() {
@@ -299,7 +318,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
 
   public void stop() {
     logger.info("lift stop at elevatorPosition {}", elevator.getSelectedSensorPosition(0));
-    elevator.set(PercentOutput, kStopOutput);
+    elevator.set(PercentOutput, 0);
   }
 
   public void setCurrentGamepiece(GamePiece currentGamepiece) {

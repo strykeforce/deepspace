@@ -12,6 +12,7 @@ import frc.team2767.deepspace.subsystem.safety.Limitable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
+import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
 public class BiscuitSubsystem extends Subsystem implements Limitable {
 
@@ -39,7 +40,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
         LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
   }
 
-  public void biscuitPreferences() {
+  private void biscuitPreferences() {
     kAbsoluteZero = (int) getPreference("absolute_zero", 1413);
     kCloseEnough = (int) getPreference("close_enough", 50);
     kLowerLimit = (int) getPreference("lower_limit", -6170);
@@ -59,6 +60,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     biscuitConfig.slot0.kD = 0.0;
     biscuitConfig.slot0.kF = 0.65;
 
+    // FIXME
     //    biscuitConfig.slot0.allowableClosedloopError = 0;
 
     biscuitConfig.slot0.integralZone = 0;
@@ -81,17 +83,16 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
 
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
-    telemetryService.register(biscuit);
+    telemetryService.register(new TalonItem(biscuit, "Biscuit"));
   }
 
-  @SuppressWarnings("Duplicates")
   private double getPreference(String name, double defaultValue) {
     String prefName = PREFS + name;
     Preferences preferences = Preferences.getInstance();
     if (!preferences.containsKey(prefName)) {
       preferences.putDouble(prefName, defaultValue);
     }
-    double pref = preferences.getDouble(name, BACKUP);
+    double pref = preferences.getDouble(prefName, BACKUP);
     logger.info("{}={}", name, pref);
     return pref;
   }
@@ -146,11 +147,11 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
       logger.info(
           "Absolute position = {}", biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF);
 
-      int zero = biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF - kAbsoluteZero;
-      biscuit.setSelectedSensorPosition(zero);
-      logger.info("New relative position = {}", zero);
+      int offset = biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF - kAbsoluteZero;
+      biscuit.setSelectedSensorPosition(offset);
+      logger.info("New relative position = {}", offset);
     } else {
-      logger.warn("Biscuit zero failed");
+      logger.error("Intake zero failed - biscuit not vertical");
       biscuit.configPeakOutputForward(0, 0);
       biscuit.configPeakOutputReverse(0, 0);
     }

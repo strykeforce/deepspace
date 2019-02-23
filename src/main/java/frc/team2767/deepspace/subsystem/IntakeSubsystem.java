@@ -11,6 +11,7 @@ import frc.team2767.deepspace.subsystem.safety.Limitable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
+import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
 public class IntakeSubsystem extends Subsystem implements Limitable {
 
@@ -121,18 +122,18 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
 
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
-    telemetryService.register(shoulder);
-    telemetryService.register(roller);
+    telemetryService.register(new TalonItem(shoulder, "IntakeShoulder"));
+    telemetryService.register(new TalonItem(roller, "IntakeRoller"));
   }
 
   @SuppressWarnings("Duplicates")
   private double getPreference(String name, double defaultValue) {
     String prefName = PREFS_NAME + name;
     Preferences preferences = Preferences.getInstance();
-    if (!preferences.containsKey(name)) {
+    if (!preferences.containsKey(prefName)) {
       preferences.putDouble(prefName, defaultValue);
     }
-    double pref = preferences.getDouble(name, BACKUP);
+    double pref = preferences.getDouble(prefName, BACKUP);
     logger.info("{}={}", name, pref);
     return pref;
   }
@@ -151,22 +152,14 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   }
 
   public void shoulderZeroWithLimitSwitch() {
-    shoulder.setSelectedSensorPosition(kShoulderZeroPosition);
-    logger.debug("shoulder zeroed with limit switch to {}", shoulder.getSelectedSensorPosition());
-  }
-
-  public void shoulderToZero() {
-    logger.debug("running to zero");
-    shoulder.set(ControlMode.PercentOutput, kShoulderDownOutput);
-  }
-
-  public boolean onZero() {
     if (shoulder.getSensorCollection().isRevLimitSwitchClosed()) {
-      logger.debug("limit switch closed");
-      return true;
+      shoulder.setSelectedSensorPosition(kShoulderZeroPosition);
+      logger.debug("shoulder zeroed with limit switch to {}", shoulder.getSelectedSensorPosition());
+    } else {
+      logger.error("Intake zero failed - intake not in stowed position");
+      shoulder.configPeakOutputForward(0, 0);
+      shoulder.configPeakOutputReverse(0, 0);
     }
-
-    return false;
   }
 
   public void shoulderStop() {

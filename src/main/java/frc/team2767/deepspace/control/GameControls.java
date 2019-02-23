@@ -9,6 +9,7 @@ import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
 import frc.team2767.deepspace.command.intake.RollerOutCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
+import frc.team2767.deepspace.command.sequences.CoconutPickupCommandGroup;
 import frc.team2767.deepspace.command.sequences.PlayerCargoCommandGroup;
 import frc.team2767.deepspace.command.sequences.PlayerHatchCommandGroup;
 import frc.team2767.deepspace.command.sequences.StowAllCommandGroup;
@@ -86,6 +87,8 @@ public class GameControls {
     //    // LOADING
     new JoystickButton(joystick, GameControls.Shoulder.RIGHT.id)
         .whenPressed(new PlayerCargoCommandGroup());
+    new JoystickButton(joystick, GameControls.Shoulder.RIGHT.id)
+        .whenReleased(new CoconutPickupCommandGroup());
     new JoystickButton(joystick, GameControls.Shoulder.LEFT.id)
         .whenPressed(new PlayerHatchCommandGroup());
 

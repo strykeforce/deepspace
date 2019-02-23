@@ -11,6 +11,7 @@ import frc.team2767.deepspace.Robot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
+import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
 public class VacuumSubsystem extends Subsystem {
 
@@ -76,7 +77,7 @@ public class VacuumSubsystem extends Subsystem {
 
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
-    telemetryService.register(vacuum);
+    telemetryService.register(new TalonItem(vacuum, "Vacuum"));
   }
 
   private void vacuumPreferences() {
@@ -88,10 +89,10 @@ public class VacuumSubsystem extends Subsystem {
   private double getPreference(String name, double defaultValue) {
     String prefName = PREFS_NAME + name;
     Preferences preferences = Preferences.getInstance();
-    if (!preferences.containsKey(name)) {
+    if (!preferences.containsKey(prefName)) {
       preferences.putDouble(prefName, defaultValue);
     }
-    double pref = preferences.getDouble(name, BACKUP);
+    double pref = preferences.getDouble(prefName, BACKUP);
     logger.info("{}={}", name, pref);
     return pref;
   }

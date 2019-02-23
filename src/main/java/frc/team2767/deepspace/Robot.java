@@ -47,6 +47,9 @@ public class Robot extends TimedRobot {
 
     DRIVE.zeroYawEncoders();
     DRIVE.zeroGyro();
+    ELEVATOR.safeZero();
+    BISCUIT.zero();
+    INTAKE.shoulderZeroWithLimitSwitch();
     TELEMETRY.start();
 
     //    new SmartDashboardControls();
