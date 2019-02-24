@@ -54,6 +54,8 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     biscuitConfig.reverseSoftLimitThreshold = kLowerLimit;
     biscuitConfig.forwardSoftLimitEnable = true;
     biscuitConfig.reverseSoftLimitEnable = true;
+    biscuitConfig.peakOutputForward = 1.0;
+    biscuitConfig.peakOutputReverse = -1.0;
 
     biscuitConfig.slot0.kP = 1.0;
     biscuitConfig.slot0.kI = 0.0;
@@ -142,12 +144,14 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
 
   public void zero() {
     if (!biscuit.getSensorCollection().isFwdLimitSwitchClosed()) {
+      int absPos = biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF;
+      int relPos = biscuit.getSelectedSensorPosition();
       logger.info("Preferences zero = {}", kAbsoluteZero);
-      logger.info("Relative position = {}", biscuit.getSelectedSensorPosition());
+      logger.info("Relative position = {}", relPos);
       logger.info(
-          "Absolute position = {}", biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF);
+          "Absolute position = {}", absPos);
 
-      int offset = biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF - kAbsoluteZero;
+      int offset = kAbsoluteZero - absPos; //Absolute Encoder is out-of-phase with relative encoder
       biscuit.setSelectedSensorPosition(offset);
       logger.info("New relative position = {}", offset);
     } else {

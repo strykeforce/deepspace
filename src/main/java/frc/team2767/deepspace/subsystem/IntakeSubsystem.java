@@ -102,6 +102,8 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     shoulderConfig.voltageMeasurementFilter = 32;
     shoulderConfig.motionAcceleration = 3000;
     shoulderConfig.motionCruiseVelocity = 1000;
+    shoulderConfig.peakOutputForward = 1.0;
+    shoulderConfig.peakOutputReverse = -1.0;
 
     TalonSRXConfiguration rollerConfig = new TalonSRXConfiguration();
     rollerConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;

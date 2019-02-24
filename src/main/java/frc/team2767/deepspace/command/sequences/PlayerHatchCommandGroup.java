@@ -28,14 +28,6 @@ public class PlayerHatchCommandGroup extends CommandGroup {
     // vacuum
     addSequential(new WaitForPressureCommand(VacuumSubsystem.VacuumPressure.HATCH));
 
-    addSequential(new LogCommand("opening valves"));
-    addSequential(
-        new ActivateValveCommand(
-            new VacuumSubsystem.Valve[] {
-              VacuumSubsystem.Valve.PUMP, VacuumSubsystem.Valve.TRIDENT
-            }));
-    addSequential(new LogCommand("opened valves"));
-
     addSequential(new SetActionCommand(Action.PLACE));
   }
 }

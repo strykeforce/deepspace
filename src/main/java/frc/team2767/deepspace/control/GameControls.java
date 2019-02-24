@@ -15,6 +15,7 @@ import frc.team2767.deepspace.command.sequences.PlayerHatchCommandGroup;
 import frc.team2767.deepspace.command.sequences.StowAllCommandGroup;
 import frc.team2767.deepspace.command.states.SetFieldDirectionCommand;
 import frc.team2767.deepspace.command.states.SetLevelCommand;
+import frc.team2767.deepspace.command.vacuum.ActivateValveCommand;
 import frc.team2767.deepspace.command.vacuum.DeactivateValveCommand;
 import frc.team2767.deepspace.command.vision.SelectCameraCommand;
 import frc.team2767.deepspace.control.trigger.*;
@@ -91,6 +92,7 @@ public class GameControls {
         .whenReleased(new CoconutPickupCommandGroup());
     new JoystickButton(joystick, GameControls.Shoulder.LEFT.id)
         .whenPressed(new PlayerHatchCommandGroup());
+    new JoystickButton(joystick, Shoulder.LEFT.id).whenReleased(new ActivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
 
     //
     // END COMP CONFIG
