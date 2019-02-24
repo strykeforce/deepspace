@@ -19,12 +19,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
 
   private static final String PREFS = "BiscuitSubsystem/Position/";
   private static final int BACKUP = 2767;
-  private final DriveSubsystem DRIVE = Robot.DRIVE;
-  private final VisionSubsystem VISION = Robot.VISION;
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
-  private final int BISCUIT_ID = 40;
-  private final int TICKS_PER_REV = 3072;
-  private final double TICKS_PER_DEGREE = 34.1;
   public static double kUpPosition;
   public static double kLeftPosition;
   public static double kRightPosition;
@@ -33,6 +27,12 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   public static double kTiltUpLPosition;
   public static double kTiltUpRPosition;
   public static double kDownPosition;
+  private final DriveSubsystem DRIVE = Robot.DRIVE;
+  private final VisionSubsystem VISION = Robot.VISION;
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private final int BISCUIT_ID = 40;
+  private final int TICKS_PER_REV = 3072;
+  private final double TICKS_PER_DEGREE = 34.1;
   private int kCloseEnough = 50; // FIXME
   private int kLowerLimit = -6170; // FIXME
   private int kUpperLimit = 6170; // FIXME
@@ -174,10 +174,11 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
       int relPos = biscuit.getSelectedSensorPosition();
       logger.info("Preferences zero = {}", kAbsoluteZero);
       logger.info("Relative position = {}", relPos);
-      logger.info(
-          "Absolute position = {}", absPos);
+      logger.info("Absolute position = {}", absPos);
 
-      int offset = kAbsoluteZero - absPos; //Absolute Encoder is out-of-phase with relative encoder
+      // appears backwards because absolute and relative encoders are out-of-phase in hardware
+      int offset = kAbsoluteZero - absPos;
+
       biscuit.setSelectedSensorPosition(offset);
       logger.info("New relative position = {}", offset);
     } else {
