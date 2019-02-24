@@ -35,7 +35,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
 
   private TalonSRX roller = new TalonSRX(ROLLER_ID);
   private int stableCount;
-  private int setpoint;
+  private int setpointTicks;
 
   public IntakeSubsystem() {
 
@@ -172,14 +172,14 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   }
 
   public void setPosition(double angle) {
-    setpoint = (int) (TICKS_OFFSET - TICKS_PER_DEGREE * angle);
-    logger.debug("setting shoulder position={}", setpoint);
-    shoulder.set(ControlMode.MotionMagic, setpoint);
+    setpointTicks = (int) (TICKS_OFFSET - TICKS_PER_DEGREE * angle);
+    logger.debug("setting shoulder position={}", setpointTicks);
+    shoulder.set(ControlMode.MotionMagic, setpointTicks);
   }
 
   @SuppressWarnings("Duplicates")
   public boolean onTarget() {
-    int error = setpoint - shoulder.getSelectedSensorPosition(0);
+    int error = setpointTicks - shoulder.getSelectedSensorPosition(0);
     if (Math.abs(error) > kCloseEnoughTicks) stableCount = 0;
     else stableCount++;
     if (stableCount > STABLE_THRESH) {

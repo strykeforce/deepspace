@@ -3,18 +3,17 @@ package frc.team2767.deepspace.control;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.command.ZeroAxisCommand;
+import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorZeroCommand;
 import frc.team2767.deepspace.command.intake.IntakePositionCommand;
+import frc.team2767.deepspace.command.log.BiscuitDumpCommand;
 import frc.team2767.deepspace.command.log.IntakeDumpCommand;
 import frc.team2767.deepspace.command.states.SetActionCommand;
 import frc.team2767.deepspace.command.states.SetGamePieceCommand;
 import frc.team2767.deepspace.command.vacuum.*;
 import frc.team2767.deepspace.command.vision.LightsOffCommand;
 import frc.team2767.deepspace.command.vision.LightsOnCommand;
-import frc.team2767.deepspace.subsystem.Action;
-import frc.team2767.deepspace.subsystem.GamePiece;
-import frc.team2767.deepspace.subsystem.IntakeSubsystem;
-import frc.team2767.deepspace.subsystem.VacuumSubsystem;
+import frc.team2767.deepspace.subsystem.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +60,29 @@ public class SmartDashboardControls {
     SmartDashboard.putData(
         "Test/Intake Stow", new IntakePositionCommand(IntakeSubsystem.kStowPositionDeg));
     SmartDashboard.putData("Test/Intake Dump", new IntakeDumpCommand());
+
+    SmartDashboard.putData(
+        "Test/Biscuit Up", new BiscuitSetPositionCommand(BiscuitSubsystem.kUpPositionDeg));
+    SmartDashboard.putData(
+        "Test/Biscuit Left", new BiscuitSetPositionCommand(BiscuitSubsystem.kLeftPositionDeg));
+    SmartDashboard.putData(
+        "Test/Biscuit Right", new BiscuitSetPositionCommand(BiscuitSubsystem.kRightPositionDeg));
+    SmartDashboard.putData(
+        "Test/Biscuit BS Left",
+        new BiscuitSetPositionCommand(BiscuitSubsystem.kBackStopLeftPositionDeg));
+    SmartDashboard.putData(
+        "Test/Biscuit BS Right",
+        new BiscuitSetPositionCommand(BiscuitSubsystem.kBackStopRightPositionDeg));
+    SmartDashboard.putData(
+        "Test/Biscuit Down Right",
+        new BiscuitSetPositionCommand(BiscuitSubsystem.kDownRightPositionDeg));
+    SmartDashboard.putData(
+        "Test/Biscuit TU Left",
+        new BiscuitSetPositionCommand(BiscuitSubsystem.kTiltUpLeftPositionDeg));
+    SmartDashboard.putData(
+        "Test/Biscuit TU Right",
+        new BiscuitSetPositionCommand(BiscuitSubsystem.kTiltUpRightPositionDeg));
+    SmartDashboard.putData("Test/Biscuit Dump", new BiscuitDumpCommand());
   }
 
   private void addVisionCommands() {

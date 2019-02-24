@@ -19,30 +19,29 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
 
   private static final String PREFS = "BiscuitSubsystem/Position/";
   private static final int BACKUP = 2767;
-  public static double kUpPosition;
-  public static double kLeftPosition;
-  public static double kRightPosition;
-  public static double kBackStopLPosition;
-  public static double kBackStopRPosition;
-  public static double kTiltUpLPosition;
-  public static double kTiltUpRPosition;
-  public static double kDownPosition;
+  public static double kUpPositionDeg;
+  public static double kLeftPositionDeg;
+  public static double kRightPositionDeg;
+  public static double kBackStopLeftPositionDeg;
+  public static double kBackStopRightPositionDeg;
+  public static double kTiltUpLeftPositionDeg;
+  public static double kTiltUpRightPositionDeg;
+  public static double kDownRightPositionDeg;
+  private static int kCloseEnoughTicks;
+  private final int BISCUIT_ID = 40;
+  private final double TICKS_PER_DEGREE = 34.1;
+  private final double TICKS_OFFSET = 0;
   private final DriveSubsystem DRIVE = Robot.DRIVE;
   private final VisionSubsystem VISION = Robot.VISION;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
-  private final int BISCUIT_ID = 40;
-  private final int TICKS_PER_REV = 3072;
-  private final double TICKS_PER_DEGREE = 34.1;
-  private int kCloseEnough = 50; // FIXME
-  private int kLowerLimit = -6170; // FIXME
-  private int kUpperLimit = 6170; // FIXME
-  private int kAbsoluteZero;
-  private double targetBiscuitPosition = 0;
+  private int kAbsoluteZeroTicks;
+  private double targetBiscuitPositionDeg = 0;
   private GamePiece currentGamePiece = GamePiece.NOTSET;
   private Action currentAction = Action.NOTSET;
   private ElevatorLevel targetLevel = NOTSET;
   private FieldDirection targetDirection = FieldDirection.NOTSET;
   private TalonSRX biscuit = new TalonSRX(BISCUIT_ID);
+  private int setpointTicks;
 
   public BiscuitSubsystem() {
     biscuitPreferences();
@@ -52,26 +51,24 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   }
 
   private void biscuitPreferences() {
-    kAbsoluteZero = (int) getPreference("absolute_zero", 1413);
-    kCloseEnough = (int) getPreference("close_enough", 50);
-    kLowerLimit = (int) getPreference("lower_limit", -6170);
-    kUpperLimit = (int) getPreference("upper_limit", 6170);
+    // ticks
+    kAbsoluteZeroTicks = (int) getPreference("absolute_zero_ticks", 1452);
+    kCloseEnoughTicks = (int) getPreference("close_enough_ticks", 50);
 
-    kUpPosition = getPreference("up", 0);
-    kDownPosition = getPreference("down_R", 180);
-    kLeftPosition = getPreference("left", -90);
-    kRightPosition = getPreference("right", 90);
-    kBackStopLPosition = getPreference("backstop_L", -135);
-    kBackStopRPosition = getPreference("backstop_R", 135);
-    kTiltUpLPosition = getPreference("tilt_up_L", -75);
-    kTiltUpRPosition = getPreference("tilt_up_R", 75);
+    // degrees
+    kUpPositionDeg = getPreference("up_deg", 0);
+    kDownRightPositionDeg = getPreference("down_R_deg", 180);
+    kLeftPositionDeg = getPreference("left_deg", -90);
+    kRightPositionDeg = getPreference("right_deg", 90);
+    kBackStopLeftPositionDeg = getPreference("backstop_L_deg", -135);
+    kBackStopRightPositionDeg = getPreference("backstop_R_deg", 135);
+    kTiltUpLeftPositionDeg = getPreference("tilt_up_L_deg", -75);
+    kTiltUpRightPositionDeg = getPreference("tilt_up_R_deg", 75);
   }
 
   private void configTalon() {
     TalonSRXConfiguration biscuitConfig = new TalonSRXConfiguration();
     biscuitConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
-    biscuitConfig.forwardSoftLimitThreshold = kUpperLimit;
-    biscuitConfig.reverseSoftLimitThreshold = kLowerLimit;
     biscuitConfig.forwardSoftLimitEnable = true;
     biscuitConfig.reverseSoftLimitEnable = true;
     biscuitConfig.peakOutputForward = 1.0;
@@ -137,7 +134,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
         + targetDirection.name()
         + "\n\t"
         + "target position = "
-        + targetBiscuitPosition;
+        + targetBiscuitPositionDeg;
   }
 
   @Override
@@ -152,16 +149,17 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   }
 
   public double getPosition() {
-    return biscuit.getSelectedSensorPosition() / TICKS_PER_DEGREE;
+    return (TICKS_OFFSET - biscuit.getSelectedSensorPosition()) / TICKS_PER_DEGREE;
   }
 
   public void setPosition(double angle) {
     if (angle == 180 && getPosition() < 0) {
       angle = -180;
     }
-    int encoderPosition = (int) (angle * TICKS_PER_DEGREE);
-    logger.info("biscuit setpoint = {} degrees at {}", angle, encoderPosition);
-    biscuit.set(ControlMode.MotionMagic, encoderPosition);
+    setpointTicks = (int) (TICKS_OFFSET - angle * TICKS_PER_DEGREE);
+    logger.debug("set position in degrees = {}", angle);
+    logger.debug("set position in ticks = {}", setpointTicks);
+    biscuit.set(ControlMode.MotionMagic, setpointTicks);
   }
 
   public List getTalons() {
@@ -172,12 +170,12 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     if (!biscuit.getSensorCollection().isFwdLimitSwitchClosed()) {
       int absPos = biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF;
       int relPos = biscuit.getSelectedSensorPosition();
-      logger.info("Preferences zero = {}", kAbsoluteZero);
+      logger.info("Preferences zero = {}", kAbsoluteZeroTicks);
       logger.info("Relative position = {}", relPos);
       logger.info("Absolute position = {}", absPos);
 
       // appears backwards because absolute and relative encoders are out-of-phase in hardware
-      int offset = kAbsoluteZero - absPos;
+      int offset = kAbsoluteZeroTicks - absPos;
 
       biscuit.setSelectedSensorPosition(offset);
       logger.info("New relative position = {}", offset);
@@ -218,20 +216,20 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
             case LEFT:
               switch (currentAngle) {
                 case FORWARD:
-                  targetBiscuitPosition = kTiltUpLPosition;
+                  targetBiscuitPositionDeg = kTiltUpLeftPositionDeg;
                   break;
                 case BACKWARD:
-                  targetBiscuitPosition = kTiltUpRPosition;
+                  targetBiscuitPositionDeg = kTiltUpRightPositionDeg;
                   break;
               }
               break;
             case RIGHT:
               switch (currentAngle) {
                 case FORWARD:
-                  targetBiscuitPosition = kTiltUpRPosition;
+                  targetBiscuitPositionDeg = kTiltUpRightPositionDeg;
                   break;
                 case BACKWARD:
-                  targetBiscuitPosition = kTiltUpLPosition;
+                  targetBiscuitPositionDeg = kTiltUpLeftPositionDeg;
                   break;
               }
           }
@@ -240,20 +238,20 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
             case LEFT:
               switch (currentAngle) {
                 case FORWARD:
-                  targetBiscuitPosition = kLeftPosition;
+                  targetBiscuitPositionDeg = kLeftPositionDeg;
                   break;
                 case BACKWARD:
-                  targetBiscuitPosition = kRightPosition;
+                  targetBiscuitPositionDeg = kRightPositionDeg;
                   break;
               }
               break;
             case RIGHT:
               switch (currentAngle) {
                 case FORWARD:
-                  targetBiscuitPosition = kRightPosition;
+                  targetBiscuitPositionDeg = kRightPositionDeg;
                   break;
                 case BACKWARD:
-                  targetBiscuitPosition = kLeftPosition;
+                  targetBiscuitPositionDeg = kLeftPositionDeg;
                   break;
               }
           }
@@ -270,33 +268,32 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
           case CARGO:
             switch (currentAngle) {
               case LEFT:
-                targetBiscuitPosition = kBackStopRPosition;
+                targetBiscuitPositionDeg = kBackStopRightPositionDeg;
                 break;
               case RIGHT:
-                targetBiscuitPosition = kBackStopLPosition;
+                targetBiscuitPositionDeg = kBackStopLeftPositionDeg;
                 break;
             }
             break;
           case HATCH:
             switch (currentAngle) {
               case LEFT:
-                targetBiscuitPosition = kLeftPosition;
+                targetBiscuitPositionDeg = kLeftPositionDeg;
                 break;
               case RIGHT:
-                targetBiscuitPosition = kRightPosition;
+                targetBiscuitPositionDeg = kRightPositionDeg;
                 break;
             }
         }
     }
 
-    setPosition(targetBiscuitPosition);
+    setPosition(targetBiscuitPositionDeg);
   }
 
   public boolean onTarget() {
-    if (Math.abs(biscuit.getSelectedSensorPosition() - targetBiscuitPosition) < kCloseEnough) {
-      logger.debug(
-          "current = {} target = {}", biscuit.getSelectedSensorPosition(), targetBiscuitPosition);
-      logger.debug("on targetBiscuitPosition");
+    int current = biscuit.getSelectedSensorPosition();
+    if (Math.abs(current - setpointTicks) < kCloseEnoughTicks) {
+      logger.debug("onTarget: current = {} target = {}", current, setpointTicks);
       return true;
     }
 
@@ -309,6 +306,11 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
 
   public void stop() {
     biscuit.set(ControlMode.PercentOutput, 0);
+  }
+
+  public void dump() {
+    logger.info("biscuit position in degrees = {}", getPosition());
+    logger.info("biscuit position in ticks = {}", getTicks());
   }
 
   private enum Angle {
