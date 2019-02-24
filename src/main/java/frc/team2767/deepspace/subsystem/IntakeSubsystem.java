@@ -2,6 +2,7 @@ package frc.team2767.deepspace.subsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import edu.wpi.first.wpilibj.Preferences;
@@ -67,14 +68,14 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   private void configTalon() {
     TalonSRXConfiguration shoulderConfig = new TalonSRXConfiguration();
     shoulderConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
-    shoulderConfig.continuousCurrentLimit = 5;
+    shoulderConfig.continuousCurrentLimit = 10;
+    shoulderConfig.peakCurrentLimit = 15;
     shoulderConfig.peakCurrentDuration = 40;
-    shoulderConfig.peakCurrentLimit = 10;
     shoulderConfig.peakOutputForward = 1.0;
     shoulderConfig.peakOutputReverse = -1.0;
-    shoulderConfig.slot0.kP = 4;
+    shoulderConfig.slot0.kP = 8;
     shoulderConfig.slot0.kI = 0;
-    shoulderConfig.slot0.kD = 60;
+    shoulderConfig.slot0.kD = 0;
     shoulderConfig.slot0.kF = 1;
     shoulderConfig.slot0.integralZone = 0;
     shoulderConfig.slot0.allowableClosedloopError = 0;
@@ -84,8 +85,10 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     shoulderConfig.reverseSoftLimitEnable = true;
     shoulderConfig.voltageCompSaturation = 12;
     shoulderConfig.voltageMeasurementFilter = 32;
-    shoulderConfig.motionAcceleration = 3000;
+    shoulderConfig.velocityMeasurementWindow = 64;
+    shoulderConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms;
     shoulderConfig.motionCruiseVelocity = 1000;
+    shoulderConfig.motionAcceleration = 4000;
     shoulderConfig.peakOutputForward = 1.0;
     shoulderConfig.peakOutputReverse = -1.0;
 
