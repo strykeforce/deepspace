@@ -38,7 +38,7 @@ public class XboxControls {
     // Dpad
     new DpadLeft(this).whenActive(new LogCommand(logger, "DPAD kLeftPosition"));
     new DpadRight(this).whenActive(new LogCommand(logger, "DPAD kRightPosition"));
-    new DpadUp(this).whenActive(new LogCommand(logger, "DPAD kUpPosition"));
+    new DpadUp(this).whenActive(new LogCommand(logger, "DPAD kStowPositionDeg"));
     new DpadDown(this).whenActive(new LogCommand(logger, "DPAD kDownPosition"));
   }
 

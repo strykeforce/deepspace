@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.command.ZeroAxisCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorZeroCommand;
+import frc.team2767.deepspace.command.intake.IntakePositionCommand;
 import frc.team2767.deepspace.command.states.SetActionCommand;
 import frc.team2767.deepspace.command.states.SetGamePieceCommand;
 import frc.team2767.deepspace.command.vacuum.*;
@@ -11,6 +12,7 @@ import frc.team2767.deepspace.command.vision.LightsOffCommand;
 import frc.team2767.deepspace.command.vision.LightsOnCommand;
 import frc.team2767.deepspace.subsystem.Action;
 import frc.team2767.deepspace.subsystem.GamePiece;
+import frc.team2767.deepspace.subsystem.IntakeSubsystem;
 import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +50,15 @@ public class SmartDashboardControls {
 
     SmartDashboard.putData("Pit/Hatch", new SetGamePieceCommand(GamePiece.HATCH));
     SmartDashboard.putData("Pit/cargo", new SetGamePieceCommand(GamePiece.CARGO));
+
+    SmartDashboard.putData(
+        "Test/Intake Cargo", new IntakePositionCommand(IntakeSubsystem.kCargoPlayerPositionDeg));
+    SmartDashboard.putData(
+        "Test/Intake Load", new IntakePositionCommand(IntakeSubsystem.kLoadPositionDeg));
+    SmartDashboard.putData(
+        "Test/Intake Middle", new IntakePositionCommand(IntakeSubsystem.kMiddlePositionDeg));
+    SmartDashboard.putData(
+        "Test/Intake Stow", new IntakePositionCommand(IntakeSubsystem.kStowPositionDeg));
   }
 
   private void addVisionCommands() {

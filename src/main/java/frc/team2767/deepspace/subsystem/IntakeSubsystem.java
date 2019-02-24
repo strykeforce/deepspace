@@ -16,27 +16,26 @@ import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
 public class IntakeSubsystem extends Subsystem implements Limitable {
 
+  private static final double TICKS_PER_DEGREE = 90.0;
+  private static final double TICKS_OFFSET = 9664.0;
+
+  public static double kStowPositionDeg;
+  public static double kZeroPositionTicks;
+  public static double kMiddlePositionDeg;
+  public static double kLoadPositionDeg;
+  public static double kCargoPlayerPositionDeg;
   private final int SHOULDER_ID = 20;
   private final int ROLLER_ID = 21;
   private final int STABLE_THRESH = 4;
   private final String PREFS_NAME = "IntakeSubsystem/Settings/";
   private final int BACKUP = 2767;
-  private int kCloseEnough;
-  public static double kUpPosition;
-  public static double kZeroPosition;
-  public static double kMiddlePosition;
-  public static double kLoadPosition;
-  public static double kCargoPlayerPosition;
-
+  private int kCloseEnoughTicks;
   private Logger logger = LoggerFactory.getLogger(this.getClass());
   private TalonSRX shoulder = new TalonSRX(SHOULDER_ID);
 
   private TalonSRX roller = new TalonSRX(ROLLER_ID);
   private int stableCount;
   private int setpoint;
-
-  private int kForwardLimit;
-  private int kReverseLimit;
 
   public IntakeSubsystem() {
 
@@ -54,14 +53,15 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
 
   @SuppressWarnings("Duplicates")
   private void intakePreferences() {
-    kZeroPosition = getPreference("zero_position", -3.66);
-    kLoadPosition = getPreference("load_position", 267.14);
-    kMiddlePosition = getPreference("middle_position", 11);
-    kUpPosition = getPreference("up_position", 0);
-    kCargoPlayerPosition = getPreference("cargo_player_position", 59.85);
-    kCloseEnough = (int) getPreference("close_enough", 20);
-    kForwardLimit = (int) getPreference("shoulder_forward_soft_limit", 15100);
-    kReverseLimit = (int) getPreference("shoulder_reverse_soft_limit", 0);
+    // ticks
+    kZeroPositionTicks = getPreference("zero_position_ticks", 0);
+    kCloseEnoughTicks = (int) getPreference("close_enough_ticks", 100);
+
+    // degrees
+    kStowPositionDeg = getPreference("up_position_deg", 107);
+    kMiddlePositionDeg = getPreference("middle_position_deg", 105);
+    kCargoPlayerPositionDeg = getPreference("cargo_player_position_deg", 97.4);
+    kLoadPositionDeg = getPreference("load_position_deg", 24.4);
   }
 
   @SuppressWarnings("Duplicates")
@@ -79,8 +79,6 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
     shoulderConfig.slot0.kF = 1;
     shoulderConfig.slot0.integralZone = 0;
     shoulderConfig.slot0.allowableClosedloopError = 0;
-    shoulderConfig.forwardSoftLimitThreshold = kForwardLimit;
-    shoulderConfig.reverseSoftLimitThreshold = kReverseLimit;
     shoulderConfig.forwardSoftLimitEnable = true;
     shoulderConfig.reverseSoftLimitEnable = true;
     shoulderConfig.voltageCompSaturation = 12;
@@ -142,7 +140,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
 
   public void shoulderZeroWithLimitSwitch() {
     if (shoulder.getSensorCollection().isRevLimitSwitchClosed()) {
-      shoulder.setSelectedSensorPosition((int) kZeroPosition);
+      shoulder.setSelectedSensorPosition((int) kZeroPositionTicks);
       logger.debug("shoulder zeroed with limit switch to {}", shoulder.getSelectedSensorPosition());
     } else {
       logger.error("Intake zero failed - intake not in stowed position");
@@ -168,11 +166,13 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   }
 
   public double getPosition() {
-    return -0.003376 * shoulder.getSelectedSensorPosition() + 109.03793;
+    double angle = (shoulder.getSelectedSensorPosition() - TICKS_OFFSET) / TICKS_PER_DEGREE;
+    logger.debug("position in degrees = {}", angle);
+    return angle;
   }
 
   public void setPosition(double angle) {
-    setpoint = (int) (32301 - angle * -296);
+    setpoint = (int) (TICKS_OFFSET - TICKS_PER_DEGREE * angle);
     logger.debug("setting shoulder position={}", setpoint);
     shoulder.set(ControlMode.MotionMagic, setpoint);
   }
@@ -180,7 +180,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   @SuppressWarnings("Duplicates")
   public boolean onTarget() {
     int error = setpoint - shoulder.getSelectedSensorPosition(0);
-    if (Math.abs(error) > kCloseEnough) stableCount = 0;
+    if (Math.abs(error) > kCloseEnoughTicks) stableCount = 0;
     else stableCount++;
     if (stableCount > STABLE_THRESH) {
       logger.debug("stableCount > {}", STABLE_THRESH);

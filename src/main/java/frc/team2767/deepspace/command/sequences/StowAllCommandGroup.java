@@ -12,6 +12,6 @@ public class StowAllCommandGroup extends CommandGroup {
   public StowAllCommandGroup() {
     addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.kUpPosition));
     addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kStowPosition));
-    addSequential(new IntakePositionCommand(IntakeSubsystem.kUpPosition));
+    addSequential(new IntakePositionCommand(IntakeSubsystem.kStowPositionDeg));
   }
 }

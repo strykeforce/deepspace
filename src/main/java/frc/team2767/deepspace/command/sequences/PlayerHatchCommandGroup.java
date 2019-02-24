@@ -20,7 +20,7 @@ public class PlayerHatchCommandGroup extends CommandGroup {
     addSequential(new SetGamePieceCommand(GamePiece.HATCH));
     addSequential(new SetLevelCommand(ElevatorLevel.ONE));
     addSequential(new PositionExecuteCommandGroup());
-    addSequential(new IntakePositionCommand(IntakeSubsystem.kUpPosition));
+    addSequential(new IntakePositionCommand(IntakeSubsystem.kStowPositionDeg));
 
     addSequential(new PressureSetCommand(VacuumSubsystem.kHatchPressure));
     // vacuum
