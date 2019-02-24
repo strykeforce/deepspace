@@ -5,6 +5,7 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.command.ZeroAxisCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorZeroCommand;
 import frc.team2767.deepspace.command.intake.IntakePositionCommand;
+import frc.team2767.deepspace.command.log.IntakeDumpCommand;
 import frc.team2767.deepspace.command.states.SetActionCommand;
 import frc.team2767.deepspace.command.states.SetGamePieceCommand;
 import frc.team2767.deepspace.command.vacuum.*;
@@ -59,6 +60,7 @@ public class SmartDashboardControls {
         "Test/Intake Middle", new IntakePositionCommand(IntakeSubsystem.kMiddlePositionDeg));
     SmartDashboard.putData(
         "Test/Intake Stow", new IntakePositionCommand(IntakeSubsystem.kStowPositionDeg));
+    SmartDashboard.putData("Test/Intake Dump", new IntakeDumpCommand());
   }
 
   private void addVisionCommands() {

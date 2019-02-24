@@ -166,7 +166,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   }
 
   public double getPosition() {
-    double angle = (shoulder.getSelectedSensorPosition() - TICKS_OFFSET) / TICKS_PER_DEGREE;
+    double angle = (TICKS_OFFSET - shoulder.getSelectedSensorPosition()) / TICKS_PER_DEGREE;
     logger.debug("position in degrees = {}", angle);
     return angle;
   }
@@ -202,5 +202,10 @@ public class IntakeSubsystem extends Subsystem implements Limitable {
   public void rollerStop() {
     logger.debug("roller stop");
     roller.set(ControlMode.PercentOutput, 0.0);
+  }
+
+  public void dump() {
+    logger.info("intake position in degrees = {}", getPosition());
+    logger.info("intake position in ticks = {}", getTicks());
   }
 }
