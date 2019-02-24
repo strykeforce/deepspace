@@ -92,7 +92,8 @@ public class GameControls {
         .whenReleased(new CoconutPickupCommandGroup());
     new JoystickButton(joystick, GameControls.Shoulder.LEFT.id)
         .whenPressed(new PlayerHatchCommandGroup());
-    new JoystickButton(joystick, Shoulder.LEFT.id).whenReleased(new ActivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
+    new JoystickButton(joystick, Shoulder.LEFT.id)
+        .whenReleased(new ActivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
 
     //
     // END COMP CONFIG
