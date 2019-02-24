@@ -33,11 +33,11 @@ public class CoconutPickupCommandGroup extends CommandGroup {
         });
 
     addSequential(new LogCommand("exiting command group"));
-    addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kCargoMediumPosition));
+    addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kCargoMediumPositionInches));
     addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.kDownRightPositionDeg));
     addParallel(new PressureSetCommand(VacuumSubsystem.kBallPressure));
 
-    addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kCargoPickupPosition));
+    addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kCargoPickupPositionInches));
 
     //    addSequential(new BiscuitWiggleCommand());
     addSequential(new WaitForPressureCommand(VacuumSubsystem.kBallPressure));
@@ -51,7 +51,7 @@ public class CoconutPickupCommandGroup extends CommandGroup {
         5);
     addSequential(new LogCommand("opened valves"));
     addSequential(new WaitCommand(1.0));
-    addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kCargoMediumPosition));
+    addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kCargoMediumPositionInches));
     addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.kUpPositionDeg));
     addSequential(new SetActionCommand(Action.PLACE));
     //        addSequential(new

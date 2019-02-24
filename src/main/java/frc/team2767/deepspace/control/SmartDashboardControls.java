@@ -4,9 +4,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.command.ZeroAxisCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
+import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorZeroCommand;
 import frc.team2767.deepspace.command.intake.IntakePositionCommand;
 import frc.team2767.deepspace.command.log.BiscuitDumpCommand;
+import frc.team2767.deepspace.command.log.ElevatorDumpCommand;
 import frc.team2767.deepspace.command.log.IntakeDumpCommand;
 import frc.team2767.deepspace.command.states.SetActionCommand;
 import frc.team2767.deepspace.command.states.SetGamePieceCommand;
@@ -83,6 +85,32 @@ public class SmartDashboardControls {
         "Test/Biscuit TU Right",
         new BiscuitSetPositionCommand(BiscuitSubsystem.kTiltUpRightPositionDeg));
     SmartDashboard.putData("Test/Biscuit Dump", new BiscuitDumpCommand());
+
+    SmartDashboard.putData(
+        "Test/Elevator Cargo High",
+        new ElevatorSetPositionCommand(ElevatorSubsystem.kCargoHighPositionInches));
+    SmartDashboard.putData(
+        "Test/Elevator Cargo Low",
+        new ElevatorSetPositionCommand(ElevatorSubsystem.kCargoLowPositionInches));
+    SmartDashboard.putData(
+        "Test/Elevator Cargo Med",
+        new ElevatorSetPositionCommand(ElevatorSubsystem.kCargoMediumPositionInches));
+    SmartDashboard.putData(
+        "Test/Elevator Cargo Pickup",
+        new ElevatorSetPositionCommand(ElevatorSubsystem.kCargoPickupPositionInches));
+    SmartDashboard.putData(
+        "Test/Elevator Cargo Player",
+        new ElevatorSetPositionCommand(ElevatorSubsystem.kCargoPlayerPositionInches));
+    SmartDashboard.putData(
+        "Test/Elevator Hatch High",
+        new ElevatorSetPositionCommand(ElevatorSubsystem.kHatchHighPositionInches));
+    SmartDashboard.putData(
+        "Test/Elevator Hatch Low",
+        new ElevatorSetPositionCommand(ElevatorSubsystem.kHatchLowPositionInches));
+    SmartDashboard.putData(
+        "Test/Elevator Hatch Med",
+        new ElevatorSetPositionCommand(ElevatorSubsystem.kHatchMediumPositionInches));
+    SmartDashboard.putData("Test/Elevator Dump", new ElevatorDumpCommand());
   }
 
   private void addVisionCommands() {

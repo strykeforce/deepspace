@@ -18,11 +18,6 @@ public class ElevatorExecutePlanCommand extends Command {
   }
 
   @Override
-  protected void execute() {
-    ELEVATOR.adjustVelocity();
-  }
-
-  @Override
   protected boolean isFinished() {
     return ELEVATOR.onTarget();
   }
