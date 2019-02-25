@@ -1,8 +1,8 @@
 package frc.team2767.deepspace.subsystem.safety;
 
 enum IntakePosition {
-  INTAKE_INTAKE(305000, 0),
-  INTAKE_STOW(7700, 0);
+  INTAKE_INTAKE(9664, 0),
+  INTAKE_STOW(3224, 0);
 
   public final int forwardLimit;
   public final int reverseLimit;
@@ -13,7 +13,7 @@ enum IntakePosition {
   }
 
   public static IntakePosition of(int position) {
-    if (position > 7700) {
+    if (position > 3224) {
       return INTAKE_INTAKE;
     }
 

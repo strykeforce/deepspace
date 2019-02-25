@@ -17,39 +17,33 @@ import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 public class ElevatorSubsystem extends Subsystem implements Limitable {
   private static final int ID = 30;
   private static final int BACKUP = 2767;
-
+  private static final int TICKS_PER_INCH = 1120;
+  private static final int TICKS_OFFSET = 4 * TICKS_PER_INCH;
+  public static double kCargoPickupPositionInches;
+  public static double kHatchLowPositionInches;
+  public static double kHatchMediumPositionInches;
+  public static double kHatchHighPositionInches;
+  public static double kStowPositionInches;
+  public static double kCargoLowPositionInches;
+  public static double kCargoMediumPositionInches;
+  public static double kCargoPlayerPositionInches;
+  public static double kCargoHighPositionInches;
+  private final VisionSubsystem VISION = Robot.VISION;
   private final Logger logger = LoggerFactory.getLogger(ElevatorSubsystem.class);
-  private final int TIMEOUT = 10;
   private final int STABLE_THRESH = 4;
   private final String PREFS_NAME = "ElevatorSubsystem/Settings/";
   private final TalonSRX elevator = new TalonSRX(ID);
-  private final Preferences preferences;
   private ElevatorLevel elevatorLevel;
-  private ElevatorPosition elevatorPosition;
   private GamePiece currentGamepiece;
-  private int kUpAccel;
-  private int kUpVelocity;
-  private int kDownSlowAccel;
-  private int kDownSlowVelocity;
-  private int kDownFastAccel;
-  private int kDownFastVelocity;
-  private int kDownVelocityShiftPos;
+  private int setpointTicks;
   private double kUpOutput;
   private double kDownOutput;
-  private double kStopOutput;
-  private int kCloseEnough;
-  private int kAbsoluteZero;
-  private boolean checkEncoder = true;
-  private boolean upward;
-  private boolean checkSlow;
-  private boolean checkFast;
+  private int kCloseEnoughTicks;
+  private int kAbsoluteZeroTicks;
   private int startPosition;
-  private int setpoint;
-  private long positionStartTime;
   private int stableCount;
 
   public ElevatorSubsystem() {
-    this.preferences = Preferences.getInstance();
 
     if (elevator == null) {
       logger.error("Talon not present");
@@ -61,20 +55,21 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   }
 
   private void elevatorPreferences() {
-    kUpAccel = (int) getPreference("up_accel", 5000);
-    kUpVelocity = (int) getPreference("up_vel", 1000);
-    kDownSlowAccel = (int) getPreference("down_slow_accel", 2000);
-    kDownSlowVelocity = (int) getPreference("down_fast_accel", 200);
-    kDownFastAccel = (int) getPreference("down_fast_accel", 5000);
-    kDownFastVelocity = (int) getPreference("down_fast_vel", 1000);
-    kDownVelocityShiftPos = (int) getPreference("down_vel_shiftpos", 4000);
     kUpOutput = getPreference("up_output", 0.2);
     kDownOutput = getPreference("down_output", -0.2);
-    logger.info("Elevator down output = {}", kDownOutput);
-    kStopOutput = getPreference("absolute_zero", 0.0);
-    kCloseEnough = (int) getPreference("close_enough", 100);
-    kAbsoluteZero = (int) getPreference("absolute_zero", 1854);
-    logger.info("Elevator absolut zero = {}", kAbsoluteZero);
+
+    kCloseEnoughTicks = (int) getPreference("close_enough_ticks", 500);
+    kAbsoluteZeroTicks = (int) getPreference("absolute_zero_ticks", 1854);
+
+    kCargoPickupPositionInches = getPreference("cargo_pickup_in", 16.22);
+    kHatchLowPositionInches = getPreference("hatch_low_in", 8.5);
+    kHatchMediumPositionInches = getPreference("hatch_medium_in", 24.0);
+    kHatchHighPositionInches = getPreference("hatch_high_in", 32.5);
+    kStowPositionInches = getPreference("stow_in", 4.0);
+    kCargoLowPositionInches = getPreference("cargo_low_in", 11.0);
+    kCargoMediumPositionInches = getPreference("cargo_medium_in", 22.0);
+    kCargoPlayerPositionInches = getPreference("cargo_player_in", 19.9);
+    kCargoHighPositionInches = getPreference("cargo_high_in", 32.5);
   }
 
   private void configTalon() {
@@ -87,6 +82,8 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     elevatorConfig.continuousCurrentLimit = 20;
     elevatorConfig.peakCurrentDuration = 40;
     elevatorConfig.peakCurrentLimit = 25;
+    elevatorConfig.peakOutputForward = 1.0;
+    elevatorConfig.peakOutputReverse = -1.0;
     elevatorConfig.slot0.kP = 1;
     elevatorConfig.slot0.kI = 0;
     elevatorConfig.slot0.kD = 40;
@@ -100,8 +97,6 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     elevatorConfig.voltageMeasurementFilter = 32;
     elevatorConfig.motionAcceleration = 2000;
     elevatorConfig.motionCruiseVelocity = 1500;
-    elevatorConfig.peakOutputReverse = -1.0;
-    elevatorConfig.peakOutputForward = 1.0;
 
     elevator.configAllSettings(elevatorConfig);
     elevator.enableCurrentLimit(true);
@@ -124,12 +119,8 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     return pref;
   }
 
-  public void setElevatorLevel(ElevatorLevel elevatorLevel) {
-    this.elevatorLevel = elevatorLevel;
-  }
-
   @Override
-  public int getPosition() {
+  public int getTicks() {
     return elevator.getSelectedSensorPosition(0);
   }
 
@@ -139,20 +130,39 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     elevator.configReverseSoftLimitThreshold(reverse, 0);
   }
 
+  public double getPosition() {
+    return (TICKS_OFFSET + elevator.getSelectedSensorPosition()) / TICKS_PER_INCH;
+  }
+
+  public void setPosition(double height) {
+    setpointTicks = (int) (height * TICKS_PER_INCH) - TICKS_OFFSET;
+
+    startPosition = elevator.getSelectedSensorPosition(0);
+    logger.info(
+        "setting elevatorPosition = {} ({} in.), starting at {}",
+        setpointTicks,
+        height,
+        startPosition);
+
+    elevator.set(ControlMode.MotionMagic, setpointTicks);
+  }
+
   public void executePlan() {
-    ElevatorPosition newPosition = ElevatorPosition.NOTSET;
+    currentGamepiece = VISION.gamePiece;
+    elevatorLevel = VISION.elevatorLevel;
+    double newPosition = 0;
 
     switch (currentGamepiece) {
       case HATCH:
         switch (elevatorLevel) {
           case ONE:
-            newPosition = ElevatorPosition.HATCH_LOW;
+            newPosition = kHatchLowPositionInches;
             break;
           case TWO:
-            newPosition = ElevatorPosition.HATCH_MEDIUM;
+            newPosition = kHatchMediumPositionInches;
             break;
           case THREE:
-            newPosition = ElevatorPosition.HATCH_HIGH;
+            newPosition = kHatchHighPositionInches;
             break;
           case NOTSET:
             logger.warn("level not set");
@@ -161,13 +171,13 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
       case CARGO:
         switch (elevatorLevel) {
           case ONE:
-            newPosition = ElevatorPosition.CARGO_LOW;
+            newPosition = kCargoLowPositionInches;
             break;
           case TWO:
-            newPosition = ElevatorPosition.CARGO_MEDIUM;
+            newPosition = kCargoMediumPositionInches;
             break;
           case THREE:
-            newPosition = ElevatorPosition.CARGO_HIGH;
+            newPosition = kCargoHighPositionInches;
             break;
           case NOTSET:
             logger.warn("level not set");
@@ -179,83 +189,12 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
         break;
     }
 
-    // stow?
-
-    setElevatorPosition(newPosition);
-  }
-
-  public void setElevatorPosition(ElevatorPosition elevatorPosition) {
-    setpoint = elevatorPosition.position;
-    startPosition = elevator.getSelectedSensorPosition(0);
-    logger.info(
-        "setting elevatorPosition = {} ({}), starting at {}",
-        setpoint,
-        elevatorPosition,
-        startPosition);
-
-    upward = setpoint > startPosition;
-
-    if (upward) {
-      elevator.configMotionCruiseVelocity(kUpVelocity, 0);
-      elevator.configMotionAcceleration(kUpAccel, 0);
-    } else {
-      checkFast = checkSlow = true;
-      adjustVelocity();
-    }
-
-    stableCount = 0;
-    checkEncoder = true;
-    positionStartTime = System.nanoTime();
-    elevator.set(ControlMode.MotionMagic, setpoint);
-  }
-
-  public void adjustVelocity() {
-    int position = elevator.getSelectedSensorPosition(0);
-
-    //    if (checkEncoder) {
-    //      long elapsed = System.nanoTime() - positionStartTime;
-    //      if (elapsed < 200e8) return;
-    //
-    //      if (Math.abs(position - startPosition) == 0) {
-    //        elevator.set(Disabled, 0);
-    //        logger.debug(
-    //            "|position - startPosition| = |{} - {}| = {}",
-    //            position,
-    //            startPosition,
-    //            Math.abs(position - startPosition));
-    //
-    //        if (setpoint != 0) {
-    //          logger.error("no encoder movement detected in {} ms", elapsed / 1e6);
-    //        }
-    //        setpoint = position;
-    //        positionStartTime += elapsed;
-    //        return;
-    //      } else checkEncoder = false;
-    //    }
-
-    if (upward) return;
-
-    if (checkFast && position > kDownVelocityShiftPos) {
-      elevator.configMotionCruiseVelocity(kDownFastVelocity, 0);
-      elevator.configMotionAcceleration(kDownFastAccel, 0);
-      logger.debug(
-          "frontTalon velocity = fast ({}) elevatorPosition = {}", kDownFastVelocity, position);
-      checkFast = false;
-      return;
-    }
-
-    if (checkSlow && position < kDownVelocityShiftPos) {
-      elevator.configMotionCruiseVelocity(kDownSlowVelocity, 0);
-      elevator.configMotionAcceleration(kDownSlowAccel, 0);
-      logger.debug(
-          "frontTalon velocity = slow ({}) elevatorPosition = {}", kDownSlowVelocity, position);
-      checkFast = checkSlow = false;
-    }
+    setPosition(newPosition);
   }
 
   public boolean onTarget() {
-    int error = setpoint - elevator.getSelectedSensorPosition(0);
-    if (Math.abs(error) > kCloseEnough) stableCount = 0;
+    int error = setpointTicks - elevator.getSelectedSensorPosition(0);
+    if (Math.abs(error) > kCloseEnoughTicks) stableCount = 0;
     else stableCount++;
     if (stableCount > STABLE_THRESH) {
       logger.debug("stableCount > {}", STABLE_THRESH);
@@ -266,12 +205,13 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
 
   public void safeZero() {
     if (elevator.getSensorCollection().isRevLimitSwitchClosed()) {
-      logger.info("Preferences zero = {}", kAbsoluteZero);
+      logger.info("Preferences zero = {}", kAbsoluteZeroTicks);
       logger.info("Relative position = {}", elevator.getSelectedSensorPosition());
       logger.info(
           "Absolute position = {}", elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF);
 
-      int offset = elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF - kAbsoluteZero;
+      int offset =
+          elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF - kAbsoluteZeroTicks;
       elevator.setSelectedSensorPosition(offset);
       logger.info("New relative position = {}", offset);
     } else {
@@ -296,7 +236,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
 
   public void zeroPosition() {
     elevator.selectProfileSlot(0, 0);
-    int zero = elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF - kAbsoluteZero;
+    int zero = elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF - kAbsoluteZeroTicks;
     elevator.setSelectedSensorPosition(zero);
 
     // elevator.set(ControlMode.MotionMagic, setpoint);
@@ -312,47 +252,26 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     if (direction.equals(Direction.UP)) {
       logger.info("moving up at {}", kUpOutput);
       elevator.set(ControlMode.PercentOutput, kUpOutput);
+      //      elevator.set(ControlMode.PercentOutput, 0.2);
     } else if (direction.equals(Direction.DOWN)) {
       logger.info("moving down at {}", kDownOutput);
       elevator.set(ControlMode.PercentOutput, kDownOutput);
+      //      elevator.set(ControlMode.PercentOutput, -0.2);
     }
   }
 
   public void stop() {
     logger.info("lift stop at elevatorPosition {}", elevator.getSelectedSensorPosition(0));
-    elevator.set(PercentOutput, 0);
+    elevator.set(PercentOutput, 0.0);
   }
 
-  public void setCurrentGamepiece(GamePiece currentGamepiece) {
-    this.currentGamepiece = currentGamepiece;
+  public void dump() {
+    logger.info("elevator position in inches = {}", getPosition());
+    logger.info("elevator position in ticks = {}", getTicks());
   }
 
   @Override
   protected void initDefaultCommand() {}
-
-  public enum ElevatorPosition {
-    CARGO_PICKUP,
-    HATCH_LOW,
-    NOTSET,
-    HATCH_MEDIUM,
-    HATCH_HIGH,
-    STOW,
-    CARGO_LOW,
-    CARGO_MEDIUM,
-    CARGO_PLAYER, // 3268
-    CARGO_HIGH;
-
-    private static final String KEY_BASE = "ElevatorSubsystem/Position/";
-
-    final int position;
-
-    ElevatorPosition() {
-      Preferences preferences = Preferences.getInstance();
-      String key = KEY_BASE + this.name();
-      if (!preferences.containsKey(key)) preferences.putInt(key, BACKUP);
-      this.position = preferences.getInt(key, BACKUP);
-    }
-  }
 
   public enum Direction {
     UP,

@@ -7,16 +7,16 @@ import frc.team2767.deepspace.subsystem.ElevatorSubsystem;
 public class ElevatorSetPositionCommand extends InstantCommand {
 
   private static final ElevatorSubsystem ELEVATOR = Robot.ELEVATOR;
-  private final ElevatorSubsystem.ElevatorPosition position;
+  private final double height;
 
-  public ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition position) {
-    this.position = position;
+  public ElevatorSetPositionCommand(double height) {
+    this.height = height;
     requires(ELEVATOR);
   }
 
   @Override
   protected void initialize() {
-    ELEVATOR.setElevatorPosition(position);
+    ELEVATOR.setPosition(height);
   }
 
   @Override

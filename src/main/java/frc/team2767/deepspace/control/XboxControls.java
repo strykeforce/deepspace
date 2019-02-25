@@ -36,10 +36,10 @@ public class XboxControls {
     new RightTrigger(this).whenActive(log(Axis.RIGHT_TRIGGER));
 
     // Dpad
-    new DpadLeft(this).whenActive(new LogCommand(logger, "DPAD LEFT"));
-    new DpadRight(this).whenActive(new LogCommand(logger, "DPAD RIGHT"));
-    new DpadUp(this).whenActive(new LogCommand(logger, "DPAD UP"));
-    new DpadDown(this).whenActive(new LogCommand(logger, "DPAD DOWN"));
+    new DpadLeft(this).whenActive(new LogCommand(logger, "DPAD kLeftPosition"));
+    new DpadRight(this).whenActive(new LogCommand(logger, "DPAD kRightPosition"));
+    new DpadUp(this).whenActive(new LogCommand(logger, "DPAD kStowPositionDeg"));
+    new DpadDown(this).whenActive(new LogCommand(logger, "DPAD kDownPosition"));
   }
 
   public double getLX() {

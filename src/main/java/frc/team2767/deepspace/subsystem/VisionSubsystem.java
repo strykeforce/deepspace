@@ -21,8 +21,10 @@ public class VisionSubsystem extends Subsystem {
   NetworkTableEntry bearingEntry;
   NetworkTableEntry rangeEntry;
   private NetworkTable table = NetworkTableInstance.getDefault().getTable("Pyeye");
-  private FieldDirection direction = FieldDirection.NOTSET;
-  private ElevatorLevel elevatorLevel = ElevatorLevel.NOTSET;
+  public GamePiece gamePiece = GamePiece.NOTSET;
+  public Action action = Action.NOTSET;
+  public FieldDirection direction = FieldDirection.NOTSET;
+  public ElevatorLevel elevatorLevel = ElevatorLevel.NOTSET;
   private Camera camera = Camera.NOTSET;
   private double rawRange;
   private double rawBearing;
@@ -114,6 +116,16 @@ public class VisionSubsystem extends Subsystem {
 
   public void enableLights(boolean state) {
     lightsOutput.set(!state);
+  }
+
+  public void setGamePiece(GamePiece gamePiece) {
+    this.gamePiece = gamePiece;
+    logger.debug("set gamepiece to {}", gamePiece);
+  }
+
+  public void setAction(Action action) {
+    this.action = action;
+    logger.debug("set action to {}", action);
   }
 
   public void setFieldDirection(FieldDirection direction) {

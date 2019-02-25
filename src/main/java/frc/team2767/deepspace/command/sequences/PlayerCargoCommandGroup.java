@@ -17,8 +17,8 @@ public class PlayerCargoCommandGroup extends CommandGroup {
     addSequential(new SetFieldDirectionCommand(FieldDirection.LEFT));
     addSequential(new SetActionCommand(Action.PICKUP));
     addSequential(new SetGamePieceCommand(GamePiece.CARGO));
-    addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition.CARGO_PLAYER));
-    addSequential(new IntakePositionCommand(IntakeSubsystem.ShoulderPosition.CARGO_PLAYER));
+    addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kCargoPlayerPositionInches));
+    addSequential(new IntakePositionCommand(IntakeSubsystem.kCargoPlayerPositionDeg));
     addSequential(new BiscuitExecutePlanCommand());
     addSequential(new CoconutOpenCommand());
     addParallel(new RollerOutCommand(0.3));

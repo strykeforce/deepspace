@@ -2,12 +2,10 @@ package frc.team2767.deepspace.command.sequences;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team2767.deepspace.command.intake.IntakePositionCommand;
-import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.states.SetActionCommand;
 import frc.team2767.deepspace.command.states.SetFieldDirectionCommand;
 import frc.team2767.deepspace.command.states.SetGamePieceCommand;
 import frc.team2767.deepspace.command.states.SetLevelCommand;
-import frc.team2767.deepspace.command.vacuum.ActivateValveCommand;
 import frc.team2767.deepspace.command.vacuum.PressureAccumulateCommandGroup;
 import frc.team2767.deepspace.command.vacuum.PressureSetCommand;
 import frc.team2767.deepspace.command.vacuum.WaitForPressureCommand;
@@ -22,11 +20,11 @@ public class PlayerHatchCommandGroup extends CommandGroup {
     addSequential(new SetGamePieceCommand(GamePiece.HATCH));
     addSequential(new SetLevelCommand(ElevatorLevel.ONE));
     addSequential(new PositionExecuteCommandGroup());
-    addSequential(new IntakePositionCommand(IntakeSubsystem.ShoulderPosition.UP));
+    addSequential(new IntakePositionCommand(IntakeSubsystem.kStowPositionDeg));
 
-    addSequential(new PressureSetCommand(VacuumSubsystem.VacuumPressure.HATCH));
+    addSequential(new PressureSetCommand(VacuumSubsystem.kHatchPressureInHg));
     // vacuum
-    addSequential(new WaitForPressureCommand(VacuumSubsystem.VacuumPressure.HATCH));
+    addSequential(new WaitForPressureCommand(VacuumSubsystem.kHatchPressureInHg));
 
     addSequential(new SetActionCommand(Action.PLACE));
   }

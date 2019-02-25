@@ -16,21 +16,22 @@ import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 public class VacuumSubsystem extends Subsystem {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
-  private static Preferences preferences = Preferences.getInstance();
   String PREFS_NAME = "VacuumSubsystem/Settings/";
   int BACKUP = 2767;
   private final int VACUUM_ID = 60;
-  private int ballPressure = 500;
-  private int hatchPressure = 600;
-  private int climbPressure = 900;
+  public static double kBallPressureInHg;
+  public static double kHatchPressureInHg;
+  public static double kClimbPressureInHg;
+  private static final double COUNTS_PER_INHG = 35.533;
+  private static final double COUNTS_OFFSET = 31.98;
 
   private int goodEnough = 100;
+  private int setpointCounts;
 
   private Solenoid tridentSolenoid;
   private Solenoid climbSolenoid;
   private Solenoid pumpSolenoid;
 
-  private VacuumPressure currentPressureSetpoint;
   private TalonSRX vacuum = new TalonSRX(VACUUM_ID);
 
   public VacuumSubsystem() {
@@ -81,9 +82,9 @@ public class VacuumSubsystem extends Subsystem {
   }
 
   private void vacuumPreferences() {
-    ballPressure = (int) getPreference("ball_pressure", 500);
-    hatchPressure = (int) getPreference("hatch_pressure", 600);
-    climbPressure = (int) getPreference("climb_pressure", 900);
+    kBallPressureInHg = (int) getPreference("ball_pressure_inHg", 13.17);
+    kHatchPressureInHg = (int) getPreference("hatch_pressure_inHg", 16);
+    kClimbPressureInHg = (int) getPreference("climb_pressure_inHg", 24.4);
   }
 
   private double getPreference(String name, double defaultValue) {
@@ -127,26 +128,11 @@ public class VacuumSubsystem extends Subsystem {
   }
 
   public boolean onTarget() {
-    if (Math.abs(vacuum.getSelectedSensorPosition() - getPressureFor(currentPressureSetpoint))
-        < goodEnough) {
+    if (Math.abs(vacuum.getSelectedSensorPosition() - setpointCounts) < goodEnough) {
       logger.debug("on target");
       return true;
     }
     return false;
-  }
-
-  public int getPressureFor(VacuumPressure pressure) {
-    switch (pressure) {
-      case CARGO:
-        return ballPressure;
-      case CLIMB:
-        return climbPressure;
-      case HATCH:
-        return hatchPressure;
-      default:
-        logger.warn("pressure state legal");
-        return 0;
-    }
   }
 
   public void runOpenLoop(double setpoint) {
@@ -154,14 +140,25 @@ public class VacuumSubsystem extends Subsystem {
     vacuum.set(ControlMode.PercentOutput, setpoint);
   }
 
-  public int getPressure() {
+  public double getPressure() {
+    return ((vacuum.getSelectedSensorPosition() - COUNTS_OFFSET) / COUNTS_PER_INHG);
+    // return vacuum.getSelectedSensorPosition();
+  }
+
+  public int getCounts() {
     return vacuum.getSelectedSensorPosition();
   }
 
-  public void setPressure(VacuumPressure setpoint) {
-    this.currentPressureSetpoint = setpoint;
-    logger.debug("setting pressure to {}", currentPressureSetpoint);
-    vacuum.set(ControlMode.Position, getPressureFor(setpoint));
+  public void dump() {
+    logger.info("vacuum pressure in inHg = {}", getPressure());
+    logger.info("vacuum pressure in counts = {}", getCounts());
+  }
+
+  public void setPressure(double pressure) {
+    setpointCounts = (int) (COUNTS_PER_INHG * pressure + COUNTS_OFFSET);
+    // setpointCounts = (int) (35.5 * pressure + 32);
+    logger.debug("setting pressure to {}", setpointCounts);
+    vacuum.set(ControlMode.Position, setpointCounts);
   }
 
   public void stop() {
@@ -171,12 +168,6 @@ public class VacuumSubsystem extends Subsystem {
 
   @Override
   protected void initDefaultCommand() {}
-
-  public enum VacuumPressure {
-    HATCH,
-    CARGO,
-    CLIMB
-  }
 
   public enum Valve {
     TRIDENT(0),
