@@ -19,12 +19,14 @@ public class VacuumSubsystem extends Subsystem {
   String PREFS_NAME = "VacuumSubsystem/Settings/";
   int BACKUP = 2767;
   private final int VACUUM_ID = 60;
-  public static double kBallPressure;
-  public static double kHatchPressure;
-  public static double kClimbPressure;
+  public static double kBallPressureInHg;
+  public static double kHatchPressureInHg;
+  public static double kClimbPressureInHg;
+  private static final double COUNTS_PER_INHG = 35.533;
+  private static final double COUNTS_OFFSET = 31.98;
 
   private int goodEnough = 100;
-  private int setpoint;
+  private int setpointCounts;
 
   private Solenoid tridentSolenoid;
   private Solenoid climbSolenoid;
@@ -80,9 +82,9 @@ public class VacuumSubsystem extends Subsystem {
   }
 
   private void vacuumPreferences() {
-    kBallPressure = (int) getPreference("ball_pressure", 500);
-    kHatchPressure = (int) getPreference("hatch_pressure", 600);
-    kClimbPressure = (int) getPreference("climb_pressure", 900);
+    kBallPressureInHg = (int) getPreference("ball_pressure_inHg", 13.17);
+    kHatchPressureInHg = (int) getPreference("hatch_pressure_inHg", 16);
+    kClimbPressureInHg = (int) getPreference("climb_pressure_inHg", 24.4);
   }
 
   private double getPreference(String name, double defaultValue) {
@@ -125,8 +127,8 @@ public class VacuumSubsystem extends Subsystem {
     }
   }
 
-  public boolean onTarget(double pressure) {
-    if (Math.abs(vacuum.getSelectedSensorPosition() - pressure) < goodEnough) {
+  public boolean onTarget() {
+    if (Math.abs(vacuum.getSelectedSensorPosition() - setpointCounts) < goodEnough) {
       logger.debug("on target");
       return true;
     }
@@ -138,14 +140,25 @@ public class VacuumSubsystem extends Subsystem {
     vacuum.set(ControlMode.PercentOutput, setpoint);
   }
 
-  public int getPressure() {
+  public double getPressure() {
+    return ((vacuum.getSelectedSensorPosition() - COUNTS_OFFSET) / COUNTS_PER_INHG);
+    // return vacuum.getSelectedSensorPosition();
+  }
+
+  public int getCounts() {
     return vacuum.getSelectedSensorPosition();
   }
 
+  public void dump() {
+    logger.info("vacuum pressure in inHg = {}", getPressure());
+    logger.info("vacuum pressure in counts = {}", getCounts());
+  }
+
   public void setPressure(double pressure) {
-    setpoint = (int) (35.5 * pressure + 32);
-    logger.debug("setting pressure to {}", setpoint);
-    vacuum.set(ControlMode.Position, setpoint);
+    setpointCounts = (int) (COUNTS_PER_INHG * pressure + COUNTS_OFFSET);
+    // setpointCounts = (int) (35.5 * pressure + 32);
+    logger.debug("setting pressure to {}", setpointCounts);
+    vacuum.set(ControlMode.Position, setpointCounts);
   }
 
   public void stop() {

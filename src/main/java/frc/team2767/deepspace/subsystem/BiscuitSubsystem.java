@@ -27,6 +27,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   public static double kTiltUpLeftPositionDeg;
   public static double kTiltUpRightPositionDeg;
   public static double kDownRightPositionDeg;
+  public static double kDownLeftPositionDeg;
   private static int kCloseEnoughTicks;
   private final int BISCUIT_ID = 40;
   private final double TICKS_PER_DEGREE = 34.1;
@@ -57,13 +58,14 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
 
     // degrees
     kUpPositionDeg = getPreference("up_deg", 0);
-    kDownRightPositionDeg = getPreference("down_R_deg", 180);
-    kLeftPositionDeg = getPreference("left_deg", -90);
-    kRightPositionDeg = getPreference("right_deg", 90);
+    kDownRightPositionDeg = getPreference("down_R_deg", 179);
+    kDownLeftPositionDeg = getPreference("down_L_deg", -179);
+    kLeftPositionDeg = getPreference("left_deg", -85);
+    kRightPositionDeg = getPreference("right_deg", 85);
     kBackStopLeftPositionDeg = getPreference("backstop_L_deg", -135);
     kBackStopRightPositionDeg = getPreference("backstop_R_deg", 135);
-    kTiltUpLeftPositionDeg = getPreference("tilt_up_L_deg", -75);
-    kTiltUpRightPositionDeg = getPreference("tilt_up_R_deg", 75);
+    kTiltUpLeftPositionDeg = getPreference("tilt_up_L_deg", -60);
+    kTiltUpRightPositionDeg = getPreference("tilt_up_R_deg", 60);
   }
 
   private void configTalon() {
@@ -153,8 +155,8 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
   }
 
   public void setPosition(double angle) {
-    if (angle == 180 && getPosition() < 0) {
-      angle = -180;
+    if (angle == kDownRightPositionDeg && getPosition() < 0) {
+      angle = kDownLeftPositionDeg;
     }
     setpointTicks = (int) (TICKS_OFFSET - angle * TICKS_PER_DEGREE);
     logger.debug("set position in degrees = {}", angle);

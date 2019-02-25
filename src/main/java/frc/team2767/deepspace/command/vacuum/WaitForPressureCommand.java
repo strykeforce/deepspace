@@ -8,6 +8,7 @@ public class WaitForPressureCommand extends Command {
 
   private static final VacuumSubsystem VACUUM = Robot.VACUUM;
   private double pressure;
+  private static final double CLOSE_ENOUGH = 100;
 
   public WaitForPressureCommand(double pressure) {
     this.pressure = pressure;
@@ -16,6 +17,6 @@ public class WaitForPressureCommand extends Command {
 
   @Override
   protected boolean isFinished() {
-    return VACUUM.onTarget(pressure);
+    return (Math.abs(pressure - VACUUM.getPressure()) < CLOSE_ENOUGH);
   }
 }

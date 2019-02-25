@@ -20,6 +20,6 @@ public class PressureSetCommand extends Command {
 
   @Override
   protected boolean isFinished() {
-    return VACUUM.onTarget(pressure);
+    return VACUUM.onTarget();
   }
 }

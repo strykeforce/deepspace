@@ -4,12 +4,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.command.ZeroAxisCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
+import frc.team2767.deepspace.command.elevator.ElevatorSafeZeroCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorZeroCommand;
 import frc.team2767.deepspace.command.intake.IntakePositionCommand;
 import frc.team2767.deepspace.command.log.BiscuitDumpCommand;
 import frc.team2767.deepspace.command.log.ElevatorDumpCommand;
 import frc.team2767.deepspace.command.log.IntakeDumpCommand;
+import frc.team2767.deepspace.command.log.VacuumDumpCommand;
 import frc.team2767.deepspace.command.states.SetActionCommand;
 import frc.team2767.deepspace.command.states.SetGamePieceCommand;
 import frc.team2767.deepspace.command.vacuum.*;
@@ -111,6 +113,24 @@ public class SmartDashboardControls {
         "Test/Elevator Hatch Med",
         new ElevatorSetPositionCommand(ElevatorSubsystem.kHatchMediumPositionInches));
     SmartDashboard.putData("Test/Elevator Dump", new ElevatorDumpCommand());
+    SmartDashboard.putData("Test/Elevator Zero", new ElevatorSafeZeroCommand());
+
+    SmartDashboard.putData("Test/Vacuum Dump", new VacuumDumpCommand());
+    SmartDashboard.putData("Test/Vacuum Cargo", new PressureSetCommand(VACUUM.kBallPressureInHg));
+    SmartDashboard.putData("Test/Vacuum Hatch", new PressureSetCommand(VACUUM.kHatchPressureInHg));
+    SmartDashboard.putData("Test/Vacuum Climb", new PressureSetCommand(VACUUM.kClimbPressureInHg));
+    SmartDashboard.putData(
+        "Test/Pump Enable", new ActivateValveCommand(VacuumSubsystem.Valve.PUMP));
+    SmartDashboard.putData(
+        "Test/Pump Disable", new DeactivateValveCommand(VacuumSubsystem.Valve.PUMP));
+    SmartDashboard.putData(
+        "Test/Trident Enable", new ActivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
+    SmartDashboard.putData(
+        "Test/Trident Disable", new DeactivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
+    SmartDashboard.putData(
+        "Test/Climb Enable", new ActivateValveCommand(VacuumSubsystem.Valve.CLIMB));
+    SmartDashboard.putData(
+        "Test/Climb Disable", new DeactivateValveCommand(VacuumSubsystem.Valve.CLIMB));
   }
 
   private void addVisionCommands() {
@@ -140,11 +160,11 @@ public class SmartDashboardControls {
 
     SmartDashboard.putData("Pit/VacuumStop", new StopPumpCommandGroup());
     SmartDashboard.putData(
-        "Pit/Vacuum/Climb", new PressureSetCommand(VacuumSubsystem.kClimbPressure));
+        "Pit/Vacuum/Climb", new PressureSetCommand(VacuumSubsystem.kClimbPressureInHg));
 
     SmartDashboard.putData(
-        "Pit/Vacuum/Hatch", new PressureSetCommand(VacuumSubsystem.kHatchPressure));
+        "Pit/Vacuum/Hatch", new PressureSetCommand(VacuumSubsystem.kHatchPressureInHg));
     SmartDashboard.putData(
-        "Pit/Vacuum/Cargo", new PressureSetCommand(VacuumSubsystem.kBallPressure));
+        "Pit/Vacuum/Cargo", new PressureSetCommand(VacuumSubsystem.kBallPressureInHg));
   }
 }
