@@ -86,11 +86,11 @@ public class VisionSubsystem extends Subsystem {
     return false;
   }
 
-  public void selectCamera(float gyro) {
+  public void selectCamera(double gyro) {
     VisionSubsystem.Camera camera;
-
-    if (Math.abs(gyro) < 90 && direction == FieldDirection.LEFT
-        || Math.abs(gyro) > 90 && direction == FieldDirection.RIGHT) {
+    double angle = Math.IEEEremainder(gyro, 360);
+    if (Math.abs(angle) < 90 && direction == FieldDirection.LEFT
+        || Math.abs(angle) > 90 && direction == FieldDirection.RIGHT) {
       camera = VisionSubsystem.Camera.LEFT;
     } else {
       camera = VisionSubsystem.Camera.RIGHT;

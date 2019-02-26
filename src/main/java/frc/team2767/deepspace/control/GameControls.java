@@ -8,6 +8,7 @@ import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
 import frc.team2767.deepspace.command.intake.RollerOutCommand;
+import frc.team2767.deepspace.command.intake.RollerStopCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.sequences.CoconutPickupCommandGroup;
 import frc.team2767.deepspace.command.sequences.PlayerCargoCommandGroup;
@@ -38,8 +39,6 @@ public class GameControls {
 
     new JoystickButton(joystick, Button.START.id).whenPressed(new ZeroAxisCommand());
 
-    DirectionPadRight directionPadRight = new DirectionPadRight(this);
-    DirectionPadLeft directionPadLeft = new DirectionPadLeft(this);
     DirectionPadAny directionPadAny = new DirectionPadAny(this);
 
     RightStickDown rightStickDown = new RightStickDown(this);
@@ -48,10 +47,8 @@ public class GameControls {
     LeftStickLeft leftStickLeft = new LeftStickLeft(this);
     LeftStickRight leftStickRight = new LeftStickRight(this);
 
-    directionPadRight.whenActive(new SetFieldDirectionCommand(FieldDirection.RIGHT));
-    directionPadLeft.whenActive(new SetFieldDirectionCommand(FieldDirection.LEFT));
-
     directionPadAny.whenActive(new RollerOutCommand());
+    directionPadAny.whenInactive(new RollerStopCommand());
 
     new JoystickButton(joystick, Trigger.LEFT.id)
         .whenPressed(new DeactivateValveCommand(VacuumSubsystem.Valve.TRIDENT));

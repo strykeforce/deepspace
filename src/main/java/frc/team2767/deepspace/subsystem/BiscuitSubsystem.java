@@ -203,8 +203,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
         currentGamePiece,
         currentAction);
     Angle currentAngle;
-    double bearing = DRIVE.getGyro().getYaw();
-
+    double bearing = Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360);
     if (Math.abs(bearing) <= 90) {
       currentAngle = Angle.FORWARD;
     } else {
@@ -234,6 +233,9 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
                   targetBiscuitPositionDeg = kTiltUpLeftPositionDeg;
                   break;
               }
+            case NOTSET:
+              logger.warn("Direction not set");
+              break;
           }
         } else {
           switch (targetDirection) {
@@ -256,12 +258,15 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
                   targetBiscuitPositionDeg = kLeftPositionDeg;
                   break;
               }
+            case NOTSET:
+              logger.warn("Direction not set");
+              break;
           }
         }
         break;
 
       case PICKUP:
-        if (bearing <= 0 && bearing >= -180) {
+        if (bearing <= 0) {
           currentAngle = Angle.LEFT;
         } else {
           currentAngle = Angle.RIGHT;
@@ -286,7 +291,12 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
                 targetBiscuitPositionDeg = kRightPositionDeg;
                 break;
             }
+          case NOTSET:
+            logger.warn("Gamepiece not set");
+            break;
         }
+      case NOTSET:
+        logger.warn("Action not set");
     }
 
     setPosition(targetBiscuitPositionDeg);
