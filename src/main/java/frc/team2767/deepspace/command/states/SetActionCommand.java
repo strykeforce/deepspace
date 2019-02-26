@@ -13,7 +13,6 @@ public class SetActionCommand extends InstantCommand {
 
   public SetActionCommand(Action action) {
     this.action = action;
-    requires(VISION);
   }
 
   @Override
