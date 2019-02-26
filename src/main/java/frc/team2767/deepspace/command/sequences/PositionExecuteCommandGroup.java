@@ -7,7 +7,7 @@ import frc.team2767.deepspace.command.elevator.ElevatorExecutePlanCommand;
 public class PositionExecuteCommandGroup extends CommandGroup {
 
   public PositionExecuteCommandGroup() {
-    addSequential(new ElevatorExecutePlanCommand());
     addSequential(new BiscuitExecutePlanCommand());
+    addSequential(new ElevatorExecutePlanCommand());
   }
 }

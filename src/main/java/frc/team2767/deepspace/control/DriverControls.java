@@ -76,7 +76,6 @@ public class DriverControls {
     // ZEROS / LOG DUMPS
     new JoystickButton(joystick, Button.RESET.id).whenPressed(new ZeroGyroCommand());
     new JoystickButton(joystick, Button.HAMBURGER.id).whenPressed(new SafetyLogDumpCommand());
-    new JoystickButton(joystick, Button.X.id).whenPressed(new PositionExecuteCommandGroup());
 
     // LIGHTS
     new JoystickButton(joystick, Trim.LEFT_X_POS.id).whenPressed(new LightsOnCommand());
