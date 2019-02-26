@@ -203,8 +203,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
         currentGamePiece,
         currentAction);
     Angle currentAngle;
-    double bearing = DRIVE.getGyro().getYaw();
-
+    double bearing = Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360);
     if (Math.abs(bearing) <= 90) {
       currentAngle = Angle.FORWARD;
     } else {
@@ -261,7 +260,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
         break;
 
       case PICKUP:
-        if (bearing <= 0 && bearing >= -180) {
+        if (bearing <= 0) {
           currentAngle = Angle.LEFT;
         } else {
           currentAngle = Angle.RIGHT;

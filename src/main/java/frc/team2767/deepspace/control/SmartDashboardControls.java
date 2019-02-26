@@ -3,6 +3,7 @@ package frc.team2767.deepspace.control;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.command.ZeroAxisCommand;
+import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSafeZeroCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
@@ -87,6 +88,7 @@ public class SmartDashboardControls {
         "Test/Biscuit TU Right",
         new BiscuitSetPositionCommand(BiscuitSubsystem.kTiltUpRightPositionDeg));
     SmartDashboard.putData("Test/Biscuit Dump", new BiscuitDumpCommand());
+    SmartDashboard.putData("Test/biscuit execute", new BiscuitExecutePlanCommand());
 
     SmartDashboard.putData(
         "Test/Elevator Cargo High",

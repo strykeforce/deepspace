@@ -13,6 +13,6 @@ public class LeftStickRight extends Trigger {
 
   @Override
   public boolean get() {
-    return controls.getLX() > 0;
+    return controls.getLX() > 0.1;
   }
 }
