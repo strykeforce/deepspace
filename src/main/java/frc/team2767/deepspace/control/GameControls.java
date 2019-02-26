@@ -39,8 +39,6 @@ public class GameControls {
 
     new JoystickButton(joystick, Button.START.id).whenPressed(new ZeroAxisCommand());
 
-    DirectionPadRight directionPadRight = new DirectionPadRight(this);
-    DirectionPadLeft directionPadLeft = new DirectionPadLeft(this);
     DirectionPadAny directionPadAny = new DirectionPadAny(this);
 
     RightStickDown rightStickDown = new RightStickDown(this);
@@ -48,9 +46,6 @@ public class GameControls {
 
     LeftStickLeft leftStickLeft = new LeftStickLeft(this);
     LeftStickRight leftStickRight = new LeftStickRight(this);
-
-    directionPadRight.whenActive(new SetFieldDirectionCommand(FieldDirection.RIGHT));
-    directionPadLeft.whenActive(new SetFieldDirectionCommand(FieldDirection.LEFT));
 
     directionPadAny.whenActive(new RollerOutCommand());
     directionPadAny.whenInactive(new RollerStopCommand());

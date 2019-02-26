@@ -33,8 +33,8 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
   private final int STABLE_THRESH = 4;
   private final String PREFS_NAME = "ElevatorSubsystem/Settings/";
   private final TalonSRX elevator = new TalonSRX(ID);
-  private ElevatorLevel elevatorLevel;
-  private GamePiece currentGamepiece;
+  private ElevatorLevel elevatorLevel = ElevatorLevel.NOTSET;
+  private GamePiece currentGamepiece = GamePiece.NOTSET;
   private int setpointTicks;
   private double kUpOutput;
   private double kDownOutput;

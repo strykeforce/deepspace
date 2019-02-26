@@ -233,6 +233,9 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
                   targetBiscuitPositionDeg = kTiltUpLeftPositionDeg;
                   break;
               }
+            case NOTSET:
+              logger.warn("Direction not set");
+              break;
           }
         } else {
           switch (targetDirection) {
@@ -255,6 +258,9 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
                   targetBiscuitPositionDeg = kLeftPositionDeg;
                   break;
               }
+            case NOTSET:
+              logger.warn("Direction not set");
+              break;
           }
         }
         break;
@@ -285,7 +291,12 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
                 targetBiscuitPositionDeg = kRightPositionDeg;
                 break;
             }
+          case NOTSET:
+            logger.warn("Gamepiece not set");
+            break;
         }
+      case NOTSET:
+        logger.warn("Action not set");
     }
 
     setPosition(targetBiscuitPositionDeg);
