@@ -15,6 +15,7 @@ import frc.team2767.deepspace.command.log.IntakeDumpCommand;
 import frc.team2767.deepspace.command.log.VacuumDumpCommand;
 import frc.team2767.deepspace.command.states.SetActionCommand;
 import frc.team2767.deepspace.command.states.SetGamePieceCommand;
+import frc.team2767.deepspace.command.twist.OrthogonalMovementCommand;
 import frc.team2767.deepspace.command.vacuum.*;
 import frc.team2767.deepspace.command.vision.LightsOffCommand;
 import frc.team2767.deepspace.command.vision.LightsOnCommand;
@@ -137,6 +138,7 @@ public class SmartDashboardControls {
   }
 
   private void addVisionCommands() {
+    SmartDashboard.putData("Game/OrthogMvmt", new OrthogonalMovementCommand());
     SmartDashboard.putData("Pit/LightsOn", new LightsOnCommand());
     SmartDashboard.putData("Pit/LightsOff", new LightsOffCommand());
   }

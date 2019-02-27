@@ -138,19 +138,19 @@ public class DriveSubsystem extends Subsystem {
   }
 
   private Wheel[] getWheels() {
-    TalonSRXConfiguration yawConfig = new TalonSRXConfiguration();
-    yawConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
-    yawConfig.continuousCurrentLimit = 10;
-    yawConfig.peakCurrentDuration = 0;
-    yawConfig.peakCurrentLimit = 0;
-    yawConfig.slot0.kP = 10.0;
-    yawConfig.slot0.kI = 0.0;
-    yawConfig.slot0.kD = 100.0;
-    yawConfig.slot0.kF = 0.0;
-    yawConfig.slot0.integralZone = 0;
-    yawConfig.slot0.allowableClosedloopError = 0;
-    yawConfig.motionAcceleration = 10_000;
-    yawConfig.motionCruiseVelocity = 800;
+    TalonSRXConfiguration azimuthConfig = new TalonSRXConfiguration();
+    azimuthConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
+    azimuthConfig.continuousCurrentLimit = 10;
+    azimuthConfig.peakCurrentDuration = 0;
+    azimuthConfig.peakCurrentLimit = 0;
+    azimuthConfig.slot0.kP = 10.0;
+    azimuthConfig.slot0.kI = 0.0;
+    azimuthConfig.slot0.kD = 100.0;
+    azimuthConfig.slot0.kF = 0.0;
+    azimuthConfig.slot0.integralZone = 0;
+    azimuthConfig.slot0.allowableClosedloopError = 0;
+    azimuthConfig.motionAcceleration = 10_000;
+    azimuthConfig.motionCruiseVelocity = 800;
 
     TalonSRXConfiguration driveConfig = new TalonSRXConfiguration();
     driveConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
@@ -172,10 +172,10 @@ public class DriveSubsystem extends Subsystem {
     Wheel[] wheels = new Wheel[4];
 
     for (int i = 0; i < 4; i++) {
-      TalonSRX yawTalon = new TalonSRX(i);
-      yawTalon.configAllSettings(yawConfig);
-      yawTalon.enableCurrentLimit(true);
-      yawTalon.enableVoltageCompensation(true);
+      TalonSRX azimuthTalon = new TalonSRX(i);
+      azimuthTalon.configAllSettings(azimuthConfig);
+      azimuthTalon.enableCurrentLimit(true);
+      azimuthTalon.enableVoltageCompensation(true);
 
       TalonSRX driveTalon = new TalonSRX(i + 10);
       driveTalon.configAllSettings(driveConfig);
@@ -185,10 +185,10 @@ public class DriveSubsystem extends Subsystem {
       //      driveTalon.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, 10);
       //      driveTalon.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0 5, 10);
 
-      telemetryService.register(new TalonItem(yawTalon, "Azimuth " + i));
+      telemetryService.register(new TalonItem(azimuthTalon, "Azimuth " + i));
       telemetryService.register(new TalonItem(driveTalon, "Drive " + (i + 10)));
 
-      Wheel wheel = new Wheel(yawTalon, driveTalon, DRIVE_SETPOINT_MAX);
+      Wheel wheel = new Wheel(azimuthTalon, driveTalon, DRIVE_SETPOINT_MAX);
       wheels[i] = wheel;
     }
 
