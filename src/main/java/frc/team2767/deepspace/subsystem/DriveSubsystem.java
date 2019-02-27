@@ -163,7 +163,7 @@ public class DriveSubsystem extends Subsystem {
     driveConfig.slot0.kF = 0.028;
     driveConfig.slot0.integralZone = 3000;
     driveConfig.slot0.allowableClosedloopError = 0;
-    driveConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms;
+    driveConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms; // FIXME?
     driveConfig.velocityMeasurementWindow = 64;
 
     TelemetryService telemetryService = Robot.TELEMETRY;

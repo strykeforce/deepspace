@@ -12,7 +12,6 @@ public class SetFieldDirectionCommand extends InstantCommand {
 
   public SetFieldDirectionCommand(FieldDirection direction) {
     this.direction = direction;
-    requires(VISION);
   }
 
   @Override
