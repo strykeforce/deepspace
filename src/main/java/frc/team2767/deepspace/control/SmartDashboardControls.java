@@ -39,6 +39,7 @@ public class SmartDashboardControls {
     SmartDashboard.putData("Game/zeroAll", new ZeroAxisCommand());
     SmartDashboard.putData("Game/tridentSol", VACUUM.getTridentSolenoid());
     SmartDashboard.putData("Game/pumpSol", VACUUM.getPumpSolenoid());
+    SmartDashboard.putBoolean("Game/onTarget", VACUUM.onTarget());
   }
 
   private void addPitCommands() {
@@ -153,7 +154,6 @@ public class SmartDashboardControls {
   }
 
   private void addVacuumCommands() {
-
     SmartDashboard.putData("Vacuum/cool", new VacuumCooldownCommandGroup());
     SmartDashboard.putData(
         "Pit/TridentValveActivate",

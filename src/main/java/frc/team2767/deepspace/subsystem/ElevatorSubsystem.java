@@ -192,6 +192,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     setPosition(newPosition);
   }
 
+  @SuppressWarnings("Duplicates")
   public boolean onTarget() {
     int error = setpointTicks - elevator.getSelectedSensorPosition(0);
     if (Math.abs(error) > kCloseEnoughTicks) stableCount = 0;

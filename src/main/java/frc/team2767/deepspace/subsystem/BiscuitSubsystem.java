@@ -106,6 +106,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     telemetryService.register(new TalonItem(biscuit, "Biscuit"));
   }
 
+  @SuppressWarnings("Duplicates")
   private double getPreference(String name, double defaultValue) {
     String prefName = PREFS + name;
     Preferences preferences = Preferences.getInstance();
