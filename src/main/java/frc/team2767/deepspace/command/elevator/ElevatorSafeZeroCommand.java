@@ -14,6 +14,6 @@ public class ElevatorSafeZeroCommand extends InstantCommand {
 
   @Override
   protected void initialize() {
-    ELEVATOR.safeZero();
+    ELEVATOR.zero();
   }
 }
