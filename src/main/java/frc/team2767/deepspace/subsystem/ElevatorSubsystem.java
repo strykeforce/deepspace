@@ -8,13 +8,14 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team2767.deepspace.Robot;
+import frc.team2767.deepspace.health.Zeroable;
 import frc.team2767.deepspace.subsystem.safety.Limitable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
-public class ElevatorSubsystem extends Subsystem implements Limitable {
+public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable {
   private static final int ID = 30;
   private static final int BACKUP = 2767;
   private static final int TICKS_PER_INCH = 1120;
@@ -204,7 +205,8 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
     return false;
   }
 
-  public void safeZero() {
+  public boolean zero() {
+    boolean didZero = false;
     if (elevator.getSensorCollection().isRevLimitSwitchClosed()) {
       logger.info("Preferences zero = {}", kAbsoluteZeroTicks);
       logger.info("Relative position = {}", elevator.getSelectedSensorPosition());
@@ -215,11 +217,13 @@ public class ElevatorSubsystem extends Subsystem implements Limitable {
           elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF - kAbsoluteZeroTicks;
       elevator.setSelectedSensorPosition(offset);
       logger.info("New relative position = {}", offset);
+      didZero = true;
     } else {
       logger.error("Elevator zero failed - elevator not at bottom");
       elevator.configPeakOutputForward(0, 0);
       elevator.configPeakOutputReverse(0, 0);
     }
+    return didZero;
   }
 
   public void positionToZero() {
