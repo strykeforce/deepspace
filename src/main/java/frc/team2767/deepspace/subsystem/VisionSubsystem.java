@@ -128,8 +128,9 @@ public class VisionSubsystem extends Subsystem {
     logger.debug("set action to {}", action);
   }
 
-  public void setFieldDirection(FieldDirection direction) {
+  public void setFieldDirection(FieldDirection direction, double gyro) {
     this.direction = direction;
+    selectCamera(gyro);
     logger.debug("set direction to {}", direction);
   }
 

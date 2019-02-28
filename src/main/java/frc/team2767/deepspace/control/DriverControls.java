@@ -4,9 +4,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.ZeroGyroCommand;
-import frc.team2767.deepspace.command.biscuit.BiscuitNegativeCommand;
-import frc.team2767.deepspace.command.biscuit.BiscuitPositiveCommand;
-import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
@@ -15,10 +12,7 @@ import frc.team2767.deepspace.command.intake.IntakeUpCommand;
 import frc.team2767.deepspace.command.intake.ShoulderStopCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.log.SafetyLogDumpCommand;
-import frc.team2767.deepspace.command.sequences.CargoGroundPickupCommandGroup;
-import frc.team2767.deepspace.command.sequences.CoconutPickupCommandGroup;
-import frc.team2767.deepspace.command.sequences.PositionExecuteCommandGroup;
-import frc.team2767.deepspace.command.sequences.StowAllCommandGroup;
+import frc.team2767.deepspace.command.sequences.*;
 import frc.team2767.deepspace.command.vacuum.DeactivateValveCommand;
 import frc.team2767.deepspace.command.vision.LightsOffCommand;
 import frc.team2767.deepspace.command.vision.LightsOnCommand;
@@ -56,10 +50,10 @@ public class DriverControls {
     new JoystickButton(joystick, Button.DOWN.id).whenPressed(new StowAllCommandGroup());
 
     // biscuit
-    new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenPressed(new BiscuitPositiveCommand());
-    new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenReleased(new BiscuitStopCommand());
-    new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenPressed(new BiscuitNegativeCommand());
-    new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenReleased(new BiscuitStopCommand());
+    new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenPressed(new DeliverCommandGroup());
+    //    new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenReleased(new BiscuitStopCommand());
+    new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenPressed(new DeliverCommandGroup());
+    //    new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenReleased(new BiscuitStopCommand());
 
     //     elevator
     new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenPressed(new ElevatorOpenLoopUpCommand());
@@ -120,6 +114,10 @@ public class DriverControls {
   /** Right slider on back of controller. */
   public double getRightBackAxis() {
     return joystick.getRawAxis(Axis.RIGHT_BACK.id);
+  }
+
+  public boolean getToggle() {
+    return joystick.getRawButtonPressed(Toggle.LEFT_TOGGLE.id);
   }
 
   public enum Axis {
