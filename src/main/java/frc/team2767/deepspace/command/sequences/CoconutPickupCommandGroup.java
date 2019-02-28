@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
 import frc.team2767.deepspace.command.intake.IntakePositionCommand;
+import frc.team2767.deepspace.command.intake.RollerOutCommand;
 import frc.team2767.deepspace.command.intake.RollerStopCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.states.SetActionCommand;
@@ -17,13 +18,13 @@ import frc.team2767.deepspace.subsystem.*;
 public class CoconutPickupCommandGroup extends CommandGroup {
 
   public CoconutPickupCommandGroup() {
+    addSequential(new RollerOutCommand(0.2));
     addParallel(new PressureAccumulateCommandGroup());
     addParallel(new PressureSetCommand(VacuumSubsystem.kBallPressureInHg));
 
     addSequential(
         new CommandGroup() {
           {
-            addParallel(new RollerStopCommand());
             addParallel(new SetActionCommand(Action.PLACE));
             addParallel(new SetGamePieceCommand(GamePiece.CARGO));
             addParallel(new IntakePositionCommand(IntakeSubsystem.kMiddlePositionDeg));
@@ -50,6 +51,7 @@ public class CoconutPickupCommandGroup extends CommandGroup {
     addSequential(new WaitCommand(1.0)); // FIXME
     addSequential(new ElevatorSetPositionCommand(25.0));
     addSequential(new SetActionCommand(Action.PLACE));
+    addSequential(new RollerStopCommand());
     //        addSequential(new
     // ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition.kStowPositionDeg));
   }
