@@ -12,11 +12,11 @@ public class CargoGroundPickupCommandGroup extends CommandGroup {
 
   public CargoGroundPickupCommandGroup() {
     addSequential(new ElevatorSetPositionCommand(22.0));
+    addSequential(new RollerInCommand());
     addSequential(
         new CommandGroup() {
           {
             addParallel(new BiscuitSetPositionCommand(BiscuitSubsystem.kDownRightPositionDeg));
-            addParallel(new RollerInCommand());
             addParallel(new IntakePositionCommand(IntakeSubsystem.kLoadPositionDeg));
           }
         });
