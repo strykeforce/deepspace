@@ -14,6 +14,6 @@ public class ShoulderZeroCommand extends InstantCommand {
 
   @Override
   protected void initialize() {
-    INTAKE.shoulderZeroWithLimitSwitch();
+    INTAKE.zero();
   }
 }

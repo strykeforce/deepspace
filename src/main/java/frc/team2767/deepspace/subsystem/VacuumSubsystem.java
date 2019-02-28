@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team2767.deepspace.Robot;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
@@ -84,6 +85,10 @@ public class VacuumSubsystem extends Subsystem {
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
     telemetryService.register(new TalonItem(vacuum, "Vacuum"));
+  }
+
+  public List<TalonSRX> getTalons() {
+    return List.of(vacuum);
   }
 
   private void vacuumPreferences() {
