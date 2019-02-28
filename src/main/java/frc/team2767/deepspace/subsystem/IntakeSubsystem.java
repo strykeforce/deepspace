@@ -87,8 +87,8 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
     shoulderConfig.voltageMeasurementFilter = 32;
     shoulderConfig.velocityMeasurementWindow = 64;
     shoulderConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms;
-    shoulderConfig.motionCruiseVelocity = 700;
-    shoulderConfig.motionAcceleration = 1500;
+    shoulderConfig.motionCruiseVelocity = 1000;
+    shoulderConfig.motionAcceleration = 4000;
 
     TalonSRXConfiguration rollerConfig = new TalonSRXConfiguration();
     rollerConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
