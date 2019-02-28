@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.health.Zeroable;
 import frc.team2767.deepspace.subsystem.safety.Limitable;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
@@ -110,6 +111,14 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
     telemetryService.stop();
     telemetryService.register(new TalonItem(shoulder, "IntakeShoulder"));
     telemetryService.register(new TalonItem(roller, "IntakeRoller"));
+  }
+
+  public List<TalonSRX> getRollerTalon() {
+    return List.of(roller);
+  }
+
+  public List<TalonSRX> getShoulderTalon() {
+    return List.of(shoulder);
   }
 
   @SuppressWarnings("Duplicates")

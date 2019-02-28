@@ -29,7 +29,7 @@ public class DriveSubsystem extends Subsystem {
   private static final double ROBOT_LENGTH = 21.0;
   private static final double ROBOT_WIDTH = 26.0;
 
-  private final SwerveDrive swerve = getSwerve();
+  private final SwerveDrive swerve = configSwerve();
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   private TwistController twistController;
@@ -125,7 +125,11 @@ public class DriveSubsystem extends Subsystem {
   // SWERVE CONFIG
   ////////////////////////////////////////////////////////////////////////////
 
-  private SwerveDrive getSwerve() {
+  public SwerveDrive getSwerve() {
+    return swerve;
+  }
+
+  private SwerveDrive configSwerve() {
     SwerveDriveConfig config = new SwerveDriveConfig();
     config.wheels = getWheels();
     config.gyro = new AHRS(SPI.Port.kMXP);
