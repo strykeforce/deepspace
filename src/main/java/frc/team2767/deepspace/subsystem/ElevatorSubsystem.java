@@ -156,7 +156,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
   public void executePlan() {
     currentGamepiece = VISION.gamePiece;
     elevatorLevel = VISION.elevatorLevel;
-    double newPosition = 0;
+    double newPosition = (elevator.getSelectedSensorPosition() + TICKS_OFFSET) / TICKS_PER_INCH;
 
     switch (currentGamepiece) {
       case HATCH:

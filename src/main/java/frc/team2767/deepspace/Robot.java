@@ -1,5 +1,6 @@
 package frc.team2767.deepspace;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team2767.deepspace.control.Controls;
@@ -23,8 +24,10 @@ public class Robot extends TimedRobot {
   public static SafetySubsystem SAFETY;
   public static VacuumSubsystem VACUUM;
   public static CoconutSubsystem COCONUT;
+  public static ClimbSubsystem CLIMB;
 
   public static Controls CONTROLS;
+  private static boolean jumperRemoved;
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -38,6 +41,10 @@ public class Robot extends TimedRobot {
     SAFETY = new SafetySubsystem();
     VACUUM = new VacuumSubsystem();
     COCONUT = new CoconutSubsystem();
+    CLIMB = new ClimbSubsystem();
+
+    DigitalInput di = new DigitalInput(7);
+    jumperRemoved = di.get();
 
     // Controls initialize Commands so this should be instantiated last to prevent
     // NullPointerExceptions in commands that require() Subsystems above.
@@ -63,5 +70,9 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     Scheduler.getInstance().run();
+  }
+
+  public static boolean isEvent() {
+    return jumperRemoved;
   }
 }

@@ -44,6 +44,8 @@ public class VacuumSubsystem extends Subsystem {
     climbSolenoid = new Solenoid(0, Valve.CLIMB.ID);
 
     pumpSolenoid.set(true);
+    climbSolenoid.set(false);
+    tridentSolenoid.set(false);
     configTalon();
     vacuumPreferences();
   }
