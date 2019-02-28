@@ -5,6 +5,10 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.command.ZeroAxisCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
+import frc.team2767.deepspace.command.climb.ClimbCommand;
+import frc.team2767.deepspace.command.climb.LowerSuctionCupCommand;
+import frc.team2767.deepspace.command.climb.StopClimbCommand;
+import frc.team2767.deepspace.command.climb.UnwindClimbCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSafeZeroCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorZeroCommand;
@@ -49,6 +53,10 @@ public class SmartDashboardControls {
     addElevatorCommands();
     addVacuumCommands();
     SmartDashboard.putData("Pit/ElevatorZero", new ElevatorZeroCommand());
+    SmartDashboard.putData("Pit/LowerSuction", new LowerSuctionCupCommand());
+    SmartDashboard.putData("Pit/Climb", new ClimbCommand());
+    SmartDashboard.putData("Pit/Unwind", new UnwindClimbCommand());
+    SmartDashboard.putData("Pit/ClimbStop", new StopClimbCommand());
   }
 
   private void addTestCommands() {
