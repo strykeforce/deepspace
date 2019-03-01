@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
 import java.util.List;
 import org.slf4j.Logger;
@@ -148,6 +149,7 @@ public class VacuumSubsystem extends Subsystem {
     }
     if (stableCount > STABLE_THRESHOLD) {
       logger.debug("on target");
+      SmartDashboard.putBoolean("Game/onTarget", true);
       return true;
     }
     return false;
@@ -173,6 +175,7 @@ public class VacuumSubsystem extends Subsystem {
   }
 
   public void setPressure(double pressure) {
+    SmartDashboard.putBoolean("Game/onTarget", false);
     setpointCounts = (int) (COUNTS_PER_INHG * pressure + COUNTS_OFFSET);
     // setpointCounts = (int) (35.5 * pressure + 32);
     logger.debug("setting pressure to {}", setpointCounts);
