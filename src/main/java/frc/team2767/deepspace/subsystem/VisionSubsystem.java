@@ -46,7 +46,6 @@ public class VisionSubsystem extends Subsystem {
     SmartDashboard.putString("Action", action.toString());
     SmartDashboard.putString("FieldDirection", direction.toString());
     SmartDashboard.putString("ElevatorLevel", elevatorLevel.toString());
-
   }
 
   public double getCorrectedRange() {
