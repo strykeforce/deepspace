@@ -153,13 +153,11 @@ public class VacuumSubsystem extends Subsystem {
 
     if (error > goodEnough) {
       stableCount = 0;
-      SmartDashboard.putBoolean("Game/onTarget", false);
     } else {
       stableCount++;
     }
     if (stableCount > STABLE_THRESHOLD) {
       logger.debug("on target");
-      SmartDashboard.putBoolean("Game/onTarget", true);
       return true;
     }
     return false;
