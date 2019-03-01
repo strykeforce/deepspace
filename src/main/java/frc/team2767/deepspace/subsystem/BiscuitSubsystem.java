@@ -218,24 +218,11 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
         if (currentGamePiece == GamePiece.CARGO && targetLevel == ElevatorLevel.THREE) {
           switch (targetDirection) {
             case LEFT:
-              switch (currentAngle) {
-                case FORWARD:
-                  targetBiscuitPositionDeg = kTiltUpLeftPositionDeg;
-                  break;
-                case BACKWARD:
-                  targetBiscuitPositionDeg = kTiltUpRightPositionDeg;
-                  break;
-              }
+              targetBiscuitPositionDeg = kTiltUpLeftPositionDeg;
               break;
             case RIGHT:
-              switch (currentAngle) {
-                case FORWARD:
-                  targetBiscuitPositionDeg = kTiltUpRightPositionDeg;
-                  break;
-                case BACKWARD:
-                  targetBiscuitPositionDeg = kTiltUpLeftPositionDeg;
-                  break;
-              }
+              targetBiscuitPositionDeg = kTiltUpLeftPositionDeg;
+              break;
             case NOTSET:
               logger.warn("Direction not set");
               break;
@@ -243,24 +230,11 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
         } else {
           switch (targetDirection) {
             case LEFT:
-              switch (currentAngle) {
-                case FORWARD:
-                  targetBiscuitPositionDeg = kLeftPositionDeg;
-                  break;
-                case BACKWARD:
-                  targetBiscuitPositionDeg = kRightPositionDeg;
-                  break;
-              }
+              targetBiscuitPositionDeg = kLeftPositionDeg;
               break;
             case RIGHT:
-              switch (currentAngle) {
-                case FORWARD:
-                  targetBiscuitPositionDeg = kRightPositionDeg;
-                  break;
-                case BACKWARD:
-                  targetBiscuitPositionDeg = kLeftPositionDeg;
-                  break;
-              }
+              targetBiscuitPositionDeg = kRightPositionDeg;
+              break;
             case NOTSET:
               logger.warn("Direction not set");
               break;
