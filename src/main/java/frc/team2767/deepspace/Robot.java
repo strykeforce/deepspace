@@ -23,7 +23,6 @@ public class Robot extends TimedRobot {
   public static IntakeSubsystem INTAKE;
   public static SafetySubsystem SAFETY;
   public static VacuumSubsystem VACUUM;
-  public static CoconutSubsystem COCONUT;
   public static ClimbSubsystem CLIMB;
 
   public static Controls CONTROLS;
@@ -40,7 +39,6 @@ public class Robot extends TimedRobot {
     INTAKE = new IntakeSubsystem();
     SAFETY = new SafetySubsystem();
     VACUUM = new VacuumSubsystem();
-    COCONUT = new CoconutSubsystem();
     CLIMB = new ClimbSubsystem();
 
     DigitalInput di = new DigitalInput(7);
