@@ -5,14 +5,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 
-public class PressureSetCommand extends Command {
+public class SmartdashboardTemperatureCommand extends Command {
 
   private static final VacuumSubsystem VACUUM = Robot.VACUUM;
-  private double pressure;
 
-  public PressureSetCommand(double pressure) {
-    this.pressure = pressure;
-  }
+  public SmartdashboardTemperatureCommand() {}
 
   @Override
   protected void execute() {
@@ -20,12 +17,7 @@ public class PressureSetCommand extends Command {
   }
 
   @Override
-  protected void initialize() {
-    VACUUM.setPressure(pressure);
-  }
-
-  @Override
   protected boolean isFinished() {
-    return VACUUM.onTarget();
+    return false;
   }
 }

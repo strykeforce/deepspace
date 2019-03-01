@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -24,6 +25,7 @@ public class VacuumSubsystem extends Subsystem {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final int VACUUM_ID = 60;
   private final int STABLE_THRESHOLD = 4;
+  private final int TEMPERATURE_PIN = 0;
   String PREFS_NAME = "VacuumSubsystem/Settings/";
   int BACKUP = 2767;
   private int goodEnough = 100;
@@ -34,6 +36,7 @@ public class VacuumSubsystem extends Subsystem {
   private Solenoid pumpSolenoid;
 
   private TalonSRX vacuum = new TalonSRX(VACUUM_ID);
+  private AnalogInput analogInput;
 
   public VacuumSubsystem() {
 
@@ -46,6 +49,8 @@ public class VacuumSubsystem extends Subsystem {
     pumpSolenoid.set(true);
     climbSolenoid.set(false);
     tridentSolenoid.set(false);
+
+    analogInput = new AnalogInput(0);
     configTalon();
     vacuumPreferences();
   }
@@ -136,6 +141,10 @@ public class VacuumSubsystem extends Subsystem {
       default:
         logger.warn("could not set {} to {}", valve, state);
     }
+  }
+
+  public int getPumpTemperature() {
+    return analogInput.getValue();
   }
 
   public boolean onTarget() {

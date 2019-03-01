@@ -13,5 +13,6 @@ public class VacuumCooldownCommandGroup extends CommandGroup {
             }));
 
     addSequential(new VacuumOpenLoopCommand(0.2));
+    addSequential(new SmartdashboardTemperatureCommand());
   }
 }
