@@ -4,7 +4,23 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
+import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
+import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
+import frc.team2767.deepspace.command.intake.RollerOutCommand;
+import frc.team2767.deepspace.command.intake.RollerStopCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
+import frc.team2767.deepspace.command.sequences.CoconutPickupCommandGroup;
+import frc.team2767.deepspace.command.sequences.PlayerCargoCommandGroup;
+import frc.team2767.deepspace.command.sequences.PlayerHatchCommandGroup;
+import frc.team2767.deepspace.command.sequences.StowAllCommandGroup;
+import frc.team2767.deepspace.command.states.SetFieldDirectionCommand;
+import frc.team2767.deepspace.command.states.SetLevelCommand;
+import frc.team2767.deepspace.command.vacuum.ActivateValveCommand;
+import frc.team2767.deepspace.control.trigger.*;
+import frc.team2767.deepspace.subsystem.ElevatorLevel;
+import frc.team2767.deepspace.subsystem.FieldDirection;
+import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,29 +33,74 @@ public class XboxControls {
   public XboxControls(int port) {
     xbox = new Joystick(port);
 
-    // Buttons
-    new JoystickButton(xbox, Button.A.id).whenPressed(log(Button.A));
-    new JoystickButton(xbox, Button.B.id).whenPressed(log(Button.B));
-    new JoystickButton(xbox, Button.X.id).whenPressed(log(Button.X));
-    new JoystickButton(xbox, Button.Y.id).whenPressed(log(Button.Y));
-    new JoystickButton(xbox, Button.START.id).whenPressed(log(Button.START));
-    new JoystickButton(xbox, Button.BACK.id).whenPressed(log(Button.BACK));
-    new JoystickButton(xbox, Button.LEFT_STICK.id).whenPressed(log(Button.LEFT_STICK));
-    new JoystickButton(xbox, Button.RIGHT_STICK.id).whenPressed(log(Button.RIGHT_STICK));
+    Trigger directionPadAny =
+        new Trigger() {
+          @Override
+          public boolean get() {
+            return xbox.getPOV(Dpad.Dpad.id) != -1;
+          }
+        };
+
+    Trigger RightStickUp =
+        new Trigger() {
+          @Override
+          public boolean get() {
+            return xbox.getRawAxis(Axis.RIGHT_X.id) > 0.1;
+          }
+        };
+
+    Trigger RightStickDown =
+        new Trigger() {
+          @Override
+          public boolean get() {
+            return xbox.getRawAxis(Axis.RIGHT_Y.id) < -0.1;
+          }
+        };
+
+    Trigger LeftStickRight =
+        new Trigger() {
+          @Override
+          public boolean get() {
+            return xbox.getRawAxis(Axis.LEFT_X.id) > 0.1;
+          }
+        };
+
+    Trigger LeftStickLeft =
+        new Trigger() {
+          @Override
+          public boolean get() {
+            return xbox.getRawAxis(Axis.LEFT_X.id) < -0.1;
+          }
+        };
+
+    // ELEVATOR
+    new JoystickButton(xbox, Button.A.id).whenPressed(new SetLevelCommand(ElevatorLevel.ONE));
+    new JoystickButton(xbox, Button.B.id).whenPressed(new SetLevelCommand(ElevatorLevel.TWO));
+    new JoystickButton(xbox, Button.X.id).whenPressed(new StowAllCommandGroup());
+    new JoystickButton(xbox, Button.Y.id).whenPressed(new SetLevelCommand(ElevatorLevel.THREE));
+
+    RightStickUp.whenActive(new ElevatorOpenLoopUpCommand());
+    RightStickUp.whenInactive(new ElevatorStopCommand());
+    RightStickDown.whenActive(new ElevatorOpenLoopDownCommand());
+    RightStickDown.whenInactive(new ElevatorStopCommand());
+
+    // FIELD DIRECTION STATE
+    LeftStickLeft.whenActive(new SetFieldDirectionCommand(FieldDirection.LEFT));
+    LeftStickRight.whenActive(new SetFieldDirectionCommand(FieldDirection.RIGHT));
 
     // Shoulders
-    new JoystickButton(xbox, Shoulder.LEFT.id).whenPressed(log(Shoulder.LEFT));
-    new JoystickButton(xbox, Shoulder.RIGHT.id).whenPressed(log(Shoulder.RIGHT));
-
-    // Triggers
-    new LeftTrigger(this).whenActive(log(Axis.LEFT_TRIGGER));
-    new RightTrigger(this).whenActive(log(Axis.RIGHT_TRIGGER));
+    new JoystickButton(xbox, XboxControls.Shoulder.RIGHT.id)
+        .whenPressed(new PlayerCargoCommandGroup());
+    new JoystickButton(xbox, XboxControls.Shoulder.RIGHT.id)
+        .whenReleased(new CoconutPickupCommandGroup());
+    new JoystickButton(xbox, XboxControls.Shoulder.LEFT.id)
+        .whenPressed(new PlayerHatchCommandGroup());
+    new JoystickButton(xbox, XboxControls.Shoulder.LEFT.id)
+        .whenReleased(new ActivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
 
     // Dpad
-    new DpadLeft(this).whenActive(new LogCommand(logger, "DPAD kLeftPosition"));
-    new DpadRight(this).whenActive(new LogCommand(logger, "DPAD kRightPosition"));
-    new DpadUp(this).whenActive(new LogCommand(logger, "DPAD kStowPositionDeg"));
-    new DpadDown(this).whenActive(new LogCommand(logger, "DPAD kDownPosition"));
+    directionPadAny.whenActive(new RollerOutCommand());
+    directionPadAny.whenInactive(new RollerStopCommand());
   }
 
   public double getLX() {
@@ -124,58 +185,6 @@ public class XboxControls {
 
     Dpad(int id) {
       this.id = id;
-    }
-  }
-
-  private class DpadLeft extends Trigger {
-    private XboxControls xbox;
-
-    public DpadLeft(XboxControls xbox) {
-      this.xbox = xbox;
-    }
-
-    @Override
-    public boolean get() {
-      return xbox.getDpad() == 270;
-    }
-  }
-
-  private class DpadRight extends Trigger {
-    private XboxControls xbox;
-
-    public DpadRight(XboxControls xbox) {
-      this.xbox = xbox;
-    }
-
-    @Override
-    public boolean get() {
-      return xbox.getDpad() == 90;
-    }
-  }
-
-  private class DpadUp extends Trigger {
-    private XboxControls xbox;
-
-    public DpadUp(XboxControls xbox) {
-      this.xbox = xbox;
-    }
-
-    @Override
-    public boolean get() {
-      return xbox.getDpad() == 0;
-    }
-  }
-
-  private class DpadDown extends Trigger {
-    private XboxControls xbox;
-
-    public DpadDown(XboxControls xbox) {
-      this.xbox = xbox;
-    }
-
-    @Override
-    public boolean get() {
-      return xbox.getDpad() == 180;
     }
   }
 

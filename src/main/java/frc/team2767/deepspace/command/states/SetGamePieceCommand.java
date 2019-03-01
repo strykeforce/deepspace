@@ -12,7 +12,6 @@ public class SetGamePieceCommand extends InstantCommand {
 
   public SetGamePieceCommand(GamePiece gamePiece) {
     this.gamePiece = gamePiece;
-    requires(VISION);
   }
 
   @Override

@@ -153,6 +153,8 @@ class TwistController(
                 velocity = motionProfile.currVel + kPDistance * positionError
                 forward = forwardComponent * velocity
                 strafe = strafeComponent * velocity
+
+                logger.debug { "forward = $forward strafe = $strafe" }
                 yaw = (kPYaw * yawError).coerceIn(-kMaxYaw, kMaxYaw)
                 updateYawDistanceCorrection()
 

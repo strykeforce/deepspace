@@ -12,7 +12,6 @@ public class SetLevelCommand extends InstantCommand {
 
   public SetLevelCommand(ElevatorLevel level) {
     this.level = level;
-    requires(VISION);
   }
 
   @Override

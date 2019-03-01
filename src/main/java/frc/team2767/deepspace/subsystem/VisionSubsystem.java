@@ -7,6 +7,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +41,11 @@ public class VisionSubsystem extends Subsystem {
     usbCamera = cameraServer.startAutomaticCapture();
     logger.debug("camera is connected = {}", usbCamera.isConnected());
     lightsOutput.set(true);
+
+    SmartDashboard.putString("GamePiece", gamePiece.toString());
+    SmartDashboard.putString("Action", action.toString());
+    SmartDashboard.putString("FieldDirection", direction.toString());
+    SmartDashboard.putString("ElevatorLevel", elevatorLevel.toString());
   }
 
   public double getCorrectedRange() {
@@ -120,21 +126,25 @@ public class VisionSubsystem extends Subsystem {
 
   public void setGamePiece(GamePiece gamePiece) {
     this.gamePiece = gamePiece;
+    SmartDashboard.putString("GamePiece", gamePiece.toString());
     logger.debug("set gamepiece to {}", gamePiece);
   }
 
   public void setAction(Action action) {
     this.action = action;
+    SmartDashboard.putString("Action", action.toString());
     logger.debug("set action to {}", action);
   }
 
   public void setFieldDirection(FieldDirection direction) {
     this.direction = direction;
+    SmartDashboard.putString("FieldDirection", direction.toString());
     logger.debug("set direction to {}", direction);
   }
 
   public void setElevatorLevel(ElevatorLevel elevatorLevel) {
     this.elevatorLevel = elevatorLevel;
+    SmartDashboard.putString("ElevatorLevel", elevatorLevel.toString());
     logger.debug("set elevator level to {}", elevatorLevel);
   }
 

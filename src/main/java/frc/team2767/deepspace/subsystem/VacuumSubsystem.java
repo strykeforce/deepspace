@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team2767.deepspace.Robot;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
@@ -15,19 +16,19 @@ import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
 public class VacuumSubsystem extends Subsystem {
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
-  String PREFS_NAME = "VacuumSubsystem/Settings/";
-  int BACKUP = 2767;
-  private final int VACUUM_ID = 60;
+  private static final double COUNTS_PER_INHG = 35.533;
+  private static final double COUNTS_OFFSET = 31.98;
   public static double kBallPressureInHg;
   public static double kHatchPressureInHg;
   public static double kClimbPressureInHg;
-  private static final double COUNTS_PER_INHG = 35.533;
-  private static final double COUNTS_OFFSET = 31.98;
-
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private final int VACUUM_ID = 60;
+  private final int STABLE_THRESHOLD = 4;
+  String PREFS_NAME = "VacuumSubsystem/Settings/";
+  int BACKUP = 2767;
   private int goodEnough = 100;
   private int setpointCounts;
-
+  private int stableCount;
   private Solenoid tridentSolenoid;
   private Solenoid climbSolenoid;
   private Solenoid pumpSolenoid;
@@ -35,11 +36,16 @@ public class VacuumSubsystem extends Subsystem {
   private TalonSRX vacuum = new TalonSRX(VACUUM_ID);
 
   public VacuumSubsystem() {
+
+    stableCount = 0;
+    setpointCounts = 0;
     tridentSolenoid = new Solenoid(0, Valve.TRIDENT.ID);
     pumpSolenoid = new Solenoid(0, Valve.PUMP.ID);
     climbSolenoid = new Solenoid(0, Valve.CLIMB.ID);
 
     pumpSolenoid.set(true);
+    climbSolenoid.set(false);
+    tridentSolenoid.set(false);
     configTalon();
     vacuumPreferences();
   }
@@ -81,12 +87,17 @@ public class VacuumSubsystem extends Subsystem {
     telemetryService.register(new TalonItem(vacuum, "Vacuum"));
   }
 
+  public List<TalonSRX> getTalons() {
+    return List.of(vacuum);
+  }
+
   private void vacuumPreferences() {
     kBallPressureInHg = (int) getPreference("ball_pressure_inHg", 13.17);
     kHatchPressureInHg = (int) getPreference("hatch_pressure_inHg", 16);
     kClimbPressureInHg = (int) getPreference("climb_pressure_inHg", 24.4);
   }
 
+  @SuppressWarnings("Duplicates")
   private double getPreference(String name, double defaultValue) {
     String prefName = PREFS_NAME + name;
     Preferences preferences = Preferences.getInstance();
@@ -128,7 +139,14 @@ public class VacuumSubsystem extends Subsystem {
   }
 
   public boolean onTarget() {
-    if (Math.abs(vacuum.getSelectedSensorPosition() - setpointCounts) < goodEnough) {
+    double error = Math.abs(vacuum.getSelectedSensorPosition() - setpointCounts);
+
+    if (error > goodEnough) {
+      stableCount = 0;
+    } else {
+      stableCount++;
+    }
+    if (stableCount > STABLE_THRESHOLD) {
       logger.debug("on target");
       return true;
     }
@@ -140,6 +158,11 @@ public class VacuumSubsystem extends Subsystem {
     vacuum.set(ControlMode.PercentOutput, setpoint);
   }
 
+  public void dump() {
+    logger.info("vacuum pressure in inHg = {}", getPressure());
+    logger.info("vacuum pressure in counts = {}", getCounts());
+  }
+
   public double getPressure() {
     return ((vacuum.getSelectedSensorPosition() - COUNTS_OFFSET) / COUNTS_PER_INHG);
     // return vacuum.getSelectedSensorPosition();
@@ -147,11 +170,6 @@ public class VacuumSubsystem extends Subsystem {
 
   public int getCounts() {
     return vacuum.getSelectedSensorPosition();
-  }
-
-  public void dump() {
-    logger.info("vacuum pressure in inHg = {}", getPressure());
-    logger.info("vacuum pressure in counts = {}", getCounts());
   }
 
   public void setPressure(double pressure) {

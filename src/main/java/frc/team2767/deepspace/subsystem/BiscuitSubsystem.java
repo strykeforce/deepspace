@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team2767.deepspace.Robot;
+import frc.team2767.deepspace.health.Zeroable;
 import frc.team2767.deepspace.subsystem.safety.Limitable;
 import java.util.List;
 import org.slf4j.Logger;
@@ -15,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
-public class BiscuitSubsystem extends Subsystem implements Limitable {
+public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
 
   private static final String PREFS = "BiscuitSubsystem/Position/";
   private static final int BACKUP = 2767;
@@ -87,8 +88,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     biscuitConfig.peakCurrentDuration = 40;
     biscuitConfig.peakCurrentLimit = 25;
     biscuitConfig.continuousCurrentLimit = 20;
-    biscuitConfig.peakOutputForward = 1.0;
-    biscuitConfig.peakOutputReverse = -1.0;
 
     biscuitConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms;
     biscuitConfig.velocityMeasurementWindow = 64;
@@ -108,6 +107,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     telemetryService.register(new TalonItem(biscuit, "Biscuit"));
   }
 
+  @SuppressWarnings("Duplicates")
   private double getPreference(String name, double defaultValue) {
     String prefName = PREFS + name;
     Preferences preferences = Preferences.getInstance();
@@ -168,7 +168,8 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     return List.of(biscuit);
   }
 
-  public void zero() {
+  public boolean zero() {
+    boolean didZero = false;
     if (!biscuit.getSensorCollection().isFwdLimitSwitchClosed()) {
       int absPos = biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF;
       int relPos = biscuit.getSelectedSensorPosition();
@@ -181,6 +182,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
 
       biscuit.setSelectedSensorPosition(offset);
       logger.info("New relative position = {}", offset);
+      didZero = true;
     } else {
       logger.error("Intake zero failed - biscuit not vertical");
       biscuit.configPeakOutputForward(0, 0);
@@ -188,6 +190,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
     }
     biscuit.configForwardLimitSwitchSource(
         LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
+    return didZero;
   }
 
   @SuppressWarnings("Duplicates")
@@ -215,24 +218,11 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
         if (currentGamePiece == GamePiece.CARGO && targetLevel == ElevatorLevel.THREE) {
           switch (targetDirection) {
             case LEFT:
-              switch (currentAngle) {
-                case FORWARD:
-                  targetBiscuitPositionDeg = kTiltUpLeftPositionDeg;
-                  break;
-                case BACKWARD:
-                  targetBiscuitPositionDeg = kTiltUpRightPositionDeg;
-                  break;
-              }
+              targetBiscuitPositionDeg = kTiltUpLeftPositionDeg;
               break;
             case RIGHT:
-              switch (currentAngle) {
-                case FORWARD:
-                  targetBiscuitPositionDeg = kTiltUpRightPositionDeg;
-                  break;
-                case BACKWARD:
-                  targetBiscuitPositionDeg = kTiltUpLeftPositionDeg;
-                  break;
-              }
+              targetBiscuitPositionDeg = kTiltUpLeftPositionDeg;
+              break;
             case NOTSET:
               logger.warn("Direction not set");
               break;
@@ -240,24 +230,11 @@ public class BiscuitSubsystem extends Subsystem implements Limitable {
         } else {
           switch (targetDirection) {
             case LEFT:
-              switch (currentAngle) {
-                case FORWARD:
-                  targetBiscuitPositionDeg = kLeftPositionDeg;
-                  break;
-                case BACKWARD:
-                  targetBiscuitPositionDeg = kRightPositionDeg;
-                  break;
-              }
+              targetBiscuitPositionDeg = kLeftPositionDeg;
               break;
             case RIGHT:
-              switch (currentAngle) {
-                case FORWARD:
-                  targetBiscuitPositionDeg = kRightPositionDeg;
-                  break;
-                case BACKWARD:
-                  targetBiscuitPositionDeg = kLeftPositionDeg;
-                  break;
-              }
+              targetBiscuitPositionDeg = kRightPositionDeg;
+              break;
             case NOTSET:
               logger.warn("Direction not set");
               break;

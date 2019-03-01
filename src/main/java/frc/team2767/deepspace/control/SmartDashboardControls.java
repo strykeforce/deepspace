@@ -5,6 +5,10 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.command.ZeroAxisCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
+import frc.team2767.deepspace.command.climb.ClimbCommand;
+import frc.team2767.deepspace.command.climb.LowerSuctionCupCommand;
+import frc.team2767.deepspace.command.climb.StopClimbCommand;
+import frc.team2767.deepspace.command.climb.UnwindClimbCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSafeZeroCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorZeroCommand;
@@ -15,6 +19,7 @@ import frc.team2767.deepspace.command.log.IntakeDumpCommand;
 import frc.team2767.deepspace.command.log.VacuumDumpCommand;
 import frc.team2767.deepspace.command.states.SetActionCommand;
 import frc.team2767.deepspace.command.states.SetGamePieceCommand;
+import frc.team2767.deepspace.command.twist.OrthogonalMovementCommand;
 import frc.team2767.deepspace.command.vacuum.*;
 import frc.team2767.deepspace.command.vision.LightsOffCommand;
 import frc.team2767.deepspace.command.vision.LightsOnCommand;
@@ -39,6 +44,7 @@ public class SmartDashboardControls {
     SmartDashboard.putData("Game/zeroAll", new ZeroAxisCommand());
     SmartDashboard.putData("Game/tridentSol", VACUUM.getTridentSolenoid());
     SmartDashboard.putData("Game/pumpSol", VACUUM.getPumpSolenoid());
+    SmartDashboard.putBoolean("Game/onTarget", VACUUM.onTarget());
   }
 
   private void addPitCommands() {
@@ -47,6 +53,10 @@ public class SmartDashboardControls {
     addElevatorCommands();
     addVacuumCommands();
     SmartDashboard.putData("Pit/ElevatorZero", new ElevatorZeroCommand());
+    SmartDashboard.putData("Pit/LowerSuction", new LowerSuctionCupCommand());
+    SmartDashboard.putData("Pit/Climb", new ClimbCommand());
+    SmartDashboard.putData("Pit/Unwind", new UnwindClimbCommand());
+    SmartDashboard.putData("Pit/ClimbStop", new StopClimbCommand());
   }
 
   private void addTestCommands() {
@@ -136,6 +146,7 @@ public class SmartDashboardControls {
   }
 
   private void addVisionCommands() {
+    SmartDashboard.putData("Game/OrthogMvmt", new OrthogonalMovementCommand());
     SmartDashboard.putData("Pit/LightsOn", new LightsOnCommand());
     SmartDashboard.putData("Pit/LightsOff", new LightsOffCommand());
   }
@@ -153,7 +164,6 @@ public class SmartDashboardControls {
   }
 
   private void addVacuumCommands() {
-
     SmartDashboard.putData("Vacuum/cool", new VacuumCooldownCommandGroup());
     SmartDashboard.putData(
         "Pit/TridentValveActivate",
