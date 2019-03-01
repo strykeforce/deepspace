@@ -221,7 +221,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
               targetBiscuitPositionDeg = kTiltUpLeftPositionDeg;
               break;
             case RIGHT:
-              targetBiscuitPositionDeg = kTiltUpLeftPositionDeg;
+              targetBiscuitPositionDeg = kTiltUpRightPositionDeg;
               break;
             case NOTSET:
               logger.warn("Direction not set");
