@@ -71,7 +71,6 @@ public class ClimbSubsystem extends Subsystem {
     grenadePinRelease = getPrefs("grenade_release", 0.6); // FIXME
   }
 
-
   @SuppressWarnings("Duplicates")
   private double getPrefs(String name, double defaultValue) {
     String prefName = PREFS + name;
