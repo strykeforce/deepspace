@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team2767.deepspace.command.ZeroAxisCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
@@ -34,40 +33,45 @@ public class XboxControls {
   public XboxControls(int port) {
     xbox = new Joystick(port);
 
-    Trigger directionPadAny = new Trigger() {
-      @Override
-      public boolean get() {
-        return xbox.getPOV(Dpad.Dpad.id) != -1;
-      }
-    };
+    Trigger directionPadAny =
+        new Trigger() {
+          @Override
+          public boolean get() {
+            return xbox.getPOV(Dpad.Dpad.id) != -1;
+          }
+        };
 
-    Trigger RightStickUp = new Trigger() {
-      @Override
-      public boolean get() {
-        return xbox.getRawAxis(Axis.RIGHT_X.id) > 0.1;
-      }
-    };
+    Trigger RightStickUp =
+        new Trigger() {
+          @Override
+          public boolean get() {
+            return xbox.getRawAxis(Axis.RIGHT_X.id) > 0.1;
+          }
+        };
 
-    Trigger RightStickDown = new Trigger() {
-      @Override
-      public boolean get() {
-        return xbox.getRawAxis(Axis.RIGHT_Y.id) < -0.1;
-      }
-    };
+    Trigger RightStickDown =
+        new Trigger() {
+          @Override
+          public boolean get() {
+            return xbox.getRawAxis(Axis.RIGHT_Y.id) < -0.1;
+          }
+        };
 
-    Trigger LeftStickRight = new Trigger() {
-      @Override
-      public boolean get() {
-        return xbox.getRawAxis(Axis.LEFT_X.id) > 0.1;
-      }
-    };
+    Trigger LeftStickRight =
+        new Trigger() {
+          @Override
+          public boolean get() {
+            return xbox.getRawAxis(Axis.LEFT_X.id) > 0.1;
+          }
+        };
 
-    Trigger LeftStickLeft = new Trigger() {
-      @Override
-      public boolean get() {
-        return xbox.getRawAxis(Axis.LEFT_X.id) < -0.1;
-      }
-    };
+    Trigger LeftStickLeft =
+        new Trigger() {
+          @Override
+          public boolean get() {
+            return xbox.getRawAxis(Axis.LEFT_X.id) < -0.1;
+          }
+        };
 
     // ELEVATOR
     new JoystickButton(xbox, Button.A.id).whenPressed(new SetLevelCommand(ElevatorLevel.ONE));
@@ -80,19 +84,19 @@ public class XboxControls {
     RightStickDown.whenActive(new ElevatorOpenLoopDownCommand());
     RightStickDown.whenInactive(new ElevatorStopCommand());
 
-    //FIELD DIRECTION STATE
+    // FIELD DIRECTION STATE
     LeftStickLeft.whenActive(new SetFieldDirectionCommand(FieldDirection.LEFT));
     LeftStickRight.whenActive(new SetFieldDirectionCommand(FieldDirection.RIGHT));
 
     // Shoulders
     new JoystickButton(xbox, XboxControls.Shoulder.RIGHT.id)
-            .whenPressed(new PlayerCargoCommandGroup());
+        .whenPressed(new PlayerCargoCommandGroup());
     new JoystickButton(xbox, XboxControls.Shoulder.RIGHT.id)
-            .whenReleased(new CoconutPickupCommandGroup());
+        .whenReleased(new CoconutPickupCommandGroup());
     new JoystickButton(xbox, XboxControls.Shoulder.LEFT.id)
-            .whenPressed(new PlayerHatchCommandGroup());
+        .whenPressed(new PlayerHatchCommandGroup());
     new JoystickButton(xbox, XboxControls.Shoulder.LEFT.id)
-            .whenReleased(new ActivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
+        .whenReleased(new ActivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
 
     // Dpad
     directionPadAny.whenActive(new RollerOutCommand());
