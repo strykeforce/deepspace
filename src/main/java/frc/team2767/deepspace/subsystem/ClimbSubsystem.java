@@ -71,6 +71,8 @@ public class ClimbSubsystem extends Subsystem {
     grenadePinRelease = getPrefs("grenade_release", 0.6); // FIXME
   }
 
+
+  @SuppressWarnings("Duplicates")
   private double getPrefs(String name, double defaultValue) {
     String prefName = PREFS + name;
     Preferences preferences = Preferences.getInstance();
@@ -82,6 +84,7 @@ public class ClimbSubsystem extends Subsystem {
     return pref;
   }
 
+  @SuppressWarnings("Duplicates")
   private void configTalon() {
     TalonSRXConfiguration leftSlaveConfig = new TalonSRXConfiguration();
     leftSlaveConfig.peakOutputReverse = 0;

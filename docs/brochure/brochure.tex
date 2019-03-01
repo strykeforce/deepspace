@@ -17,23 +17,34 @@
  \vspace{0.5in}
  \includegraphics[scale=0.2]{assets/strykeforce}\\
  \vspace{0.5in}
- \LARGE\textbf{Software Development Team 2019}
+ \LARGE\textbf{Software Development Team 2019}\vspace{0.25in}\\ www.strykeforce.org\\www.github.com/strykeforce
  \vfill
 % \includegraphics[scale=0.4]{assets/FIRST-FRC18-PowerUp-Stack}
 \end{center}
+\clearpage
 
 \section{Software Designed for Drivers}
 We strive to meld high-performance hardware with custom software to provide our drive team with the best robot possible. Our \textbf{Third Coast Swerve Drive} software has historically provided unmatched maneuverability and response.
 
 \section{Precision Control}
 
-StrykeForce delved deeper into motion profiling this year than ever before.  Using the CTR-Electronics Talon SRX Motion Magic functionality, the programming team controlled the motion-profile by accelerating at a specified acceleration to a setpoint.  This feature in the software allows the robot to make precise and repeatable actuator movements.
+Stryke Force delved deep into motion profiling this year.  Using the CTR-Electronics Talon SRX Motion Magic functionality, the programming team controls the motion-profile using acceleration, velocity, current limit, and PID parameters.  This feature in the software allows the robot to make precise and repeatable movements in all subsystems.
 
 \section{``Robot Safety Glasses''}
 
-At Stryke Force, safety is our primary concern so it's only natural that safety rules apply to all, human and otherwise. Programmers are using a custom \textbf{Safety Subsystem} that interfaces with the Elevator, Biscuit, and Intake subsystems. Every 20ms, all three subsystems update their current state and then the Safety Subsystem runs through a matrix of legal and safe positions updating Talon SRX forward and reverse soft limits. Since the axes cannot pass the soft limits, the programmers have ensured the robot's safety.
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.3]{assets/safety}
+\end{figure}
+
+At Stryke Force, safety is our primary concern so it's only natural that safety rules apply to all, human and otherwise: robot. Programmers are using a custom \textbf{Safety Subsystem} that interfaces with the Elevator, Biscuit, and Intake subsystems. Every 20ms, all three subsystems update their current state and then the Safety Subsystem runs through a matrix of legal and safe positions updating Talon SRX forward and reverse soft limits. Since the axes cannot pass the soft limits, the programmers ensure the robot's safety.
 
 \section{``Twisting our way through the sandstorm''}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.75]{assets/vision}
+\end{figure}
 
 The software team focused on helping our driver perform during Sandstorm. In addition to pathfinding using Pathfinder, we're implementing \textbf{computer vision} (CV) to guide our driver through Sandstorm. Since vision processing significantly affects CPU performance, we decided to use a Raspberry Pi co-processor. Our custom Python CV application \textit{Pyeye} uses OpenCV to calculate the range and bearing to targets which we then publish to NetworkTables.
 
@@ -41,7 +52,7 @@ After transforming the range and bearing from the camera coordinate system, the 
 
 \section{Custom Development Tools}
 
-The software team also builds and maintains custom development tools called \textbf{Third Coast Telemetry} (TCT).  These tools are used by the entire team to test and tune drive systems, actuators and sensors. The Stryke Force Grapher application allows the team to log and analyze the robot performance and perfect the tuning by plotting data received from the RoboRIO.  Stryke Force is able to chart almost any data possible from the RoboRIO.  TCT and the Grapher applications provide Stryke Force with deep insight into robot performance and are invaluable to the development process.
+The software team also builds and maintains custom development tools.  These tools are used by the entire team to test and tune drive systems, actuators and sensors. The Stryke Force \textbf{Grapher} application allows the team to log and analyze the robot performance and perfect the tuning by plotting data received from the RoboRIO.  Stryke Force is able to chart almost any data possible from the RoboRIO.  \textbf{Third Coast Telemetry} (TCT) and the Grapher applications provide Stryke Force with deep insight into robot performance and are invaluable to the development process.
 
 \begin{figure}[H]
 	\centering
@@ -53,20 +64,25 @@ The software team also builds and maintains custom development tools called \tex
 	\includegraphics[scale=0.35]{assets/tct}
 \end{figure}
 
-Similar to the Grapher, Keeper logs data recorded from the robot during the execution of a command. The data is then made available through a Dash app using PostgreSQL and Plotly.
+Similar to the Grapher, \textbf{Keeper} logs data recorded from the robot during the execution of a command. The data is then made available through a Dash app using PostgreSQL and Plotly.
 
-Stryke Force programmers are using a Jupyter Notebook server this year to test CV applications and algorithms, coordinate transformation math, and any other ideas that come to mind. All of our programmers have enjoyed the ease of logging in and being able to test anything anywhere.
+Stryke Force programmers are using a \textbf{Jupyter Notebook server} this year to test CV applications and algorithms, coordinate transformation math, and any other ideas that come to mind. All of our programmers have enjoyed the ease of logging in and being able to quickly test any idea anywhere.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.25]{assets/jupyter}
+\end{figure}
 
 \begin{figure}[H]
  \centering
 % \includegraphics[scale=0.2]{assets/grapher}
 \end{figure}
 
-We are pleased to make TCT and the Grapher available as open source at https://github.com/strykeforce.
+We are pleased to make TCT and the Grapher available as open source at https://github.com/strykeforce. More resources are available at https://www.strykeforce.org/resources.
 
 \section{Software Engineering}
 
-As members of the Stryke Force team, we learn how to work together using real-world tools and processes that will benefit us during our college years and careers ahead.
+As members of Stryke Force, we learn how to work together using real-world tools and processes that will benefit us during college and our future careers.
 
 This year’s FIRST Deepspace code is written in Java, an object-oriented programming language and leverages WPILib command-based programming. Our use of system sequence diagrams speeds up development and testing since all events are carefully planned in advance.
 
