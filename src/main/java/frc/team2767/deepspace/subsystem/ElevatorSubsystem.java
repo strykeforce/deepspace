@@ -97,8 +97,8 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
     elevatorConfig.forwardSoftLimitThreshold = 32_000; // FIXME different for comp/proto
     elevatorConfig.voltageCompSaturation = 12;
     elevatorConfig.voltageMeasurementFilter = 32;
-    elevatorConfig.motionAcceleration = 2000;
-    elevatorConfig.motionCruiseVelocity = 1500;
+    elevatorConfig.motionAcceleration = 15000;
+    elevatorConfig.motionCruiseVelocity = 4000;
 
     elevator.configAllSettings(elevatorConfig);
     elevator.enableCurrentLimit(true);
