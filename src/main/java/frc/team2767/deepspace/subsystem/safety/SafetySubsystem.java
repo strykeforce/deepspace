@@ -29,7 +29,7 @@ public class SafetySubsystem extends Subsystem {
 
   public SafetySubsystem() {
     this(Robot.BISCUIT, Robot.INTAKE, Robot.ELEVATOR);
-     VACUUM = Robot.VACUUM;
+    VACUUM = Robot.VACUUM;
   }
 
   SafetySubsystem(
@@ -45,6 +45,7 @@ public class SafetySubsystem extends Subsystem {
   @Override
   public void periodic() {
     SmartDashboard.putBoolean("Game/onTarget", VACUUM.onTarget());
+    SmartDashboard.putNumber("Game/Temperature", VACUUM.getPumpTemperature());
 
     biscuitCurrent = BiscuitPosition.of(biscuitSubsystem.getTicks());
     intakeCurrent = IntakePosition.of(intakeSubsystem.getTicks());

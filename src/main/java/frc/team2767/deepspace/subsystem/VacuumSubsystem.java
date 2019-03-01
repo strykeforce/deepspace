@@ -20,6 +20,8 @@ public class VacuumSubsystem extends Subsystem {
 
   private static final double COUNTS_PER_INHG = 35.533;
   private static final double COUNTS_OFFSET = 31.98;
+  private static final double TEMP_OFFSET = .5;
+  private static final double VOLTS_PER_CELSIUS = 0.01;
   public static double kBallPressureInHg;
   public static double kHatchPressureInHg;
   public static double kClimbPressureInHg;
@@ -144,8 +146,9 @@ public class VacuumSubsystem extends Subsystem {
     }
   }
 
-  public int getPumpTemperature() {
-    return analogInput.getValue();
+  public double getPumpTemperature() {
+    double temp = (analogInput.getValue() - TEMP_OFFSET) * VOLTS_PER_CELSIUS;
+    return temp;
   }
 
   public boolean onTarget() {
