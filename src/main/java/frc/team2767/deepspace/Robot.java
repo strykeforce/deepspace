@@ -1,5 +1,6 @@
 package frc.team2767.deepspace;
 
+import ch.qos.logback.classic.util.ContextInitializer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -14,8 +15,7 @@ import org.strykeforce.thirdcoast.trapper.Session;
 
 public class Robot extends TimedRobot {
   // Instantiate this before Subsystems because they use telemetry service.
-  public static final TelemetryService TELEMETRY = new TelemetryService(TelemetryController::new);
-
+  public static TelemetryService TELEMETRY;
   public static DriveSubsystem DRIVE;
   public static VisionSubsystem VISION;
   public static ElevatorSubsystem ELEVATOR;
@@ -26,12 +26,27 @@ public class Robot extends TimedRobot {
   public static ClimbSubsystem CLIMB;
 
   public static Controls CONTROLS;
-  private static boolean jumperRemoved;
+  private static boolean isEvent;
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private Logger logger;
+
+  public static boolean isEvent() {
+    return isEvent;
+  }
 
   @Override
   public void robotInit() {
+    DigitalInput di = new DigitalInput(7);
+    isEvent = di.get();
+
+    // logging configuration needs to happen before any loggers are created.
+    if (isEvent) {
+      System.out.println("Event flag removed - switching logging to log file");
+      System.setProperty(ContextInitializer.CONFIG_FILE_PROPERTY, "logback-event.xml");
+    }
+    logger = LoggerFactory.getLogger(this.getClass());
+
+    TELEMETRY = new TelemetryService(TelemetryController::new);
     DRIVE = new DriveSubsystem();
     VISION = new VisionSubsystem();
     ELEVATOR = new ElevatorSubsystem();
@@ -40,9 +55,6 @@ public class Robot extends TimedRobot {
     SAFETY = new SafetySubsystem();
     VACUUM = new VacuumSubsystem();
     CLIMB = new ClimbSubsystem();
-
-    DigitalInput di = new DigitalInput(7);
-    jumperRemoved = di.get();
 
     // Controls initialize Commands so this should be instantiated last to prevent
     // NullPointerExceptions in commands that require() Subsystems above.
@@ -68,9 +80,5 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     Scheduler.getInstance().run();
-  }
-
-  public static boolean isEvent() {
-    return jumperRemoved;
   }
 }
