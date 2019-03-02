@@ -29,14 +29,14 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   public static double kTiltUpRightPositionDeg;
   public static double kDownRightPositionDeg;
   public static double kDownLeftPositionDeg;
-  public static final double BALL_COMPRESSION = 1;
-  public static final double HATCH_COMPRESSION = 1;
+  public static final double BALL_COMPRESSION = 2;
+  public static final double HATCH_COMPRESSION = 2;
   private static int kCloseEnoughTicks;
   private final int BISCUIT_ID = 40;
   private final double TICKS_PER_DEGREE = 34.1;
   private final double TICKS_OFFSET = 0;
-  private final double COMPRESSION_COUNTS_OFFSET = 0;
-  private final double COMPRESSION_COUNTS_PER_IN = 0;
+  private final double COMPRESSION_COUNTS_OFFSET = 383.9;
+  private final double COMPRESSION_COUNTS_PER_IN = 26.56;
   private final DriveSubsystem DRIVE = Robot.DRIVE;
   private final VisionSubsystem VISION = Robot.VISION;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
