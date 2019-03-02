@@ -96,11 +96,12 @@ public class SafetySubsystem extends Subsystem {
             biscuitLimit = BISCUIT_0;
             break;
           case ELEVATOR_9: // fall-through
-          case ELEVATOR_10:
-            biscuitLimit = isLeft ? BISCUIT_90L : BISCUIT_90R;
-            break;
+          case ELEVATOR_10: // fall-through
           case ELEVATOR_16:
-            if (biscuitCurrent == BISCUIT_180L || biscuitCurrent == BISCUIT_180R) {
+            if (biscuitCurrent == BISCUIT_180L
+                || biscuitCurrent == BISCUIT_180R
+                || biscuitCurrent == BISCUIT_120L_180L
+                || biscuitCurrent == BISCUIT_120R_180R) {
               biscuitLimit = isLeft ? BISCUIT_180L : BISCUIT_180R;
             } else {
               biscuitLimit = isLeft ? BISCUIT_90L : BISCUIT_90R;
