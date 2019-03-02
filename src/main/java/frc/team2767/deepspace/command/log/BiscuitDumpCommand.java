@@ -5,6 +5,7 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 
 public class BiscuitDumpCommand extends InstantCommand {
+
   private static final BiscuitSubsystem BISCUIT = Robot.BISCUIT;
 
   @Override

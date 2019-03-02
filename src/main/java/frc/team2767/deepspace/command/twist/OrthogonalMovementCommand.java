@@ -26,7 +26,7 @@ public class OrthogonalMovementCommand extends Command {
 
     distance = (int) (distance * Math.cos(Math.toRadians(90.0 - heading)));
 
-    logger.debug("dist = {}", distance / DriveSubsystem.TICKS_PER_INCH);
+    logger.info("dist = {}", distance / DriveSubsystem.TICKS_PER_INCH);
 
     double direction = DRIVE.getGyro().getAngle();
 

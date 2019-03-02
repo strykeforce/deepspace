@@ -11,7 +11,6 @@ public class TwistCommand extends Command {
 
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VisionSubsystem VISION = Robot.VISION;
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public TwistCommand() {
     requires(DRIVE);

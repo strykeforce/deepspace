@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 public class ShoulderStopCommand extends InstantCommand {
 
   private static final IntakeSubsystem INTAKE = Robot.INTAKE;
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public ShoulderStopCommand() {
     requires(INTAKE);

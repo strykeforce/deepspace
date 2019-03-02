@@ -7,7 +7,6 @@ import frc.team2767.deepspace.subsystem.VisionSubsystem;
 
 public class SelectCameraCommand extends InstantCommand {
 
-  private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VisionSubsystem VISION = Robot.VISION;
 
   public SelectCameraCommand() {}

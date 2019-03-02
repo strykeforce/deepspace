@@ -1,15 +1,16 @@
 package frc.team2767.deepspace.motion;
 
-import static frc.team2767.deepspace.subsystem.DriveSubsystem.TICKS_PER_INCH;
-
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Preferences;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
-import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
 import org.strykeforce.thirdcoast.swerve.Wheel;
+
+import java.io.File;
+
+import static frc.team2767.deepspace.subsystem.DriveSubsystem.TICKS_PER_INCH;
 
 public class PathController implements Runnable {
 
@@ -128,7 +129,7 @@ public class PathController implements Runnable {
   }
 
   private void logState() {
-    logger.debug("{}", state);
+    logger.info("{}", state);
   }
 
   private void setPreferences() {
@@ -137,10 +138,12 @@ public class PathController implements Runnable {
   }
 
   private void logInit() {
-    logger.debug("Path start");
-    logger.debug("yawKp = {} distKp = {}", yawKp, distanceKp);
-    logger.debug("targetYaw = {}", targetYaw);
-    logger.debug("maxVelocity in/s = {}", maxVelocityInSec);
+    logger.info(
+        "Path start yawKp = {} distKp = {} targetYaw = {} maxVelocity in/s = {}",
+        yawKp,
+        distanceKp,
+        targetYaw,
+        maxVelocityInSec);
   }
 
   private double distanceError(double position) {
@@ -158,7 +161,7 @@ public class PathController implements Runnable {
   }
 
   public void interrupt() {
-    logger.debug("interrupted");
+    logger.info("interrupted");
     state = States.STOPPED;
   }
 }

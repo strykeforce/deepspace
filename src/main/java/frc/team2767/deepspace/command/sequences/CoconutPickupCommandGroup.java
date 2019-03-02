@@ -36,18 +36,12 @@ public class CoconutPickupCommandGroup extends CommandGroup {
 
     addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kCargoPickupPositionInches));
 
-    // addSequential(new BiscuitWiggleCommand());
-    // addSequential(new WaitForPressureCommand(VacuumSubsystem.kBallPressureInHg));
-    // addSequential(new WaitCommand(0.5));
-
-    addSequential(new LogCommand("opening valves"));
     addSequential(
         new ActivateValveCommand(
             new VacuumSubsystem.Valve[] {
               VacuumSubsystem.Valve.PUMP, VacuumSubsystem.Valve.TRIDENT
             }),
         5);
-    addSequential(new LogCommand("opened valves"));
     addSequential(new WaitCommand(1.0)); // FIXME
     addSequential(new ElevatorSetPositionCommand(25.0));
     addSequential(new SetActionCommand(Action.PLACE));
