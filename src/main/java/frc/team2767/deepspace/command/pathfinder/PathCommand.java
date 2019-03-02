@@ -3,8 +3,6 @@ package frc.team2767.deepspace.command.pathfinder;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PathCommand extends Command {
 

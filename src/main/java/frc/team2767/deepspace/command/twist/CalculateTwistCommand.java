@@ -23,8 +23,11 @@ public class CalculateTwistCommand extends InstantCommand {
   @Override
   protected void initialize() {
     double targetYaw = VISION.getTargetYaw();
-    logger.info("pyeye bearing={} range={} current gyro = {}", VISION.getRawBearing(), VISION.getRawRange(),
-            DRIVE.getGyro().getAngle());
+    logger.info(
+        "pyeye bearing={} range={} current gyro = {}",
+        VISION.getRawBearing(),
+        VISION.getRawRange(),
+        DRIVE.getGyro().getAngle());
 
     TwistCalculator twistCalculator =
         new TwistCalculator(

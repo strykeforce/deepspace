@@ -184,8 +184,11 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
     if (!biscuit.getSensorCollection().isFwdLimitSwitchClosed()) {
       int absPos = biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF;
       int relPos = biscuit.getSelectedSensorPosition();
-      logger.info("Preferences zero = {} Relative position = {} Absolute position = {}", kAbsoluteZeroTicks, relPos,
-              absPos);
+      logger.info(
+          "Preferences zero = {} Relative position = {} Absolute position = {}",
+          kAbsoluteZeroTicks,
+          relPos,
+          absPos);
 
       // appears backwards because absolute and relative encoders are out-of-phase in hardware
       int offset = kAbsoluteZeroTicks - absPos;
@@ -308,7 +311,10 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   }
 
   public void dump() {
-    logger.info("biscuit position in degrees = {} biscuit position in ticks = {}", getPosition(), getTicks());
+    logger.info(
+        "biscuit position in degrees = {} biscuit position in ticks = {}",
+        getPosition(),
+        getTicks());
   }
 
   private enum Angle {

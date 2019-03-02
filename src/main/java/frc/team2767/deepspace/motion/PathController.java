@@ -1,16 +1,15 @@
 package frc.team2767.deepspace.motion;
 
+import static frc.team2767.deepspace.subsystem.DriveSubsystem.TICKS_PER_INCH;
+
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Preferences;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
+import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
 import org.strykeforce.thirdcoast.swerve.Wheel;
-
-import java.io.File;
-
-import static frc.team2767.deepspace.subsystem.DriveSubsystem.TICKS_PER_INCH;
 
 public class PathController implements Runnable {
 
