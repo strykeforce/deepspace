@@ -185,11 +185,9 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
   public boolean zero() {
     boolean didZero = false;
     if (elevator.getSensorCollection().isRevLimitSwitchClosed()) {
-      logger.info("Preferences zero = {}", kAbsoluteZeroTicks);
-      logger.info("Relative position = {}", elevator.getSelectedSensorPosition());
-      logger.info(
-          "Absolute position = {}", elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF);
 
+      logger.info("Preferences zero = {} Relative position = {} Absolute position = {}", kAbsoluteZeroTicks,
+              elevator.getSelectedSensorPosition(), elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF);
       int offset =
           elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF - kAbsoluteZeroTicks;
       elevator.setSelectedSensorPosition(offset);
@@ -248,8 +246,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
   }
 
   public void dump() {
-    logger.info("elevator position in inches = {}", getPosition());
-    logger.info("elevator position in ticks = {}", getTicks());
+    logger.info("elevator position in inches = {} ticks = {}", getPosition(), getTicks());
   }
 
   public double getPosition() {

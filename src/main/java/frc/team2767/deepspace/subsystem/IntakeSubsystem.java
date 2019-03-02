@@ -150,7 +150,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
     boolean didZero = false;
     if (shoulder.getSensorCollection().isRevLimitSwitchClosed()) {
       shoulder.setSelectedSensorPosition((int) kZeroPositionTicks);
-      logger.debug("shoulder zeroed with limit switch to {}", shoulder.getSelectedSensorPosition());
+      logger.info("shoulder zeroed with limit switch to {}", shoulder.getSelectedSensorPosition());
       didZero = true;
     } else {
       logger.error("Intake zero failed - intake not in stowed position");
@@ -161,7 +161,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
   }
 
   public void shoulderStop() {
-    logger.debug("shoulder stop");
+    logger.info("shoulder stop");
     shoulder.set(ControlMode.PercentOutput, 0.0);
   }
 
@@ -184,7 +184,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
 
   public void setPosition(double angle) {
     setpointTicks = (int) (TICKS_OFFSET - TICKS_PER_DEGREE * angle);
-    logger.debug("setting shoulder position={}", setpointTicks);
+    logger.info("setting shoulder position={}", setpointTicks);
     shoulder.set(ControlMode.MotionMagic, setpointTicks);
   }
 
@@ -194,7 +194,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
     if (Math.abs(error) > kCloseEnoughTicks) stableCount = 0;
     else stableCount++;
     if (stableCount > STABLE_THRESH) {
-      logger.debug("stableCount > {}", STABLE_THRESH);
+      logger.info("stableCount > {}", STABLE_THRESH);
       return true;
     }
     return false;
@@ -206,17 +206,16 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
 
   /** @param setpoint TalonSRX setpoint */
   public void rollerOpenLoop(double setpoint) {
-    logger.debug("rollers open loop at {}", setpoint);
+    logger.info("rollers open loop at {}", setpoint);
     roller.set(ControlMode.PercentOutput, setpoint);
   }
 
   public void rollerStop() {
-    logger.debug("roller stop");
+    logger.info("roller stop");
     roller.set(ControlMode.PercentOutput, 0.0);
   }
 
   public void dump() {
-    logger.info("intake position in degrees = {}", getPosition());
-    logger.info("intake position in ticks = {}", getTicks());
+    logger.info("intake position degrees = {} ticks = {}", getPosition(), getTicks());
   }
 }

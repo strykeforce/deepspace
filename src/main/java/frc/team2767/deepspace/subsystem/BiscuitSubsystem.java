@@ -184,13 +184,14 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
     if (!biscuit.getSensorCollection().isFwdLimitSwitchClosed()) {
       int absPos = biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF;
       int relPos = biscuit.getSelectedSensorPosition();
+      logger.info("Preferences zero = {} Relative position = {} Absolute position = {}", kAbsoluteZeroTicks, relPos,
+              absPos);
 
       // appears backwards because absolute and relative encoders are out-of-phase in hardware
       int offset = kAbsoluteZeroTicks - absPos;
 
       biscuit.setSelectedSensorPosition(offset);
-      logger.info("Preferences zero = {} Relative position = {} Absolute position = {} New relative position = {}", kAbsoluteZeroTicks, relPos,
-              absPos, offset);
+      logger.info("New relative position = {}", offset);
       didZero = true;
     } else {
       logger.error("Intake zero failed - biscuit not vertical");
