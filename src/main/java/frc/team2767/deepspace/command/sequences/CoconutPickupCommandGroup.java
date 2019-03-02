@@ -3,7 +3,10 @@ package frc.team2767.deepspace.command.sequences;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
+import frc.team2767.deepspace.command.biscuit.BiscuitWaitForCompressionCommand;
+import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
+import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
 import frc.team2767.deepspace.command.intake.IntakePositionCommand;
 import frc.team2767.deepspace.command.intake.RollerOutCommand;
 import frc.team2767.deepspace.command.intake.RollerStopCommand;
@@ -34,7 +37,9 @@ public class CoconutPickupCommandGroup extends CommandGroup {
     addSequential(new ElevatorSetPositionCommand(22.0));
     addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.kDownRightPositionDeg));
 
-    addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kCargoPickupPositionInches));
+    addSequential(new ElevatorOpenLoopDownCommand());
+    addSequential(new BiscuitWaitForCompressionCommand(BiscuitSubsystem.BALL_COMPRESSION), 3.0);
+    addSequential(new ElevatorStopCommand());
 
     // addSequential(new BiscuitWiggleCommand());
     // addSequential(new WaitForPressureCommand(VacuumSubsystem.kBallPressureInHg));

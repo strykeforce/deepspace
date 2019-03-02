@@ -8,7 +8,6 @@ public class BiscuitWaitForCompressionCommand extends Command {
 
   private static final BiscuitSubsystem BISCUIT = Robot.BISCUIT;
   private double compression;
-  private static final double CLOSE_ENOUGH = 100;
 
   public BiscuitWaitForCompressionCommand(double compression) {
     this.compression = compression;
