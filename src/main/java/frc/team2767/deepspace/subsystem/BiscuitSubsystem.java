@@ -29,10 +29,14 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   public static double kTiltUpRightPositionDeg;
   public static double kDownRightPositionDeg;
   public static double kDownLeftPositionDeg;
+  public static final double BALL_COMPRESSION = 2;
+  public static final double HATCH_COMPRESSION = 2;
   private static int kCloseEnoughTicks;
   private final int BISCUIT_ID = 40;
   private final double TICKS_PER_DEGREE = 34.1;
   private final double TICKS_OFFSET = 0;
+  private final double COMPRESSION_COUNTS_OFFSET = 383.9;
+  private final double COMPRESSION_COUNTS_PER_IN = 26.56;
   private final DriveSubsystem DRIVE = Robot.DRIVE;
   private final VisionSubsystem VISION = Robot.VISION;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -154,6 +158,13 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
     return (TICKS_OFFSET - biscuit.getSelectedSensorPosition()) / TICKS_PER_DEGREE;
   }
 
+  public double getCompression() {
+    double compression =
+        (biscuit.getSensorCollection().getAnalogInRaw() - COMPRESSION_COUNTS_OFFSET)
+            / COMPRESSION_COUNTS_PER_IN;
+    return compression;
+  }
+
   public void setPosition(double angle) {
     if (angle == kDownRightPositionDeg && getPosition() < 0) {
       angle = kDownLeftPositionDeg;
@@ -221,7 +232,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
               targetBiscuitPositionDeg = kTiltUpLeftPositionDeg;
               break;
             case RIGHT:
-              targetBiscuitPositionDeg = kTiltUpLeftPositionDeg;
+              targetBiscuitPositionDeg = kTiltUpRightPositionDeg;
               break;
             case NOTSET:
               logger.warn("Direction not set");

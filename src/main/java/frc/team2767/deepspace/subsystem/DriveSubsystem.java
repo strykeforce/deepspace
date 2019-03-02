@@ -8,11 +8,11 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.command.TeleOpDriveCommand;
 import frc.team2767.deepspace.motion.PathController;
 import frc.team2767.deepspace.motion.TwistController;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
@@ -21,6 +21,8 @@ import org.strykeforce.thirdcoast.swerve.SwerveDriveConfig;
 import org.strykeforce.thirdcoast.swerve.Wheel;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
+
+import java.util.List;
 
 public class DriveSubsystem extends Subsystem {
 
@@ -90,7 +92,13 @@ public class DriveSubsystem extends Subsystem {
   }
 
   public boolean isTwistFinished() {
-    return twistController.isFinished();
+    if (twistController.isFinished()) {
+      SmartDashboard.putBoolean("Game/twistFinished", true);
+      return true;
+    }
+
+    SmartDashboard.putBoolean("Game/twistFinished", false);
+    return false;
   }
 
   public void interruptTwist() {

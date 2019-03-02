@@ -21,8 +21,6 @@ public class OrthogonalMovementCommand extends Command {
   @SuppressWarnings("Duplicates")
   @Override
   protected void initialize() {
-    VISION.queryPyeye();
-    //    VISION.setCamera(VisionSubsystem.Camera.RIGHT);
     double heading = VISION.getRawBearing();
     int distance = (int) (DriveSubsystem.TICKS_PER_INCH * VISION.getRawRange());
 

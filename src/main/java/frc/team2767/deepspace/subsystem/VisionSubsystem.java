@@ -19,11 +19,11 @@ public class VisionSubsystem extends Subsystem {
   private final double CAMERA_X = 0.0;
   private final double CAMERA_Y = -9.0;
   private final UsbCamera usbCamera;
-  private NetworkTable table;
   public GamePiece gamePiece = GamePiece.NOTSET;
   public Action action = Action.NOTSET;
   public FieldDirection direction = FieldDirection.NOTSET;
   public ElevatorLevel elevatorLevel = ElevatorLevel.NOTSET;
+  private NetworkTable table;
   private NetworkTableEntry bearingEntry;
   private NetworkTableEntry rangeEntry;
   private Camera camera = Camera.NOTSET;
@@ -119,22 +119,20 @@ public class VisionSubsystem extends Subsystem {
     logger.debug("set action to {}", action);
   }
 
-  public void setFieldDirection(FieldDirection direction, double gyro) {
+  public void setFieldDirection(FieldDirection direction) {
     this.direction = direction;
     SmartDashboard.putString("FieldDirection", direction.toString());
-    selectCamera(gyro);
+    selectCamera();
     logger.debug("set direction to {}", direction);
   }
 
-  public void selectCamera(double gyro) {
+  public void selectCamera() {
     VisionSubsystem.Camera camera;
-    double angle = Math.IEEEremainder(gyro, 360);
-    if (Math.abs(angle) < 90 && direction == FieldDirection.LEFT
-        || Math.abs(angle) > 90 && direction == FieldDirection.RIGHT) {
-      camera = VisionSubsystem.Camera.LEFT;
-    } else {
-      camera = VisionSubsystem.Camera.RIGHT;
+    camera = Camera.LEFT;
+    if (direction == FieldDirection.RIGHT) {
+      camera = Camera.RIGHT;
     }
+
     setCamera(camera);
   }
 

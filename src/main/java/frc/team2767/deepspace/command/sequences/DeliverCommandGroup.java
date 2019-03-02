@@ -11,8 +11,6 @@ public class DeliverCommandGroup extends CommandGroup {
     addSequential(new SelectCameraCommand());
     addSequential(new QueryPyeyeCommand());
     addSequential(new OrthogonalMovementCommand());
-    //    addSequential(new ApproachChooseCommand(new OrthogonalMovementCommand(), new
-    // TwistCommand()));
-    //    addSequential(new TwistCommand());
+    addSequential(new PositionExecuteCommandGroup());
   }
 }
