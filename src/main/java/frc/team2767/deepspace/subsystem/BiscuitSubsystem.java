@@ -29,7 +29,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   public static double kTiltUpRightPositionDeg;
   public static double kDownRightPositionDeg;
   public static double kDownLeftPositionDeg;
-  public static final double BALL_COMPRESSION = 2;
+  public static final double BALL_COMPRESSION = 1.5;
   public static final double HATCH_COMPRESSION = 2;
   private static int kCloseEnoughTicks;
   private final int BISCUIT_ID = 40;

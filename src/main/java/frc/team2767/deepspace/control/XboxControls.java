@@ -45,7 +45,7 @@ public class XboxControls {
         new Trigger() {
           @Override
           public boolean get() {
-            return xbox.getRawAxis(Axis.RIGHT_Y.id) > 0.1;
+            return xbox.getRawAxis(Axis.RIGHT_Y.id) < -0.1;
           }
         };
 
@@ -53,7 +53,7 @@ public class XboxControls {
         new Trigger() {
           @Override
           public boolean get() {
-            return xbox.getRawAxis(Axis.RIGHT_Y.id) < -0.1;
+            return xbox.getRawAxis(Axis.RIGHT_Y.id) > 0.1;
           }
         };
 
