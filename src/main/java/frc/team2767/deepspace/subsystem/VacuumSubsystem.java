@@ -4,9 +4,11 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
 import java.util.List;
 import org.slf4j.Logger;
@@ -18,12 +20,16 @@ public class VacuumSubsystem extends Subsystem {
 
   private static final double COUNTS_PER_INHG = 35.533;
   private static final double COUNTS_OFFSET = 31.98;
+  private static final double TEMP_OFFSET = .5;
+  private static final double VOLTS_PER_CELSIUS = 0.01;
+  public static final double TEMP_LIMIT = 93.33;
   public static double kBallPressureInHg;
   public static double kHatchPressureInHg;
   public static double kClimbPressureInHg;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final int VACUUM_ID = 60;
   private final int STABLE_THRESHOLD = 4;
+  private final int TEMPERATURE_PIN = 0;
   String PREFS_NAME = "VacuumSubsystem/Settings/";
   int BACKUP = 2767;
   private int goodEnough = 100;
@@ -34,6 +40,7 @@ public class VacuumSubsystem extends Subsystem {
   private Solenoid pumpSolenoid;
 
   private TalonSRX vacuum = new TalonSRX(VACUUM_ID);
+  private AnalogInput analogInput;
 
   public VacuumSubsystem() {
 
@@ -46,6 +53,8 @@ public class VacuumSubsystem extends Subsystem {
     pumpSolenoid.set(true);
     climbSolenoid.set(false);
     tridentSolenoid.set(false);
+
+    analogInput = new AnalogInput(0);
     configTalon();
     vacuumPreferences();
   }
@@ -109,6 +118,16 @@ public class VacuumSubsystem extends Subsystem {
     return pref;
   }
 
+  @Override
+  public void periodic() {
+    SmartDashboard.putBoolean("Game/onTarget", onTarget());
+    if (!Robot.isEvent()) SmartDashboard.putNumber("Game/Temperature", getPumpTemperature());
+    if (getPumpTemperature() > TEMP_LIMIT) {
+      logger.error("Vacuum overheating!");
+      setPeakOutput(0);
+    }
+  }
+
   public Solenoid getTridentSolenoid() {
     return tridentSolenoid;
   }
@@ -136,6 +155,11 @@ public class VacuumSubsystem extends Subsystem {
       default:
         logger.warn("could not set {} to {}", valve, state);
     }
+  }
+
+  public double getPumpTemperature() {
+    double temp = (analogInput.getValue() - TEMP_OFFSET) * VOLTS_PER_CELSIUS;
+    return temp;
   }
 
   public boolean onTarget() {
@@ -173,14 +197,20 @@ public class VacuumSubsystem extends Subsystem {
   }
 
   public void setPressure(double pressure) {
+    SmartDashboard.putBoolean("Game/onTarget", false);
     setpointCounts = (int) (COUNTS_PER_INHG * pressure + COUNTS_OFFSET);
     // setpointCounts = (int) (35.5 * pressure + 32);
     logger.debug("setting pressure to {}", setpointCounts);
     vacuum.set(ControlMode.Position, setpointCounts);
   }
 
+  public void setPeakOutput(double peakOutput) {
+    vacuum.configPeakOutputForward(peakOutput, 0);
+  }
+
   public void stop() {
     logger.debug("stop pump");
+    SmartDashboard.putBoolean("Game/onTarget", false);
     vacuum.set(ControlMode.Position, 0);
   }
 

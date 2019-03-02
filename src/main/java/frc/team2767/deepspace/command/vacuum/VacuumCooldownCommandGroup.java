@@ -6,6 +6,7 @@ import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 public class VacuumCooldownCommandGroup extends CommandGroup {
 
   public VacuumCooldownCommandGroup() {
+    addSequential(new VacuumCurrentLimitCommand(1.0));
     addSequential(
         new ActivateValveCommand(
             new VacuumSubsystem.Valve[] {

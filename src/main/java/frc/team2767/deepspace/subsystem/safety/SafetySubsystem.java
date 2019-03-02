@@ -7,11 +7,13 @@ import static frc.team2767.deepspace.subsystem.safety.IntakePosition.INTAKE_STOW
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team2767.deepspace.Robot;
+import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SafetySubsystem extends Subsystem {
+  VacuumSubsystem VACUUM;
 
   private final Limitable biscuitSubsystem;
   private final Limitable intakeSubsystem;
@@ -26,6 +28,7 @@ public class SafetySubsystem extends Subsystem {
 
   public SafetySubsystem() {
     this(Robot.BISCUIT, Robot.INTAKE, Robot.ELEVATOR);
+    VACUUM = Robot.VACUUM;
   }
 
   SafetySubsystem(
