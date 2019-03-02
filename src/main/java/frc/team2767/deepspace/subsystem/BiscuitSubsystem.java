@@ -29,8 +29,8 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   public static double kTiltUpRightPositionDeg;
   public static double kDownRightPositionDeg;
   public static double kDownLeftPositionDeg;
-  public static final double BALL_COMPRESSION = 1.5;
-  public static final double HATCH_COMPRESSION = 2;
+  public static final double BALL_COMPRESSION = 1.0;
+  public static final double HATCH_COMPRESSION = 1.0;
   private static int kCloseEnoughTicks;
   private final int BISCUIT_ID = 40;
   private final double TICKS_PER_DEGREE = 34.1;
@@ -311,6 +311,9 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   public void dump() {
     logger.info("biscuit position in degrees = {}", getPosition());
     logger.info("biscuit position in ticks = {}", getTicks());
+    logger.info("biscuit compression in inches = {}", getCompression());
+    logger.info(
+        "biscuit compression in counts = {}", biscuit.getSensorCollection().getAnalogInRaw());
   }
 
   private enum Angle {

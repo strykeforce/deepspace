@@ -16,6 +16,7 @@ public class BiscuitWaitForCompressionCommand extends Command {
 
   public BiscuitWaitForCompressionCommand(double compression) {
     this.compression = compression;
+    setTimeout(2.0);
     requires(BISCUIT);
     requires(ELEVATOR);
   }
@@ -27,7 +28,7 @@ public class BiscuitWaitForCompressionCommand extends Command {
 
   @Override
   protected boolean isFinished() {
-    return (Math.abs(compression - BISCUIT.getCompression()) < .2);
+    return ((Math.abs(compression - BISCUIT.getCompression()) < .2) || isTimedOut());
   }
 
   @Override
