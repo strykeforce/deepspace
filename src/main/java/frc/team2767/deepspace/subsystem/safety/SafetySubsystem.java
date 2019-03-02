@@ -6,7 +6,6 @@ import static frc.team2767.deepspace.subsystem.safety.IntakePosition.INTAKE_INTA
 import static frc.team2767.deepspace.subsystem.safety.IntakePosition.INTAKE_STOW;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 import org.jetbrains.annotations.NotNull;
@@ -44,8 +43,6 @@ public class SafetySubsystem extends Subsystem {
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("Game/onTarget", VACUUM.onTarget());
-    SmartDashboard.putNumber("Game/Temperature", VACUUM.getPumpTemperature());
 
     biscuitCurrent = BiscuitPosition.of(biscuitSubsystem.getTicks());
     intakeCurrent = IntakePosition.of(intakeSubsystem.getTicks());

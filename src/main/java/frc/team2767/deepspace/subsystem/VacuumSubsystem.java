@@ -22,6 +22,7 @@ public class VacuumSubsystem extends Subsystem {
   private static final double COUNTS_OFFSET = 31.98;
   private static final double TEMP_OFFSET = .5;
   private static final double VOLTS_PER_CELSIUS = 0.01;
+  public static final double TEMP_LIMIT = 93.33;
   public static double kBallPressureInHg;
   public static double kHatchPressureInHg;
   public static double kClimbPressureInHg;
@@ -117,6 +118,16 @@ public class VacuumSubsystem extends Subsystem {
     return pref;
   }
 
+  @Override
+  public void periodic() {
+    SmartDashboard.putBoolean("Game/onTarget", onTarget());
+    if (!Robot.isEvent()) SmartDashboard.putNumber("Game/Temperature", getPumpTemperature());
+    if (getPumpTemperature() > TEMP_LIMIT) {
+      logger.error("Vacuum overheating!");
+      setPeakOutput(0);
+    }
+  }
+
   public Solenoid getTridentSolenoid() {
     return tridentSolenoid;
   }
@@ -191,6 +202,10 @@ public class VacuumSubsystem extends Subsystem {
     // setpointCounts = (int) (35.5 * pressure + 32);
     logger.debug("setting pressure to {}", setpointCounts);
     vacuum.set(ControlMode.Position, setpointCounts);
+  }
+
+  public void setPeakOutput(double peakOutput) {
+    vacuum.configPeakOutputForward(peakOutput, 0);
   }
 
   public void stop() {
