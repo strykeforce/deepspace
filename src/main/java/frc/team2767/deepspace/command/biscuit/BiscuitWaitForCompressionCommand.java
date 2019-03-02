@@ -3,7 +3,6 @@ package frc.team2767.deepspace.command.biscuit;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
-import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 
 public class BiscuitWaitForCompressionCommand extends Command {
 

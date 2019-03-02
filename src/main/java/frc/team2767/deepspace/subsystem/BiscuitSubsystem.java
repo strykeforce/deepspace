@@ -158,8 +158,10 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
     return (TICKS_OFFSET - biscuit.getSelectedSensorPosition()) / TICKS_PER_DEGREE;
   }
 
-  public double getCompression(){
-    double compression = (biscuit.getSensorCollection().getAnalogInRaw() - COMPRESSION_COUNTS_OFFSET) / COMPRESSION_COUNTS_PER_IN;
+  public double getCompression() {
+    double compression =
+        (biscuit.getSensorCollection().getAnalogInRaw() - COMPRESSION_COUNTS_OFFSET)
+            / COMPRESSION_COUNTS_PER_IN;
     return compression;
   }
 
