@@ -96,8 +96,8 @@ public class VisionSubsystem extends Subsystem {
   }
 
   public void queryPyeye() {
-    rangeEntry = table.getEntry("camera_bearing");
-    bearingEntry = table.getEntry("camera_range");
+    bearingEntry = table.getEntry("camera_bearing");
+    rangeEntry = table.getEntry("camera_range");
 
     rawBearing = (double) bearingEntry.getNumber(0.0);
     rawRange = (double) rangeEntry.getNumber(-1.0);
