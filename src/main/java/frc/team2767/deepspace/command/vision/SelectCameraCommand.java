@@ -10,8 +10,7 @@ public class SelectCameraCommand extends InstantCommand {
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VisionSubsystem VISION = Robot.VISION;
 
-  public SelectCameraCommand() {
-  }
+  public SelectCameraCommand() {}
 
   @Override
   protected void initialize() {
