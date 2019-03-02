@@ -1,6 +1,6 @@
 package frc.team2767.deepspace.subsystem;
 
-import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
+import static com.ctre.phoenix.motorcontrol.ControlMode.*;
 
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -170,6 +170,11 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
     setPosition(newPosition);
   }
 
+  public void holdPosition() {
+    int position = elevator.getSelectedSensorPosition();
+    elevator.set(MotionMagic, position);
+  }
+
   @SuppressWarnings("Duplicates")
   public boolean onTarget() {
     int error = setpointTicks - elevator.getSelectedSensorPosition(0);
@@ -240,6 +245,11 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
       elevator.set(ControlMode.PercentOutput, kDownOutput);
       //      elevator.set(ControlMode.PercentOutput, -0.2);
     }
+  }
+
+  public void openLoopMove(double output) {
+    logger.info("moving at {}", output);
+    elevator.set(ControlMode.PercentOutput, output);
   }
 
   public void stop() {
