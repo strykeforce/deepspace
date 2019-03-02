@@ -4,7 +4,7 @@ enum ElevatorPosition {
   ELEVATOR_4(32000, 0),
   ELEVATOR_9(32000, 4900),
   ELEVATOR_10(32000, 7690),
-  ELEVATOR_16(32000, 14305),
+  ELEVATOR_16(32000, 10898),
   ELEVATOR_21(32000, 17700);
 
   public final int forwardLimit;
@@ -20,7 +20,7 @@ enum ElevatorPosition {
       return ELEVATOR_21;
     }
 
-    if (position > 14305) {
+    if (position > 10898) {
       return ELEVATOR_16;
     }
 

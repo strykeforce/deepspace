@@ -36,7 +36,7 @@ public class CoconutPickupCommandGroup extends CommandGroup {
     addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.kDownRightPositionDeg));
 
     addSequential(new ElevatorSetPositionCommand(18.0));
-    addSequential(new BiscuitWaitForCompressionCommand(BiscuitSubsystem.BALL_COMPRESSION), 3.0);
+    addSequential(new BiscuitWaitForCompressionCommand(BiscuitSubsystem.BALL_COMPRESSION), 1.0);
     addSequential(new LogCommand("Compression reached"));
 
     // addSequential(new BiscuitWiggleCommand());
