@@ -10,14 +10,10 @@ public class SelectCameraCommand extends InstantCommand {
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VisionSubsystem VISION = Robot.VISION;
 
-  public SelectCameraCommand() {
-    requires(VISION);
-  }
+  public SelectCameraCommand() {}
 
   @Override
   protected void initialize() {
-    double gyro = DRIVE.getGyro().getAngle();
-
-    VISION.selectCamera(gyro);
+    VISION.selectCamera();
   }
 }

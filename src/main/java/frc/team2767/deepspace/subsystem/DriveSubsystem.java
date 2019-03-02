@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.command.TeleOpDriveCommand;
 import frc.team2767.deepspace.motion.PathController;
@@ -90,7 +91,13 @@ public class DriveSubsystem extends Subsystem {
   }
 
   public boolean isTwistFinished() {
-    return twistController.isFinished();
+    if (twistController.isFinished()) {
+      SmartDashboard.putBoolean("Game/twistFinished", true);
+      return true;
+    }
+
+    SmartDashboard.putBoolean("Game/twistFinished", false);
+    return false;
   }
 
   public void interruptTwist() {
@@ -113,12 +120,31 @@ public class DriveSubsystem extends Subsystem {
     logger.info("resetting gyro shoulderZero ({})", adj);
   }
 
-  public AHRS getGyro() {
-    return swerve.getGyro();
-  }
-
   public SwerveDrive getSwerveDrive() {
     return swerve;
+  }
+
+  public void setAngleOrthogonalAngle() {
+    double[] angles = new double[] {-90.0, 0.0, 90.0, 180.0, -180.0};
+    double[] differences = new double[5];
+
+    for (int i = 0; i < angles.length; i++) {
+      differences[i] = Math.IEEEremainder(getGyro().getAngle(), 360) - angles[i];
+    }
+
+    double index;
+    double minAngle = differences[0];
+
+    for (int i = 0; i < differences.length; i++) {
+      if (differences[i] < minAngle) {
+        index = i;
+        minAngle = differences[i];
+      }
+    }
+  }
+
+  public AHRS getGyro() {
+    return swerve.getGyro();
   }
 
   ////////////////////////////////////////////////////////////////////////////

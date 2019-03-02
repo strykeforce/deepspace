@@ -31,7 +31,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
   public static double kCargoPlayerPositionInches;
   public static double kCargoHighPositionInches;
   private final VisionSubsystem VISION = Robot.VISION;
-  private final Logger logger = LoggerFactory.getLogger(ElevatorSubsystem.class);
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final int STABLE_THRESH = 4;
   private final String PREFS_NAME = "ElevatorSubsystem/Settings/";
   private final TalonSRX elevator = new TalonSRX(ID);
@@ -97,7 +97,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
     elevatorConfig.forwardSoftLimitThreshold = 32_000; // FIXME different for comp/proto
     elevatorConfig.voltageCompSaturation = 12;
     elevatorConfig.voltageMeasurementFilter = 32;
-    elevatorConfig.motionAcceleration = 15000;
+    elevatorConfig.motionAcceleration = 8000;
     elevatorConfig.motionCruiseVelocity = 4000;
 
     elevator.configAllSettings(elevatorConfig);
@@ -107,10 +107,6 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
     telemetryService.register(new TalonItem(elevator, "Elevator"));
-  }
-
-  public List<TalonSRX> getTalons() {
-    return List.of(elevator);
   }
 
   @SuppressWarnings("Duplicates")
@@ -125,32 +121,8 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
     return pref;
   }
 
-  @Override
-  public int getTicks() {
-    return elevator.getSelectedSensorPosition(0);
-  }
-
-  @Override
-  public void setLimits(int forward, int reverse) {
-    elevator.configForwardSoftLimitThreshold(forward, 0);
-    elevator.configReverseSoftLimitThreshold(reverse, 0);
-  }
-
-  public double getPosition() {
-    return (TICKS_OFFSET + elevator.getSelectedSensorPosition()) / TICKS_PER_INCH;
-  }
-
-  public void setPosition(double height) {
-    setpointTicks = (int) (height * TICKS_PER_INCH) - TICKS_OFFSET;
-
-    startPosition = elevator.getSelectedSensorPosition(0);
-    logger.info(
-        "setting elevatorPosition = {} ({} in.), starting at {}",
-        setpointTicks,
-        height,
-        startPosition);
-
-    elevator.set(ControlMode.MotionMagic, setpointTicks);
+  public List<TalonSRX> getTalons() {
+    return List.of(elevator);
   }
 
   public void executePlan() {
@@ -278,6 +250,34 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
   public void dump() {
     logger.info("elevator position in inches = {}", getPosition());
     logger.info("elevator position in ticks = {}", getTicks());
+  }
+
+  public double getPosition() {
+    return (TICKS_OFFSET + elevator.getSelectedSensorPosition()) / TICKS_PER_INCH;
+  }
+
+  @Override
+  public int getTicks() {
+    return elevator.getSelectedSensorPosition(0);
+  }
+
+  @Override
+  public void setLimits(int forward, int reverse) {
+    elevator.configForwardSoftLimitThreshold(forward, 0);
+    elevator.configReverseSoftLimitThreshold(reverse, 0);
+  }
+
+  public void setPosition(double height) {
+    setpointTicks = (int) (height * TICKS_PER_INCH) - TICKS_OFFSET;
+
+    startPosition = elevator.getSelectedSensorPosition(0);
+    logger.info(
+        "setting elevatorPosition = {} ({} in.), starting at {}",
+        setpointTicks,
+        height,
+        startPosition);
+
+    elevator.set(ControlMode.MotionMagic, setpointTicks);
   }
 
   @Override
