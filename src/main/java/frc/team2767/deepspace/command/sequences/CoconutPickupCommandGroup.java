@@ -1,12 +1,9 @@
 package frc.team2767.deepspace.command.sequences;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitWaitForCompressionCommand;
-import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
-import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
 import frc.team2767.deepspace.command.intake.IntakePositionCommand;
 import frc.team2767.deepspace.command.intake.RollerOutCommand;
 import frc.team2767.deepspace.command.intake.RollerStopCommand;
@@ -16,6 +13,7 @@ import frc.team2767.deepspace.command.states.SetGamePieceCommand;
 import frc.team2767.deepspace.command.vacuum.ActivateValveCommand;
 import frc.team2767.deepspace.command.vacuum.PressureAccumulateCommandGroup;
 import frc.team2767.deepspace.command.vacuum.PressureSetCommand;
+import frc.team2767.deepspace.command.vacuum.WaitForPressureCommand;
 import frc.team2767.deepspace.subsystem.*;
 
 public class CoconutPickupCommandGroup extends CommandGroup {
@@ -37,9 +35,9 @@ public class CoconutPickupCommandGroup extends CommandGroup {
     addSequential(new ElevatorSetPositionCommand(22.0));
     addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.kDownRightPositionDeg));
 
-    addSequential(new ElevatorOpenLoopDownCommand());
+    addSequential(new ElevatorSetPositionCommand(18.0));
     addSequential(new BiscuitWaitForCompressionCommand(BiscuitSubsystem.BALL_COMPRESSION), 3.0);
-    addSequential(new ElevatorStopCommand());
+    addSequential(new LogCommand("Compression reached"));
 
     // addSequential(new BiscuitWiggleCommand());
     // addSequential(new WaitForPressureCommand(VacuumSubsystem.kBallPressureInHg));
@@ -53,7 +51,7 @@ public class CoconutPickupCommandGroup extends CommandGroup {
             }),
         5);
     addSequential(new LogCommand("opened valves"));
-    addSequential(new WaitCommand(1.0)); // FIXME
+    addSequential(new WaitForPressureCommand(VacuumSubsystem.kBallPressureInHg));
     addSequential(new ElevatorSetPositionCommand(25.0));
     addSequential(new SetActionCommand(Action.PLACE));
     addSequential(new RollerStopCommand());
