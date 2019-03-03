@@ -26,7 +26,6 @@ class TalonPositionTest(private val group: TalonGroup) : Test, Reportable {
 
     private var state = STARTING
     private var iteration = 0
-    private var countingUp = true
     private var passed = false
 
     private lateinit var talon: TalonSRX
@@ -45,8 +44,7 @@ class TalonPositionTest(private val group: TalonGroup) : Test, Reportable {
                 }
                 logger.info { "$name starting" }
                 talon = group.talons.first()
-                countingUp = encoderTarget > 0
-                talon.selectedSensorPosition = 0
+                talon.set(controlMode, 0.0)
                 state = ZEROING
             }
 
