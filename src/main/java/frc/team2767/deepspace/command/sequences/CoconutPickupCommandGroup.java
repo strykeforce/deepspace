@@ -44,8 +44,6 @@ public class CoconutPickupCommandGroup extends CommandGroup {
             }),
         5);
     addSequential(new LogCommand("opened valves"));
-    // addSequential(new BiscuitWaitForCompressionCommand(BiscuitSubsystem.BALL_COMPRESSION));
-    // addSequential(new LogCommand("Compression reached"));
     addSequential(new ElevatorOpenLoopDownCommand());
     addSequential(new WaitForPressureCommand(VacuumSubsystem.kBallPressureInHg));
     addSequential(new ElevatorSetPositionCommand(25.0));

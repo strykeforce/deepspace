@@ -17,7 +17,7 @@ public class QueryPyeyeCommand extends Command {
 
   @Override
   protected void initialize() {
-    logger.debug("Looking for target");
+    logger.info("Looking for target");
   }
 
   @Override

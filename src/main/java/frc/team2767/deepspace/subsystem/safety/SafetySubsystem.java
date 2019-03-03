@@ -116,6 +116,7 @@ public class SafetySubsystem extends Subsystem {
     return biscuitLimit;
   }
 
+  @SuppressWarnings("Duplicates")
   @NotNull
   private IntakePosition intakeLimit(
       BiscuitPosition biscuitPosition, ElevatorPosition elevatorPosition) {
@@ -166,6 +167,7 @@ public class SafetySubsystem extends Subsystem {
     return intakeLimit;
   }
 
+  @SuppressWarnings("Duplicates")
   @NotNull
   private ElevatorPosition elevatorLimit(
       BiscuitPosition biscuitPosition, IntakePosition intakePosition) {

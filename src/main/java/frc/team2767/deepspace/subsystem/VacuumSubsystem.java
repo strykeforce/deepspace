@@ -141,7 +141,7 @@ public class VacuumSubsystem extends Subsystem {
   }
 
   public void setSolenoid(Valve valve, boolean state) {
-    logger.debug("setting {} to {}", valve, state);
+    logger.info("setting {} to {}", valve, state);
     switch (valve) {
       case CLIMB:
         climbSolenoid.set(state);
@@ -178,13 +178,12 @@ public class VacuumSubsystem extends Subsystem {
   }
 
   public void runOpenLoop(double setpoint) {
-    logger.debug("running vacuum at {}", setpoint);
+    logger.info("running vacuum at {}", setpoint);
     vacuum.set(ControlMode.PercentOutput, setpoint);
   }
 
   public void dump() {
-    logger.info("vacuum pressure in inHg = {}", getPressure());
-    logger.info("vacuum pressure in counts = {}", getCounts());
+    logger.info("vacuum pressure in inHg = {} counts = {}", getPressure(), getCounts());
   }
 
   public double getPressure() {
@@ -200,7 +199,7 @@ public class VacuumSubsystem extends Subsystem {
     SmartDashboard.putBoolean("Game/onTarget", false);
     setpointCounts = (int) (COUNTS_PER_INHG * pressure + COUNTS_OFFSET);
     // setpointCounts = (int) (35.5 * pressure + 32);
-    logger.debug("setting pressure to {}", setpointCounts);
+    logger.info("setting pressure to {}", setpointCounts);
     vacuum.set(ControlMode.Position, setpointCounts);
   }
 
@@ -209,7 +208,7 @@ public class VacuumSubsystem extends Subsystem {
   }
 
   public void stop() {
-    logger.debug("stop pump");
+    logger.info("stop pump");
     SmartDashboard.putBoolean("Game/onTarget", false);
     vacuum.set(ControlMode.Position, 0);
   }

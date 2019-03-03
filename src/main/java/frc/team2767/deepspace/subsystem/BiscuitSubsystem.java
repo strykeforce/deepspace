@@ -184,9 +184,11 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
     if (!biscuit.getSensorCollection().isFwdLimitSwitchClosed()) {
       int absPos = biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF;
       int relPos = biscuit.getSelectedSensorPosition();
-      logger.info("Preferences zero = {}", kAbsoluteZeroTicks);
-      logger.info("Relative position = {}", relPos);
-      logger.info("Absolute position = {}", absPos);
+      logger.info(
+          "Preferences zero = {} Relative position = {} Absolute position = {}",
+          kAbsoluteZeroTicks,
+          relPos,
+          absPos);
 
       // appears backwards because absolute and relative encoders are out-of-phase in hardware
       int offset = kAbsoluteZeroTicks - absPos;
@@ -293,7 +295,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   public boolean onTarget() {
     int current = biscuit.getSelectedSensorPosition();
     if (Math.abs(current - setpointTicks) < kCloseEnoughTicks) {
-      logger.debug("onTarget: current = {} target = {}", current, setpointTicks);
+      logger.info("onTarget: current = {} target = {}", current, setpointTicks);
       return true;
     }
 
@@ -309,11 +311,11 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   }
 
   public void dump() {
-    logger.info("biscuit position in degrees = {}", getPosition());
-    logger.info("biscuit position in ticks = {}", getTicks());
-    logger.info("biscuit compression in inches = {}", getCompression());
     logger.info(
-        "biscuit compression in counts = {}", biscuit.getSensorCollection().getAnalogInRaw());
+        "biscuit position in degrees = {} biscuit position in ticks = {}",
+        getPosition(),
+        getTicks());
+    logger.info("biscuit compression in inches = {} biscuit compression in counts = {}", getCompression(), biscuit.getSensorCollection().getAnalogInRaw());
   }
 
   private enum Angle {

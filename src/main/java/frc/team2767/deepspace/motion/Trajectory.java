@@ -48,7 +48,7 @@ public class Trajectory {
         lineNumberReader.close();
 
       } else {
-        logger.debug("File does not exist");
+        logger.info("File does not exist");
       }
 
     } catch (IOException e) {

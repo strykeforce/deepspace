@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
+import frc.team2767.deepspace.command.YawCommand;
 import frc.team2767.deepspace.command.ZeroAxisCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
@@ -151,6 +152,8 @@ public class SmartDashboardControls {
         "Test/Climb Disable", new DeactivateValveCommand(VacuumSubsystem.Valve.CLIMB));
 
     SmartDashboard.putData("Test/SandstormHatchPickUp", new SandstormHatchPickupCommandGroup());
+
+    SmartDashboard.putData("Test/Yaw Command", new YawCommand());
   }
 
   private void addVisionCommands() {
