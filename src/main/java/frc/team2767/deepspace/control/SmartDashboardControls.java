@@ -17,6 +17,7 @@ import frc.team2767.deepspace.command.log.BiscuitDumpCommand;
 import frc.team2767.deepspace.command.log.ElevatorDumpCommand;
 import frc.team2767.deepspace.command.log.IntakeDumpCommand;
 import frc.team2767.deepspace.command.log.VacuumDumpCommand;
+import frc.team2767.deepspace.command.sequences.SandstormHatchPickupCommandGroup;
 import frc.team2767.deepspace.command.states.SetActionCommand;
 import frc.team2767.deepspace.command.states.SetGamePieceCommand;
 import frc.team2767.deepspace.command.twist.OrthogonalMovementCommand;
@@ -143,6 +144,8 @@ public class SmartDashboardControls {
         "Test/Climb Enable", new ActivateValveCommand(VacuumSubsystem.Valve.CLIMB));
     SmartDashboard.putData(
         "Test/Climb Disable", new DeactivateValveCommand(VacuumSubsystem.Valve.CLIMB));
+
+    SmartDashboard.putData("Test/SandstormHatchPickUp", new SandstormHatchPickupCommandGroup());
   }
 
   private void addVisionCommands() {

@@ -1,6 +1,6 @@
 package frc.team2767.deepspace.subsystem;
 
-import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
+import static com.ctre.phoenix.motorcontrol.ControlMode.*;
 
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -170,6 +170,11 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
     setPosition(newPosition);
   }
 
+  public void holdPosition() {
+    int position = elevator.getSelectedSensorPosition();
+    elevator.set(MotionMagic, position);
+  }
+
   @SuppressWarnings("Duplicates")
   public boolean onTarget() {
     int error = setpointTicks - elevator.getSelectedSensorPosition(0);
@@ -185,11 +190,12 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
   public boolean zero() {
     boolean didZero = false;
     if (elevator.getSensorCollection().isRevLimitSwitchClosed()) {
-      logger.info("Preferences zero = {}", kAbsoluteZeroTicks);
-      logger.info("Relative position = {}", elevator.getSelectedSensorPosition());
-      logger.info(
-          "Absolute position = {}", elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF);
 
+      logger.info(
+          "Preferences zero = {} Relative position = {} Absolute position = {}",
+          kAbsoluteZeroTicks,
+          elevator.getSelectedSensorPosition(),
+          elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF);
       int offset =
           elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF - kAbsoluteZeroTicks;
       elevator.setSelectedSensorPosition(offset);
@@ -242,14 +248,18 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
     }
   }
 
+  public void openLoopMove(double output) {
+    logger.info("moving at {}", output);
+    elevator.set(ControlMode.PercentOutput, output);
+  }
+
   public void stop() {
     logger.info("lift stop at elevatorPosition {}", elevator.getSelectedSensorPosition(0));
     elevator.set(PercentOutput, 0.0);
   }
 
   public void dump() {
-    logger.info("elevator position in inches = {}", getPosition());
-    logger.info("elevator position in ticks = {}", getTicks());
+    logger.info("elevator position in inches = {} ticks = {}", getPosition(), getTicks());
   }
 
   public double getPosition() {

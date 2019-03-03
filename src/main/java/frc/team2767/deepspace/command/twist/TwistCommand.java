@@ -4,14 +4,11 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
 import frc.team2767.deepspace.subsystem.VisionSubsystem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TwistCommand extends Command {
 
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VisionSubsystem VISION = Robot.VISION;
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public TwistCommand() {
     requires(DRIVE);

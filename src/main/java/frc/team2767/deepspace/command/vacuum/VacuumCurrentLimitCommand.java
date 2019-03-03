@@ -7,7 +7,7 @@ import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 public class VacuumCurrentLimitCommand extends InstantCommand {
 
   private static final VacuumSubsystem VACUUM = Robot.VACUUM;
-  double limit;
+  private final double limit;
 
   public VacuumCurrentLimitCommand(double limit) {
     this.limit = limit;

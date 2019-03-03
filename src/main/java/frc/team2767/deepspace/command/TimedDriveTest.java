@@ -39,6 +39,6 @@ public class TimedDriveTest extends TimedCommand {
 
   @Override
   protected void interrupted() {
-    logger.debug("interrupted timed drive");
+    logger.info("interrupted timed drive");
   }
 }

@@ -42,7 +42,7 @@ public class VisionSubsystem extends Subsystem {
     table = instance.getTable("Pyeye");
 
     usbCamera = cameraServer.startAutomaticCapture();
-    logger.debug("camera is connected = {}", usbCamera.isConnected());
+    logger.info("camera is connected = {}", usbCamera.isConnected());
     lightsOutput.set(true);
 
     SmartDashboard.putString("GamePiece", gamePiece.toString());
@@ -89,7 +89,7 @@ public class VisionSubsystem extends Subsystem {
 
   public boolean isTargetAcquired() {
     if (rawRange > 0.0) {
-      logger.debug("target found");
+      logger.info("target found");
       return true;
     }
     return false;
@@ -110,20 +110,20 @@ public class VisionSubsystem extends Subsystem {
   public void setGamePiece(GamePiece gamePiece) {
     this.gamePiece = gamePiece;
     SmartDashboard.putString("GamePiece", gamePiece.toString());
-    logger.debug("set gamepiece to {}", gamePiece);
+    logger.info("set gamepiece to {}", gamePiece);
   }
 
   public void setAction(Action action) {
     this.action = action;
     SmartDashboard.putString("Action", action.toString());
-    logger.debug("set action to {}", action);
+    logger.info("set action to {}", action);
   }
 
   public void setFieldDirection(FieldDirection direction) {
     this.direction = direction;
     SmartDashboard.putString("FieldDirection", direction.toString());
     selectCamera();
-    logger.debug("set direction to {}", direction);
+    logger.info("set direction to {}", direction);
   }
 
   public void selectCamera() {
@@ -137,9 +137,8 @@ public class VisionSubsystem extends Subsystem {
   }
 
   public void setCamera(Camera camera) {
-    logger.debug("chose {} camera", camera);
     this.camera = camera;
-    logger.debug("id = {}", table.getEntry("camera_id").getNumber(2767));
+    logger.info("chose {} camera", camera);
 
     NetworkTableEntry cameraID = table.getEntry("camera_id");
     cameraID.setNumber(camera.id);
@@ -148,7 +147,7 @@ public class VisionSubsystem extends Subsystem {
   public void setElevatorLevel(ElevatorLevel elevatorLevel) {
     this.elevatorLevel = elevatorLevel;
     SmartDashboard.putString("ElevatorLevel", elevatorLevel.toString());
-    logger.debug("set elevator level to {}", elevatorLevel);
+    logger.info("set elevator level to {}", elevatorLevel);
   }
 
   public double getRawBearing() {

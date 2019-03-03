@@ -79,7 +79,7 @@ public class ClimbSubsystem extends Subsystem {
       preferences.putDouble(prefName, defaultValue);
     }
     double pref = preferences.getDouble(prefName, BACKUP);
-    logger.debug("{} = {}", name, pref);
+    logger.info("{} = {}", name, pref);
     return pref;
   }
 
@@ -123,7 +123,7 @@ public class ClimbSubsystem extends Subsystem {
     rightMaster.configForwardLimitSwitchSource(
         LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
 
-    logger.debug("Configured Climber Talons");
+    logger.info("Configured Climber Talons");
 
     if (!Robot.isEvent()) {
       TelemetryService telemetryService = Robot.TELEMETRY;

@@ -5,6 +5,7 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.ClimbSubsystem;
 
 public class ReleaseClimbCommand extends InstantCommand {
+
   private static final ClimbSubsystem CLIMB = Robot.CLIMB;
 
   public ReleaseClimbCommand() {
