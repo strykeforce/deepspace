@@ -6,6 +6,7 @@ import frc.team2767.deepspace.subsystem.GamePiece;
 import frc.team2767.deepspace.subsystem.VisionSubsystem;
 
 public class SetGamePieceCommand extends InstantCommand {
+
   private static final VisionSubsystem VISION = Robot.VISION;
 
   private GamePiece gamePiece;

@@ -85,7 +85,7 @@ public class DriveSubsystem extends Subsystem {
   ////////////////////////////////////////////////////////////////////////////
 
   public void startTwist(double heading, int distance, double targetYaw) {
-    logger.debug("heading={} distance={} targetYaw={}", heading, distance, targetYaw);
+    logger.info("heading={} distance={} targetYaw={}", heading, distance, targetYaw);
     twistController = new TwistController(swerve, heading, distance, targetYaw);
     twistController.start();
   }
@@ -101,7 +101,7 @@ public class DriveSubsystem extends Subsystem {
   }
 
   public void interruptTwist() {
-    logger.debug("twist command interrupted");
+    logger.info("twist command interrupted");
     twistController.interrupt();
   }
 

@@ -51,7 +51,7 @@ class TwistController(
 
 
     init {
-        logger.debug {
+        logger.info {
             "INIT motion, heading = $heading, distance = $distance,\n" +
                     "ticks/sec max = $ticksPerSecMax\n" +
                     "forward = $forwardComponent, strafe = $strafeComponent\n"
@@ -75,7 +75,7 @@ class TwistController(
 
 
     fun start() {
-        logger.debug { "twist controller start" }
+        logger.info { "twist controller start" }
         notifier.startPeriodic(DT_MS_DEFAULT / 1000.0)
     }
 

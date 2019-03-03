@@ -7,7 +7,6 @@ import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
 import frc.team2767.deepspace.command.intake.IntakePositionCommand;
 import frc.team2767.deepspace.command.intake.RollerOutCommand;
 import frc.team2767.deepspace.command.intake.RollerStopCommand;
-import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.states.SetActionCommand;
 import frc.team2767.deepspace.command.states.SetGamePieceCommand;
 import frc.team2767.deepspace.command.vacuum.ActivateValveCommand;
@@ -43,7 +42,6 @@ public class CoconutPickupCommandGroup extends CommandGroup {
     // addSequential(new WaitForPressureCommand(VacuumSubsystem.kBallPressureInHg));
     // addSequential(new WaitCommand(0.5));
 
-    addSequential(new LogCommand("opening valves"));
     addSequential(
         new ActivateValveCommand(
             new VacuumSubsystem.Valve[] {

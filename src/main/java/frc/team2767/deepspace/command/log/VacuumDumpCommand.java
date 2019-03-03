@@ -5,6 +5,7 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 
 public class VacuumDumpCommand extends InstantCommand {
+
   private static final VacuumSubsystem VACUUM = Robot.VACUUM;
 
   @Override

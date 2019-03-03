@@ -8,6 +8,7 @@ import frc.team2767.deepspace.subsystem.ClimbSubsystem;
 import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 
 public class LowerSuctionCupCommand extends InstantCommand {
+
   private static final ClimbSubsystem CLIMB = Robot.CLIMB;
   private static final VacuumSubsystem VACUUM = Robot.VACUUM;
 

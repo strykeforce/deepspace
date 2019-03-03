@@ -71,6 +71,7 @@ public class ClimbSubsystem extends Subsystem {
     grenadePinRelease = getPrefs("grenade_release", 0.6); // FIXME
   }
 
+  @SuppressWarnings("Duplicates")
   private double getPrefs(String name, double defaultValue) {
     String prefName = PREFS + name;
     Preferences preferences = Preferences.getInstance();
@@ -78,10 +79,11 @@ public class ClimbSubsystem extends Subsystem {
       preferences.putDouble(prefName, defaultValue);
     }
     double pref = preferences.getDouble(prefName, BACKUP);
-    logger.debug("{} = {}", name, pref);
+    logger.info("{} = {}", name, pref);
     return pref;
   }
 
+  @SuppressWarnings("Duplicates")
   private void configTalon() {
     TalonSRXConfiguration leftSlaveConfig = new TalonSRXConfiguration();
     leftSlaveConfig.peakOutputReverse = 0;
@@ -121,7 +123,7 @@ public class ClimbSubsystem extends Subsystem {
     rightMaster.configForwardLimitSwitchSource(
         LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
 
-    logger.debug("Configured Climber Talons");
+    logger.info("Configured Climber Talons");
 
     if (!Robot.isEvent()) {
       TelemetryService telemetryService = Robot.TELEMETRY;
