@@ -18,23 +18,26 @@ public class ClimbSubsystem extends Subsystem {
   private static final double TICKS_PER_INCH = 1738; // FIXME
   private static final double TICKS_OFFSET = TICKS_PER_INCH * 4;
   private static int ticksStart;
+  private static int relStartTicks;
   private static int setpointTicks;
 
   private static final int LEFT_SLAVE_ID = 50;
   private static final int RIGHT_MASTER_ID = 51;
   private static final int LEFT_KICKSTAND = 2;
   private static final int RIGHT_KICKSTAND = 3;
-  private static final int GRENADE_PIN = 4;
+  private static final int RATCHET_SERVO = 4;
 
   private TalonSRX leftSlave = new TalonSRX(LEFT_SLAVE_ID);
   private TalonSRX rightMaster = new TalonSRX(RIGHT_MASTER_ID);
   private Servo rightKickstand = new Servo(RIGHT_KICKSTAND);
   private Servo leftKickstand = new Servo(LEFT_KICKSTAND);
-  private Servo grenadePin = new Servo(GRENADE_PIN);
+  private Servo ratchetServo = new Servo(RATCHET_SERVO);
 
   private static final double kClimbSpeed = 0.3;
   private static final double kLowerSuction = 0.1;
   private static final double kUnwindSpeed = -0.1;
+  private static final double kRatchetReleaseSpeed = 0.1;
+  private static final double kRaiseToHeight = -0.1;
 
   private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -43,8 +46,8 @@ public class ClimbSubsystem extends Subsystem {
   public static double leftKickstandRelease;
   public static double rightKickstandHold;
   public static double rightKickstandRelease;
-  public static double grenadePinHold;
-  public static double grenadePinRelease;
+  public static double ratchetDisable;
+  public static double ratchetEngage;
   private static double BACKUP = 2767;
 
   public ClimbSubsystem() {
@@ -57,7 +60,7 @@ public class ClimbSubsystem extends Subsystem {
     climbPrefs();
     configTalon();
 
-    grenadePin.set(grenadePinHold);
+    ratchetServo.set(ratchetEngage);
     leftKickstand.set(leftKickstandHold);
     rightKickstand.set(rightKickstandHold);
   }
@@ -67,8 +70,8 @@ public class ClimbSubsystem extends Subsystem {
     leftKickstandRelease = getPrefs("L_kickstand_release", 0.95);
     rightKickstandHold = getPrefs("R_kickstand_hold", 0.5);
     rightKickstandRelease = getPrefs("R_kickstand_release", 0.95);
-    grenadePinHold = getPrefs("grenade_hold", 0.5); // FIXME
-    grenadePinRelease = getPrefs("grenade_release", 0.6); // FIXME
+    ratchetDisable = getPrefs("ratchet_disable", 0.5); // FIXME
+    ratchetEngage = getPrefs("ratchet_engage", 0.5); // FIXME
   }
 
   private double getPrefs(String name, double defaultValue) {
@@ -84,7 +87,7 @@ public class ClimbSubsystem extends Subsystem {
 
   private void configTalon() {
     TalonSRXConfiguration leftSlaveConfig = new TalonSRXConfiguration();
-    leftSlaveConfig.peakOutputReverse = 0;
+    leftSlaveConfig.peakOutputReverse = -1.0;
     leftSlaveConfig.peakCurrentLimit = 45;
     leftSlaveConfig.peakCurrentDuration = 40;
     leftSlaveConfig.continuousCurrentLimit = 40;
@@ -96,7 +99,7 @@ public class ClimbSubsystem extends Subsystem {
     leftSlaveConfig.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
 
     TalonSRXConfiguration rightMasterConfig = new TalonSRXConfiguration();
-    rightMasterConfig.peakOutputReverse = 0;
+    rightMasterConfig.peakOutputReverse = -1.0;
     rightMasterConfig.peakCurrentLimit = 45;
     rightMasterConfig.peakCurrentDuration = 40;
     rightMasterConfig.continuousCurrentLimit = 40;
@@ -135,43 +138,43 @@ public class ClimbSubsystem extends Subsystem {
     return (rightMaster.getSelectedSensorPosition() + TICKS_OFFSET - ticksStart) / TICKS_PER_INCH;
   }
 
-  public void runToPosition(double inches) {
-    setpointTicks = (int) (inches * TICKS_PER_INCH + TICKS_OFFSET + ticksStart);
-    climb();
-  }
-
-  public void climb() {
-    openLoopUp(kClimbSpeed);
-  }
-
-  public void lowerSuctionCup() {
-    openLoopUp(kLowerSuction);
-  }
-
-  public void openLoopUp(double percent) {
+  public void openLoopMove(double percent) {
     leftSlave.follow(rightMaster);
     rightMaster.set(ControlMode.PercentOutput, percent);
   }
 
+  public void climb() {
+    openLoopMove(kClimbSpeed);
+  }
+
+  public void lowerSuctionCup() {
+    openLoopMove(kLowerSuction);
+  }
+
   public void stop() {
-    leftSlave.follow(rightMaster);
-    rightMaster.set(ControlMode.PercentOutput, 0.0);
+    openLoopMove(0.0);
   }
 
   public void unwind() {
-    leftSlave.configPeakOutputReverse(-1.0);
-    rightMaster.configPeakOutputReverse(-1.0);
-    leftSlave.follow(rightMaster);
-    rightMaster.set(ControlMode.PercentOutput, kUnwindSpeed);
+    openLoopMove(kUnwindSpeed);
   }
 
-  public void setMaxReverse() {
-    leftSlave.configPeakOutputReverse(0.0);
-    rightMaster.configPeakOutputReverse(0.0);
+  public void runTicks(int ticks) {
+    setpointTicks = ticks;
+    relStartTicks = rightMaster.getSelectedSensorPosition();
+    openLoopMove(kRatchetReleaseSpeed);
   }
 
-  public void releaseClimber() {
-    grenadePin.set(grenadePinRelease);
+  public boolean onTicks() {
+    return Math.abs(rightMaster.getSelectedSensorPosition() - relStartTicks) >= setpointTicks;
+  }
+
+  public void disableRatchet() {
+    ratchetServo.set(ratchetDisable);
+  }
+
+  public void raiseToHeight() {
+    openLoopMove(kRaiseToHeight);
   }
 
   public void releaseKickstand() {
