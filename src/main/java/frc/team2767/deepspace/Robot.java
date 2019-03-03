@@ -3,8 +3,11 @@ package frc.team2767.deepspace;
 import ch.qos.logback.classic.util.ContextInitializer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team2767.deepspace.command.sequences.SandstormHatchPickupCommandGroup;
 import frc.team2767.deepspace.control.Controls;
 import frc.team2767.deepspace.subsystem.*;
 import frc.team2767.deepspace.subsystem.safety.SafetySubsystem;
@@ -28,6 +31,7 @@ public class Robot extends TimedRobot {
 
   public static Controls CONTROLS;
   private static boolean isEvent;
+  private static CommandGroup getHatch = new SandstormHatchPickupCommandGroup();
 
   private Logger logger;
 
@@ -64,7 +68,6 @@ public class Robot extends TimedRobot {
     Session.INSTANCE.setBaseUrl("https://keeper.strykeforce.org");
 
     DRIVE.zeroYawEncoders();
-    DRIVE.zeroGyro();
     ELEVATOR.zero();
     BISCUIT.zero();
     INTAKE.zero();
@@ -78,6 +81,13 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     Scheduler.getInstance().run();
+  }
+
+
+  @Override
+  public void autonomousInit() {
+    DRIVE.setAngleAdjustment();
+    getHatch.start();
   }
 
   @Override
