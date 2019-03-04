@@ -28,14 +28,16 @@ class HealthCheckCommand : Command() {
                 talons = Robot.BISCUIT.talons
 
                 positionTest {
-                    percentOutput = 0.1
+                    percentOutput = 0.2
+                    zeroGoodEnough = 50
                     encoderTarget = 1250
                     encoderTimeOutCount = 500
                 }
 
                 positionTest {
-                    percentOutput = -0.1
-                    encoderTarget = -1250
+                    percentOutput = -0.2
+                    zeroGoodEnough = 50
+                    encoderTarget = 1250
                     encoderTimeOutCount = 250
                 }
             }

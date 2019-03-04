@@ -19,7 +19,7 @@ class TalonPositionTest(private val group: TalonGroup) : Test, Reportable {
     var percentOutput = 0.0
     var peakVoltage = 12.0
     var zeroGoodEnough = 5
-    var zeroTimeOutCount = 10
+    var zeroTimeOutCount = 50
     var encoderTarget = 0
     var encoderTimeOutCount = 0
     var controlMode = ControlMode.MotionMagic
@@ -57,7 +57,7 @@ class TalonPositionTest(private val group: TalonGroup) : Test, Reportable {
                     return
                 }
                 if (iteration++ > zeroTimeOutCount) {
-                    logger.warn { "timed out waiting for encoder zero, skipping test" }
+                    logger.warn { "timed out waiting for encoder zero, encoder = ${talon.selectedSensorPosition}" }
                     state = STOPPED
                 }
             }
@@ -88,6 +88,7 @@ class TalonPositionTest(private val group: TalonGroup) : Test, Reportable {
 
             RESETTING -> {
                 if (talon.selectedSensorPosition.absoluteValue < zeroGoodEnough)
+                    logger.info { "repositioned to zero, finishing test" }
                     state = STOPPED
             }
 
