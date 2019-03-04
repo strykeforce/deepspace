@@ -36,6 +36,7 @@ public class CoconutPickupCommandGroup extends CommandGroup {
     addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.kDownRightPositionDeg));
 
     addSequential(new ElevatorSetPositionCommand(18.0));
+    addParallel(new IntakePositionCommand(105)); // 105
     addSequential(new LogCommand("opening valves"));
     addSequential(
         new ActivateValveCommand(
@@ -49,7 +50,6 @@ public class CoconutPickupCommandGroup extends CommandGroup {
     addSequential(new ElevatorSetPositionCommand(25.0));
     addSequential(new SetActionCommand(Action.PLACE));
     addSequential(new RollerStopCommand());
-    addSequential(new IntakePositionCommand(IntakeSubsystem.kStowPositionDeg)); // 105
     //        addSequential(new
     // ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition.kStowPositionDeg));
   }

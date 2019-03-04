@@ -281,12 +281,15 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
                 targetBiscuitPositionDeg = kRightPositionDeg;
                 break;
             }
+            break;
           case NOTSET:
             logger.warn("Gamepiece not set");
             break;
         }
+        break;
       case NOTSET:
         logger.warn("Action not set");
+        break;
     }
 
     setPosition(targetBiscuitPositionDeg);
@@ -315,7 +318,10 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
         "biscuit position in degrees = {} biscuit position in ticks = {}",
         getPosition(),
         getTicks());
-    logger.info("biscuit compression in inches = {} biscuit compression in counts = {}", getCompression(), biscuit.getSensorCollection().getAnalogInRaw());
+    logger.info(
+        "biscuit compression in inches = {} biscuit compression in counts = {}",
+        getCompression(),
+        biscuit.getSensorCollection().getAnalogInRaw());
   }
 
   private enum Angle {
