@@ -4,18 +4,15 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.ClimbSubsystem;
 
-public class ClimbCommand extends InstantCommand {
-
+public class RaiseClimbCommand extends InstantCommand {
   private static final ClimbSubsystem CLIMB = Robot.CLIMB;
 
-  public ClimbCommand() {
+  public RaiseClimbCommand() {
     requires(CLIMB);
   }
 
   @Override
   protected void initialize() {
-    CLIMB.enableRatchet();
-    CLIMB.releaseKickstand();
-    CLIMB.climb();
+    CLIMB.raiseToHeight();
   }
 }

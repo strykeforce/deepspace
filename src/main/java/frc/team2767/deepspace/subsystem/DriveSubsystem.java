@@ -120,6 +120,20 @@ public class DriveSubsystem extends Subsystem {
     logger.info("resetting gyro shoulderZero ({})", adj);
   }
 
+  public void setAngleAdjustment(boolean startMatch) {
+    AHRS gyro = swerve.getGyro();
+    double adj;
+    if (startMatch) {
+      gyro.setAngleAdjustment(0);
+      adj = -gyro.getAngle() % 360;
+      adj += 90d; // Always Start with Left side forward
+    } else {
+      adj = gyro.getAngle() % 360;
+      adj -= 90d; // Adjust Back for Teleop
+    }
+    gyro.setAngleAdjustment(adj);
+  }
+
   public SwerveDrive getSwerveDrive() {
     return swerve;
   }

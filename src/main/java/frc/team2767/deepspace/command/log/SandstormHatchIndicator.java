@@ -12,6 +12,6 @@ public class SandstormHatchIndicator extends InstantCommand {
 
   @Override
   protected void initialize() {
-    SmartDashboard.putBoolean("Hatch/SandstormPickUp", state);
+    SmartDashboard.putBoolean("Game/SandstormPickUp", state);
   }
 }

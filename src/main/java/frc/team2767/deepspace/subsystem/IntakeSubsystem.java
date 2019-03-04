@@ -1,8 +1,6 @@
 package frc.team2767.deepspace.subsystem;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
+import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import edu.wpi.first.wpilibj.Preferences;
@@ -26,6 +24,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
   public static double kMiddlePositionDeg;
   public static double kLoadPositionDeg;
   public static double kCargoPlayerPositionDeg;
+  private static int kAbsoluteZero;
   private final int SHOULDER_ID = 20;
   private final int ROLLER_ID = 21;
   private final int STABLE_THRESH = 4;
@@ -51,6 +50,8 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
 
     intakePreferences();
     configTalon();
+    shoulder.configReverseLimitSwitchSource(
+        LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
   }
 
   @SuppressWarnings("Duplicates")
@@ -58,6 +59,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
     // ticks
     kZeroPositionTicks = getPreference("zero_position_ticks", 0);
     kCloseEnoughTicks = (int) getPreference("close_enough_ticks", 100);
+    kAbsoluteZero = (int) getPreference("absolute_zero", 1658);
 
     // degrees
     kStowPositionDeg = getPreference("up_position_deg", 107);
@@ -87,8 +89,10 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
     shoulderConfig.voltageMeasurementFilter = 32;
     shoulderConfig.velocityMeasurementWindow = 64;
     shoulderConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms;
-    shoulderConfig.motionCruiseVelocity = 1000;
-    shoulderConfig.motionAcceleration = 4000;
+    shoulderConfig.motionCruiseVelocity = 900;
+    shoulderConfig.motionAcceleration = 3500;
+    shoulderConfig.forwardSoftLimitThreshold = 9664;
+    shoulderConfig.reverseSoftLimitThreshold = -250;
 
     TalonSRXConfiguration rollerConfig = new TalonSRXConfiguration();
     rollerConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
@@ -149,14 +153,19 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
   public boolean zero() {
     boolean didZero = false;
     if (shoulder.getSensorCollection().isRevLimitSwitchClosed()) {
-      shoulder.setSelectedSensorPosition((int) kZeroPositionTicks);
-      logger.info("shoulder zeroed with limit switch to {}", shoulder.getSelectedSensorPosition());
+      int absPos = shoulder.getSensorCollection().getPulseWidthPosition() % 0xFFF;
+      int offset = absPos - kAbsoluteZero;
+      shoulder.setSelectedSensorPosition(offset + (int) kZeroPositionTicks);
+      logger.info("shoulder zeroed with limit switch to {}", offset + (int) kZeroPositionTicks);
       didZero = true;
     } else {
       logger.error("Intake zero failed - intake not in stowed position");
       shoulder.configPeakOutputForward(0, 0);
       shoulder.configPeakOutputReverse(0, 0);
     }
+
+    shoulder.configReverseLimitSwitchSource(
+        LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
     return didZero;
   }
 

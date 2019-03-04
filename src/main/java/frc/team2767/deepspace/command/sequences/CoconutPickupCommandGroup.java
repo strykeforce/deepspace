@@ -2,7 +2,7 @@ package frc.team2767.deepspace.command.sequences;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
-import frc.team2767.deepspace.command.biscuit.BiscuitWaitForCompressionCommand;
+import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
 import frc.team2767.deepspace.command.intake.IntakePositionCommand;
 import frc.team2767.deepspace.command.intake.RollerOutCommand;
@@ -36,13 +36,8 @@ public class CoconutPickupCommandGroup extends CommandGroup {
     addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.kDownRightPositionDeg));
 
     addSequential(new ElevatorSetPositionCommand(18.0));
-    addSequential(new BiscuitWaitForCompressionCommand(BiscuitSubsystem.BALL_COMPRESSION), 1.0);
-    addSequential(new LogCommand("Compression reached"));
-
-    // addSequential(new BiscuitWiggleCommand());
-    // addSequential(new WaitForPressureCommand(VacuumSubsystem.kBallPressureInHg));
-    // addSequential(new WaitCommand(0.5));
-
+    addParallel(new IntakePositionCommand(105)); // 105
+    addSequential(new LogCommand("opening valves"));
     addSequential(
         new ActivateValveCommand(
             new VacuumSubsystem.Valve[] {
@@ -50,11 +45,11 @@ public class CoconutPickupCommandGroup extends CommandGroup {
             }),
         5);
     addSequential(new LogCommand("opened valves"));
+    addSequential(new ElevatorOpenLoopDownCommand());
     addSequential(new WaitForPressureCommand(VacuumSubsystem.kBallPressureInHg));
     addSequential(new ElevatorSetPositionCommand(25.0));
     addSequential(new SetActionCommand(Action.PLACE));
     addSequential(new RollerStopCommand());
-    addSequential(new IntakePositionCommand(105.0));
     //        addSequential(new
     // ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition.kStowPositionDeg));
   }

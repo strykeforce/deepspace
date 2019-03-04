@@ -23,7 +23,7 @@ public class PlayerCargoCommandGroup extends CommandGroup {
         });
 
     addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kCargoPlayerPositionInches));
-    addSequential(new IntakePositionCommand(IntakeSubsystem.kCargoPlayerPositionDeg));
+    addParallel(new IntakePositionCommand(IntakeSubsystem.kCargoPlayerPositionDeg));
     addSequential(new BiscuitExecutePlanCommand());
     addParallel(new RollerOutCommand(0.3));
 

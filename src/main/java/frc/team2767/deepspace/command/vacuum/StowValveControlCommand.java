@@ -12,8 +12,10 @@ public class StowValveControlCommand extends ConditionalCommand {
     super(new DeactivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
   }
 
+  // Not on Target -> Close Trident Valve
+  // on Target -> leave Trident Valve in current state
   @Override
   protected boolean condition() {
-    return VACUUM.onTarget();
+    return !VACUUM.onTarget();
   }
 }

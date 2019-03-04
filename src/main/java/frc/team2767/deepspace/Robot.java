@@ -3,7 +3,10 @@ package frc.team2767.deepspace;
 import ch.qos.logback.classic.util.ContextInitializer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team2767.deepspace.command.sequences.SandstormHatchPickupCommandGroup;
 import frc.team2767.deepspace.control.Controls;
 import frc.team2767.deepspace.subsystem.*;
 import frc.team2767.deepspace.subsystem.safety.SafetySubsystem;
@@ -27,6 +30,7 @@ public class Robot extends TimedRobot {
 
   public static Controls CONTROLS;
   private static boolean isEvent;
+  private static CommandGroup getHatch;
 
   private Logger logger;
 
@@ -60,14 +64,17 @@ public class Robot extends TimedRobot {
     // NullPointerExceptions in commands that require() Subsystems above.
     CONTROLS = new Controls();
 
+    getHatch = new SandstormHatchPickupCommandGroup();
+
     Session.INSTANCE.setBaseUrl("https://keeper.strykeforce.org");
 
     DRIVE.zeroYawEncoders();
-    DRIVE.zeroGyro();
     ELEVATOR.zero();
     BISCUIT.zero();
     INTAKE.zero();
     TELEMETRY.start();
+
+    SmartDashboard.putBoolean("Game/SandstormPickUp", false);
 
     //    new SmartDashboardControls();
   }
@@ -76,6 +83,20 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
     Scheduler.getInstance().run();
   }
+
+  @Override
+  public void autonomousInit() {
+    DRIVE.setAngleAdjustment(true);
+    getHatch.start();
+  }
+
+  @Override
+  public void autonomousPeriodic() {
+    Scheduler.getInstance().run();
+  }
+
+  @Override
+  public void teleopInit() {}
 
   @Override
   public void teleopPeriodic() {

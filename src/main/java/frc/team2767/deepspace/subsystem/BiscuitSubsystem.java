@@ -29,8 +29,8 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   public static double kTiltUpRightPositionDeg;
   public static double kDownRightPositionDeg;
   public static double kDownLeftPositionDeg;
-  public static final double BALL_COMPRESSION = 1.5;
-  public static final double HATCH_COMPRESSION = 2;
+  public static final double BALL_COMPRESSION = 1.0;
+  public static final double HATCH_COMPRESSION = 1.0;
   private static int kCloseEnoughTicks;
   private final int BISCUIT_ID = 40;
   private final double TICKS_PER_DEGREE = 34.1;
@@ -281,12 +281,15 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
                 targetBiscuitPositionDeg = kRightPositionDeg;
                 break;
             }
+            break;
           case NOTSET:
             logger.warn("Gamepiece not set");
             break;
         }
+        break;
       case NOTSET:
         logger.warn("Action not set");
+        break;
     }
 
     setPosition(targetBiscuitPositionDeg);
@@ -315,6 +318,10 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
         "biscuit position in degrees = {} biscuit position in ticks = {}",
         getPosition(),
         getTicks());
+    logger.info(
+        "biscuit compression in inches = {} biscuit compression in counts = {}",
+        getCompression(),
+        biscuit.getSensorCollection().getAnalogInRaw());
   }
 
   private enum Angle {

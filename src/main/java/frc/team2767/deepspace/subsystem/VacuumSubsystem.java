@@ -33,8 +33,10 @@ public class VacuumSubsystem extends Subsystem {
   String PREFS_NAME = "VacuumSubsystem/Settings/";
   int BACKUP = 2767;
   private int goodEnough = 100;
+  private int goodEnoughClimb = 150;
   private int setpointCounts;
   private int stableCount;
+  private int climbStableCounts;
   private Solenoid tridentSolenoid;
   private Solenoid climbSolenoid;
   private Solenoid pumpSolenoid;
@@ -45,6 +47,7 @@ public class VacuumSubsystem extends Subsystem {
   public VacuumSubsystem() {
 
     stableCount = 0;
+    climbStableCounts = 0;
     setpointCounts = 0;
     tridentSolenoid = new Solenoid(0, Valve.TRIDENT.ID);
     pumpSolenoid = new Solenoid(0, Valve.PUMP.ID);
@@ -121,6 +124,7 @@ public class VacuumSubsystem extends Subsystem {
   @Override
   public void periodic() {
     SmartDashboard.putBoolean("Game/onTarget", onTarget());
+    SmartDashboard.putBoolean("Game/climbOnTarget", climbOnTarget());
     if (!Robot.isEvent()) SmartDashboard.putNumber("Game/Temperature", getPumpTemperature());
     if (getPumpTemperature() > TEMP_LIMIT) {
       logger.error("Vacuum overheating!");
@@ -158,7 +162,7 @@ public class VacuumSubsystem extends Subsystem {
   }
 
   public double getPumpTemperature() {
-    double temp = (analogInput.getVoltage() - TEMP_OFFSET) * VOLTS_PER_CELSIUS;
+    double temp = (analogInput.getVoltage() - TEMP_OFFSET) / VOLTS_PER_CELSIUS;
     return temp;
   }
 
@@ -175,6 +179,18 @@ public class VacuumSubsystem extends Subsystem {
       return true;
     }
     return false;
+  }
+
+  public boolean climbOnTarget() {
+    if (vacuum.getSelectedSensorPosition() >= goodEnoughClimb) {
+      climbStableCounts++;
+    } else {
+      climbStableCounts = 0;
+    }
+
+    if (climbStableCounts > STABLE_THRESHOLD) {
+      return true;
+    } else return false;
   }
 
   public void runOpenLoop(double setpoint) {
