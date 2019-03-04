@@ -14,6 +14,8 @@ public class ClimbCommand extends InstantCommand {
 
   @Override
   protected void initialize() {
+    CLIMB.enableRatchet();
+    CLIMB.releaseKickstand();
     CLIMB.climb();
   }
 }

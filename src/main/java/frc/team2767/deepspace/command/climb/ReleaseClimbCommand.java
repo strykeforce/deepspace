@@ -5,8 +5,12 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.ClimbSubsystem;
 
 public class ReleaseClimbCommand extends Command {
+  // Runs Down 4000 ticks to pull pin
+  // Disables ratchet after going at least 50 ticks
+
   private static final ClimbSubsystem CLIMB = Robot.CLIMB;
-  private static final int NUM_TICKS = 100; // FIXME
+  private static final int NUM_TICKS = 4000; // FIXME
+  private boolean ratchetDisabled = false;
 
   public ReleaseClimbCommand() {
     requires(CLIMB);
@@ -14,8 +18,15 @@ public class ReleaseClimbCommand extends Command {
 
   @Override
   protected void initialize() {
-    CLIMB.disableRatchet();
     CLIMB.runTicks(NUM_TICKS);
+  }
+
+  @Override
+  protected void execute() {
+    if (!ratchetDisabled && CLIMB.getTicks() > 50) {
+      CLIMB.disableRatchet();
+      ratchetDisabled = true;
+    }
   }
 
   @Override

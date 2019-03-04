@@ -7,6 +7,9 @@ import frc.team2767.deepspace.command.ZeroGyroCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitNegativeCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositiveCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
+import frc.team2767.deepspace.command.climb.LowerSuctionCupCommand;
+import frc.team2767.deepspace.command.climb.RaiseClimbCommand;
+import frc.team2767.deepspace.command.climb.StopClimbCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
@@ -21,6 +24,7 @@ import frc.team2767.deepspace.command.vacuum.DeactivateValveCommand;
 import frc.team2767.deepspace.command.vision.LightsOffCommand;
 import frc.team2767.deepspace.command.vision.LightsOnCommand;
 import frc.team2767.deepspace.subsystem.VacuumSubsystem;
+import javax.swing.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +49,13 @@ public class DriverControls {
     new JoystickButton(joystick, Toggle.LEFT_TOGGLE.id).whenPressed(new InterruptCommand());
     new JoystickButton(joystick, Toggle.LEFT_TOGGLE.id).whenReleased(new InterruptCommand());
 
-    new JoystickButton(joystick, Button.DOWN.id).whenPressed(new StowAllCommandGroup());
+    new JoystickButton(joystick, Button.X.id).whenPressed(new StowAllCommandGroup());
+
+    // Climb Commands
+    new JoystickButton(joystick, Button.UP.id).whenPressed(new RaiseClimbCommand());
+    new JoystickButton(joystick, Button.UP.id).whenReleased(new StopClimbCommand());
+    new JoystickButton(joystick, Button.DOWN.id).whenPressed(new LowerSuctionCupCommand());
+    new JoystickButton(joystick, Button.DOWN.id).whenReleased(new StopClimbCommand());
 
     // biscuit
     new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenPressed(new DeliverCommandGroup());

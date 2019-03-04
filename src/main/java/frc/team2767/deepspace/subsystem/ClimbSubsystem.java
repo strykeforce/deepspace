@@ -36,8 +36,8 @@ public class ClimbSubsystem extends Subsystem {
   private static final double kClimbSpeed = 0.3;
   private static final double kLowerSuction = 0.1;
   private static final double kUnwindSpeed = -0.1;
-  private static final double kRatchetReleaseSpeed = 0.1;
-  private static final double kRaiseToHeight = -0.1;
+  private static final double kRatchetReleaseSpeed = 0.2;
+  private static final double kRaiseToHeight = -0.4;
 
   private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -147,14 +147,17 @@ public class ClimbSubsystem extends Subsystem {
 
   public void climb() {
     openLoopMove(kClimbSpeed);
+    logger.info("Climbing");
   }
 
   public void lowerSuctionCup() {
     openLoopMove(kLowerSuction);
+    logger.info("Lowering Suction Cup");
   }
 
   public void stop() {
     openLoopMove(0.0);
+    logger.info("Stopping Climb");
   }
 
   public void unwind() {
@@ -165,23 +168,36 @@ public class ClimbSubsystem extends Subsystem {
     setpointTicks = ticks;
     relStartTicks = rightMaster.getSelectedSensorPosition();
     openLoopMove(kRatchetReleaseSpeed);
+    logger.info("Running down {} ticks", setpointTicks);
   }
 
   public boolean onTicks() {
     return Math.abs(rightMaster.getSelectedSensorPosition() - relStartTicks) >= setpointTicks;
   }
 
+  public int getTicks() {
+    return Math.abs(rightMaster.getSelectedSensorPosition() - relStartTicks);
+  }
+
   public void disableRatchet() {
     ratchetServo.set(ratchetDisable);
+    logger.info("Ratchet Disabled");
+  }
+
+  public void enableRatchet() {
+    ratchetServo.set(ratchetEngage);
+    logger.info("Ratchet Enabled");
   }
 
   public void raiseToHeight() {
     openLoopMove(kRaiseToHeight);
+    logger.info("Raising Climber");
   }
 
   public void releaseKickstand() {
     leftKickstand.set(leftKickstandRelease);
     rightKickstand.set(rightKickstandRelease);
+    logger.info("Releasing Kickstand");
   }
 
   public List getTalons() {

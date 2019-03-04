@@ -4,6 +4,9 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team2767.deepspace.command.climb.ClimbCommand;
+import frc.team2767.deepspace.command.climb.DeploySequenceCommand;
+import frc.team2767.deepspace.command.climb.StopClimbCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
@@ -101,6 +104,12 @@ public class XboxControls {
     // Dpad
     directionPadAny.whenActive(new RollerOutCommand());
     directionPadAny.whenInactive(new RollerStopCommand());
+
+    // Climb Commands
+    new JoystickButton(xbox, Button.START.id).whenPressed(new DeploySequenceCommand());
+    new JoystickButton(xbox, Button.START.id).whenReleased(new StopClimbCommand());
+    new JoystickButton(xbox, Button.BACK.id).whenPressed(new ClimbCommand());
+    new JoystickButton(xbox, Button.BACK.id).whenReleased(new StopClimbCommand());
   }
 
   public double getLX() {
