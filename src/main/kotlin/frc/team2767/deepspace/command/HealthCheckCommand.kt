@@ -25,6 +25,17 @@ class HealthCheckCommand : Command() {
         healthCheck = healthCheck {
 
             talonCheck {
+                name = "raise elevator"
+                talons = Robot.ELEVATOR.talons
+
+                positionTalon {
+                    encoderTarget = 15_000
+                    encoderGoodEnough = 500
+                }
+            }
+
+            talonCheck {
+                name = "biscuit position tests"
                 talons = Robot.BISCUIT.talons
 
                 positionTest {

@@ -46,9 +46,11 @@ abstract class TestGroup(val healthCheck: HealthCheck) : Test {
         tagConsumer.div {
             h2 { +name }
             table {
-                val test = tests.first() as Reportable
-                test.reportHeader(tagConsumer)
-                tests.map { it as Reportable }.forEach { it.reportRows(tagConsumer) }
+                val reportable = tests.filterIsInstance<Reportable>()
+                if (!reportable.isEmpty()) {
+                    reportable.first().apply { reportHeader(tagConsumer) }
+                    reportable.forEach { it.reportRows(tagConsumer) }
+                }
             }
         }
     }
@@ -84,5 +86,12 @@ class TalonGroup(healthCheck: HealthCheck) : TestGroup(healthCheck) {
         positionTest.init()
         tests.add(positionTest)
         return positionTest
+    }
+
+    fun positionTalon(init: TalonPosition.() -> Unit): Test {
+        val position = TalonPosition(this)
+        position.init()
+        tests.add(position)
+        return position
     }
 }
