@@ -1,8 +1,8 @@
 package frc.team2767.deepspace.health
 
-import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
+import edu.wpi.first.wpilibj.Timer
 import frc.team2767.deepspace.health.TalonPositionTest.State.*
 import kotlinx.html.TagConsumer
 import kotlinx.html.td
@@ -17,16 +17,16 @@ private val logger = KotlinLogging.logger {}
 class TalonPositionTest(private val group: TalonGroup) : Test, Reportable {
     override var name = "position test"
     var percentOutput = 0.0
+    var warmUp = 0.25
     var peakVoltage = 12.0
-    var zeroGoodEnough = 5
-    var zeroTimeOutCount = 50
     var encoderTarget = 0
+    var encoderGoodEnough = 5
     var encoderTimeOutCount = 0
-    var controlMode = ControlMode.MotionMagic
 
     private var state = STARTING
+    private var startTime = 0.0
     private var iteration = 0
-    private var passed = false
+    private var startingPosition = 0
 
     private lateinit var talon: TalonSRX
     private var currents = mutableListOf<Double>()
@@ -44,32 +44,24 @@ class TalonPositionTest(private val group: TalonGroup) : Test, Reportable {
                 }
                 logger.info { "$name starting" }
                 talon = group.talons.first()
-                talon.set(controlMode, 0.0)
-                state = ZEROING
+                startingPosition = talon.selectedSensorPosition
+                talon.set(PercentOutput, percentOutput)
+                startTime = Timer.getFPGATimestamp()
+                state = RUNNING
             }
 
-            ZEROING -> {
-                if (talon.selectedSensorPosition.absoluteValue < zeroGoodEnough) {
-                    logger.info { "successfully zeroed encoder" }
-                    talon.set(PercentOutput, percentOutput)
-                    iteration = 0
-                    state = RUNNING
-                    return
-                }
-                if (iteration++ > zeroTimeOutCount) {
-                    logger.warn { "timed out waiting for encoder zero, encoder = ${talon.selectedSensorPosition}" }
-                    state = STOPPED
-                }
+            WARMING -> if (Timer.getFPGATimestamp() - startTime >= warmUp) {
+                state = RUNNING
             }
 
             RUNNING -> {
                 currents.add(talon.outputCurrent)
                 speeds.add(talon.selectedSensorVelocity)
 
-                if (talon.selectedSensorPosition.absoluteValue > encoderTarget) {
+                if ((talon.selectedSensorPosition - startingPosition).absoluteValue > encoderTarget) {
                     logger.info { "reached encoder target $encoderTarget" }
                     talon.set(PercentOutput, 0.0)
-                    state = PASSED
+                    state = STOPPED
                     return
                 }
 
@@ -80,17 +72,6 @@ class TalonPositionTest(private val group: TalonGroup) : Test, Reportable {
                 }
             }
 
-            PASSED -> {
-                passed = true
-                talon.set(controlMode, 0.0)
-                state = RESETTING
-            }
-
-            RESETTING -> {
-                if (talon.selectedSensorPosition.absoluteValue < zeroGoodEnough)
-                    logger.info { "repositioned to zero, finishing test" }
-                    state = STOPPED
-            }
 
             STOPPED -> logger.info { "position test stopped" }
 
@@ -124,10 +105,8 @@ class TalonPositionTest(private val group: TalonGroup) : Test, Reportable {
     @Suppress("unused")
     private enum class State {
         STARTING,
-        ZEROING,
+        WARMING,
         RUNNING,
-        PASSED,
-        RESETTING,
         STOPPED
     }
 }

@@ -93,7 +93,7 @@ class HealthCheckCommand : Command() {
                     percentOutput = 0.2
                     encoderTarget = 10_000
                     encoderTimeOutCount = 5000
-                    zeroGoodEnough = 1500
+                    encoderGoodEnough = 1500
                 }
 
                 positionTalon {
@@ -109,7 +109,7 @@ class HealthCheckCommand : Command() {
 
                 positionTest {
                     percentOutput = 0.2
-                    zeroGoodEnough = 200
+                    encoderGoodEnough = 200
                     encoderTarget = 2500
                     encoderTimeOutCount = 500
                 }
@@ -121,14 +121,14 @@ class HealthCheckCommand : Command() {
 
                 positionTest {
                     percentOutput = 0.2
-                    zeroGoodEnough = 50
+                    encoderGoodEnough = 50
                     encoderTarget = 3000
                     encoderTimeOutCount = 500
                 }
 
                 positionTest {
                     percentOutput = -0.2
-                    zeroGoodEnough = 50
+                    encoderGoodEnough = 50
                     encoderTarget = 3000
                     encoderTimeOutCount = 250
                 }
