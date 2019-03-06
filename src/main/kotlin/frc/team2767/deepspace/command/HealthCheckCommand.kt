@@ -46,8 +46,6 @@ class HealthCheckCommand : Command() {
                 }
 
                 timedTest {
-                    warmUp = 0.5
-                    duration = 2.0
                     percentOutput = 0.75
                     currentRange = 0.6..1.2
                     speedRange = 1000..1100
@@ -91,9 +89,13 @@ class HealthCheckCommand : Command() {
 
                 positionTest {
                     percentOutput = 0.2
-                    encoderTarget = 10_000
+
+                    encoderChangeTarget = 10_000
+                    encoderGoodEnough = 500
                     encoderTimeOutCount = 5000
-                    zeroGoodEnough = 1500
+
+                    currentRange = 0.0..0.5
+                    speedRange = 500..600
                 }
 
                 positionTalon {
@@ -109,9 +111,13 @@ class HealthCheckCommand : Command() {
 
                 positionTest {
                     percentOutput = 0.2
-                    zeroGoodEnough = 200
-                    encoderTarget = 2500
+
+                    encoderChangeTarget = 2500
+                    encoderGoodEnough = 200
                     encoderTimeOutCount = 500
+
+                    currentRange = 0.0..0.5
+                    speedRange = 500..600
                 }
             }
 
@@ -121,16 +127,24 @@ class HealthCheckCommand : Command() {
 
                 positionTest {
                     percentOutput = 0.2
-                    zeroGoodEnough = 50
-                    encoderTarget = 3000
+
+                    encoderChangeTarget = 3000
+                    encoderGoodEnough = 50
                     encoderTimeOutCount = 500
+
+                    currentRange = 0.0..0.5
+                    speedRange = 500..600
                 }
 
                 positionTest {
                     percentOutput = -0.2
-                    zeroGoodEnough = 50
-                    encoderTarget = 3000
+
+                    encoderChangeTarget = 3000
+                    encoderGoodEnough = 50
                     encoderTimeOutCount = 250
+
+                    currentRange = 0.0..0.5
+                    speedRange = 500..600
                 }
             }
 

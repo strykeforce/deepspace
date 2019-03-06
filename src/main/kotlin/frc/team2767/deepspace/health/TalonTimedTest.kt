@@ -86,12 +86,14 @@ class TalonTimedTest(private val group: TalonGroup) : Test, Reportable {
 
     override fun reportRows(tagConsumer: TagConsumer<Appendable>) {
         group.talons.forEach {
+            val current = talonCurrents[it]?.average() ?: 0.0
+            val speed = talonSpeeds[it]?.average()?.toInt() ?: 0
             tagConsumer.tr {
                 td { +"${it.deviceID}" }
                 td { +"%.2f".format(percentOutput * 12.0) }
                 td { +"%.2f".format(duration) }
-                td { +"%.2f".format(talonCurrents[it]?.average()) }
-                td { +"%.2f".format(talonSpeeds[it]?.average()) }
+                td(classes = currentRange.statusOf(current)) { +"%.2f".format(current) }
+                td(classes = speedRange.statusOf(speed)) { +"$speed" }
             }
         }
     }
