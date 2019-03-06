@@ -28,7 +28,6 @@ import frc.team2767.deepspace.command.vacuum.*;
 import frc.team2767.deepspace.command.vision.LightsOffCommand;
 import frc.team2767.deepspace.command.vision.LightsOnCommand;
 import frc.team2767.deepspace.subsystem.*;
-import java.awt.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +65,50 @@ public class SmartDashboardControls {
     SmartDashboard.putData("Pit/Unwind", new UnwindClimbCommand());
     SmartDashboard.putData("Pit/ClimbStop", new StopClimbCommand());
     SmartDashboard.putData("Pit/Health Check", new HealthCheckCommand());
+  }
+
+  private void addClimbTab() {
+    ShuffleboardTab ClimbTab = Shuffleboard.getTab("ClimbTab");
+
+    // Climb Commands
+    ShuffleboardLayout Climb = ClimbTab.getLayout("Climb", "List Layout");
+    Climb.add("Lower Suction Cup", new LowerSuctionCupCommand())
+        .withWidget(BuiltInWidgets.kCommand);
+    Climb.add("Climb", new ClimbCommand()).withWidget(BuiltInWidgets.kCommand);
+    Climb.add("Stop", new StopClimbCommand()).withWidget(BuiltInWidgets.kCommand);
+    Climb.add("Unwind", new UnwindClimbCommand()).withWidget(BuiltInWidgets.kCommand);
+    Climb.add("Raise", new RaiseClimbCommand()).withWidget(BuiltInWidgets.kCommand);
+    Climb.withPosition(1, 1);
+
+    // Solenoid Commands
+    ShuffleboardLayout Solenoid = ClimbTab.getLayout("Solenoids", "List Layout");
+    Solenoid.add("Enable Pump", new ActivateValveCommand(VacuumSubsystem.Valve.PUMP));
+    Solenoid.add("Disable Pump", new DeactivateValveCommand(VacuumSubsystem.Valve.PUMP));
+    Solenoid.add("Enable Trident", new ActivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
+    Solenoid.add("Disable Trident", new DeactivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
+    Solenoid.add("Enable Climb", new ActivateValveCommand(VacuumSubsystem.Valve.CLIMB));
+    Solenoid.add("Disable Climb", new DeactivateValveCommand(VacuumSubsystem.Valve.CLIMB));
+    Solenoid.add("Trident", VACUUM.getTridentSolenoid()).withWidget(BuiltInWidgets.kBooleanBox);
+    Solenoid.add("Pump", VACUUM.getPumpSolenoid()).withWidget(BuiltInWidgets.kBooleanBox);
+    Solenoid.add("Climb", VACUUM.getClimbSolenoid()).withWidget(BuiltInWidgets.kBooleanBox);
+    Solenoid.withPosition(3, 1);
+
+    // Pump Commands
+    ShuffleboardLayout Pump = ClimbTab.getLayout("Pump", "List Layout");
+    Pump.add("Stop", new StopPumpCommandGroup());
+    Pump.add("Hatch Pressure", new PressureSetCommand(VACUUM.kHatchPressureInHg))
+        .withWidget(BuiltInWidgets.kCommand);
+    Pump.add("Cargo Pressure", new PressureSetCommand(VACUUM.kBallPressureInHg))
+        .withWidget(BuiltInWidgets.kCommand);
+    Pump.add("Climb Pressure", new PressureSetCommand(VACUUM.kClimbPressureInHg))
+        .withWidget(BuiltInWidgets.kCommand);
+    Pump.withPosition(2, 1);
+
+    // Release Mechanisms
+    ShuffleboardLayout Servos = ClimbTab.getLayout("Servos", "List Layout");
+    Servos.add("Release Climb", new ReleaseClimbCommand()).withWidget(BuiltInWidgets.kCommand);
+    Servos.add("Release Kickstand", new ReleaseKickstandCommand())
+        .withWidget(BuiltInWidgets.kCommand);
   }
 
   private void addTestCommands() {
@@ -191,49 +234,5 @@ public class SmartDashboardControls {
         "Pit/Vacuum/Hatch", new PressureSetCommand(VacuumSubsystem.kHatchPressureInHg));
     SmartDashboard.putData(
         "Pit/Vacuum/Cargo", new PressureSetCommand(VacuumSubsystem.kBallPressureInHg));
-  }
-
-  private void addClimbTab() {
-    ShuffleboardTab ClimbTab = Shuffleboard.getTab("ClimbTab");
-
-    // Climb Commands
-    ShuffleboardLayout Climb = ClimbTab.getLayout("Climb", "List Layout");
-    Climb.add("Lower Suction Cup", new LowerSuctionCupCommand())
-        .withWidget(BuiltInWidgets.kCommand);
-    Climb.add("Climb", new ClimbCommand()).withWidget(BuiltInWidgets.kCommand);
-    Climb.add("Stop", new StopClimbCommand()).withWidget(BuiltInWidgets.kCommand);
-    Climb.add("Unwind", new UnwindClimbCommand()).withWidget(BuiltInWidgets.kCommand);
-    Climb.add("Raise", new RaiseClimbCommand()).withWidget(BuiltInWidgets.kCommand);
-    Climb.withPosition(1, 1);
-
-    // Solenoid Commands
-    ShuffleboardLayout Solenoid = ClimbTab.getLayout("Solenoids", "List Layout");
-    Solenoid.add("Enable Pump", new ActivateValveCommand(VacuumSubsystem.Valve.PUMP));
-    Solenoid.add("Disable Pump", new DeactivateValveCommand(VacuumSubsystem.Valve.PUMP));
-    Solenoid.add("Enable Trident", new ActivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
-    Solenoid.add("Disable Trident", new DeactivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
-    Solenoid.add("Enable Climb", new ActivateValveCommand(VacuumSubsystem.Valve.CLIMB));
-    Solenoid.add("Disable Climb", new DeactivateValveCommand(VacuumSubsystem.Valve.CLIMB));
-    Solenoid.add("Trident", VACUUM.getTridentSolenoid()).withWidget(BuiltInWidgets.kBooleanBox);
-    Solenoid.add("Pump", VACUUM.getPumpSolenoid()).withWidget(BuiltInWidgets.kBooleanBox);
-    Solenoid.add("Climb", VACUUM.getClimbSolenoid()).withWidget(BuiltInWidgets.kBooleanBox);
-    Solenoid.withPosition(3, 1);
-
-    // Pump Commands
-    ShuffleboardLayout Pump = ClimbTab.getLayout("Pump", "List Layout");
-    Pump.add("Stop", new StopPumpCommandGroup());
-    Pump.add("Hatch Pressure", new PressureSetCommand(VACUUM.kHatchPressureInHg))
-        .withWidget(BuiltInWidgets.kCommand);
-    Pump.add("Cargo Pressure", new PressureSetCommand(VACUUM.kBallPressureInHg))
-        .withWidget(BuiltInWidgets.kCommand);
-    Pump.add("Climb Pressure", new PressureSetCommand(VACUUM.kClimbPressureInHg))
-        .withWidget(BuiltInWidgets.kCommand);
-    Pump.withPosition(2, 1);
-
-    // Release Mechanisms
-    ShuffleboardLayout Servos = ClimbTab.getLayout("Servos", "List Layout");
-    Servos.add("Release Climb", new ReleaseClimbCommand()).withWidget(BuiltInWidgets.kCommand);
-    Servos.add("Release Kickstand", new ReleaseKickstandCommand())
-        .withWidget(BuiltInWidgets.kCommand);
   }
 }
