@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.command.HealthCheckCommand;
+import frc.team2767.deepspace.command.HealthcheckCommandGroup;
 import frc.team2767.deepspace.command.YawCommand;
 import frc.team2767.deepspace.command.ZeroAxisCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
@@ -64,7 +65,7 @@ public class SmartDashboardControls {
     SmartDashboard.putData("Pit/Climb", new ClimbCommand());
     SmartDashboard.putData("Pit/Unwind", new UnwindClimbCommand());
     SmartDashboard.putData("Pit/ClimbStop", new StopClimbCommand());
-    SmartDashboard.putData("Pit/Health Check", new HealthCheckCommand());
+    SmartDashboard.putData("Pit/Health Check", new HealthcheckCommandGroup());
   }
 
   private void addClimbTab() {
