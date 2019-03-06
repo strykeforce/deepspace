@@ -20,7 +20,6 @@ import frc.team2767.deepspace.command.sequences.StowAllCommandGroup;
 import frc.team2767.deepspace.command.states.SetFieldDirectionCommand;
 import frc.team2767.deepspace.command.states.SetLevelCommand;
 import frc.team2767.deepspace.command.vacuum.ActivateValveCommand;
-import frc.team2767.deepspace.control.trigger.*;
 import frc.team2767.deepspace.subsystem.ElevatorLevel;
 import frc.team2767.deepspace.subsystem.FieldDirection;
 import frc.team2767.deepspace.subsystem.VacuumSubsystem;
@@ -30,6 +29,7 @@ import org.slf4j.LoggerFactory;
 public class XboxControls {
 
   private final Joystick xbox;
+  private static final double DEADBAND = 0.5;
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -48,7 +48,7 @@ public class XboxControls {
         new Trigger() {
           @Override
           public boolean get() {
-            return xbox.getRawAxis(Axis.RIGHT_Y.id) < -0.1;
+            return xbox.getRawAxis(Axis.RIGHT_Y.id) < -DEADBAND;
           }
         };
 
@@ -56,7 +56,7 @@ public class XboxControls {
         new Trigger() {
           @Override
           public boolean get() {
-            return xbox.getRawAxis(Axis.RIGHT_Y.id) > 0.1;
+            return xbox.getRawAxis(Axis.RIGHT_Y.id) > DEADBAND;
           }
         };
 
@@ -64,7 +64,7 @@ public class XboxControls {
         new Trigger() {
           @Override
           public boolean get() {
-            return xbox.getRawAxis(Axis.LEFT_X.id) > 0.1;
+            return xbox.getRawAxis(Axis.LEFT_X.id) > DEADBAND;
           }
         };
 
@@ -72,7 +72,7 @@ public class XboxControls {
         new Trigger() {
           @Override
           public boolean get() {
-            return xbox.getRawAxis(Axis.LEFT_X.id) < -0.1;
+            return xbox.getRawAxis(Axis.LEFT_X.id) < -DEADBAND;
           }
         };
 
