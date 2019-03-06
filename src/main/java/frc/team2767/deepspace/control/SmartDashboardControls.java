@@ -38,12 +38,12 @@ public class SmartDashboardControls {
 
   public SmartDashboardControls() {
     addMatchCommands();
-    addPitCommands();
+
     addClimbTab();
     if (!Robot.isEvent()) {
-      addTestCommands();
+      addPitCommands();
+      addVisionCommands();
     }
-    addVisionCommands();
   }
 
   private void addMatchCommands() {
