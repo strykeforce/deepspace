@@ -18,3 +18,11 @@ th {
 td {
 text-align: right;
 }
+
+td.pass {
+    background-color: white
+}
+
+td.fail {
+    background-color: #ffb6c1
+}

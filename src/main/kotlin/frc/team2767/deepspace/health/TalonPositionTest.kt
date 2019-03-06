@@ -17,9 +17,12 @@ private val logger = KotlinLogging.logger {}
 class TalonPositionTest(private val group: TalonGroup) : Test, Reportable {
     override var name = "position test"
     var percentOutput = 0.0
+    var currentRange = 0.0..0.0
+    var speedRange = 0..0
     var warmUp = 0.25
     var peakVoltage = 12.0
-    var encoderTarget = 0
+
+    var encoderChangeTarget = 0
     var encoderGoodEnough = 5
     var encoderTimeOutCount = 0
 
@@ -58,8 +61,8 @@ class TalonPositionTest(private val group: TalonGroup) : Test, Reportable {
                 currents.add(talon.outputCurrent)
                 speeds.add(talon.selectedSensorVelocity)
 
-                if ((talon.selectedSensorPosition - startingPosition).absoluteValue > encoderTarget) {
-                    logger.info { "reached encoder target $encoderTarget" }
+                if ((talon.selectedSensorPosition - startingPosition).absoluteValue > encoderChangeTarget) {
+                    logger.info { "reached encoder target $encoderChangeTarget" }
                     talon.set(PercentOutput, 0.0)
                     state = STOPPED
                     return
@@ -93,12 +96,15 @@ class TalonPositionTest(private val group: TalonGroup) : Test, Reportable {
     }
 
     override fun reportRows(tagConsumer: TagConsumer<Appendable>) {
+        val current = currents.average()
+        val speed = speeds.average().toInt()
+
         tagConsumer.tr {
             td { +"${talon.deviceID}" }
             td { +"%.1f".format(percentOutput * peakVoltage) }
-            td { +"$encoderTarget" }
-            td { +"%.2f".format(currents.average()) }
-            td { +"%.2f".format(speeds.average()) }
+            td { +"$encoderChangeTarget" }
+            td(classes = currentRange.statusOf(current)) { +"%.2f".format(current) }
+            td(classes = speedRange.statusOf(speed)) { +"$speed" }
         }
     }
 
