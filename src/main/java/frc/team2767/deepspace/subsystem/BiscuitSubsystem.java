@@ -175,7 +175,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
     biscuit.set(ControlMode.MotionMagic, setpointTicks);
   }
 
-  public List getTalons() {
+  public List<TalonSRX> getTalons() {
     return List.of(biscuit);
   }
 
