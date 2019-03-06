@@ -153,7 +153,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
   public boolean zero() {
     boolean didZero = false;
     if (shoulder.getSensorCollection().isRevLimitSwitchClosed()) {
-      int absPos = shoulder.getSensorCollection().getPulseWidthPosition() % 0xFFF;
+      int absPos = shoulder.getSensorCollection().getPulseWidthPosition() & 0xFFF;
       int offset = absPos - kAbsoluteZero;
       logger.debug(
           "pulse = {} abs = {} rel = {}",
