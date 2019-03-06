@@ -70,8 +70,8 @@ public class ClimbSubsystem extends Subsystem {
     leftKickstandRelease = getPrefs("L_kickstand_release", 0.95);
     rightKickstandHold = getPrefs("R_kickstand_hold", 0.5);
     rightKickstandRelease = getPrefs("R_kickstand_release", 0.95);
-    ratchetDisable = getPrefs("ratchet_disable", 0.5); // FIXME
-    ratchetEngage = getPrefs("ratchet_engage", 0.5); // FIXME
+    ratchetDisable = getPrefs("ratchet_disable", 1.0);
+    ratchetEngage = getPrefs("ratchet_engage", 0.5);
   }
 
   @SuppressWarnings("Duplicates")

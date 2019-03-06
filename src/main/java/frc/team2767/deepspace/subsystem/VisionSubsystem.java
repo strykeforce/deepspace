@@ -14,7 +14,8 @@ import org.slf4j.LoggerFactory;
 public class VisionSubsystem extends Subsystem {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
-  private final DigitalOutput lightsOutput = new DigitalOutput(6);
+  private final DigitalOutput lightsOutput6 = new DigitalOutput(6);
+  private final DigitalOutput lightsOutput5 = new DigitalOutput(5);
   private final double cameraPositionBearing = -90.0;
   private final double CAMERA_X = 0.0;
   private final double CAMERA_Y = -9.0;
@@ -43,7 +44,8 @@ public class VisionSubsystem extends Subsystem {
 
     usbCamera = cameraServer.startAutomaticCapture();
     logger.info("camera is connected = {}", usbCamera.isConnected());
-    lightsOutput.set(true);
+    lightsOutput6.set(true);
+    lightsOutput5.set(true);
 
     SmartDashboard.putString("GamePiece", gamePiece.toString());
     SmartDashboard.putString("Action", action.toString());
@@ -104,7 +106,9 @@ public class VisionSubsystem extends Subsystem {
   }
 
   public void enableLights(boolean state) {
-    lightsOutput.set(!state);
+    logger.info("lights to {}", !state);
+    lightsOutput6.set(!state);
+    lightsOutput5.set(!state);
   }
 
   public void setGamePiece(GamePiece gamePiece) {

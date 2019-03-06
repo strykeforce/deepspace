@@ -1,7 +1,5 @@
 package frc.team2767.deepspace.command
 
-import com.ctre.phoenix.motorcontrol.ControlMode
-import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.command.Command
 import frc.team2767.deepspace.Robot
 import frc.team2767.deepspace.health.HealthCheck
@@ -24,13 +22,96 @@ class HealthCheckCommand : Command() {
     override fun initialize() {
         healthCheck = healthCheck {
 
+
             talonCheck {
-                name = "raise elevator"
+                name = "swerve azimuth tests"
+                talons = Robot.DRIVE.allWheels.map { it.azimuthTalon }
+
+                timedTest {
+                    percentOutput = 0.25
+                    currentRange = 0.0..0.5
+                    speedRange = 500..600
+                }
+
+                timedTest {
+                    percentOutput = -0.25
+                    currentRange = 0.0..0.5
+                    speedRange = 500..600
+                }
+
+                timedTest {
+                    percentOutput = -0.5
+                    currentRange = 0.0..0.5
+                    speedRange = 500..600
+                }
+
+                timedTest {
+                    warmUp = 0.5
+                    duration = 2.0
+                    percentOutput = 0.75
+                    currentRange = 0.6..1.2
+                    speedRange = 1000..1100
+                }
+
+            }
+
+            talonCheck {
+                name = "swerve drive tests"
+                talons = Robot.DRIVE.allWheels.map { it.driveTalon }
+
+                timedTest {
+                    percentOutput = 0.25
+                    currentRange = 0.0..0.5
+                    speedRange = 500..600
+                }
+
+                timedTest {
+                    percentOutput = -0.25
+                    currentRange = 0.0..0.5
+                    speedRange = 500..600
+                }
+
+                timedTest {
+                    percentOutput = -0.5
+                    currentRange = 0.0..0.5
+                    speedRange = 500..600
+                }
+
+                timedTest {
+                    percentOutput = 0.75
+                    currentRange = 0.6..1.2
+                    speedRange = 1000..1100
+                }
+            }
+
+
+            talonCheck {
+                name = "elevator position tests"
                 talons = Robot.ELEVATOR.talons
 
+                positionTest {
+                    percentOutput = 0.2
+                    encoderTarget = 10_000
+                    encoderTimeOutCount = 5000
+                    zeroGoodEnough = 1500
+                }
+
                 positionTalon {
-                    encoderTarget = 15_000
-                    encoderGoodEnough = 500
+                    encoderTarget = 10_000
+                    encoderGoodEnough = 100
+
+                }
+            }
+
+            talonCheck {
+                name = "shoulder position tests"
+                talons = Robot.INTAKE.shoulderTalon
+
+                positionTest {
+                    percentOutput = 0.2
+                    zeroGoodEnough = 200
+                    encoderTarget = 2500
+                    encoderTimeOutCount = 500
                 }
             }
 
@@ -41,97 +122,35 @@ class HealthCheckCommand : Command() {
                 positionTest {
                     percentOutput = 0.2
                     zeroGoodEnough = 50
-                    encoderTarget = 1250
+                    encoderTarget = 3000
                     encoderTimeOutCount = 500
                 }
 
                 positionTest {
                     percentOutput = -0.2
                     zeroGoodEnough = 50
-                    encoderTarget = 1250
+                    encoderTarget = 3000
                     encoderTimeOutCount = 250
                 }
             }
 
+            talonCheck {
+                name = "intake roller tests"
+                talons = Robot.INTAKE.rollerTalon
 
-//            talonCheck {
-//                name = "Swerve Azimuth Talons"
-//                talons = Robot.DRIVE.allWheels.map { it.azimuthTalon }
-//
-//                timedTest {
-//                    percentOutput = 0.25
-//                    currentRange = 0.0..0.5
-//                    speedRange = 500..600
-//                }
-//
-//                timedTest {
-//                    percentOutput = -0.25
-//                    currentRange = 0.0..0.5
-//                    speedRange = 500..600
-//                }
-//
-//                timedTest {
-//                    percentOutput = -0.5
-//                    currentRange = 0.0..0.5
-//                    speedRange = 500..600
-//                }
-//
-//                timedTest {
-//                    warmUp = 0.5
-//                    duration = 2.0
-//                    percentOutput = 0.75
-//                    currentRange = 0.6..1.2
-//                    speedRange = 1000..1100
-//                }
-//
-//            }
-//
-//            talonCheck {
-//                name = "Swerve Drive Talons"
-//                talons = Robot.DRIVE.allWheels.map { it.driveTalon }
-//
-//                timedTest {
-//                    percentOutput = 0.25
-//                    currentRange = 0.0..0.5
-//                    speedRange = 500..600
-//                }
-//
-//                timedTest {
-//                    percentOutput = -0.25
-//                    currentRange = 0.0..0.5
-//                    speedRange = 500..600
-//                }
-//
-//                timedTest {
-//                    percentOutput = -0.5
-//                    currentRange = 0.0..0.5
-//                    speedRange = 500..600
-//                }
-//
-//                timedTest {
-//                    percentOutput = 0.75
-//                    currentRange = 0.6..1.2
-//                    speedRange = 1000..1100
-//                }
-//            }
-//
-//            talonCheck {
-//                name = "Intake Roller Talon"
-//                talons = Robot.INTAKE.rollerTalon
-//
-//                timedTest {
-//                    percentOutput = 0.25
-//                    currentRange = 0.0..0.5
-//                    speedRange = 500..600
-//                }
-//
-//                timedTest {
-//                    percentOutput = 0.5
-//                    currentRange = 0.6..1.2
-//                    speedRange = 1000..1100
-//                }
-//            }
-//
+                timedTest {
+                    percentOutput = 0.25
+                    currentRange = 0.0..0.5
+                    speedRange = 500..600
+                }
+
+                timedTest {
+                    percentOutput = 0.5
+                    currentRange = 0.6..1.2
+                    speedRange = 1000..1100
+                }
+            }
+
         }
 
     }

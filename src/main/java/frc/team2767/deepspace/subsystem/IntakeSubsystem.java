@@ -59,7 +59,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
     // ticks
     kZeroPositionTicks = getPreference("zero_position_ticks", 0);
     kCloseEnoughTicks = (int) getPreference("close_enough_ticks", 100);
-    kAbsoluteZero = (int) getPreference("absolute_zero", 1658);
+    kAbsoluteZero = (int) getPreference("absolute_zero", 2163);
 
     // degrees
     kStowPositionDeg = getPreference("up_position_deg", 107);
@@ -155,6 +155,11 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
     if (shoulder.getSensorCollection().isRevLimitSwitchClosed()) {
       int absPos = shoulder.getSensorCollection().getPulseWidthPosition() % 0xFFF;
       int offset = absPos - kAbsoluteZero;
+      logger.debug(
+          "pulse = {} abs = {} rel = {}",
+          shoulder.getSensorCollection().getPulseWidthPosition(),
+          absPos,
+          shoulder.getSelectedSensorPosition());
       shoulder.setSelectedSensorPosition(offset + (int) kZeroPositionTicks);
       logger.info("shoulder zeroed with limit switch to {}", offset + (int) kZeroPositionTicks);
       didZero = true;
