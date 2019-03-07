@@ -89,8 +89,7 @@ public class VacuumSubsystem extends Subsystem {
     vacuumConfig.voltageMeasurementFilter = 32;
     vacuumConfig.peakOutputForward = 1.0;
     vacuumConfig.peakOutputReverse = 0.0;
-
-    vacuum.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 10);
+    
     vacuum.configAllSettings(vacuumConfig);
     vacuum.enableCurrentLimit(true);
     vacuum.enableVoltageCompensation(true);

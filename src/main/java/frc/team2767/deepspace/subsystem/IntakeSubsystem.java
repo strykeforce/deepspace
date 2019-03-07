@@ -59,11 +59,11 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
     // ticks
     kZeroPositionTicks = getPreference("zero_position_ticks", 0);
     kCloseEnoughTicks = (int) getPreference("close_enough_ticks", 100);
-    kAbsoluteZero = (int) getPreference("absolute_zero", 2163);
+    kAbsoluteZero = (int) getPreference("absolute_zero", 1978);
 
     // degrees
-    kStowPositionDeg = getPreference("up_position_deg", 107);
-    kMiddlePositionDeg = getPreference("middle_position_deg", 105);
+    kStowPositionDeg = getPreference("up_position_deg", 109.86);
+    kMiddlePositionDeg = getPreference("middle_position_deg", 95);
     kCargoPlayerPositionDeg = getPreference("cargo_player_position_deg", 97.4);
     kLoadPositionDeg = getPreference("load_position_deg", 24.4);
   }

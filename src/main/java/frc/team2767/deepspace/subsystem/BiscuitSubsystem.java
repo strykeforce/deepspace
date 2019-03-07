@@ -58,19 +58,19 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
 
   private void biscuitPreferences() {
     // ticks
-    kAbsoluteZeroTicks = (int) getPreference("absolute_zero_ticks", 1452);
+    kAbsoluteZeroTicks = (int) getPreference("absolute_zero_ticks", 2294);
     kCloseEnoughTicks = (int) getPreference("close_enough_ticks", 50);
 
     // degrees
     kUpPositionDeg = getPreference("up_deg", 0);
     kDownRightPositionDeg = getPreference("down_R_deg", 179);
     kDownLeftPositionDeg = getPreference("down_L_deg", -179);
-    kLeftPositionDeg = getPreference("left_deg", -85);
-    kRightPositionDeg = getPreference("right_deg", 85);
+    kLeftPositionDeg = getPreference("left_deg", -85.5);
+    kRightPositionDeg = getPreference("right_deg", 87);
     kBackStopLeftPositionDeg = getPreference("backstop_L_deg", -135);
     kBackStopRightPositionDeg = getPreference("backstop_R_deg", 135);
-    kTiltUpLeftPositionDeg = getPreference("tilt_up_L_deg", -60);
-    kTiltUpRightPositionDeg = getPreference("tilt_up_R_deg", 60);
+    kTiltUpLeftPositionDeg = getPreference("tilt_up_L_deg", -65);
+    kTiltUpRightPositionDeg = getPreference("tilt_up_R_deg", 65);
   }
 
   private void configTalon() {
