@@ -15,12 +15,38 @@ class HealthCheckCommand : Command() {
         requires(Robot.DRIVE)
         requires(Robot.ELEVATOR)
         requires(Robot.INTAKE)
+        requires(Robot.VACUUM)
     }
 
     private lateinit var healthCheck: HealthCheck
 
     override fun initialize() {
         healthCheck = healthCheck {
+            //
+//            vacuumCheck {
+//                name = "pressure tests"
+//
+//                pressureTest {
+//                    name = "climb pressure test"
+//
+//                    pressure = 16.0
+//                    encoderTimeOutCount = 20_000
+//                    maxAcceptablePressureDrop = 2
+//                }
+//            }
+
+            // pump tests are highly dependent on valve states set in pressure tests
+            talonCheck {
+                name = "pump tests"
+                talons = Robot.VACUUM.talons
+
+                timedTest {
+                    percentOutput = 0.25
+                    currentRange = 0.0..0.0
+                    speedRange = 0..0
+                    duration = 5.0
+                }
+            }
 
 
             talonCheck {
@@ -87,10 +113,15 @@ class HealthCheckCommand : Command() {
                 name = "elevator position tests"
                 talons = Robot.ELEVATOR.talons
 
+                positionTalon {
+                    encoderTarget = 10_000
+                    encoderGoodEnough = 100
+                }
+
                 positionTest {
                     percentOutput = 0.2
 
-                    encoderChangeTarget = 10_000
+                    encoderChangeTarget = 15_000
                     encoderGoodEnough = 500
                     encoderTimeOutCount = 5000
 
@@ -98,12 +129,18 @@ class HealthCheckCommand : Command() {
                     speedRange = 500..600
                 }
 
-                positionTalon {
-                    encoderTarget = 10_000
-                    encoderGoodEnough = 100
+                positionTest {
+                    percentOutput = -0.2
 
+                    encoderChangeTarget = 15_000
+                    encoderGoodEnough = 500
+                    encoderTimeOutCount = 5000
+
+                    currentRange = 0.0..0.5
+                    speedRange = 500..600
                 }
             }
+
 
             talonCheck {
                 name = "shoulder position tests"
@@ -111,6 +148,17 @@ class HealthCheckCommand : Command() {
 
                 positionTest {
                     percentOutput = 0.2
+
+                    encoderChangeTarget = 2500
+                    encoderGoodEnough = 200
+                    encoderTimeOutCount = 500
+
+                    currentRange = 0.0..0.5
+                    speedRange = 500..600
+                }
+
+                positionTest {
+                    percentOutput = -0.2
 
                     encoderChangeTarget = 2500
                     encoderGoodEnough = 200
@@ -164,7 +212,6 @@ class HealthCheckCommand : Command() {
                     speedRange = 1000..1100
                 }
             }
-
         }
 
     }

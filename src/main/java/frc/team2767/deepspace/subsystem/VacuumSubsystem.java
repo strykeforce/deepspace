@@ -164,8 +164,7 @@ public class VacuumSubsystem extends Subsystem {
   }
 
   public double getPumpTemperature() {
-    double temp = (analogInput.getVoltage() - TEMP_OFFSET) / VOLTS_PER_CELSIUS;
-    return temp;
+    return (analogInput.getVoltage() - TEMP_OFFSET) / VOLTS_PER_CELSIUS;
   }
 
   public boolean onTarget() {

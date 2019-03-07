@@ -50,7 +50,7 @@ class TalonPositionTest(private val group: TalonGroup) : Test, Reportable {
                 startingPosition = talon.selectedSensorPosition
                 talon.set(PercentOutput, percentOutput)
                 startTime = Timer.getFPGATimestamp()
-                state = RUNNING
+                state = WARMING
             }
 
             WARMING -> if (Timer.getFPGATimestamp() - startTime >= warmUp) {
