@@ -2,7 +2,6 @@ package frc.team2767.deepspace.subsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -89,7 +88,7 @@ public class VacuumSubsystem extends Subsystem {
     vacuumConfig.voltageMeasurementFilter = 32;
     vacuumConfig.peakOutputForward = 1.0;
     vacuumConfig.peakOutputReverse = 0.0;
-    
+
     vacuum.configAllSettings(vacuumConfig);
     vacuum.enableCurrentLimit(true);
     vacuum.enableVoltageCompensation(true);
