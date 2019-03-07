@@ -69,7 +69,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
     kHatchHighPositionInches = getPreference("hatch_high_in", 33.45);
     kStowPositionInches = getPreference("stow_in", 4.0);
     kCargoLowPositionInches = getPreference("cargo_low_in", 12.5);
-    kCargoMediumPositionInches = getPreference("cargo_medium_in", 25.75);
+    kCargoMediumPositionInches = getPreference("cargo_medium_in", 25.0);
     kCargoPlayerPositionInches = getPreference("cargo_player_in", 19.9);
     kCargoHighPositionInches = getPreference("cargo_high_in", 32.57);
   }

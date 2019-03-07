@@ -65,7 +65,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
     kStowPositionDeg = getPreference("up_position_deg", 109.86);
     kMiddlePositionDeg = getPreference("middle_position_deg", 95);
     kCargoPlayerPositionDeg = getPreference("cargo_player_position_deg", 97.4);
-    kLoadPositionDeg = getPreference("load_position_deg", 24.4);
+    kLoadPositionDeg = getPreference("load_position_deg", 0.0);
   }
 
   @SuppressWarnings("Duplicates")
