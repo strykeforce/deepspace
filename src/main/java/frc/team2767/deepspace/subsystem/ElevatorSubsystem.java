@@ -61,17 +61,17 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
     kDownOutput = getPreference("down_output", -0.2);
 
     kCloseEnoughTicks = (int) getPreference("close_enough_ticks", 500);
-    kAbsoluteZeroTicks = (int) getPreference("absolute_zero_ticks", 1854);
+    kAbsoluteZeroTicks = (int) getPreference("absolute_zero_ticks", 2064);
 
     kCargoPickupPositionInches = getPreference("cargo_pickup_in", 16.22);
-    kHatchLowPositionInches = getPreference("hatch_low_in", 8.5);
-    kHatchMediumPositionInches = getPreference("hatch_medium_in", 24.0);
-    kHatchHighPositionInches = getPreference("hatch_high_in", 32.5);
+    kHatchLowPositionInches = getPreference("hatch_low_in", 8.43);
+    kHatchMediumPositionInches = getPreference("hatch_medium_in", 22.0);
+    kHatchHighPositionInches = getPreference("hatch_high_in", 33.45);
     kStowPositionInches = getPreference("stow_in", 4.0);
-    kCargoLowPositionInches = getPreference("cargo_low_in", 11.0);
-    kCargoMediumPositionInches = getPreference("cargo_medium_in", 22.0);
+    kCargoLowPositionInches = getPreference("cargo_low_in", 12.5);
+    kCargoMediumPositionInches = getPreference("cargo_medium_in", 25.0);
     kCargoPlayerPositionInches = getPreference("cargo_player_in", 19.9);
-    kCargoHighPositionInches = getPreference("cargo_high_in", 32.5);
+    kCargoHighPositionInches = getPreference("cargo_high_in", 32.57);
   }
 
   private void configTalon() {

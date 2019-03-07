@@ -2,7 +2,8 @@ package frc.team2767.deepspace.health
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
-import frc.team2767.deepspace.health.TalonPosition.State.*
+import frc.team2767.deepspace.health.TalonPosition.State.RUNNING
+import frc.team2767.deepspace.health.TalonPosition.State.STOPPED
 import kotlinx.html.TagConsumer
 import mu.KotlinLogging
 import kotlin.math.absoluteValue
@@ -16,12 +17,12 @@ class TalonPosition(private val group: TalonGroup) : Test {
     var encoderTarget = 0
     var encoderGoodEnough = 10
 
-    private var state = STARTING
+    private var state = State.STARTING
     private lateinit var talon: TalonSRX
 
     override fun execute() {
         when (state) {
-            STARTING -> {
+            State.STARTING -> {
                 if (group.talons.size != 1) {
                     logger.error { "position test valid for one talon, has ${group.talons.size}, skipping" }
                     state = STOPPED
@@ -33,9 +34,10 @@ class TalonPosition(private val group: TalonGroup) : Test {
                 state = RUNNING
             }
             RUNNING -> {
-                if ((encoderTarget - talon.selectedSensorPosition).absoluteValue < encoderGoodEnough)
+                if ((encoderTarget - talon.selectedSensorPosition).absoluteValue < encoderGoodEnough) {
                     logger.info { "repositioned to $encoderTarget, finishing" }
-                state = STOPPED
+                    state = STOPPED
+                }
             }
             STOPPED -> logger.info { "position talon stopped" }
         }

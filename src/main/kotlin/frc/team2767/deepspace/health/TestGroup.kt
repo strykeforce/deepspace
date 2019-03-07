@@ -1,7 +1,9 @@
 package frc.team2767.deepspace.health
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
+import frc.team2767.deepspace.Robot
 import frc.team2767.deepspace.health.TestGroup.State.*
+import frc.team2767.deepspace.subsystem.VacuumSubsystem
 import kotlinx.html.TagConsumer
 import kotlinx.html.div
 import kotlinx.html.h2
@@ -73,7 +75,6 @@ abstract class TestGroup(val healthCheck: HealthCheck) : Test {
 class TalonGroup(healthCheck: HealthCheck) : TestGroup(healthCheck) {
     var talons = emptyList<TalonSRX>()
 
-
     fun timedTest(init: TalonTimedTest.() -> Unit): Test {
         val spinTest = TalonTimedTest(this)
         spinTest.init()
@@ -93,5 +94,18 @@ class TalonGroup(healthCheck: HealthCheck) : TestGroup(healthCheck) {
         position.init()
         tests.add(position)
         return position
+    }
+}
+
+class VacuumGroup(healthCheck: HealthCheck) : TestGroup(healthCheck) {
+    val vacuumSubsystem = Robot.VACUUM
+
+    fun pressureTest(init: VacuumPressureTest.() -> Unit): Test {
+
+        logger.debug { "vacuum group" }
+        val pressureTest = VacuumPressureTest(this)
+        pressureTest.init()
+        tests.add(pressureTest)
+        return pressureTest
     }
 }
