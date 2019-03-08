@@ -52,6 +52,7 @@ public class SmartDashboardControls {
     SmartDashboard.putData("Game/tridentSol", VACUUM.getTridentSolenoid());
     SmartDashboard.putData("Game/pumpSol", VACUUM.getPumpSolenoid());
     SmartDashboard.putBoolean("Game/onTarget", false);
+    SmartDashboard.putData("Game/SandstormHatchPickUp", new SandstormHatchPickupCommandGroup());
   }
 
   private void addPitCommands() {
@@ -195,9 +196,6 @@ public class SmartDashboardControls {
         "Test/Climb Enable", new ActivateValveCommand(VacuumSubsystem.Valve.CLIMB));
     SmartDashboard.putData(
         "Test/Climb Disable", new DeactivateValveCommand(VacuumSubsystem.Valve.CLIMB));
-
-    SmartDashboard.putData("Test/SandstormHatchPickUp", new SandstormHatchPickupCommandGroup());
-
     SmartDashboard.putData("Test/Yaw Command", new YawCommand());
   }
 

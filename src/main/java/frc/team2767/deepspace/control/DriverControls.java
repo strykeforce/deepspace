@@ -21,8 +21,6 @@ import frc.team2767.deepspace.command.log.SafetyLogDumpCommand;
 import frc.team2767.deepspace.command.sequences.*;
 import frc.team2767.deepspace.command.teleop.InterruptCommand;
 import frc.team2767.deepspace.command.vacuum.DeactivateValveCommand;
-import frc.team2767.deepspace.command.vision.LightsOffCommand;
-import frc.team2767.deepspace.command.vision.LightsOnCommand;
 import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 import javax.swing.*;
 import org.slf4j.Logger;
@@ -84,8 +82,8 @@ public class DriverControls {
     new JoystickButton(joystick, Button.HAMBURGER.id).whenPressed(new SafetyLogDumpCommand());
 
     // LIGHTS
-    new JoystickButton(joystick, Trim.LEFT_X_POS.id).whenPressed(new LightsOnCommand());
-    new JoystickButton(joystick, Trim.LEFT_X_NEG.id).whenPressed(new LightsOffCommand());
+    //    new JoystickButton(joystick, Trim.LEFT_X_POS.id).whenPressed(new LightsOnCommand());
+    //    new JoystickButton(joystick, Trim.LEFT_X_NEG.id).whenPressed(new LightsOffCommand());
 
     // shoulder
     new JoystickButton(joystick, Shoulder.LEFT_DOWN.id)

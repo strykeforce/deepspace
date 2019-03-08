@@ -32,7 +32,7 @@ public class VacuumSubsystem extends Subsystem {
   private final int TEMPERATURE_PIN = 0;
   String PREFS_NAME = "VacuumSubsystem/Settings/";
   int BACKUP = 2767;
-  private int goodEnough = 100;
+  private int goodEnough = 50;
   private int goodEnoughClimb = 150;
   private int setpointCounts;
   private int stableCount;

@@ -181,7 +181,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
     if (Math.abs(error) > kCloseEnoughTicks) stableCount = 0;
     else stableCount++;
     if (stableCount > STABLE_THRESH) {
-      logger.debug("stableCount > {}", STABLE_THRESH);
+      logger.info("stableCount > {}", STABLE_THRESH);
       return true;
     }
     return false;

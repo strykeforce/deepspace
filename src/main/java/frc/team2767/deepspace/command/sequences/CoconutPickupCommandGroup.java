@@ -2,7 +2,7 @@ package frc.team2767.deepspace.command.sequences;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
-import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
+import frc.team2767.deepspace.command.elevator.ElevatorDownFastOpenLoopCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
 import frc.team2767.deepspace.command.intake.IntakePositionCommand;
 import frc.team2767.deepspace.command.intake.RollerOutCommand;
@@ -45,7 +45,7 @@ public class CoconutPickupCommandGroup extends CommandGroup {
             }),
         5);
     addSequential(new LogCommand("opened valves"));
-    addSequential(new ElevatorOpenLoopDownCommand());
+    addSequential(new ElevatorDownFastOpenLoopCommand());
     addSequential(new WaitForPressureCommand(VacuumSubsystem.kBallPressureInHg));
     addSequential(new ElevatorSetPositionCommand(25.0));
     addSequential(new SetActionCommand(Action.PLACE));

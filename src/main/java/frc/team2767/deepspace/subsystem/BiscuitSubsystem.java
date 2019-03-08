@@ -170,8 +170,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
       angle = kDownLeftPositionDeg;
     }
     setpointTicks = (int) (TICKS_OFFSET - angle * TICKS_PER_DEGREE);
-    logger.debug("set position in degrees = {}", angle);
-    logger.debug("set position in ticks = {}", setpointTicks);
+    logger.info("set position in degrees = {} in ticks = {}", angle, setpointTicks);
     biscuit.set(ControlMode.MotionMagic, setpointTicks);
   }
 

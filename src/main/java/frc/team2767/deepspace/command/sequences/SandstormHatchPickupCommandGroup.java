@@ -20,7 +20,7 @@ public class SandstormHatchPickupCommandGroup extends CommandGroup {
         new CommandGroup() {
           {
             addSequential(new PressureAccumulateCommandGroup());
-            addParallel(new PressureSetCommand(VacuumSubsystem.kHatchPressureInHg));
+            addParallel(new PressureSetCommand(VacuumSubsystem.kHatchPressureInHg), 0.5);
             addParallel(new SetActionCommand(Action.PLACE));
             addParallel(new SetGamePieceCommand(GamePiece.HATCH));
             addParallel(new SetFieldDirectionCommand(FieldDirection.LEFT));
@@ -28,6 +28,7 @@ public class SandstormHatchPickupCommandGroup extends CommandGroup {
           }
         });
     addSequential(new ActivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
+    addSequential(new ElevatorSetPositionCommand(9.0));
     addSequential(new WaitForPressureCommand(VacuumSubsystem.kHatchPressureInHg));
     addSequential(new SandstormHatchIndicator(true));
     addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kHatchLowPositionInches));

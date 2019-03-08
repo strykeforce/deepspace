@@ -33,7 +33,7 @@ public class ClimbSubsystem extends Subsystem {
   private Servo leftKickstand = new Servo(LEFT_KICKSTAND);
   private Servo ratchetServo = new Servo(RATCHET_SERVO);
 
-  private static final double kClimbSpeed = 0.3;
+  private static final double kClimbSpeed = 0.5;
   private static final double kLowerSuction = 0.1;
   private static final double kUnwindSpeed = -0.1;
   private static final double kRatchetReleaseSpeed = 0.2;
