@@ -191,15 +191,19 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
     boolean didZero = false;
     if (elevator.getSensorCollection().isRevLimitSwitchClosed()) {
 
+      int pulseWidthPosition = elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF;
+
       logger.info(
           "Preferences zero = {} Relative position = {} Absolute position = {}",
           kAbsoluteZeroTicks,
           elevator.getSelectedSensorPosition(),
-          elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF);
-      int offset =
-          elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF - kAbsoluteZeroTicks;
+          pulseWidthPosition);
+
+      int offset = (pulseWidthPosition) - kAbsoluteZeroTicks;
+
       elevator.setSelectedSensorPosition(offset);
       logger.info("New relative position = {}", offset);
+
       didZero = true;
     } else {
       logger.error("Elevator zero failed - elevator not at bottom");
