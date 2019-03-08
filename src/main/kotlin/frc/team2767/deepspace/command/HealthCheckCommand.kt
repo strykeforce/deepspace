@@ -55,26 +55,38 @@ class HealthCheckCommand : Command() {
 
                 timedTest {
                     percentOutput = 0.25
-                    currentRange = 0.0..0.5
-                    speedRange = 500..600
+                    currentRange = 0.5..0.75
+                    speedRange = 215..245
                 }
 
                 timedTest {
                     percentOutput = -0.25
-                    currentRange = 0.0..0.5
-                    speedRange = 500..600
+                    currentRange = 0.5..0.75
+                    speedRange = -245..-215
+                }
+
+                timedTest {
+                    percentOutput = 0.5
+                    currentRange = 0.5..1.0
+                    speedRange = 475..510
                 }
 
                 timedTest {
                     percentOutput = -0.5
-                    currentRange = 0.0..0.5
-                    speedRange = 500..600
+                    currentRange = 0.5..1.0
+                    speedRange = -510..-475
                 }
 
                 timedTest {
                     percentOutput = 0.75
-                    currentRange = 0.6..1.2
-                    speedRange = 1000..1100
+                    currentRange = 1.125..1.5
+                    speedRange = 730..760
+                }
+
+                timedTest {
+                    percentOutput = -0.75
+                    currentRange = 1.125..1.5
+                    speedRange = -760..730
                 }
 
             }

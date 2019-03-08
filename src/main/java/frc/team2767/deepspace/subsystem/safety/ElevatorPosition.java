@@ -28,7 +28,7 @@ enum ElevatorPosition {
       return ELEVATOR_10;
     }
 
-    if (position > 4900) {
+    if (position > 4000) {
       return ELEVATOR_9;
     }
 

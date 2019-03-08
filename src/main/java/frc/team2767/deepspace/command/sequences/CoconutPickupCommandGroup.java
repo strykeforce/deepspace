@@ -19,6 +19,7 @@ import frc.team2767.deepspace.subsystem.*;
 public class CoconutPickupCommandGroup extends CommandGroup {
 
   public CoconutPickupCommandGroup() {
+    addSequential(new LogCommand("BEGIN COCONUT PICKUP"));
     addSequential(new RollerOutCommand(0.2));
     addParallel(new PressureAccumulateCommandGroup());
     addParallel(new PressureSetCommand(VacuumSubsystem.kBallPressureInHg));
@@ -50,6 +51,7 @@ public class CoconutPickupCommandGroup extends CommandGroup {
     addSequential(new ElevatorSetPositionCommand(25.0));
     addSequential(new SetActionCommand(Action.PLACE));
     addSequential(new RollerStopCommand());
+    addSequential(new LogCommand("END COCONUT PICKUP"));
     //        addSequential(new
     // ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition.kStowPositionDeg));
   }
