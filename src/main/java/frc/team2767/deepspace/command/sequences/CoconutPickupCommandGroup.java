@@ -21,8 +21,16 @@ public class CoconutPickupCommandGroup extends CommandGroup {
   public CoconutPickupCommandGroup() {
     addSequential(new LogCommand("BEGIN COCONUT PICKUP"));
     addSequential(new RollerOutCommand(0.2));
-    addParallel(new PressureAccumulateCommandGroup());
-    addParallel(new PressureSetCommand(VacuumSubsystem.kBallPressureInHg));
+    addSequential(new PressureAccumulateCommandGroup());
+    addSequential(new PressureSetCommand(VacuumSubsystem.kBallPressureInHg), 0.5);
+    addSequential(new LogCommand("opening valves"));
+    addSequential(
+        new ActivateValveCommand(
+            new VacuumSubsystem.Valve[] {
+              VacuumSubsystem.Valve.PUMP, VacuumSubsystem.Valve.TRIDENT
+            }),
+        5);
+    addSequential(new LogCommand("opened valves"));
 
     addSequential(
         new CommandGroup() {
@@ -38,14 +46,7 @@ public class CoconutPickupCommandGroup extends CommandGroup {
 
     addSequential(new ElevatorSetPositionCommand(17.8));
     addParallel(new IntakePositionCommand(105)); // 105
-    addSequential(new LogCommand("opening valves"));
-    addSequential(
-        new ActivateValveCommand(
-            new VacuumSubsystem.Valve[] {
-              VacuumSubsystem.Valve.PUMP, VacuumSubsystem.Valve.TRIDENT
-            }),
-        5);
-    addSequential(new LogCommand("opened valves"));
+
     addSequential(new ElevatorDownFastOpenLoopCommand());
     addSequential(new WaitForPressureCommand(VacuumSubsystem.kBallPressureInHg));
     addSequential(new ElevatorSetPositionCommand(25.0));
