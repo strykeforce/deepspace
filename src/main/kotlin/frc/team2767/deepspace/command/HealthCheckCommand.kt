@@ -29,7 +29,7 @@ class HealthCheckCommand : Command() {
 //                pressureTest {
 //                    name = "climb pressure test"
 //
-//                    pressure = 16.0
+//                    pressure = 18.0
 //                    encoderTimeOutCount = 20_000
 //                    maxAcceptablePressureDrop = 2
 //                }
