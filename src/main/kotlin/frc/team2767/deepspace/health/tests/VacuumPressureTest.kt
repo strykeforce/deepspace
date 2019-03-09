@@ -1,8 +1,11 @@
-package frc.team2767.deepspace.health
+package frc.team2767.deepspace.health.tests
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.Timer
-import frc.team2767.deepspace.health.VacuumPressureTest.State.*
+import frc.team2767.deepspace.health.Reportable
+import frc.team2767.deepspace.health.Test
+import frc.team2767.deepspace.health.VacuumGroup
+import frc.team2767.deepspace.health.tests.VacuumPressureTest.State.*
 import kotlinx.html.*
 import mu.KotlinLogging
 

@@ -1,9 +1,13 @@
-package frc.team2767.deepspace.health
+package frc.team2767.deepspace.health.tests
 
 import com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.Timer
-import frc.team2767.deepspace.health.TalonPositionTest.State.*
+import frc.team2767.deepspace.health.Reportable
+import frc.team2767.deepspace.health.TalonGroup
+import frc.team2767.deepspace.health.Test
+import frc.team2767.deepspace.health.statusOf
+import frc.team2767.deepspace.health.tests.TalonPositionTest.State.*
 import kotlinx.html.TagConsumer
 import kotlinx.html.td
 import kotlinx.html.th
