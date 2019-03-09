@@ -60,37 +60,37 @@ class HealthCheckCommand : Command() {
                 timedTest {
                     percentOutput = 0.25
                     currentRange = volt3currentRange
-                    speedRange = 215..245
+                    speedRange = 215..250
                 }
 
                 timedTest {
                     percentOutput = -0.25
                     currentRange = volt3currentRange
-                    speedRange = -245..-215
+                    speedRange = -250..-215
                 }
 
                 timedTest {
                     percentOutput = 0.5
                     currentRange = volt6currentRange
-                    speedRange = 475..520
+                    speedRange = 475..535
                 }
 
                 timedTest {
                     percentOutput = -0.5
                     currentRange = volt6currentRange
-                    speedRange = -520..-475
+                    speedRange = -535..-475
                 }
 
                 timedTest {
                     percentOutput = 0.75
                     currentRange = volt9currentRange
-                    speedRange = 730..760
+                    speedRange = 750..810
                 }
 
                 timedTest {
                     percentOutput = -0.75
                     currentRange = volt9currentRange
-                    speedRange = -760..730
+                    speedRange = -810..-750
                 }
 
             }
@@ -106,37 +106,37 @@ class HealthCheckCommand : Command() {
                 timedTest {
                     percentOutput = 0.25
                     currentRange = volt3currentRange
-                    speedRange = 8300..9000
+                    speedRange = 8500..9500
                 }
 
                 timedTest {
                     percentOutput = -0.25
                     currentRange = volt3currentRange
-                    speedRange = -9000..-8300
+                    speedRange = -9500..-8500
                 }
 
                 timedTest {
                     percentOutput = 0.5
                     currentRange = volt6currentRange
-                    speedRange = 17200..18500
+                    speedRange = 17200..19500
                 }
 
                 timedTest {
                     percentOutput = -0.5
                     currentRange = volt6currentRange
-                    speedRange = -18500..-17200
+                    speedRange = -19500..-17200
                 }
 
                 timedTest {
                     percentOutput = 1.0
                     currentRange = volt12currentRange
-                    speedRange = 34750..36500
+                    speedRange = 34750..38500
                 }
 
                 timedTest {
                     percentOutput = -1.0
                     currentRange = volt12currentRange
-                    speedRange = -36500 .. -34750
+                    speedRange = -38500 .. -34750
                 }
             }
 
@@ -145,7 +145,7 @@ class HealthCheckCommand : Command() {
                 name = "elevator position tests"
                 talons = Robot.ELEVATOR.talons
 
-                val elevatorCurrentRange = 2.25..3.0
+                val elevatorCurrentRange = 2.0..3.0
 
                 positionTalon {
                     encoderTarget = 10_000
@@ -191,7 +191,7 @@ class HealthCheckCommand : Command() {
                     encoderTimeOutCount = 500
 
                     currentRange = shoulderDownCurrentRange
-                    speedRange = 100..150
+                    speedRange = 100..160
                 }
 
                 positionTest {
@@ -202,7 +202,7 @@ class HealthCheckCommand : Command() {
                     encoderTimeOutCount = 500
 
                     currentRange = shoulderUpCurrentRange
-                    speedRange = -150..-100
+                    speedRange = -160..-100
                 }
             }
 
@@ -274,25 +274,25 @@ class HealthCheckCommand : Command() {
                 timedTest {
                     percentOutput = 0.25
                     currentRange = volt6currentRange
-                    speedRange = 1100..1300
+                    speedRange = 1100..1350
                 }
 
                 timedTest {
                     percentOutput = -0.25
                     currentRange = volt6currentRange
-                    speedRange = -1300..-1100
+                    speedRange = -1350..-1100
                 }
 
                 timedTest {
                     percentOutput = 1.0
                     currentRange = volt12currentRange
-                    speedRange = 1100..1300
+                    speedRange = 1100..6500
                 }
 
                 timedTest {
                     percentOutput = -1.0
                     currentRange = volt12currentRange
-                    speedRange = -1300..-1100
+                    speedRange = -6500..-1100
                 }
             }
         }

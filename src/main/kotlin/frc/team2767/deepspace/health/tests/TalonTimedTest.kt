@@ -101,7 +101,7 @@ class TalonTimedTest(private val group: TalonGroup) : Test, Reportable {
                 td(classes = currentRange.statusOf(current)) { +"%.2f".format(current) }
                 td(classes = speedRange.statusOf(speed)) { +"$speed" }
                 td { +"${currentRange.start}, ${currentRange.endInclusive}" }
-                td { +"${speedRange.start}, ${currentRange.endInclusive}" }
+                td { +"${speedRange.start}, ${speedRange.endInclusive}" }
             }
         }
     }
