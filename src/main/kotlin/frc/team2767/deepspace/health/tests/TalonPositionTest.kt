@@ -96,6 +96,8 @@ class TalonPositionTest(private val group: TalonGroup) : Test, Reportable {
             th { +"Position (ticks)" }
             th { +"Current (amps)" }
             th { +"Speed (ticks/100ms)" }
+            th { +"Current range" }
+            th { +"Speed range" }
         }
     }
 
@@ -109,6 +111,8 @@ class TalonPositionTest(private val group: TalonGroup) : Test, Reportable {
             td { +"$encoderChangeTarget" }
             td(classes = currentRange.statusOf(current)) { +"%.2f".format(current) }
             td(classes = speedRange.statusOf(speed)) { +"$speed" }
+            td { +"${currentRange.start}, ${currentRange.endInclusive}" }
+            td { +"${speedRange.start}, ${currentRange.endInclusive}" }
         }
     }
 

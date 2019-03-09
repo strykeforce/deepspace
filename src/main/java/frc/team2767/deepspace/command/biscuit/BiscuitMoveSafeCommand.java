@@ -2,10 +2,11 @@ package frc.team2767.deepspace.command.biscuit;
 
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
 import frc.team2767.deepspace.Robot;
-import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
+import frc.team2767.deepspace.subsystem.Action;
+import frc.team2767.deepspace.subsystem.VisionSubsystem;
 
 public class BiscuitMoveSafeCommand extends ConditionalCommand {
-  BiscuitSubsystem BISCUIT = Robot.BISCUIT;
+  private static final VisionSubsystem VISION = Robot.VISION;
 
   public BiscuitMoveSafeCommand() {
     super(new BiscuitSetPositionCommand(0));
@@ -13,6 +14,6 @@ public class BiscuitMoveSafeCommand extends ConditionalCommand {
 
   @Override
   protected boolean condition() {
-    return (BISCUIT.getPosition() > 130 || BISCUIT.getPosition() < -130);
+    return (VISION.action == Action.PICKUP);
   }
 }

@@ -43,7 +43,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   private int kAbsoluteZeroTicks;
   private double targetBiscuitPositionDeg = 0;
   private GamePiece currentGamePiece = GamePiece.NOTSET;
-  private Action currentAction = Action.NOTSET;
   private ElevatorLevel targetLevel = NOTSET;
   private FieldDirection targetDirection = FieldDirection.NOTSET;
   private TalonSRX biscuit = new TalonSRX(BISCUIT_ID);
@@ -209,7 +208,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   public void executePlan() {
     targetLevel = VISION.elevatorLevel;
     currentGamePiece = VISION.gamePiece;
-    currentAction = VISION.action;
+    Action currentAction = VISION.action;
     targetDirection = VISION.direction;
 
     logger.debug(
