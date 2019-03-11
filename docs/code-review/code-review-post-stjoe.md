@@ -17,59 +17,60 @@
 
 #### Practice 1
 
-| Problem | Cause | Response |
-|--------|-------|-----|
-| Azimuths 90 deg off | Axle loose | Tighten |
-| Nothing happens in sandstorm | Waiting for pressure | Raise elevator to get seal, add pressure timeout |
+| Problem | Cause | Response | Outcome |
+|--------|-------|-----|----------------|
+| Azimuths 90 deg off | Axle loose | Tighten | Successful |
+| Nothing happens in sandstorm | Waiting for pressure | Raise elevator to get seal, add pressure timeout | Unsuccessful, need more |
 
 #### Practice 2
 
-| Problem | Cause | Response |
-|--------|-------|----|
-| No suction | Solenoids not opening | Set solenoids in TeleopInit() |
-| No suction during climb | Trident solenoid open | Close trident solenoid in climb sequence |
-| No suction during stow | Pressure goodEnough too low, doesn't think we have game piece (onTarget) | Increase good enough |
-| Not moving in Sandstorm | Waiting for pressure  onTarget with hatch | Raise elevator more |
-| Can't move elevator at certain positions | Safety subsystem limits are different | Adjust safety limits |
+| Problem | Cause | Response | Outcome |
+|--------|-------|----|-----------------|
+| No suction on teleop transition | Solenoids not opening | Set solenoids in TeleopInit() | Successful |
+| No suction during climb | Trident solenoid open | Close trident solenoid in climb sequence | Successful |
+| No suction during stow | Pressure goodEnough too low, doesn't think we have game piece (onTarget) | Increase good enough | Successful |
+| Not moving in Sandstorm | Waiting for pressure  onTarget with hatch | Raise elevator more | Successful |
+| Can't move elevator at certain positions | Safety subsystem limits are different | Adjust safety limits | Mostly successful, didn't change limit in of() method |
 
 #### Practice 3
 
-| Problem | Cause | Response |
-|---------|------|----------|
-| Difficult picking up hatches | Elevator low setpoint too low | Raise all elevator positions by 1 in. |
-| No log | Unknown | None |
+| Problem | Cause | Response | Outcome |
+|---------|------|----------|----------|
+| Difficult picking up hatches | Elevator low setpoint too low | Raise all elevator positions by 1 in. | Unsuccessful |
+| No log | Unknown | None | N/A |
 
 #### Practice 4
 
-| Problem  | Cause | Response |
-|---------|--------|----------|
-| Biscuit hits shoulder gear | Elevator low setpoint too low | Raise elevator position |
-| No log | Unknown | None|
+| Problem  | Cause | Response | Outcome |
+|---------|--------|----------|---------|
+| Biscuit hits shoulder gear | Elevator low setpoint too low | Raise elevator position | Successful |
+| No log | Unknown | None | N/A |
 
 #### Match 1
 
-| Problem  | Cause | Response |
-|----------|-------|----------|
-| Cross hairs difficult to see | none | Change camera cross hairs to dark green |
-| Driver controller behaves weird | Unknown | Set deadband to 0.09 |
-| No log | Permissions wrong | Set permissions to lvuser |
+| Problem  | Cause | Response | Outcome |
+|----------|-------|----------|----------|
+| Cross hairs difficult to see | none | Change camera cross hairs to dark green | Successful |
+| Driver controller behaves weird | Unknown | Set deadband to 0.09 | Unknown, may not have been root cause |
+| No log | Permissions wrong | Set permissions to lvuser | Successful |
 
 #### Match 2
 
 - Climber set higher to protect from accidental release during Hab lvl 2 drop
 
-| Problem | Cause | Response |
-|----------|-------|---------|
-| Elevator won't move | Pulley rope caught in elevator roller guides | Tie end down |
+| Problem | Cause | Response | Outcome |
+|----------|-------|---------|----------|
+| Elevator won't move | Pulley rope caught in elevator roller guides | Tie end down | Successful |
 
 #### Match 3
 
 - CommandGroup sequences are now enclosed by "BEGIN FOO" and "END FOO"
 
-| Problem | Cause | Response |
-|----------|-------|---------|
-| Elevator positions not right | Unknown | Adjust elevator heights |
-| Elevator behavior | PositionExecute waiting for Biscuit | Change order of PositionExecute (Elevator -> Biscuit) |
+| Problem | Cause | Response | Outcome |
+|----------|-------|---------|--------|
+| Elevator positions not right | Unknown | Adjust elevator heights | Successful |
+| Elevator behavior | PositionExecute waiting for Biscuit | Change order of PositionExecute (Elevator -> Biscuit) | 
+Successful |
 
 #### Match 4
 
@@ -83,35 +84,35 @@ None
 
 #### Match 6
 
-| Problem | Cause | Response |
-|---------|---------|-------|
-| Last ball stuck in intake | N/A | None |
-| Can't build climb seal | Suction cup lower too fast | Set to 0.15 |
+| Problem | Cause | Response | Outcome |
+|---------|---------|-------|----------|
+| Last ball stuck in intake | N/A | None | N/A |
+| Can't build climb seal | Suction cup lower too fast | Set to 0.15 | Successful |
 
 #### Match 7
 
-| Problem  | Cause | Response | 
-|----------|--------|----------|
-| Missed ball pickup | Valve not opening fast enough | Open valve at beginning of coconut pickup |
-| Biscuit stabs robot after Player hatch | Elevator too low, moving biscuit before elevator| Set Biscuit to safe up position if Player hatch |
+| Problem  | Cause | Response | Outcome |
+|----------|--------|----------|---------|
+| Missed ball pickup | Valve not opening fast enough | Open valve at beginning of coconut pickup | Successful |
+| Biscuit stabs robot after Player hatch | Elevator too low, moving biscuit before elevator | Set Biscuit to safe up position if Player hatch | Successful |
 
 #### Match 8
 
-| Problem | Cause | Response |
-|---------|---------|---------|
-| Yellow card | Too tall during climb | Lower stow position |
+| Problem | Cause | Response | Outcome |
+|---------|---------|---------|---------|
+| Yellow card | Too tall during climb | Lower stow position | Unsuccessful |
 
 #### Match 9
 
-| Problem | Cause | Response |
-|--------|---------|-----------|
-| Biscuit always going up | Wrong bounds for conditional command | Get action from VISION instead to decide if go to safe position |
+| Problem | Cause | Response | Outcome |
+|--------|---------|-----------|---------|
+| Biscuit always going up | Wrong bounds for conditional command | Get action from VISION instead to decide if go to safe position | Successful |
 
 #### Match 10
 
-| Problem | Cause | Response |
-|-------|---------|----------|
-| Yellow card | Too tall during climb | Open loop jog into ball to clear height restriction |
+| Problem | Cause | Response | Outcome |
+|-------|---------|----------|---------|
+| Yellow card | Too tall during climb | Open loop jog into ball to clear height restriction | Successful |
 
 #### Match 11
 
