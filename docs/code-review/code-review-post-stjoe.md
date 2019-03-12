@@ -69,8 +69,7 @@
 | Problem | Cause | Response | Outcome |
 |----------|-------|---------|--------|
 | Elevator positions not right | Unknown | Adjust elevator heights | Successful |
-| Elevator behavior | PositionExecute waiting for Biscuit | Change order of PositionExecute (Elevator -> Biscuit) | 
-Successful |
+| Elevator behavior | PositionExecute waiting for Biscuit | Change order of PositionExecute (Elevator -> Biscuit) | Successful |
 
 #### Match 4
 
