@@ -129,10 +129,12 @@ None
 
 ## Things to be fixed
 
-- Solenoid delay
 
-## Current/Future Projects
+
+## To Do
 
 - Hatch pickup with vision
+- Hatch place level 2 & 3 with vision
+- Game controller: move not stage
 - Auton for Sandstorm
 
