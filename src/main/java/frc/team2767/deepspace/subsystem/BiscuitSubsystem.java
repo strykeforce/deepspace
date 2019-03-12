@@ -20,6 +20,11 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
 
   private static final String PREFS = "BiscuitSubsystem/Position/";
   private static final int BACKUP = 2767;
+  private static final int BISCUIT_ID = 40;
+  private static final double TICKS_PER_DEGREE = 34.1;
+  private static final double TICKS_OFFSET = 0;
+  private static final DriveSubsystem DRIVE = Robot.DRIVE;
+  private static final VisionSubsystem VISION = Robot.VISION;
   public static double kUpPositionDeg;
   public static double kLeftPositionDeg;
   public static double kRightPositionDeg;
@@ -29,22 +34,15 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   public static double kTiltUpRightPositionDeg;
   public static double kDownRightPositionDeg;
   public static double kDownLeftPositionDeg;
-  public static final double BALL_COMPRESSION = 1.0;
-  public static final double HATCH_COMPRESSION = 1.0;
   private static int kCloseEnoughTicks;
-  private final int BISCUIT_ID = 40;
-  private final double TICKS_PER_DEGREE = 34.1;
-  private final double TICKS_OFFSET = 0;
+  private static int kAbsoluteZeroTicks;
   private final double COMPRESSION_COUNTS_OFFSET = 383.9;
   private final double COMPRESSION_COUNTS_PER_IN = 26.56;
-  private final DriveSubsystem DRIVE = Robot.DRIVE;
-  private final VisionSubsystem VISION = Robot.VISION;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
-  private int kAbsoluteZeroTicks;
   private double targetBiscuitPositionDeg = 0;
-  private GamePiece currentGamePiece = GamePiece.NOTSET;
-  private ElevatorLevel targetLevel = NOTSET;
-  private FieldDirection targetDirection = FieldDirection.NOTSET;
+  private GamePiece currentGamePiece = GamePiece.NOTSET; // FIXME: remove
+  private ElevatorLevel targetLevel = NOTSET; // FIXME: remove
+  private FieldDirection targetDirection = FieldDirection.NOTSET; // FIXME: remove
   private TalonSRX biscuit = new TalonSRX(BISCUIT_ID);
   private int setpointTicks;
 
@@ -142,37 +140,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
         + targetBiscuitPositionDeg;
   }
 
-  @Override
-  public int getTicks() {
-    return biscuit.getSelectedSensorPosition();
-  }
-
-  @Override
-  public void setLimits(int forward, int reverse) {
-    biscuit.configForwardSoftLimitThreshold(forward, 0);
-    biscuit.configReverseSoftLimitThreshold(reverse, 0);
-  }
-
-  public double getPosition() {
-    return (TICKS_OFFSET - biscuit.getSelectedSensorPosition()) / TICKS_PER_DEGREE;
-  }
-
-  public double getCompression() {
-    double compression =
-        (biscuit.getSensorCollection().getAnalogInRaw() - COMPRESSION_COUNTS_OFFSET)
-            / COMPRESSION_COUNTS_PER_IN;
-    return compression;
-  }
-
-  public void setPosition(double angle) {
-    if (angle == kDownRightPositionDeg && getPosition() < 0) {
-      angle = kDownLeftPositionDeg;
-    }
-    setpointTicks = (int) (TICKS_OFFSET - angle * TICKS_PER_DEGREE);
-    logger.info("set position in degrees = {} in ticks = {}", angle, setpointTicks);
-    biscuit.set(ControlMode.MotionMagic, setpointTicks);
-  }
-
   public List<TalonSRX> getTalons() {
     return List.of(biscuit);
   }
@@ -181,12 +148,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
     boolean didZero = false;
     if (!biscuit.getSensorCollection().isFwdLimitSwitchClosed()) {
       int absPos = biscuit.getSensorCollection().getPulseWidthPosition() & 0xFFF;
-      int relPos = biscuit.getSelectedSensorPosition();
-      logger.info(
-          "Preferences zero = {} Relative position = {} Absolute position = {}",
-          kAbsoluteZeroTicks,
-          relPos,
-          absPos);
+      logger.info("Preferences zero = {} Absolute position = {}", kAbsoluteZeroTicks, absPos);
 
       // appears backwards because absolute and relative encoders are out-of-phase in hardware
       int offset = kAbsoluteZeroTicks - absPos;
@@ -199,8 +161,10 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
       biscuit.configPeakOutputForward(0, 0);
       biscuit.configPeakOutputReverse(0, 0);
     }
+
     biscuit.configForwardLimitSwitchSource(
         LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
+
     return didZero;
   }
 
@@ -216,13 +180,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
         targetLevel,
         currentGamePiece,
         currentAction);
-    Angle currentAngle;
     double bearing = Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360);
-    if (Math.abs(bearing) <= 90) {
-      currentAngle = Angle.FORWARD;
-    } else {
-      currentAngle = Angle.BACKWARD;
-    }
 
     switch (currentAction) {
       case PLACE:
@@ -254,6 +212,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
         break;
 
       case PICKUP:
+        Angle currentAngle;
         if (bearing <= 0) {
           currentAngle = Angle.LEFT;
         } else {
@@ -293,6 +252,19 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
     setPosition(targetBiscuitPositionDeg);
   }
 
+  public double getPosition() {
+    return (TICKS_OFFSET - biscuit.getSelectedSensorPosition()) / TICKS_PER_DEGREE;
+  }
+
+  public void setPosition(double angle) {
+    if (angle == kDownRightPositionDeg && getPosition() < 0) {
+      angle = kDownLeftPositionDeg;
+    }
+    setpointTicks = (int) (TICKS_OFFSET - angle * TICKS_PER_DEGREE);
+    logger.info("set position in degrees = {} in ticks = {}", angle, setpointTicks);
+    biscuit.set(ControlMode.MotionMagic, setpointTicks);
+  }
+
   public boolean onTarget() {
     int current = biscuit.getSelectedSensorPosition();
     if (Math.abs(current - setpointTicks) < kCloseEnoughTicks) {
@@ -322,11 +294,24 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
         biscuit.getSensorCollection().getAnalogInRaw());
   }
 
+  @Override
+  public int getTicks() {
+    return biscuit.getSelectedSensorPosition();
+  }
+
+  @Override
+  public void setLimits(int forward, int reverse) {
+    biscuit.configForwardSoftLimitThreshold(forward, 0);
+    biscuit.configReverseSoftLimitThreshold(reverse, 0);
+  }
+
+  public double getCompression() {
+    return (biscuit.getSensorCollection().getAnalogInRaw() - COMPRESSION_COUNTS_OFFSET)
+        / COMPRESSION_COUNTS_PER_IN;
+  }
+
   private enum Angle {
-    FORWARD,
-    BACKWARD,
     LEFT,
     RIGHT,
-    NOTSET
   }
 }
