@@ -1,9 +1,15 @@
-package frc.team2767.deepspace.health
+package frc.team2767.deepspace.health.tests
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.Timer
-import frc.team2767.deepspace.health.VacuumPressureTest.State.*
-import kotlinx.html.*
+import frc.team2767.deepspace.health.Reportable
+import frc.team2767.deepspace.health.Test
+import frc.team2767.deepspace.health.VacuumGroup
+import frc.team2767.deepspace.health.tests.VacuumPressureTest.State.*
+import kotlinx.html.TagConsumer
+import kotlinx.html.td
+import kotlinx.html.th
+import kotlinx.html.tr
 import mu.KotlinLogging
 
 
@@ -27,7 +33,7 @@ class VacuumPressureTest(private val group: VacuumGroup) : Test, Reportable {
     private var startTime = 0.0
 
     override fun execute() {
-        when(state) {
+        when (state) {
             STARTING -> {
                 name = "pressure test to $pressure"
 
@@ -98,7 +104,7 @@ class VacuumPressureTest(private val group: VacuumGroup) : Test, Reportable {
             th { +"Setpoint (in Hg)" }
             th { +"Max Acceptable Pressure Drop" }
             th { +"Time sealed" }
-            th { +"Pressure drop"}
+            th { +"Pressure drop" }
         }
     }
 
@@ -108,7 +114,7 @@ class VacuumPressureTest(private val group: VacuumGroup) : Test, Reportable {
             td { +"$pressure" }
             td { +"$maxAcceptablePressureDrop" }
             td { +"$sealedWaitCount" }
-            td { +"$pressureDrop"}
+            td { +"$pressureDrop" }
         }
     }
 

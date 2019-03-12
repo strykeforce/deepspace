@@ -1,9 +1,11 @@
-package frc.team2767.deepspace.health
+package frc.team2767.deepspace.health.tests
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
-import frc.team2767.deepspace.health.TalonPosition.State.RUNNING
-import frc.team2767.deepspace.health.TalonPosition.State.STOPPED
+import frc.team2767.deepspace.health.TalonGroup
+import frc.team2767.deepspace.health.Test
+import frc.team2767.deepspace.health.tests.TalonPosition.State.RUNNING
+import frc.team2767.deepspace.health.tests.TalonPosition.State.STOPPED
 import kotlinx.html.TagConsumer
 import mu.KotlinLogging
 import kotlin.math.absoluteValue

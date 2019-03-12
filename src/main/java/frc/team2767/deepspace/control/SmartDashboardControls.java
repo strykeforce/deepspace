@@ -8,13 +8,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.command.HealthCheckCommand;
 import frc.team2767.deepspace.command.YawCommand;
-import frc.team2767.deepspace.command.ZeroAxisCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
 import frc.team2767.deepspace.command.climb.*;
 import frc.team2767.deepspace.command.elevator.ElevatorSafeZeroCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
-import frc.team2767.deepspace.command.elevator.ElevatorZeroCommand;
 import frc.team2767.deepspace.command.intake.IntakePositionCommand;
 import frc.team2767.deepspace.command.log.BiscuitDumpCommand;
 import frc.team2767.deepspace.command.log.ElevatorDumpCommand;
@@ -48,24 +46,10 @@ public class SmartDashboardControls {
 
   private void addMatchCommands() {
     logger.debug("creating match commands");
-    SmartDashboard.putData("Game/zeroAll", new ZeroAxisCommand());
     SmartDashboard.putData("Game/tridentSol", VACUUM.getTridentSolenoid());
     SmartDashboard.putData("Game/pumpSol", VACUUM.getPumpSolenoid());
     SmartDashboard.putBoolean("Game/onTarget", false);
     SmartDashboard.putData("Game/SandstormHatchPickUp", new SandstormHatchPickupCommandGroup());
-  }
-
-  private void addPitCommands() {
-    addTestCommands();
-    addIntakeCommands();
-    addElevatorCommands();
-    addVacuumCommands();
-    SmartDashboard.putData("Pit/ElevatorZero", new ElevatorZeroCommand());
-    SmartDashboard.putData("Pit/LowerSuction", new LowerSuctionCupCommand());
-    SmartDashboard.putData("Pit/Climb", new ClimbCommand());
-    SmartDashboard.putData("Pit/Unwind", new UnwindClimbCommand());
-    SmartDashboard.putData("Pit/ClimbStop", new StopClimbCommand());
-    SmartDashboard.putData("Pit/Health Check", new HealthCheckCommand());
   }
 
   private void addClimbTab() {
@@ -110,6 +94,24 @@ public class SmartDashboardControls {
     Servos.add("Release Climb", new ReleaseClimbCommand()).withWidget(BuiltInWidgets.kCommand);
     Servos.add("Release Kickstand", new ReleaseKickstandCommand())
         .withWidget(BuiltInWidgets.kCommand);
+  }
+
+  private void addPitCommands() {
+    addTestCommands();
+    addIntakeCommands();
+    addElevatorCommands();
+    addVacuumCommands();
+    SmartDashboard.putData("Pit/LowerSuction", new LowerSuctionCupCommand());
+    SmartDashboard.putData("Pit/Climb", new ClimbCommand());
+    SmartDashboard.putData("Pit/Unwind", new UnwindClimbCommand());
+    SmartDashboard.putData("Pit/ClimbStop", new StopClimbCommand());
+    SmartDashboard.putData("Pit/Health Check", new HealthCheckCommand());
+  }
+
+  private void addVisionCommands() {
+    SmartDashboard.putData("Game/OrthogMvmt", new OrthogonalMovementCommand());
+    SmartDashboard.putData("Pit/LightsOn", new LightsOnCommand());
+    SmartDashboard.putData("Pit/LightsOff", new LightsOffCommand());
   }
 
   private void addTestCommands() {
@@ -197,12 +199,6 @@ public class SmartDashboardControls {
     SmartDashboard.putData(
         "Test/Climb Disable", new DeactivateValveCommand(VacuumSubsystem.Valve.CLIMB));
     SmartDashboard.putData("Test/Yaw Command", new YawCommand());
-  }
-
-  private void addVisionCommands() {
-    SmartDashboard.putData("Game/OrthogMvmt", new OrthogonalMovementCommand());
-    SmartDashboard.putData("Pit/LightsOn", new LightsOnCommand());
-    SmartDashboard.putData("Pit/LightsOff", new LightsOffCommand());
   }
 
   private void addIntakeCommands() {

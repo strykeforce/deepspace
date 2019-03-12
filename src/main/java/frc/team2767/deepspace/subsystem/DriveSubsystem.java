@@ -195,6 +195,7 @@ public class DriveSubsystem extends Subsystem {
     azimuthConfig.slot0.allowableClosedloopError = 0;
     azimuthConfig.motionAcceleration = 10_000;
     azimuthConfig.motionCruiseVelocity = 800;
+    azimuthConfig.voltageCompSaturation = 12;
 
     TalonSRXConfiguration driveConfig = new TalonSRXConfiguration();
     driveConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
@@ -207,8 +208,9 @@ public class DriveSubsystem extends Subsystem {
     driveConfig.slot0.kF = 0.028;
     driveConfig.slot0.integralZone = 3000;
     driveConfig.slot0.allowableClosedloopError = 0;
-    driveConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms; // FIXME?
+    driveConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms;
     driveConfig.velocityMeasurementWindow = 64;
+    driveConfig.voltageCompSaturation = 12;
 
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();

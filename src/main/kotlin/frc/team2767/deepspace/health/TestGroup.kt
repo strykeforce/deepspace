@@ -3,7 +3,10 @@ package frc.team2767.deepspace.health
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import frc.team2767.deepspace.Robot
 import frc.team2767.deepspace.health.TestGroup.State.*
-import frc.team2767.deepspace.subsystem.VacuumSubsystem
+import frc.team2767.deepspace.health.tests.TalonPosition
+import frc.team2767.deepspace.health.tests.TalonPositionTest
+import frc.team2767.deepspace.health.tests.TalonTimedTest
+import frc.team2767.deepspace.health.tests.VacuumPressureTest
 import kotlinx.html.TagConsumer
 import kotlinx.html.div
 import kotlinx.html.h2

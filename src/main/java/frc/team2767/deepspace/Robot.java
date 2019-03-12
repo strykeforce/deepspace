@@ -72,16 +72,14 @@ public class Robot extends TimedRobot {
     ELEVATOR.zero();
     BISCUIT.zero();
     INTAKE.zero();
-    TELEMETRY.start();
+
+    if (!isEvent) {
+      TELEMETRY.start();
+    }
 
     SmartDashboard.putBoolean("Game/SandstormPickUp", false);
 
     //    new SmartDashboardControls();
-  }
-
-  @Override
-  public void disabledPeriodic() {
-    Scheduler.getInstance().run();
   }
 
   @Override
@@ -91,14 +89,19 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void autonomousPeriodic() {
+  public void teleopInit() {
+    VACUUM.setSolenoid(VacuumSubsystem.Valve.TRIDENT, true);
+    VACUUM.setSolenoid(VacuumSubsystem.Valve.PUMP, true);
+  }
+
+  @Override
+  public void disabledPeriodic() {
     Scheduler.getInstance().run();
   }
 
   @Override
-  public void teleopInit() {
-    VACUUM.setSolenoid(VacuumSubsystem.Valve.TRIDENT, true);
-    VACUUM.setSolenoid(VacuumSubsystem.Valve.PUMP, true);
+  public void autonomousPeriodic() {
+    Scheduler.getInstance().run();
   }
 
   @Override
