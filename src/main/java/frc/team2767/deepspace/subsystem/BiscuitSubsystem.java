@@ -36,8 +36,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   public static double kDownLeftPositionDeg;
   private static int kCloseEnoughTicks;
   private static int kAbsoluteZeroTicks;
-  private final double COMPRESSION_COUNTS_OFFSET = 383.9;
-  private final double COMPRESSION_COUNTS_PER_IN = 26.56;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private double targetBiscuitPositionDeg = 0;
   private GamePiece currentGamePiece = GamePiece.NOTSET; // FIXME: remove
@@ -288,10 +286,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
         "biscuit position in degrees = {} biscuit position in ticks = {}",
         getPosition(),
         getTicks());
-    logger.info(
-        "biscuit compression in inches = {} biscuit compression in counts = {}",
-        getCompression(),
-        biscuit.getSensorCollection().getAnalogInRaw());
   }
 
   @Override
@@ -303,11 +297,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   public void setLimits(int forward, int reverse) {
     biscuit.configForwardSoftLimitThreshold(forward, 0);
     biscuit.configReverseSoftLimitThreshold(reverse, 0);
-  }
-
-  public double getCompression() {
-    return (biscuit.getSensorCollection().getAnalogInRaw() - COMPRESSION_COUNTS_OFFSET)
-        / COMPRESSION_COUNTS_PER_IN;
   }
 
   private enum Angle {
