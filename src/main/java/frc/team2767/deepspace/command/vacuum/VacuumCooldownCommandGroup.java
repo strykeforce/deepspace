@@ -7,11 +7,7 @@ public class VacuumCooldownCommandGroup extends CommandGroup {
 
   public VacuumCooldownCommandGroup() {
     addSequential(new VacuumCurrentLimitCommand(1.0));
-    addSequential(
-        new ActivateValveCommand(
-            new VacuumSubsystem.Valve[] {
-              VacuumSubsystem.Valve.TRIDENT, VacuumSubsystem.Valve.PUMP
-            }));
+    addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.COOL_DOWN));
 
     addSequential(new VacuumOpenLoopCommand(0.2));
   }

@@ -9,7 +9,7 @@ public class StowValveControlCommand extends ConditionalCommand {
   private static final VacuumSubsystem VACUUM = Robot.VACUUM;
 
   public StowValveControlCommand() {
-    super(new DeactivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
+    super(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.PRESSURE_ACCUMULATE));
   }
 
   // Not on Target -> Close Trident Valve

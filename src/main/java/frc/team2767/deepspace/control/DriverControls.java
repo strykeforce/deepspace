@@ -20,9 +20,8 @@ import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.log.SafetyLogDumpCommand;
 import frc.team2767.deepspace.command.sequences.*;
 import frc.team2767.deepspace.command.teleop.InterruptCommand;
-import frc.team2767.deepspace.command.vacuum.DeactivateValveCommand;
+import frc.team2767.deepspace.command.vacuum.SetSolenoidStatesCommand;
 import frc.team2767.deepspace.subsystem.VacuumSubsystem;
-import javax.swing.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,13 +80,10 @@ public class DriverControls {
     new JoystickButton(joystick, Button.RESET.id).whenPressed(new ZeroGyroCommand());
     new JoystickButton(joystick, Button.HAMBURGER.id).whenPressed(new SafetyLogDumpCommand());
 
-    // LIGHTS
-    //    new JoystickButton(joystick, Trim.LEFT_X_POS.id).whenPressed(new LightsOnCommand());
-    //    new JoystickButton(joystick, Trim.LEFT_X_NEG.id).whenPressed(new LightsOffCommand());
-
     // shoulder
     new JoystickButton(joystick, Shoulder.LEFT_DOWN.id)
-        .whenPressed(new DeactivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
+        .whenPressed(
+            new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.PRESSURE_ACCUMULATE));
     new JoystickButton(joystick, Shoulder.LEFT_UP.id)
         .whenPressed(new PositionExecuteCommandGroup());
   }

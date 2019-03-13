@@ -9,9 +9,8 @@ import frc.team2767.deepspace.command.states.SetActionCommand;
 import frc.team2767.deepspace.command.states.SetFieldDirectionCommand;
 import frc.team2767.deepspace.command.states.SetGamePieceCommand;
 import frc.team2767.deepspace.command.states.SetLevelCommand;
-import frc.team2767.deepspace.command.vacuum.ActivateValveCommand;
-import frc.team2767.deepspace.command.vacuum.PressureAccumulateCommandGroup;
 import frc.team2767.deepspace.command.vacuum.PressureSetCommand;
+import frc.team2767.deepspace.command.vacuum.SetSolenoidStatesCommand;
 import frc.team2767.deepspace.command.vacuum.WaitForPressureCommand;
 import frc.team2767.deepspace.subsystem.*;
 
@@ -23,7 +22,8 @@ public class SandstormHatchPickupCommandGroup extends CommandGroup {
     addSequential(
         new CommandGroup() {
           {
-            addSequential(new PressureAccumulateCommandGroup());
+            addSequential(
+                new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.PRESSURE_ACCUMULATE));
             addParallel(new PressureSetCommand(VacuumSubsystem.kHatchPressureInHg), 0.5);
             addParallel(new SetActionCommand(Action.PLACE));
             addParallel(new SetGamePieceCommand(GamePiece.HATCH));
@@ -31,7 +31,7 @@ public class SandstormHatchPickupCommandGroup extends CommandGroup {
             addParallel(new SetLevelCommand(ElevatorLevel.ONE));
           }
         });
-    addSequential(new ActivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
+    addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP));
     addSequential(new ElevatorSetPositionCommand(9.0));
     addSequential(new WaitForPressureCommand(VacuumSubsystem.kHatchPressureInHg));
     addSequential(new SandstormHatchIndicator(true));

@@ -90,8 +90,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    VACUUM.setSolenoid(VacuumSubsystem.Valve.TRIDENT, true);
-    VACUUM.setSolenoid(VacuumSubsystem.Valve.PUMP, true);
+    VACUUM.setSolenoidsState(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP);
   }
 
   @Override

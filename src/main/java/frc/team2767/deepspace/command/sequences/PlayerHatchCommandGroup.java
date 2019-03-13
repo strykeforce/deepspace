@@ -7,15 +7,15 @@ import frc.team2767.deepspace.command.states.SetActionCommand;
 import frc.team2767.deepspace.command.states.SetFieldDirectionCommand;
 import frc.team2767.deepspace.command.states.SetGamePieceCommand;
 import frc.team2767.deepspace.command.states.SetLevelCommand;
-import frc.team2767.deepspace.command.vacuum.PressureAccumulateCommandGroup;
 import frc.team2767.deepspace.command.vacuum.PressureSetCommand;
+import frc.team2767.deepspace.command.vacuum.SetSolenoidStatesCommand;
 import frc.team2767.deepspace.subsystem.*;
 
 public class PlayerHatchCommandGroup extends CommandGroup {
 
   public PlayerHatchCommandGroup() {
     addSequential(new LogCommand("BEGIN PLAYER HATCH PICKUP"));
-    addSequential(new PressureAccumulateCommandGroup());
+    addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.PRESSURE_ACCUMULATE));
     addParallel(new PressureSetCommand(VacuumSubsystem.kHatchPressureInHg));
     addSequential(
         new CommandGroup() {

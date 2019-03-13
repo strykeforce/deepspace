@@ -118,21 +118,30 @@ public class VacuumSubsystem extends Subsystem {
     return climbSolenoid;
   }
 
-  public void setSolenoid(Valve valve, boolean state) {
-    switch (valve) {
+  public void setSolenoidsState(SolenoidStates state) {
+    switch (state) {
       case CLIMB:
-        climbSolenoid.set(state);
-        return;
-      case PUMP:
-        pumpSolenoid.set(state);
-        return;
-      case TRIDENT:
-        tridentSolenoid.set(state);
-        return;
+        climbSolenoid.set(true);
+        pumpSolenoid.set(true);
+        tridentSolenoid.set(false);
+        break;
+      case STOP: // fall through
+      case PRESSURE_ACCUMULATE:
+        climbSolenoid.set(false);
+        pumpSolenoid.set(true);
+        tridentSolenoid.set(false);
+        break;
+      case COOL_DOWN: // fall through
+      case GAME_PIECE_PICKUP:
+        tridentSolenoid.set(true);
+        pumpSolenoid.set(true);
+        climbSolenoid.set(false);
+        break;
       default:
-        logger.warn("could not set {} to {}", valve, state);
+        logger.warn("could not set to {}", state);
+        break;
     }
-    logger.info("set {} to {}", valve, state);
+    logger.info("set state to {}", state);
   }
 
   public void runOpenLoop(double setpoint) {
@@ -193,14 +202,6 @@ public class VacuumSubsystem extends Subsystem {
     return false;
   }
 
-  public double getPumpTemperature() {
-    return (analogInput.getVoltage() - TEMP_OFFSET) / VOLTS_PER_CELSIUS;
-  }
-
-  public void setPeakOutput(double peakOutput) {
-    vacuum.configPeakOutputForward(peakOutput, 0);
-  }
-
   // FIXME
   private boolean isClimbOnTarget() {
     if (vacuum.getSelectedSensorPosition() >= kGoodEnoughClimb) {
@@ -217,6 +218,14 @@ public class VacuumSubsystem extends Subsystem {
     return false;
   }
 
+  public double getPumpTemperature() {
+    return (analogInput.getVoltage() - TEMP_OFFSET) / VOLTS_PER_CELSIUS;
+  }
+
+  public void setPeakOutput(double peakOutput) {
+    vacuum.configPeakOutputForward(peakOutput, 0);
+  }
+
   public enum Valve {
     TRIDENT(0),
     CLIMB(2),
@@ -227,5 +236,13 @@ public class VacuumSubsystem extends Subsystem {
     Valve(int id) {
       this.ID = id;
     }
+  }
+
+  public enum SolenoidStates {
+    PRESSURE_ACCUMULATE,
+    CLIMB,
+    GAME_PIECE_PICKUP,
+    STOP,
+    COOL_DOWN
   }
 }
