@@ -16,40 +16,30 @@ import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
 public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
 
-  private static final double TICKS_PER_DEGREE = 90.0;
-  private static final double TICKS_OFFSET = 9664.0;
-
+  private static final int TICKS_PER_DEGREE = 90;
+  private static final int TICKS_OFFSET = 9664;
+  private static final int SHOULDER_ID = 20;
+  private static final int ROLLER_ID = 21;
+  private static final int STABLE_THRESH = 4;
+  private static final String PREFS_NAME = "IntakeSubsystem/Settings/";
   public static double kStowPositionDeg;
   public static double kZeroPositionTicks;
   public static double kMiddlePositionDeg;
   public static double kLoadPositionDeg;
   public static double kCargoPlayerPositionDeg;
   private static int kAbsoluteZero;
-  private final int SHOULDER_ID = 20;
-  private final int ROLLER_ID = 21;
-  private final int STABLE_THRESH = 4;
-  private final String PREFS_NAME = "IntakeSubsystem/Settings/";
+  private static int kCloseEnoughTicks;
   private final int BACKUP = 2767;
-  private int kCloseEnoughTicks;
-  private Logger logger = LoggerFactory.getLogger(this.getClass());
-  private TalonSRX shoulder = new TalonSRX(SHOULDER_ID);
-
-  private TalonSRX roller = new TalonSRX(ROLLER_ID);
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private final TalonSRX shoulder = new TalonSRX(SHOULDER_ID);
+  private final TalonSRX roller = new TalonSRX(ROLLER_ID);
   private int stableCount;
   private int setpointTicks;
 
   public IntakeSubsystem() {
-
-    if (shoulder == null) {
-      logger.error("Shoulder not present");
-    }
-
-    if (roller == null) {
-      logger.error("Roller not present");
-    }
-
     intakePreferences();
     configTalon();
+
     shoulder.configReverseLimitSwitchSource(
         LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
   }
@@ -117,14 +107,6 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
     telemetryService.register(new TalonItem(roller, "IntakeRoller"));
   }
 
-  public List<TalonSRX> getRollerTalon() {
-    return List.of(roller);
-  }
-
-  public List<TalonSRX> getShoulderTalon() {
-    return List.of(shoulder);
-  }
-
   @SuppressWarnings("Duplicates")
   private double getPreference(String name, double defaultValue) {
     String prefName = PREFS_NAME + name;
@@ -137,6 +119,14 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
     return pref;
   }
 
+  public List<TalonSRX> getRollerTalon() {
+    return List.of(roller);
+  }
+
+  public List<TalonSRX> getShoulderTalon() {
+    return List.of(shoulder);
+  }
+
   @Override
   protected void initDefaultCommand() {}
 
@@ -144,7 +134,6 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
   // SHOULDER
   ////////////////////////////////////////////////////////////////////////////
 
-  /** @param setpoint TalonSRX setpoint */
   public void shoulderOpenLoop(double setpoint) {
     logger.debug("shoulder open loop at {}", setpoint);
     shoulder.set(ControlMode.PercentOutput, setpoint);
@@ -156,10 +145,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
       int absPos = shoulder.getSensorCollection().getPulseWidthPosition() & 0xFFF;
       int offset = absPos - kAbsoluteZero;
       logger.debug(
-          "pulse = {} abs = {} rel = {}",
-          shoulder.getSensorCollection().getPulseWidthPosition(),
-          absPos,
-          shoulder.getSelectedSensorPosition());
+          "pulse = {} abs = {}", shoulder.getSensorCollection().getPulseWidthPosition(), absPos);
       shoulder.setSelectedSensorPosition(offset + (int) kZeroPositionTicks);
       logger.info("shoulder zeroed with limit switch to {}", offset + (int) kZeroPositionTicks);
       didZero = true;
@@ -179,34 +165,15 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
     shoulder.set(ControlMode.PercentOutput, 0.0);
   }
 
-  @Override
-  public int getTicks() {
-    return shoulder.getSelectedSensorPosition();
-  }
-
-  @Override
-  public void setLimits(int forward, int reverse) {
-    shoulder.configForwardSoftLimitThreshold(forward, 0);
-    shoulder.configReverseSoftLimitThreshold(reverse, 0);
-  }
-
-  public double getPosition() {
-    double angle = (TICKS_OFFSET - shoulder.getSelectedSensorPosition()) / TICKS_PER_DEGREE;
-    logger.debug("position in degrees = {}", angle);
-    return angle;
-  }
-
-  public void setPosition(double angle) {
-    setpointTicks = (int) (TICKS_OFFSET - TICKS_PER_DEGREE * angle);
-    logger.info("setting shoulder position={}", setpointTicks);
-    shoulder.set(ControlMode.MotionMagic, setpointTicks);
-  }
-
   @SuppressWarnings("Duplicates")
   public boolean onTarget() {
     int error = setpointTicks - shoulder.getSelectedSensorPosition(0);
-    if (Math.abs(error) > kCloseEnoughTicks) stableCount = 0;
-    else stableCount++;
+    if (Math.abs(error) > kCloseEnoughTicks) {
+      stableCount = 0;
+    } else {
+      stableCount++;
+    }
+
     if (stableCount > STABLE_THRESH) {
       logger.info("stableCount > {}", STABLE_THRESH);
       return true;
@@ -214,11 +181,6 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
     return false;
   }
 
-  ////////////////////////////////////////////////////////////////////////////
-  // ROLLER
-  ////////////////////////////////////////////////////////////////////////////
-
-  /** @param setpoint TalonSRX setpoint */
   public void rollerOpenLoop(double setpoint) {
     logger.info("rollers open loop at {}", setpoint);
     roller.set(ControlMode.PercentOutput, setpoint);
@@ -231,5 +193,33 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
 
   public void dump() {
     logger.info("intake position degrees = {} ticks = {}", getPosition(), getTicks());
+  }
+
+  public double getPosition() {
+    double angle =
+        (TICKS_OFFSET - shoulder.getSelectedSensorPosition()) / (double) TICKS_PER_DEGREE;
+    logger.debug("position in degrees = {}", angle);
+    return angle;
+  }
+
+  ////////////////////////////////////////////////////////////////////////////
+  // ROLLER
+  ////////////////////////////////////////////////////////////////////////////
+
+  @Override
+  public int getTicks() {
+    return shoulder.getSelectedSensorPosition();
+  }
+
+  @Override
+  public void setLimits(int forward, int reverse) {
+    shoulder.configForwardSoftLimitThreshold(forward, 0);
+    shoulder.configReverseSoftLimitThreshold(reverse, 0);
+  }
+
+  public void setPosition(double angle) {
+    setpointTicks = (int) (TICKS_OFFSET - TICKS_PER_DEGREE * angle);
+    logger.info("setting shoulder position={}", setpointTicks);
+    shoulder.set(ControlMode.MotionMagic, setpointTicks);
   }
 }

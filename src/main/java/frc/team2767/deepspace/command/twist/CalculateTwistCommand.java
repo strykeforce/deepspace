@@ -22,7 +22,7 @@ public class CalculateTwistCommand extends InstantCommand {
 
   @Override
   protected void initialize() {
-    double targetYaw = VISION.getTargetYaw();
+    double targetYaw = 0.0; // VISION.getTargetYaw(); // FIXME
     logger.info(
         "pyeye bearing={} range={} current gyro = {}",
         VISION.getRawBearing(),

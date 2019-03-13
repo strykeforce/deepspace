@@ -19,7 +19,7 @@ public class TwistCommand extends Command {
   protected void initialize() {
     double heading = VISION.getCorrectedHeading();
     int distance = (int) (DriveSubsystem.TICKS_PER_INCH * VISION.getCorrectedRange());
-    double targetYaw = VISION.getTargetYaw();
+    double targetYaw = 0.0; // VISION.getTargetYaw(); FIXME
     DRIVE.startTwist(heading, distance, targetYaw);
   }
 
