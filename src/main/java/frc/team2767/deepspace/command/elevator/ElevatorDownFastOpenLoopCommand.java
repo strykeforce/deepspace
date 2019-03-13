@@ -4,16 +4,16 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.ElevatorSubsystem;
 
-public class ElevatorHoldPositionCommand extends InstantCommand {
+public class ElevatorDownFastOpenLoopCommand extends InstantCommand {
 
   private static final ElevatorSubsystem ELEVATOR = Robot.ELEVATOR;
 
-  public ElevatorHoldPositionCommand() {
+  public ElevatorDownFastOpenLoopCommand() {
     requires(ELEVATOR);
   }
 
   @Override
   protected void initialize() {
-    ELEVATOR.holdPosition();
+    ELEVATOR.openLoopMove(-0.3);
   }
 }

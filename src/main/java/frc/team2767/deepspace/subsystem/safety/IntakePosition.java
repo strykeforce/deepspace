@@ -13,7 +13,7 @@ enum IntakePosition {
   }
 
   public static IntakePosition of(int position) {
-    if (position > 3224) {
+    if (position > 3932) {
       return INTAKE_INTAKE;
     }
 

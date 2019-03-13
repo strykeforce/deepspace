@@ -5,6 +5,7 @@ import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
 import frc.team2767.deepspace.command.intake.IntakePositionCommand;
 import frc.team2767.deepspace.command.intake.RollerOutCommand;
+import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.states.SetActionCommand;
 import frc.team2767.deepspace.command.states.SetFieldDirectionCommand;
 import frc.team2767.deepspace.command.states.SetGamePieceCommand;
@@ -13,6 +14,7 @@ import frc.team2767.deepspace.subsystem.*;
 public class PlayerCargoCommandGroup extends CommandGroup {
 
   public PlayerCargoCommandGroup() {
+    addSequential(new LogCommand("BEGIN PLAYER CARGO PICKUP"));
     addSequential(
         new CommandGroup() {
           {
@@ -28,5 +30,6 @@ public class PlayerCargoCommandGroup extends CommandGroup {
     addParallel(new RollerOutCommand(0.3));
 
     addSequential(new SetActionCommand(Action.PLACE));
+    addSequential(new LogCommand("END PLAYER CARGO PICKUP"));
   }
 }

@@ -6,7 +6,7 @@ import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 public class StopPumpCommandGroup extends CommandGroup {
 
   public StopPumpCommandGroup() {
-    addSequential(new DeactivateValveCommand(VacuumSubsystem.Valve.PUMP));
+    addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.STOP));
     addSequential(new VacuumStopCommand());
   }
 }

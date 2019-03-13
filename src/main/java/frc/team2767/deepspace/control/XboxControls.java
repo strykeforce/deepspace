@@ -19,7 +19,7 @@ import frc.team2767.deepspace.command.sequences.PlayerHatchCommandGroup;
 import frc.team2767.deepspace.command.sequences.StowAllCommandGroup;
 import frc.team2767.deepspace.command.states.SetFieldDirectionCommand;
 import frc.team2767.deepspace.command.states.SetLevelCommand;
-import frc.team2767.deepspace.command.vacuum.ActivateValveCommand;
+import frc.team2767.deepspace.command.vacuum.SetSolenoidStatesCommand;
 import frc.team2767.deepspace.subsystem.ElevatorLevel;
 import frc.team2767.deepspace.subsystem.FieldDirection;
 import frc.team2767.deepspace.subsystem.VacuumSubsystem;
@@ -99,7 +99,8 @@ public class XboxControls {
     new JoystickButton(xbox, XboxControls.Shoulder.LEFT.id)
         .whenPressed(new PlayerHatchCommandGroup());
     new JoystickButton(xbox, XboxControls.Shoulder.LEFT.id)
-        .whenReleased(new ActivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
+        .whenReleased(
+            new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP));
 
     // Dpad
     directionPadAny.whenActive(new RollerOutCommand());

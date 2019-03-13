@@ -7,18 +7,17 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class VisionSubsystem extends Subsystem {
 
+  private static final double CAMERA_X = 0.0;
+  private static final double CAMERA_Y = -9.0;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final DigitalOutput lightsOutput6 = new DigitalOutput(6);
   private final DigitalOutput lightsOutput5 = new DigitalOutput(5);
-  private final double cameraPositionBearing = -90.0;
-  private final double CAMERA_X = 0.0;
-  private final double CAMERA_Y = -9.0;
+  private final double CAMERA_POSITION_BEARING = -90.0;
   private final UsbCamera usbCamera;
   public GamePiece gamePiece = GamePiece.NOTSET;
   public Action action = Action.NOTSET;
@@ -27,30 +26,25 @@ public class VisionSubsystem extends Subsystem {
   private NetworkTable table;
   private NetworkTableEntry bearingEntry;
   private NetworkTableEntry rangeEntry;
-  private Camera camera = Camera.NOTSET;
+  private NetworkTableEntry cameraIDEntry;
   private double rawRange;
   private double rawBearing;
-
   private double correctedRange;
   private double correctedHeading;
-
-  private double targetYaw;
 
   public VisionSubsystem() {
 
     CameraServer cameraServer = CameraServer.getInstance();
     NetworkTableInstance instance = NetworkTableInstance.getDefault();
     table = instance.getTable("Pyeye");
+    bearingEntry = table.getEntry("camera_bearing");
+    rangeEntry = table.getEntry("camera_range");
+    cameraIDEntry = table.getEntry("camera_id");
 
     usbCamera = cameraServer.startAutomaticCapture();
     logger.info("camera is connected = {}", usbCamera.isConnected());
     lightsOutput6.set(true);
     lightsOutput5.set(true);
-
-    SmartDashboard.putString("GamePiece", gamePiece.toString());
-    SmartDashboard.putString("Action", action.toString());
-    SmartDashboard.putString("FieldDirection", direction.toString());
-    SmartDashboard.putString("ElevatorLevel", elevatorLevel.toString());
   }
 
   public double getCorrectedRange() {
@@ -70,7 +64,7 @@ public class VisionSubsystem extends Subsystem {
   }
 
   public double getCameraPositionBearing() {
-    return cameraPositionBearing;
+    return CAMERA_POSITION_BEARING;
   }
 
   public double getCameraX() {
@@ -79,14 +73,6 @@ public class VisionSubsystem extends Subsystem {
 
   public double getCameraY() {
     return CAMERA_Y;
-  }
-
-  public double getTargetYaw() {
-    return targetYaw;
-  }
-
-  public void setTargetYaw(double targetYaw) {
-    this.targetYaw = targetYaw;
   }
 
   public boolean isTargetAcquired() {
@@ -98,34 +84,28 @@ public class VisionSubsystem extends Subsystem {
   }
 
   public void queryPyeye() {
-    bearingEntry = table.getEntry("camera_bearing");
-    rangeEntry = table.getEntry("camera_range");
-
     rawBearing = (double) bearingEntry.getNumber(0.0);
     rawRange = (double) rangeEntry.getNumber(-1.0);
   }
 
-  public void enableLights(boolean state) {
-    logger.info("lights to {}", !state);
-    lightsOutput6.set(!state);
-    lightsOutput5.set(!state);
+  public void enableLights(boolean enabled) {
+    logger.info("lights to {}", !enabled);
+    lightsOutput6.set(!enabled);
+    lightsOutput5.set(!enabled);
   }
 
   public void setGamePiece(GamePiece gamePiece) {
     this.gamePiece = gamePiece;
-    SmartDashboard.putString("GamePiece", gamePiece.toString());
     logger.info("set gamepiece to {}", gamePiece);
   }
 
   public void setAction(Action action) {
     this.action = action;
-    SmartDashboard.putString("Action", action.toString());
     logger.info("set action to {}", action);
   }
 
   public void setFieldDirection(FieldDirection direction) {
     this.direction = direction;
-    SmartDashboard.putString("FieldDirection", direction.toString());
     selectCamera();
     logger.info("set direction to {}", direction);
   }
@@ -137,20 +117,12 @@ public class VisionSubsystem extends Subsystem {
       camera = Camera.RIGHT;
     }
 
-    setCamera(camera);
-  }
-
-  public void setCamera(Camera camera) {
-    this.camera = camera;
     logger.info("chose {} camera", camera);
-
-    NetworkTableEntry cameraID = table.getEntry("camera_id");
-    cameraID.setNumber(camera.id);
+    cameraIDEntry.setNumber(camera.id);
   }
 
   public void setElevatorLevel(ElevatorLevel elevatorLevel) {
     this.elevatorLevel = elevatorLevel;
-    SmartDashboard.putString("ElevatorLevel", elevatorLevel.toString());
     logger.info("set elevator level to {}", elevatorLevel);
   }
 
@@ -167,8 +139,7 @@ public class VisionSubsystem extends Subsystem {
 
   public enum Camera {
     LEFT(0),
-    RIGHT(1),
-    NOTSET(-1);
+    RIGHT(1);
 
     int id;
 

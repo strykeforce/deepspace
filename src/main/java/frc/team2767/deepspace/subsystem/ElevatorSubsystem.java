@@ -1,8 +1,10 @@
 package frc.team2767.deepspace.subsystem;
 
-import static com.ctre.phoenix.motorcontrol.ControlMode.*;
+import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
 
-import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import edu.wpi.first.wpilibj.Preferences;
@@ -21,6 +23,9 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
   private static final int BACKUP = 2767;
   private static final int TICKS_PER_INCH = 1120;
   private static final int TICKS_OFFSET = 4 * TICKS_PER_INCH;
+  private static final int STABLE_THRESH = 4;
+  private static final String PREFS_NAME = "ElevatorSubsystem/Settings/";
+  private static final VisionSubsystem VISION = Robot.VISION;
   public static double kCargoPickupPositionInches;
   public static double kHatchLowPositionInches;
   public static double kHatchMediumPositionInches;
@@ -30,30 +35,28 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
   public static double kCargoMediumPositionInches;
   public static double kCargoPlayerPositionInches;
   public static double kCargoHighPositionInches;
-  private final VisionSubsystem VISION = Robot.VISION;
+  private static int kCloseEnoughTicks;
+  private static int kAbsoluteZeroTicks;
+  private static double kUpOutput;
+  private static double kDownOutput;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
-  private final int STABLE_THRESH = 4;
-  private final String PREFS_NAME = "ElevatorSubsystem/Settings/";
   private final TalonSRX elevator = new TalonSRX(ID);
   private ElevatorLevel elevatorLevel = ElevatorLevel.NOTSET;
   private GamePiece currentGamepiece = GamePiece.NOTSET;
   private int setpointTicks;
-  private double kUpOutput;
-  private double kDownOutput;
-  private int kCloseEnoughTicks;
-  private int kAbsoluteZeroTicks;
   private int startPosition;
   private int stableCount;
 
+  private int currentForwardLimit;
+  private int currentReverseLimit;
+
   public ElevatorSubsystem() {
 
-    if (elevator == null) {
-      logger.error("Talon not present");
-    }
+    currentForwardLimit = 0;
+    currentReverseLimit = 0;
 
     elevatorPreferences();
     configTalon();
-    logger.info("");
   }
 
   private void elevatorPreferences() {
@@ -128,7 +131,8 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
   public void executePlan() {
     currentGamepiece = VISION.gamePiece;
     elevatorLevel = VISION.elevatorLevel;
-    double newPosition = (elevator.getSelectedSensorPosition() + TICKS_OFFSET) / TICKS_PER_INCH;
+    double newPosition =
+        (elevator.getSelectedSensorPosition() + TICKS_OFFSET) / (double) TICKS_PER_INCH;
 
     switch (currentGamepiece) {
       case HATCH:
@@ -170,18 +174,17 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
     setPosition(newPosition);
   }
 
-  public void holdPosition() {
-    int position = elevator.getSelectedSensorPosition();
-    elevator.set(MotionMagic, position);
-  }
-
   @SuppressWarnings("Duplicates")
   public boolean onTarget() {
     int error = setpointTicks - elevator.getSelectedSensorPosition(0);
-    if (Math.abs(error) > kCloseEnoughTicks) stableCount = 0;
-    else stableCount++;
+    if (Math.abs(error) > kCloseEnoughTicks) {
+      stableCount = 0;
+    } else {
+      stableCount++;
+    }
+
     if (stableCount > STABLE_THRESH) {
-      logger.debug("stableCount > {}", STABLE_THRESH);
+      logger.info("stableCount > {}", STABLE_THRESH);
       return true;
     }
     return false;
@@ -191,15 +194,16 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
     boolean didZero = false;
     if (elevator.getSensorCollection().isRevLimitSwitchClosed()) {
 
+      int pulseWidthPosition = elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF;
+
       logger.info(
-          "Preferences zero = {} Relative position = {} Absolute position = {}",
-          kAbsoluteZeroTicks,
-          elevator.getSelectedSensorPosition(),
-          elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF);
-      int offset =
-          elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF - kAbsoluteZeroTicks;
+          "Preferences zero = {} Absolute position = {}", kAbsoluteZeroTicks, pulseWidthPosition);
+
+      int offset = (pulseWidthPosition) - kAbsoluteZeroTicks;
+
       elevator.setSelectedSensorPosition(offset);
       logger.info("New relative position = {}", offset);
+
       didZero = true;
     } else {
       logger.error("Elevator zero failed - elevator not at bottom");
@@ -209,42 +213,13 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
     return didZero;
   }
 
-  public void positionToZero() {
-    elevator.configPeakCurrentLimit(2);
-    elevator.configReverseLimitSwitchSource(
-        LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
-
-    logger.info("positioning to zero elevatorPosition");
-    elevator.set(PercentOutput, kDownOutput);
-  }
-
-  public boolean onZero() {
-    return elevator.getSensorCollection().isRevLimitSwitchClosed();
-  }
-
-  public void zeroPosition() {
-    elevator.selectProfileSlot(0, 0);
-    int zero = elevator.getSensorCollection().getPulseWidthPosition() & 0xFFF - kAbsoluteZeroTicks;
-    elevator.setSelectedSensorPosition(zero);
-
-    // elevator.set(ControlMode.MotionMagic, setpoint);
-    logger.info("lift elevatorPosition zeroed to = {}", zero);
-
-    elevator.configPeakCurrentLimit(25);
-    elevator.enableCurrentLimit(true);
-    elevator.configReverseLimitSwitchSource(
-        LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
-  }
-
   public void openLoopMove(Direction direction) {
-    if (direction.equals(Direction.UP)) {
+    if (direction == Direction.UP) {
       logger.info("moving up at {}", kUpOutput);
       elevator.set(ControlMode.PercentOutput, kUpOutput);
-      //      elevator.set(ControlMode.PercentOutput, 0.2);
-    } else if (direction.equals(Direction.DOWN)) {
+    } else if (direction == Direction.DOWN) {
       logger.info("moving down at {}", kDownOutput);
       elevator.set(ControlMode.PercentOutput, kDownOutput);
-      //      elevator.set(ControlMode.PercentOutput, -0.2);
     }
   }
 
@@ -263,7 +238,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
   }
 
   public double getPosition() {
-    return (TICKS_OFFSET + elevator.getSelectedSensorPosition()) / TICKS_PER_INCH;
+    return (TICKS_OFFSET + elevator.getSelectedSensorPosition()) / (double) TICKS_PER_INCH;
   }
 
   @Override
@@ -271,10 +246,18 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
     return elevator.getSelectedSensorPosition(0);
   }
 
+  @SuppressWarnings("Duplicates")
   @Override
   public void setLimits(int forward, int reverse) {
-    elevator.configForwardSoftLimitThreshold(forward, 0);
-    elevator.configReverseSoftLimitThreshold(reverse, 0);
+    if (forward != currentForwardLimit) {
+      elevator.configForwardSoftLimitThreshold(forward, 0);
+      currentForwardLimit = forward;
+    }
+
+    if (reverse != currentReverseLimit) {
+      elevator.configReverseSoftLimitThreshold(reverse, 0);
+      currentReverseLimit = reverse;
+    }
   }
 
   public void setPosition(double height) {

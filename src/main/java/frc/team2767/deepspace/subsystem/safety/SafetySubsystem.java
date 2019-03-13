@@ -7,18 +7,12 @@ import static frc.team2767.deepspace.subsystem.safety.IntakePosition.INTAKE_STOW
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team2767.deepspace.Robot;
-import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SafetySubsystem extends Subsystem {
-  VacuumSubsystem VACUUM;
-
   private final Limitable biscuitSubsystem;
   private final Limitable intakeSubsystem;
   private final Limitable elevatorSubsystem;
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private BiscuitPosition biscuitLimit;
   private IntakePosition intakeLimit;
   private ElevatorPosition elevatorLimit;
@@ -28,7 +22,6 @@ public class SafetySubsystem extends Subsystem {
 
   public SafetySubsystem() {
     this(Robot.BISCUIT, Robot.INTAKE, Robot.ELEVATOR);
-    VACUUM = Robot.VACUUM;
   }
 
   SafetySubsystem(
@@ -52,20 +45,9 @@ public class SafetySubsystem extends Subsystem {
     intakeLimit = intakeLimit(biscuitCurrent, elevatorCurrent);
     elevatorLimit = elevatorLimit(biscuitCurrent, intakeCurrent);
 
-    if (biscuitCurrent.forwardLimit != biscuitLimit.forwardLimit
-        || biscuitCurrent.reverseLimit != biscuitLimit.reverseLimit) {
-      biscuitSubsystem.setLimits(biscuitLimit.forwardLimit, biscuitLimit.reverseLimit);
-    }
-
-    if (intakeCurrent.forwardLimit != intakeLimit.forwardLimit
-        || intakeCurrent.reverseLimit != intakeLimit.reverseLimit) {
-      intakeSubsystem.setLimits(intakeLimit.forwardLimit, intakeLimit.reverseLimit);
-    }
-
-    if (elevatorCurrent.forwardLimit != elevatorLimit.forwardLimit
-        || elevatorCurrent.reverseLimit != elevatorLimit.reverseLimit) {
-      elevatorSubsystem.setLimits(elevatorLimit.forwardLimit, elevatorLimit.reverseLimit);
-    }
+    biscuitSubsystem.setLimits(biscuitLimit.forwardLimit, biscuitLimit.reverseLimit);
+    intakeSubsystem.setLimits(intakeLimit.forwardLimit, intakeLimit.reverseLimit);
+    elevatorSubsystem.setLimits(elevatorLimit.forwardLimit, elevatorLimit.reverseLimit);
   }
 
   @NotNull
@@ -117,7 +99,6 @@ public class SafetySubsystem extends Subsystem {
   }
 
   @SuppressWarnings("Duplicates")
-  @NotNull
   private IntakePosition intakeLimit(
       BiscuitPosition biscuitPosition, ElevatorPosition elevatorPosition) {
     IntakePosition intakeLimit = null;
@@ -168,7 +149,6 @@ public class SafetySubsystem extends Subsystem {
   }
 
   @SuppressWarnings("Duplicates")
-  @NotNull
   private ElevatorPosition elevatorLimit(
       BiscuitPosition biscuitPosition, IntakePosition intakePosition) {
     ElevatorPosition elevatorPosition = null;
@@ -224,28 +204,28 @@ public class SafetySubsystem extends Subsystem {
 
     return "current="
         + "\n\t"
-        + elevatorCurrent.name()
+        + elevatorCurrent
         + "\t"
         + elevatorSubsystem.getTicks()
         + "\n\t"
-        + intakeCurrent.name()
+        + intakeCurrent
         + "\t"
         + intakeSubsystem.getTicks()
         + "\n\t"
-        + biscuitCurrent.name()
+        + biscuitCurrent
         + "\t"
         + biscuitSubsystem.getTicks()
         + "\nlimits="
         + "\n\t"
-        + elevatorLimit.name()
+        + elevatorLimit
         + "\t"
         + elevatorLimit.toString()
         + "\n\t"
-        + intakeLimit.name()
+        + intakeLimit
         + "\t"
         + intakeLimit.toString()
         + "\n\t"
-        + biscuitLimit.name()
+        + biscuitLimit
         + "\t"
         + biscuitLimit.toString();
   }

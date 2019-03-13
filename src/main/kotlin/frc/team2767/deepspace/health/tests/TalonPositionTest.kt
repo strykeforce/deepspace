@@ -1,9 +1,13 @@
-package frc.team2767.deepspace.health
+package frc.team2767.deepspace.health.tests
 
 import com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import edu.wpi.first.wpilibj.Timer
-import frc.team2767.deepspace.health.TalonPositionTest.State.*
+import frc.team2767.deepspace.health.Reportable
+import frc.team2767.deepspace.health.TalonGroup
+import frc.team2767.deepspace.health.Test
+import frc.team2767.deepspace.health.statusOf
+import frc.team2767.deepspace.health.tests.TalonPositionTest.State.*
 import kotlinx.html.TagConsumer
 import kotlinx.html.td
 import kotlinx.html.th
@@ -92,6 +96,8 @@ class TalonPositionTest(private val group: TalonGroup) : Test, Reportable {
             th { +"Position (ticks)" }
             th { +"Current (amps)" }
             th { +"Speed (ticks/100ms)" }
+            th { +"Current range" }
+            th { +"Speed range" }
         }
     }
 
@@ -105,6 +111,8 @@ class TalonPositionTest(private val group: TalonGroup) : Test, Reportable {
             td { +"$encoderChangeTarget" }
             td(classes = currentRange.statusOf(current)) { +"%.2f".format(current) }
             td(classes = speedRange.statusOf(speed)) { +"$speed" }
+            td { +"${currentRange.start}, ${currentRange.endInclusive}" }
+            td { +"${speedRange.start}, ${speedRange.endInclusive}" }
         }
     }
 

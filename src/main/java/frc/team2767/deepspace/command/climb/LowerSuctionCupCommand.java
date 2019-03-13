@@ -20,8 +20,7 @@ public class LowerSuctionCupCommand extends InstantCommand {
   @Override
   protected void initialize() {
     CLIMB.lowerSuctionCup();
-    VACUUM.setSolenoid(VacuumSubsystem.Valve.PUMP, true);
-    VACUUM.setSolenoid(VacuumSubsystem.Valve.CLIMB, true);
+    VACUUM.setSolenoidsState(VacuumSubsystem.SolenoidStates.CLIMB);
     VACUUM.setPressure(kClimbPressureInHg);
   }
 }

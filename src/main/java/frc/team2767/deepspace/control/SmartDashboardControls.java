@@ -7,14 +7,13 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.command.HealthCheckCommand;
+import frc.team2767.deepspace.command.ResetAxisCommandGroup;
 import frc.team2767.deepspace.command.YawCommand;
-import frc.team2767.deepspace.command.ZeroAxisCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
 import frc.team2767.deepspace.command.climb.*;
 import frc.team2767.deepspace.command.elevator.ElevatorSafeZeroCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
-import frc.team2767.deepspace.command.elevator.ElevatorZeroCommand;
 import frc.team2767.deepspace.command.intake.IntakePositionCommand;
 import frc.team2767.deepspace.command.log.BiscuitDumpCommand;
 import frc.team2767.deepspace.command.log.ElevatorDumpCommand;
@@ -48,23 +47,10 @@ public class SmartDashboardControls {
 
   private void addMatchCommands() {
     logger.debug("creating match commands");
-    SmartDashboard.putData("Game/zeroAll", new ZeroAxisCommand());
     SmartDashboard.putData("Game/tridentSol", VACUUM.getTridentSolenoid());
     SmartDashboard.putData("Game/pumpSol", VACUUM.getPumpSolenoid());
     SmartDashboard.putBoolean("Game/onTarget", false);
-  }
-
-  private void addPitCommands() {
-    addTestCommands();
-    addIntakeCommands();
-    addElevatorCommands();
-    addVacuumCommands();
-    SmartDashboard.putData("Pit/ElevatorZero", new ElevatorZeroCommand());
-    SmartDashboard.putData("Pit/LowerSuction", new LowerSuctionCupCommand());
-    SmartDashboard.putData("Pit/Climb", new ClimbCommand());
-    SmartDashboard.putData("Pit/Unwind", new UnwindClimbCommand());
-    SmartDashboard.putData("Pit/ClimbStop", new StopClimbCommand());
-    SmartDashboard.putData("Pit/Health Check", new HealthCheckCommand());
+    SmartDashboard.putData("Game/SandstormHatchPickUp", new SandstormHatchPickupCommandGroup());
   }
 
   private void addClimbTab() {
@@ -82,12 +68,6 @@ public class SmartDashboardControls {
 
     // Solenoid Commands
     ShuffleboardLayout Solenoid = ClimbTab.getLayout("Solenoids", "List Layout");
-    Solenoid.add("Enable Pump", new ActivateValveCommand(VacuumSubsystem.Valve.PUMP));
-    Solenoid.add("Disable Pump", new DeactivateValveCommand(VacuumSubsystem.Valve.PUMP));
-    Solenoid.add("Enable Trident", new ActivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
-    Solenoid.add("Disable Trident", new DeactivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
-    Solenoid.add("Enable Climb", new ActivateValveCommand(VacuumSubsystem.Valve.CLIMB));
-    Solenoid.add("Disable Climb", new DeactivateValveCommand(VacuumSubsystem.Valve.CLIMB));
     Solenoid.add("Trident", VACUUM.getTridentSolenoid()).withWidget(BuiltInWidgets.kBooleanBox);
     Solenoid.add("Pump", VACUUM.getPumpSolenoid()).withWidget(BuiltInWidgets.kBooleanBox);
     Solenoid.add("Climb", VACUUM.getClimbSolenoid()).withWidget(BuiltInWidgets.kBooleanBox);
@@ -96,11 +76,11 @@ public class SmartDashboardControls {
     // Pump Commands
     ShuffleboardLayout Pump = ClimbTab.getLayout("Pump", "List Layout");
     Pump.add("Stop", new StopPumpCommandGroup());
-    Pump.add("Hatch Pressure", new PressureSetCommand(VACUUM.kHatchPressureInHg))
+    Pump.add("Hatch Pressure", new PressureSetCommand(VacuumSubsystem.kHatchPressureInHg))
         .withWidget(BuiltInWidgets.kCommand);
-    Pump.add("Cargo Pressure", new PressureSetCommand(VACUUM.kBallPressureInHg))
+    Pump.add("Cargo Pressure", new PressureSetCommand(VacuumSubsystem.kBallPressureInHg))
         .withWidget(BuiltInWidgets.kCommand);
-    Pump.add("Climb Pressure", new PressureSetCommand(VACUUM.kClimbPressureInHg))
+    Pump.add("Climb Pressure", new PressureSetCommand(VacuumSubsystem.kClimbPressureInHg))
         .withWidget(BuiltInWidgets.kCommand);
     Pump.withPosition(2, 1);
 
@@ -109,6 +89,23 @@ public class SmartDashboardControls {
     Servos.add("Release Climb", new ReleaseClimbCommand()).withWidget(BuiltInWidgets.kCommand);
     Servos.add("Release Kickstand", new ReleaseKickstandCommand())
         .withWidget(BuiltInWidgets.kCommand);
+  }
+
+  private void addPitCommands() {
+    addTestCommands();
+    addVacuumCommands();
+    SmartDashboard.putData("Pit/resetAxis", new ResetAxisCommandGroup());
+    SmartDashboard.putData("Pit/LowerSuction", new LowerSuctionCupCommand());
+    SmartDashboard.putData("Pit/Climb", new ClimbCommand());
+    SmartDashboard.putData("Pit/Unwind", new UnwindClimbCommand());
+    SmartDashboard.putData("Pit/ClimbStop", new StopClimbCommand());
+    SmartDashboard.putData("Pit/Health Check", new HealthCheckCommand());
+  }
+
+  private void addVisionCommands() {
+    SmartDashboard.putData("Game/OrthogMvmt", new OrthogonalMovementCommand());
+    SmartDashboard.putData("Pit/LightsOn", new LightsOnCommand());
+    SmartDashboard.putData("Pit/LightsOff", new LightsOffCommand());
   }
 
   private void addTestCommands() {
@@ -180,51 +177,25 @@ public class SmartDashboardControls {
     SmartDashboard.putData("Test/Elevator Zero", new ElevatorSafeZeroCommand());
 
     SmartDashboard.putData("Test/Vacuum Dump", new VacuumDumpCommand());
-    SmartDashboard.putData("Test/Vacuum Cargo", new PressureSetCommand(VACUUM.kBallPressureInHg));
-    SmartDashboard.putData("Test/Vacuum Hatch", new PressureSetCommand(VACUUM.kHatchPressureInHg));
-    SmartDashboard.putData("Test/Vacuum Climb", new PressureSetCommand(VACUUM.kClimbPressureInHg));
     SmartDashboard.putData(
-        "Test/Pump Enable", new ActivateValveCommand(VacuumSubsystem.Valve.PUMP));
+        "Test/Vacuum Cargo", new PressureSetCommand(VacuumSubsystem.kBallPressureInHg));
     SmartDashboard.putData(
-        "Test/Pump Disable", new DeactivateValveCommand(VacuumSubsystem.Valve.PUMP));
+        "Test/Vacuum Hatch", new PressureSetCommand(VacuumSubsystem.kHatchPressureInHg));
     SmartDashboard.putData(
-        "Test/Trident Enable", new ActivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
-    SmartDashboard.putData(
-        "Test/Trident Disable", new DeactivateValveCommand(VacuumSubsystem.Valve.TRIDENT));
-    SmartDashboard.putData(
-        "Test/Climb Enable", new ActivateValveCommand(VacuumSubsystem.Valve.CLIMB));
-    SmartDashboard.putData(
-        "Test/Climb Disable", new DeactivateValveCommand(VacuumSubsystem.Valve.CLIMB));
-
-    SmartDashboard.putData("Test/SandstormHatchPickUp", new SandstormHatchPickupCommandGroup());
-
+        "Test/Vacuum Climb", new PressureSetCommand(VacuumSubsystem.kClimbPressureInHg));
     SmartDashboard.putData("Test/Yaw Command", new YawCommand());
-  }
-
-  private void addVisionCommands() {
-    SmartDashboard.putData("Game/OrthogMvmt", new OrthogonalMovementCommand());
-    SmartDashboard.putData("Pit/LightsOn", new LightsOnCommand());
-    SmartDashboard.putData("Pit/LightsOff", new LightsOffCommand());
-  }
-
-  private void addIntakeCommands() {
-    //    SmartDashboard.putData("Pit/IntakeOut", new IntakeDownCommand());
-    //    SmartDashboard.putData("Pit/IntakeStop", new ShoulderStopCommand());
-    //    SmartDashboard.putData("Pit/IntakeIn", new IntakeUpCommand());
-  }
-
-  private void addElevatorCommands() {
-    //    SmartDashboard.putData("Pit/ElevatorUp", new ElevatorOpenLoopUpCommand());
-    //    SmartDashboard.putData("Pit/ElevatorStop", new ElevatorStopCommand());
-    //    SmartDashboard.putData("Pit/ElevatorDown", new ElevatorOpenLoopDownCommand());
   }
 
   private void addVacuumCommands() {
     SmartDashboard.putData("Vacuum/cool", new VacuumCooldownCommandGroup());
     SmartDashboard.putData(
-        "Pit/TridentValveActivate",
-        new ActivateValveCommand(new VacuumSubsystem.Valve[] {VacuumSubsystem.Valve.TRIDENT}));
-    SmartDashboard.putData("Pit/BuildPressure", new PressureAccumulateCommandGroup());
+        "Pit/GamePiece",
+        new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP));
+    SmartDashboard.putData(
+        "Pit/PressureAccumulate",
+        new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.PRESSURE_ACCUMULATE));
+    SmartDashboard.putData(
+        "Pit/ClimbSolenoids", new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.CLIMB));
 
     SmartDashboard.putData("Pit/VacuumStop", new StopPumpCommandGroup());
     SmartDashboard.putData(
