@@ -31,6 +31,7 @@ public class VisionSubsystem extends Subsystem {
   private double rawBearing;
   private double correctedRange;
   private double correctedHeading;
+  private double targetYaw;
 
   public VisionSubsystem() {
 
@@ -136,6 +137,15 @@ public class VisionSubsystem extends Subsystem {
 
   @Override
   protected void initDefaultCommand() {}
+
+  public double getTargetYaw() {
+    return targetYaw;
+  }
+
+  public void setTargetYaw(double targetYaw) {
+    this.targetYaw = targetYaw;
+    logger.debug("Set target yaw to {}", targetYaw);
+  }
 
   public enum Camera {
     LEFT(0),

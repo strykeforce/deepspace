@@ -1,4 +1,4 @@
-package frc.team2767.deepspace.command.twist;
+package frc.team2767.deepspace.command.approach;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.Robot;
@@ -19,7 +19,7 @@ public class TwistCommand extends Command {
   protected void initialize() {
     double heading = VISION.getCorrectedHeading();
     int distance = (int) (DriveSubsystem.TICKS_PER_INCH * VISION.getCorrectedRange());
-    double targetYaw = 0.0; // VISION.getTargetYaw(); FIXME
+    double targetYaw = VISION.getTargetYaw();
     DRIVE.startTwist(heading, distance, targetYaw);
   }
 

@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.ZeroGyroCommand;
+import frc.team2767.deepspace.command.approach.PlayerHatchAutonPickupCommandGroup;
 import frc.team2767.deepspace.command.biscuit.BiscuitNegativeCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositiveCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
@@ -55,8 +56,10 @@ public class DriverControls {
     new JoystickButton(joystick, Button.DOWN.id).whenReleased(new StopClimbCommand());
 
     // biscuit
-    new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenPressed(new DeliverCommandGroup());
-    new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenPressed(new DeliverCommandGroup());
+    new JoystickButton(joystick, Trim.RIGHT_Y_POS.id)
+        .whenPressed(new PlayerHatchAutonPickupCommandGroup());
+    new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id)
+        .whenPressed(new PlayerHatchAutonPickupCommandGroup());
 
     // elevator
     new JoystickButton(joystick, Trim.LEFT_X_NEG.id).whenPressed(new ElevatorOpenLoopDownCommand());

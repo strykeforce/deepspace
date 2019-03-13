@@ -40,8 +40,7 @@ public class YawCommand extends PIDCommand {
 
   @Override
   protected double returnPIDInput() {
-    double angle = Math.IEEEremainder(gyro.getAngle(), 360.0);
-    return angle;
+    return Math.IEEEremainder(gyro.getAngle(), 360.0);
   }
 
   @Override
