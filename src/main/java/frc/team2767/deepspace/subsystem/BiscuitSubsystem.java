@@ -179,7 +179,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
         targetLevel,
         currentGamePiece,
         currentAction);
-    double bearing = Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360);
 
     switch (currentAction) {
       case PLACE:
@@ -211,6 +210,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
         break;
 
       case PICKUP:
+        double bearing = Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360);
         Angle currentAngle;
         if (bearing <= 0) {
           currentAngle = Angle.LEFT;
@@ -308,7 +308,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
     }
   }
 
-  private enum Angle {
+  public enum Angle {
     LEFT,
     RIGHT,
   }

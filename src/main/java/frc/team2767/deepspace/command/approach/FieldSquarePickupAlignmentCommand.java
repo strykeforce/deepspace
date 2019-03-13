@@ -5,17 +5,20 @@ import edu.wpi.first.wpilibj.command.ConditionalCommand;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.command.YawCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
+import frc.team2767.deepspace.subsystem.DriveSubsystem;
 import frc.team2767.deepspace.subsystem.FieldDirection;
 import frc.team2767.deepspace.subsystem.VisionSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FieldSquareAlignmentCommand extends ConditionalCommand {
+public class FieldSquarePickupAlignmentCommand extends ConditionalCommand {
 
   private static final VisionSubsystem VISION = Robot.VISION;
+  private static final DriveSubsystem DRIVE = Robot.DRIVE;
+
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  public FieldSquareAlignmentCommand() {
+  public FieldSquarePickupAlignmentCommand() {
     super(
         new CommandGroup() {
           {
@@ -35,7 +38,12 @@ public class FieldSquareAlignmentCommand extends ConditionalCommand {
 
   @Override
   protected boolean condition() {
-    logger.debug("direction = {}", VISION.direction);
+    double bearing = Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360);
+    if (bearing <= 0) {
+      VISION.setFieldDirection(FieldDirection.LEFT);
+    } else {
+      VISION.setFieldDirection(FieldDirection.RIGHT);
+    }
     return VISION.direction == FieldDirection.LEFT;
   }
 }
