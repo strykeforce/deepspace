@@ -24,12 +24,18 @@ public class YawCommand extends PIDCommand {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public YawCommand() {
-    super(0.01, 0.0, 0.0, DRIVE);
+    this(0.0);
+  }
+
+  public YawCommand(double yawSetpoint) {
+    super(0.018, 0.0, 0.0, DRIVE);
     setInputRange(-180.0, 180.0);
     PIDController controller = getPIDController();
     controller.setContinuous();
     controller.setOutputRange(-1.0, 1.0);
     controller.setAbsoluteTolerance(2.0);
+    controller.setSetpoint(yawSetpoint);
+    logger.debug("construct yaw command");
   }
 
   @Override
