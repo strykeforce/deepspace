@@ -10,7 +10,7 @@ public class RollerInCommand extends InstantCommand {
   private final double output;
 
   public RollerInCommand() {
-    this(1.0);
+    this(0.5);
   }
 
   public RollerInCommand(double output) {
