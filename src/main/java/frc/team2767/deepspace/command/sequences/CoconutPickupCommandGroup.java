@@ -23,7 +23,7 @@ public class CoconutPickupCommandGroup extends CommandGroup {
     addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.PRESSURE_ACCUMULATE));
     addSequential(new PressureSetCommand(VacuumSubsystem.kBallPressureInHg), 0.5);
     addSequential(new LogCommand("opening valves"));
-    new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP);
+    addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP));
     addSequential(new LogCommand("opened valves"));
 
     addSequential(
