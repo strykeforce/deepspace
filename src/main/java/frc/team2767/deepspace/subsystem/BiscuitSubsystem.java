@@ -44,7 +44,14 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   private TalonSRX biscuit = new TalonSRX(BISCUIT_ID);
   private int setpointTicks;
 
+  private int currentForwardLimit;
+  private int currentReverseLimit;
+
   public BiscuitSubsystem() {
+
+    currentForwardLimit = 0;
+    currentReverseLimit = 0;
+
     biscuitPreferences();
     configTalon();
     biscuit.configForwardLimitSwitchSource(
@@ -75,25 +82,19 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
     biscuitConfig.reverseSoftLimitEnable = true;
     biscuitConfig.peakOutputForward = 1.0;
     biscuitConfig.peakOutputReverse = -1.0;
-
     biscuitConfig.slot0.kP = 1.0;
     biscuitConfig.slot0.kI = 0.0;
     biscuitConfig.slot0.kD = 0.0;
     biscuitConfig.slot0.kF = 0.65;
-
     biscuitConfig.slot0.allowableClosedloopError = 0;
-
     biscuitConfig.slot0.integralZone = 0;
     biscuitConfig.peakCurrentDuration = 40;
     biscuitConfig.peakCurrentLimit = 25;
     biscuitConfig.continuousCurrentLimit = 20;
-
     biscuitConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms;
     biscuitConfig.velocityMeasurementWindow = 64;
-
     biscuitConfig.voltageCompSaturation = 12;
     biscuitConfig.voltageMeasurementFilter = 32;
-
     biscuitConfig.motionCruiseVelocity = 1_000;
     biscuitConfig.motionAcceleration = 2_000;
 
@@ -293,10 +294,18 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
     return biscuit.getSelectedSensorPosition();
   }
 
+  @SuppressWarnings("Duplicates")
   @Override
   public void setLimits(int forward, int reverse) {
-    biscuit.configForwardSoftLimitThreshold(forward, 0);
-    biscuit.configReverseSoftLimitThreshold(reverse, 0);
+    if (forward != currentForwardLimit) {
+      biscuit.configForwardSoftLimitThreshold(forward, 0);
+      currentForwardLimit = forward;
+    }
+
+    if (reverse != currentReverseLimit) {
+      biscuit.configReverseSoftLimitThreshold(reverse, 0);
+      currentReverseLimit = reverse;
+    }
   }
 
   private enum Angle {

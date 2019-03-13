@@ -36,7 +36,14 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
   private int stableCount;
   private int setpointTicks;
 
+  private int currentForwardLimit;
+  private int currentReverseLimit;
+
   public IntakeSubsystem() {
+
+    currentForwardLimit = 0;
+    currentReverseLimit = 0;
+
     intakePreferences();
     configTalon();
 
@@ -211,10 +218,18 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
     return shoulder.getSelectedSensorPosition();
   }
 
+  @SuppressWarnings("Duplicates")
   @Override
   public void setLimits(int forward, int reverse) {
-    shoulder.configForwardSoftLimitThreshold(forward, 0);
-    shoulder.configReverseSoftLimitThreshold(reverse, 0);
+    if (forward != currentForwardLimit) {
+      shoulder.configForwardSoftLimitThreshold(forward, 0);
+      currentForwardLimit = forward;
+    }
+
+    if (reverse != currentReverseLimit) {
+      shoulder.configReverseSoftLimitThreshold(reverse, 0);
+      currentReverseLimit = reverse;
+    }
   }
 
   public void setPosition(double angle) {

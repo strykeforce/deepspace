@@ -45,20 +45,9 @@ public class SafetySubsystem extends Subsystem {
     intakeLimit = intakeLimit(biscuitCurrent, elevatorCurrent);
     elevatorLimit = elevatorLimit(biscuitCurrent, intakeCurrent);
 
-    if (biscuitCurrent.forwardLimit != biscuitLimit.forwardLimit
-        || biscuitCurrent.reverseLimit != biscuitLimit.reverseLimit) {
-      biscuitSubsystem.setLimits(biscuitLimit.forwardLimit, biscuitLimit.reverseLimit);
-    }
-
-    if (intakeCurrent.forwardLimit != intakeLimit.forwardLimit
-        || intakeCurrent.reverseLimit != intakeLimit.reverseLimit) {
-      intakeSubsystem.setLimits(intakeLimit.forwardLimit, intakeLimit.reverseLimit);
-    }
-
-    if (elevatorCurrent.forwardLimit != elevatorLimit.forwardLimit
-        || elevatorCurrent.reverseLimit != elevatorLimit.reverseLimit) {
-      elevatorSubsystem.setLimits(elevatorLimit.forwardLimit, elevatorLimit.reverseLimit);
-    }
+    biscuitSubsystem.setLimits(biscuitLimit.forwardLimit, biscuitLimit.reverseLimit);
+    intakeSubsystem.setLimits(intakeLimit.forwardLimit, intakeLimit.reverseLimit);
+    elevatorSubsystem.setLimits(elevatorLimit.forwardLimit, elevatorLimit.reverseLimit);
   }
 
   @NotNull

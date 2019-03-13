@@ -2,7 +2,9 @@ package frc.team2767.deepspace.subsystem;
 
 import static com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput;
 
-import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import edu.wpi.first.wpilibj.Preferences;
@@ -45,7 +47,14 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
   private int startPosition;
   private int stableCount;
 
+  private int currentForwardLimit;
+  private int currentReverseLimit;
+
   public ElevatorSubsystem() {
+
+    currentForwardLimit = 0;
+    currentReverseLimit = 0;
+
     elevatorPreferences();
     configTalon();
   }
@@ -237,10 +246,18 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
     return elevator.getSelectedSensorPosition(0);
   }
 
+  @SuppressWarnings("Duplicates")
   @Override
   public void setLimits(int forward, int reverse) {
-    elevator.configForwardSoftLimitThreshold(forward, 0);
-    elevator.configReverseSoftLimitThreshold(reverse, 0);
+    if (forward != currentForwardLimit) {
+      elevator.configForwardSoftLimitThreshold(forward, 0);
+      currentForwardLimit = forward;
+    }
+
+    if (reverse != currentReverseLimit) {
+      elevator.configReverseSoftLimitThreshold(reverse, 0);
+      currentReverseLimit = reverse;
+    }
   }
 
   public void setPosition(double height) {
