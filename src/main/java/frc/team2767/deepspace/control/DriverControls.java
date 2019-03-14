@@ -87,8 +87,6 @@ public class DriverControls {
     new JoystickButton(joystick, Shoulder.LEFT_DOWN.id)
         .whenPressed(
             new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.PRESSURE_ACCUMULATE));
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id)
-        .whenPressed(new PositionExecuteCommandGroup());
   }
 
   private <E extends Enum<E>> Command log(E control) {
