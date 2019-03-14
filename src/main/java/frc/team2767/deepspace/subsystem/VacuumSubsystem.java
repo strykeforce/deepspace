@@ -171,7 +171,6 @@ public class VacuumSubsystem extends Subsystem {
 
   @Override
   public void periodic() {
-    isClimbOnTarget(); // FIXME
     if (!Robot.isEvent()) SmartDashboard.putNumber("Game/Temperature", getPumpTemperature());
     if (getPumpTemperature() > TEMP_LIMIT) {
       logger.error("Vacuum overheating!");
@@ -197,7 +196,7 @@ public class VacuumSubsystem extends Subsystem {
   }
 
   // FIXME
-  private boolean isClimbOnTarget() {
+  public boolean isClimbOnTarget() {
     if (vacuum.getSelectedSensorPosition() >= kGoodEnoughClimb) {
       climbStableCounts++;
     } else {
