@@ -49,7 +49,6 @@ public class SmartDashboardControls {
   private void addMatchCommands() {
     logger.debug("creating match commands");
     SmartDashboard.putData("Game/tridentSol", VACUUM.getTridentSolenoid());
-    SmartDashboard.putData("Game/pumpSol", VACUUM.getPumpSolenoid());
     SmartDashboard.putBoolean("Game/onTarget", false);
     SmartDashboard.putData("Game/SandstormHatchPickUp", new SandstormHatchPickupCommandGroup());
   }
@@ -70,7 +69,6 @@ public class SmartDashboardControls {
     // Solenoid Commands
     ShuffleboardLayout Solenoid = ClimbTab.getLayout("Solenoids", "List Layout");
     Solenoid.add("Trident", VACUUM.getTridentSolenoid()).withWidget(BuiltInWidgets.kBooleanBox);
-    Solenoid.add("Pump", VACUUM.getPumpSolenoid()).withWidget(BuiltInWidgets.kBooleanBox);
     Solenoid.add("Climb", VACUUM.getClimbSolenoid()).withWidget(BuiltInWidgets.kBooleanBox);
     Solenoid.withPosition(3, 1);
 

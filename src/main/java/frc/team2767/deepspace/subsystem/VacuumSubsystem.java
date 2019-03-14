@@ -35,7 +35,6 @@ public class VacuumSubsystem extends Subsystem {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final int STABLE_THRESHOLD = 4;
   private final Solenoid tridentSolenoid = new Solenoid(0, Valve.TRIDENT.ID);
-  private final Solenoid pumpSolenoid = new Solenoid(0, Valve.PUMP.ID);
   private final Solenoid climbSolenoid = new Solenoid(0, Valve.CLIMB.ID);
   private final TalonSRX vacuum = new TalonSRX(VACUUM_ID);
   private final AnalogInput analogInput = new AnalogInput(TEMPERATURE_ID);
@@ -48,7 +47,6 @@ public class VacuumSubsystem extends Subsystem {
     climbStableCounts = 0;
     setpoint = 0;
 
-    pumpSolenoid.set(true);
     climbSolenoid.set(false);
     tridentSolenoid.set(false);
 
@@ -110,10 +108,6 @@ public class VacuumSubsystem extends Subsystem {
     return tridentSolenoid;
   }
 
-  public Solenoid getPumpSolenoid() {
-    return pumpSolenoid;
-  }
-
   public Solenoid getClimbSolenoid() {
     return climbSolenoid;
   }
@@ -122,19 +116,16 @@ public class VacuumSubsystem extends Subsystem {
     switch (state) {
       case CLIMB:
         climbSolenoid.set(true);
-        pumpSolenoid.set(true);
         tridentSolenoid.set(false);
         break;
       case STOP: // fall through
       case PRESSURE_ACCUMULATE:
         climbSolenoid.set(false);
-        pumpSolenoid.set(true);
         tridentSolenoid.set(false);
         break;
       case COOL_DOWN: // fall through
       case GAME_PIECE_PICKUP:
         tridentSolenoid.set(true);
-        pumpSolenoid.set(true);
         climbSolenoid.set(false);
         break;
       default:
@@ -178,7 +169,6 @@ public class VacuumSubsystem extends Subsystem {
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("Game/onTarget", onTarget()); // FIXME
     isClimbOnTarget(); // FIXME
     if (!Robot.isEvent()) SmartDashboard.putNumber("Game/Temperature", getPumpTemperature());
     if (getPumpTemperature() > TEMP_LIMIT) {
@@ -198,6 +188,8 @@ public class VacuumSubsystem extends Subsystem {
     if (stableCount > STABLE_THRESHOLD) {
       SmartDashboard.putBoolean("Game/onTarget", true);
       return true;
+    } else {
+      SmartDashboard.putBoolean("Game/onTarget", false);
     }
     return false;
   }
@@ -213,6 +205,8 @@ public class VacuumSubsystem extends Subsystem {
     if (climbStableCounts > STABLE_THRESHOLD) {
       SmartDashboard.putBoolean("Game/climbOnTarget", true);
       return true;
+    } else {
+      SmartDashboard.putBoolean("Game/climbOnTarget", false);
     }
 
     return false;
