@@ -30,8 +30,8 @@ public class VacuumSubsystem extends Subsystem {
   public static double kBallPressureInHg;
   public static double kHatchPressureInHg;
   public static double kClimbPressureInHg;
-  private static int kGoodEnoughGamePiece = 80; // FIXME: move to preferences
-  private static int kGoodEnoughClimb = 200; // FIXME: move to preferences
+  private static int kGoodEnoughGamePiece;
+  private static int kGoodEnoughClimb;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final int STABLE_THRESHOLD = 4;
   private final Solenoid tridentSolenoid = new Solenoid(0, Valve.TRIDENT.ID);
@@ -86,6 +86,8 @@ public class VacuumSubsystem extends Subsystem {
     kBallPressureInHg = getPreference("ball_pressure_inHg", 13.17);
     kHatchPressureInHg = getPreference("hatch_pressure_inHg", 16);
     kClimbPressureInHg = getPreference("climb_pressure_inHg", 24.4);
+    kGoodEnoughGamePiece = (int) getPreference("gamepiece_good_enough_inTicks", 80);
+    kGoodEnoughClimb = (int) getPreference("climb_good_enough_inTicks", 200);
   }
 
   @SuppressWarnings("Duplicates")
