@@ -39,7 +39,7 @@ public class CalculateTwistCommand extends InstantCommand {
             DRIVE.getGyro().getAngle(),
             targetYaw);
 
-    VISION.setCorrectedHeading(twistCalculator.getHeading());
-    VISION.setCorrectedRange(twistCalculator.getRange());
+    VISION.setCorrectedHeading(-180);
+    VISION.setCorrectedRange(50.0);
   }
 }

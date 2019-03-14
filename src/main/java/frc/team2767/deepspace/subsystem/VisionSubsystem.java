@@ -6,6 +6,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalOutput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ public class VisionSubsystem extends Subsystem {
   private final DigitalOutput lightsOutput5 = new DigitalOutput(5);
   private final double CAMERA_POSITION_BEARING = -90.0;
   private final UsbCamera usbCamera;
+  private final Timer blinkTimer = new Timer();
   public GamePiece gamePiece = GamePiece.NOTSET;
   public Action action = Action.NOTSET;
   public FieldDirection direction = FieldDirection.NOTSET;
@@ -32,6 +34,9 @@ public class VisionSubsystem extends Subsystem {
   private double correctedRange;
   private double correctedHeading;
   private double targetYaw;
+  private double blinkPeriod;
+  private boolean blinkEnabled;
+  private LightPattern currentPattern;
 
   public VisionSubsystem() {
 
@@ -41,6 +46,8 @@ public class VisionSubsystem extends Subsystem {
     bearingEntry = table.getEntry("camera_bearing");
     rangeEntry = table.getEntry("camera_range");
     cameraIDEntry = table.getEntry("camera_id");
+    bearingEntry.setNumber(0.0);
+    rangeEntry.setNumber(-1.0);
 
     usbCamera = cameraServer.startAutomaticCapture();
     logger.info("camera is connected = {}", usbCamera.isConnected());
@@ -89,12 +96,6 @@ public class VisionSubsystem extends Subsystem {
     rawRange = (double) rangeEntry.getNumber(-1.0);
   }
 
-  public void enableLights(boolean enabled) {
-    logger.info("lights to {}", !enabled);
-    lightsOutput6.set(!enabled);
-    lightsOutput5.set(!enabled);
-  }
-
   public void setGamePiece(GamePiece gamePiece) {
     this.gamePiece = gamePiece;
     logger.info("set gamepiece to {}", gamePiece);
@@ -127,6 +128,39 @@ public class VisionSubsystem extends Subsystem {
     logger.info("set elevator level to {}", elevatorLevel);
   }
 
+  public void startLightBlink(LightPattern pattern) {
+    currentPattern = pattern;
+    switch (currentPattern) {
+      case CLIMB_GOOD: // fall through
+      case GOT_HATCH:
+        blinkPeriod = pattern.period;
+        blinkEnabled = false;
+        blinkTimer.reset();
+        blinkTimer.start();
+    }
+  }
+
+  public void blink() {
+    if (blinkTimer.hasPeriodPassed(blinkPeriod)) {
+      enableLights(!blinkEnabled);
+      blinkEnabled = !blinkEnabled;
+    }
+  }
+
+  public void enableLights(boolean enabled) {
+    logger.info("lights to {}", !enabled);
+    lightsOutput6.set(!enabled);
+    lightsOutput5.set(!enabled);
+  }
+
+  public boolean isBlinkFinished() {
+    if (blinkTimer.get() > currentPattern.duration) {
+      return true;
+    }
+
+    return false;
+  }
+
   public double getRawBearing() {
     return rawBearing;
   }
@@ -155,6 +189,19 @@ public class VisionSubsystem extends Subsystem {
 
     Camera(int i) {
       id = i;
+    }
+  }
+
+  public enum LightPattern {
+    GOT_HATCH(0.05, 1.0),
+    CLIMB_GOOD(0.2, 2.0);
+
+    double period;
+    double duration;
+
+    LightPattern(double period, double duration) {
+      this.period = period;
+      this.duration = duration;
     }
   }
 }

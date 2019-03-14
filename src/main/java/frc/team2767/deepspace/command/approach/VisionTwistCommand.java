@@ -5,12 +5,12 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
 import frc.team2767.deepspace.subsystem.VisionSubsystem;
 
-public class TwistCommand extends Command {
+public class VisionTwistCommand extends Command {
 
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VisionSubsystem VISION = Robot.VISION;
 
-  public TwistCommand() {
+  public VisionTwistCommand() {
     requires(DRIVE);
     setInterruptible(true);
   }
