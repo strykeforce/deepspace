@@ -9,6 +9,7 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.command.HealthCheckCommand;
 import frc.team2767.deepspace.command.ResetAxisCommandGroup;
 import frc.team2767.deepspace.command.YawCommand;
+import frc.team2767.deepspace.command.approach.OrthogonalMovementCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
 import frc.team2767.deepspace.command.climb.*;
@@ -22,8 +23,8 @@ import frc.team2767.deepspace.command.log.VacuumDumpCommand;
 import frc.team2767.deepspace.command.sequences.SandstormHatchPickupCommandGroup;
 import frc.team2767.deepspace.command.states.SetActionCommand;
 import frc.team2767.deepspace.command.states.SetGamePieceCommand;
-import frc.team2767.deepspace.command.twist.OrthogonalMovementCommand;
 import frc.team2767.deepspace.command.vacuum.*;
+import frc.team2767.deepspace.command.vision.BlinkLightsCommand;
 import frc.team2767.deepspace.command.vision.LightsOffCommand;
 import frc.team2767.deepspace.command.vision.LightsOnCommand;
 import frc.team2767.deepspace.subsystem.*;
@@ -184,6 +185,8 @@ public class SmartDashboardControls {
     SmartDashboard.putData(
         "Test/Vacuum Climb", new PressureSetCommand(VacuumSubsystem.kClimbPressureInHg));
     SmartDashboard.putData("Test/Yaw Command", new YawCommand());
+    SmartDashboard.putData(
+        "Test/blinkLights", new BlinkLightsCommand(VisionSubsystem.LightPattern.GOT_HATCH));
   }
 
   private void addVacuumCommands() {

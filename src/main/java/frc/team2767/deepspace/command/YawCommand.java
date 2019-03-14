@@ -23,13 +23,23 @@ public class YawCommand extends PIDCommand {
   private final AHRS gyro = DRIVE.getGyro();
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+  private static final int STABLE_THRESHOLD = 4;
+  private int count;
+
   public YawCommand() {
-    super(0.01, 0.0, 0.0, DRIVE);
+    this(0.0);
+  }
+
+  public YawCommand(double yawSetpoint) {
+    super(0.018, 0.0, 0.0, DRIVE);
     setInputRange(-180.0, 180.0);
     PIDController controller = getPIDController();
     controller.setContinuous();
     controller.setOutputRange(-1.0, 1.0);
     controller.setAbsoluteTolerance(2.0);
+    controller.setSetpoint(yawSetpoint);
+    count = 0;
+    logger.debug("construct yaw command");
   }
 
   @Override
@@ -40,8 +50,7 @@ public class YawCommand extends PIDCommand {
 
   @Override
   protected double returnPIDInput() {
-    double angle = Math.IEEEremainder(gyro.getAngle(), 360.0);
-    return angle;
+    return Math.IEEEremainder(gyro.getAngle(), 360.0);
   }
 
   @Override
@@ -51,7 +60,16 @@ public class YawCommand extends PIDCommand {
 
   @Override
   protected boolean isFinished() {
-    return getPIDController().onTarget();
+    if (count > STABLE_THRESHOLD) {
+      count = 0;
+      return true;
+    }
+
+    if (getPIDController().onTarget()) {
+      count++;
+    }
+
+    return false;
   }
 
   @Override

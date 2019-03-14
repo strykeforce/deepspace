@@ -1,4 +1,4 @@
-package frc.team2767.deepspace.command.twist;
+package frc.team2767.deepspace.command.approach;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team2767.deepspace.Robot;
@@ -39,7 +39,7 @@ public class CalculateTwistCommand extends InstantCommand {
             DRIVE.getGyro().getAngle(),
             targetYaw);
 
-    VISION.setCorrectedHeading(twistCalculator.getHeading());
-    VISION.setCorrectedRange(twistCalculator.getRange());
+    VISION.setCorrectedHeading(-180);
+    VISION.setCorrectedRange(50.0);
   }
 }
