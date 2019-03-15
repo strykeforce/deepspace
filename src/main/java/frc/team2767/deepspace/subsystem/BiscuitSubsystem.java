@@ -32,8 +32,9 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   public static double kBackStopRightPositionDeg;
   public static double kTiltUpLeftPositionDeg;
   public static double kTiltUpRightPositionDeg;
-  public static double kDownRightPositionDeg;
-  public static double kDownLeftPositionDeg;
+  public static double kDownPosition;
+  private static double kDownRightPositionDeg;
+  private static double kDownLeftPositionDeg;
   private static int kCloseEnoughTicks;
   private static int kAbsoluteZeroTicks;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -210,14 +211,16 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   public void executePlan() {
     targetBiscuitPositionDeg = selectAngle();
 
-    logger.debug(
-        "plan running: level = {} gp = {} action = {}",
-        targetLevel,
-        currentGamePiece,
-        currentAction);
-
     if (targetBiscuitPositionDeg != 2767) {
+      logger.debug(
+          "plan running: level = {} gp = {} action = {}",
+          targetLevel,
+          currentGamePiece,
+          currentAction);
+
       setPosition(targetBiscuitPositionDeg);
+    } else {
+      logger.warn("Biscuit execution failed");
     }
   }
 
@@ -226,8 +229,10 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   }
 
   public void setPosition(double angle) {
-    if (angle == kDownRightPositionDeg && getPosition() < 0) {
+    if (angle == kDownPosition && getPosition() < 0) {
       angle = kDownLeftPositionDeg;
+    } else {
+      angle = kDownRightPositionDeg;
     }
     setpointTicks = (int) (TICKS_OFFSET - angle * TICKS_PER_DEGREE);
     logger.info("set position in degrees = {} in ticks = {}", angle, setpointTicks);
