@@ -1,7 +1,5 @@
 package frc.team2767.deepspace.subsystem;
 
-import static frc.team2767.deepspace.subsystem.ElevatorLevel.NOTSET;
-
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
@@ -39,10 +37,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   private static int kAbsoluteZeroTicks;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private double targetBiscuitPositionDeg = 0;
-  private GamePiece currentGamePiece = GamePiece.NOTSET; // FIXME: remove
-  private Action currentAction = Action.NOTSET;
-  private ElevatorLevel targetLevel = NOTSET; // FIXME: remove
-  private FieldDirection targetDirection = FieldDirection.NOTSET; // FIXME: remove
   private TalonSRX biscuit = new TalonSRX(BISCUIT_ID);
   private int setpointTicks;
 
@@ -129,13 +123,13 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
     return "states="
         + "\n\t"
         + "current game piece = "
-        + currentGamePiece.name()
+        + VISION.gamePiece.name()
         + "\n\t"
         + "target level = "
-        + targetLevel.name()
+        + VISION.elevatorLevel.name()
         + "\n\t"
         + "target direction = "
-        + targetDirection.name()
+        + VISION.direction.name()
         + "\n\t"
         + "target position = "
         + targetBiscuitPositionDeg;
@@ -170,25 +164,20 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   }
 
   public double selectAngle() {
-    targetLevel = VISION.elevatorLevel;
-    currentGamePiece = VISION.gamePiece;
-    currentAction = VISION.action;
-    targetDirection = VISION.direction;
-
-    if (currentAction == Action.PLACE
-        && currentGamePiece == GamePiece.CARGO
-        && targetLevel == ElevatorLevel.THREE) {
-      if (targetDirection == FieldDirection.LEFT) {
+    if (VISION.action == Action.PLACE
+        && VISION.gamePiece == GamePiece.CARGO
+        && VISION.elevatorLevel == ElevatorLevel.THREE) {
+      if (VISION.direction == FieldDirection.LEFT) {
         return kTiltUpLeftPositionDeg;
       }
-      if (targetDirection == FieldDirection.RIGHT) {
+      if (VISION.direction == FieldDirection.RIGHT) {
         return kTiltUpRightPositionDeg;
       } else {
         logger.warn("Direction not set");
       }
     }
 
-    if (currentAction == Action.PICKUP && currentGamePiece == GamePiece.CARGO) {
+    if (VISION.action == Action.PICKUP && VISION.gamePiece == GamePiece.CARGO) {
       double bearing = Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360);
       if (bearing <= 0) {
         return kBackStopRightPositionDeg;
@@ -197,10 +186,10 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
       }
     }
 
-    if (targetDirection == FieldDirection.LEFT) {
+    if (VISION.direction == FieldDirection.LEFT) {
       return kLeftPositionDeg;
     }
-    if (targetDirection == FieldDirection.RIGHT) {
+    if (VISION.direction == FieldDirection.RIGHT) {
       return kRightPositionDeg;
     }
     logger.warn("Direction not set");
@@ -214,9 +203,9 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
     if (targetBiscuitPositionDeg != 2767) {
       logger.debug(
           "plan running: level = {} gp = {} action = {}",
-          targetLevel,
-          currentGamePiece,
-          currentAction);
+          VISION.elevatorLevel,
+          VISION.gamePiece,
+          VISION.action);
 
       setPosition(targetBiscuitPositionDeg);
     } else {
