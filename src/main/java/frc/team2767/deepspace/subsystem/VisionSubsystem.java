@@ -13,12 +13,15 @@ import org.slf4j.LoggerFactory;
 
 public class VisionSubsystem extends Subsystem {
 
-  private static final double CAMERA_X = 0.0;
-  private static final double CAMERA_Y = -9.0;
+  private static final double CAMERA_X = 3.25;
+  private static final double CAMERA_Y_LEFT = -13.5;
+  private static final double CAMERA_Y_RIGHT = 13.5;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final DigitalOutput lightsOutput6 = new DigitalOutput(6);
   private final DigitalOutput lightsOutput5 = new DigitalOutput(5);
-  private final double CAMERA_POSITION_BEARING = -90.0;
+  private final double CAMERA_POSITION_BEARING_LEFT = -90.0;
+  private final double CAMERA_POSITION_BEARING_RIGHT = 90.0;
+
   private final UsbCamera usbCamera;
   private final Timer blinkTimer = new Timer();
   public GamePiece gamePiece = GamePiece.NOTSET;
@@ -72,7 +75,9 @@ public class VisionSubsystem extends Subsystem {
   }
 
   public double getCameraPositionBearing() {
-    return CAMERA_POSITION_BEARING;
+    return direction == FieldDirection.RIGHT
+        ? CAMERA_POSITION_BEARING_RIGHT
+        : CAMERA_POSITION_BEARING_LEFT;
   }
 
   public double getCameraX() {
@@ -80,7 +85,7 @@ public class VisionSubsystem extends Subsystem {
   }
 
   public double getCameraY() {
-    return CAMERA_Y;
+    return direction == FieldDirection.RIGHT ? CAMERA_Y_RIGHT : CAMERA_Y_LEFT;
   }
 
   public boolean isTargetAcquired() {

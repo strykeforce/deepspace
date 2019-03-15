@@ -9,6 +9,7 @@ import org.strykeforce.thirdcoast.swerve.Wheel
 import org.strykeforce.thirdcoast.trapper.Action
 import org.strykeforce.thirdcoast.trapper.post
 import kotlin.math.absoluteValue
+import kotlin.math.log
 
 private enum class TwistState { STARTING, RUNNING, STOPPING, STOPPED }
 
@@ -24,8 +25,8 @@ class TwistController(
     private val kDtMs = prefs.getInt(DT_MS, 20)
     private val kT1Ms = prefs.getInt(T1_MS, 200)
     private val kT2Ms = prefs.getInt(T2_MS, 100)
-    private val kVProg = prefs.getInt(V_PROFILE, 12000 * 10)
-    private val kPDistance = prefs.getDouble(K_P_DISTANCE, 3.7)
+    private var kVProg = prefs.getInt(V_PROFILE, 120_000)
+    private var kPDistance = prefs.getDouble(K_P_DISTANCE, 3.7)
     //    private val kGoodEnoughDistance = prefs.getInt(GOOD_ENOUGH_DISTANCE, 5500)
     private val kPYaw = prefs.getDouble(K_P_YAW, 0.0)
     private val kMaxYaw = prefs.getDouble(MAX_YAW, 0.01)
@@ -73,6 +74,11 @@ class TwistController(
         savePreferences()
     }
 
+    fun getPIDPrefs() {
+        kPDistance = prefs.getDouble(K_P_DISTANCE, 3.7)
+        kVProg = prefs.getInt(V_PROFILE, 120_000)
+        logger.debug { "kPDistance = $kPDistance kVProg = $kVProg" }
+    }
 
     fun start() {
         logger.info { "twist controller start" }
@@ -172,6 +178,7 @@ class TwistController(
             }
             STOPPED -> {
                 drive.stop()
+                logger.debug { "ticks driven = $actualDistance" }
                 if (kTrace) action.post()
                 logState()
                 notifier.close()

@@ -25,7 +25,7 @@ import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
 public class DriveSubsystem extends Subsystem {
 
-  public static final double TICKS_PER_INCH = 1900; // TODO: Set Ticks per inch
+  public static final double TICKS_PER_INCH = 2335;
   private static final double DRIVE_SETPOINT_MAX = 25_000.0;
   private static final double ROBOT_LENGTH = 21.0;
   private static final double ROBOT_WIDTH = 26.0;
@@ -87,6 +87,7 @@ public class DriveSubsystem extends Subsystem {
   public void startTwist(double heading, int distance, double targetYaw) {
     logger.info("heading={} distance={} targetYaw={}", heading, distance, targetYaw);
     twistController = new TwistController(swerve, heading, distance, targetYaw);
+    twistController.getPIDPrefs();
     twistController.start();
   }
 
