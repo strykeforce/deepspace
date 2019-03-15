@@ -39,6 +39,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private double targetBiscuitPositionDeg = 0;
   private GamePiece currentGamePiece = GamePiece.NOTSET; // FIXME: remove
+  private Action currentAction = Action.NOTSET;
   private ElevatorLevel targetLevel = NOTSET; // FIXME: remove
   private FieldDirection targetDirection = FieldDirection.NOTSET; // FIXME: remove
   private TalonSRX biscuit = new TalonSRX(BISCUIT_ID);
@@ -167,12 +168,47 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
     return didZero;
   }
 
-  @SuppressWarnings("Duplicates")
-  public void executePlan() {
+  public double selectAngle() {
     targetLevel = VISION.elevatorLevel;
     currentGamePiece = VISION.gamePiece;
-    Action currentAction = VISION.action;
+    currentAction = VISION.action;
     targetDirection = VISION.direction;
+
+    if (currentAction == Action.PLACE
+        && currentGamePiece == GamePiece.CARGO
+        && targetLevel == ElevatorLevel.THREE) {
+      if (targetDirection == FieldDirection.LEFT) {
+        return kTiltUpLeftPositionDeg;
+      }
+      if (targetDirection == FieldDirection.RIGHT) {
+        return kTiltUpRightPositionDeg;
+      } else {
+        logger.warn("Direction not set");
+      }
+    }
+
+    if (currentAction == Action.PICKUP && currentGamePiece == GamePiece.CARGO) {
+      double bearing = Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360);
+      if (bearing <= 0) {
+        return kBackStopRightPositionDeg;
+      } else {
+        return kBackStopLeftPositionDeg;
+      }
+    }
+
+    if (targetDirection == FieldDirection.LEFT) {
+      return kLeftPositionDeg;
+    }
+    if (targetDirection == FieldDirection.RIGHT) {
+      return kRightPositionDeg;
+    }
+    logger.warn("Direction not set");
+    return 2767;
+  }
+
+  @SuppressWarnings("Duplicates")
+  public void executePlan() {
+    targetBiscuitPositionDeg = selectAngle();
 
     logger.debug(
         "plan running: level = {} gp = {} action = {}",
@@ -180,75 +216,9 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
         currentGamePiece,
         currentAction);
 
-    switch (currentAction) {
-      case PLACE:
-        if (currentGamePiece == GamePiece.CARGO && targetLevel == ElevatorLevel.THREE) {
-          switch (targetDirection) {
-            case LEFT:
-              targetBiscuitPositionDeg = kTiltUpLeftPositionDeg;
-              break;
-            case RIGHT:
-              targetBiscuitPositionDeg = kTiltUpRightPositionDeg;
-              break;
-            case NOTSET:
-              logger.warn("Direction not set");
-              break;
-          }
-        } else {
-          switch (targetDirection) {
-            case LEFT:
-              targetBiscuitPositionDeg = kLeftPositionDeg;
-              break;
-            case RIGHT:
-              targetBiscuitPositionDeg = kRightPositionDeg;
-              break;
-            case NOTSET:
-              logger.warn("Direction not set");
-              break;
-          }
-        }
-        break;
-
-      case PICKUP:
-        double bearing = Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360);
-        Angle currentAngle;
-        if (bearing <= 0) {
-          currentAngle = Angle.LEFT;
-        } else {
-          currentAngle = Angle.RIGHT;
-        }
-        switch (currentGamePiece) {
-          case CARGO:
-            switch (currentAngle) {
-              case LEFT:
-                targetBiscuitPositionDeg = kBackStopRightPositionDeg;
-                break;
-              case RIGHT:
-                targetBiscuitPositionDeg = kBackStopLeftPositionDeg;
-                break;
-            }
-            break;
-          case HATCH:
-            switch (currentAngle) {
-              case LEFT:
-                targetBiscuitPositionDeg = kLeftPositionDeg;
-                break;
-              case RIGHT:
-                targetBiscuitPositionDeg = kRightPositionDeg;
-                break;
-            }
-            break;
-          case NOTSET:
-            logger.warn("Gamepiece not set");
-            break;
-        }
-        break;
-      case NOTSET:
-        logger.warn("Action not set");
-        break;
+    if (targetBiscuitPositionDeg != 2767) {
+      setPosition(targetBiscuitPositionDeg);
     }
-
-    setPosition(targetBiscuitPositionDeg);
   }
 
   public double getPosition() {
