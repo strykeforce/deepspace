@@ -45,9 +45,12 @@ public class CalculateTwistCommand extends InstantCommand {
     double finalHeading = twistCalculator.getHeading();
     double finalRange = twistCalculator.getRange();
 
-    double angle = finalHeading - VISION.getCameraPositionBearing();
-    double newX = finalRange * Math.cos(Math.toRadians(angle));
-    double newY = finalRange * Math.sin(Math.toRadians(angle)) - TRIDENT_DISTANCE_OFFSET;
+    double offsetX = TRIDENT_DISTANCE_OFFSET * Math.cos(Math.toRadians(targetYaw));
+    double offsetY = TRIDENT_DISTANCE_OFFSET * Math.sin(Math.toRadians(targetYaw));
+
+    double newAngle = finalHeading - VISION.getCameraPositionBearing();
+    double newX = finalRange * Math.cos(Math.toRadians(newAngle)) - offsetX;
+    double newY = finalRange * Math.sin(Math.toRadians(newAngle)) - offsetY;
 
     logger.debug("x={} y={}", newX, newY);
     finalRange = Math.hypot(newX, newY);
