@@ -30,20 +30,18 @@ import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
 public class DriveSubsystem extends Subsystem implements Item {
 
-  public static final double TICKS_PER_INCH = 2335;
+  public static final double TICKS_PER_INCH = 2369;
   private static final double DRIVE_SETPOINT_MAX = 25_000.0;
   private static final double ROBOT_LENGTH = 21.0;
   private static final double ROBOT_WIDTH = 26.0;
 
   // 2272 up field
   // 2398 down field
-
+  private static Wheel[] wheels;
   private final SwerveDrive swerve = configSwerve();
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
   private TwistController twistController;
   private PathController pathController;
-  private Wheel[] wheels;
 
   public DriveSubsystem() {
     swerve.setFieldOriented(true);
@@ -97,7 +95,7 @@ public class DriveSubsystem extends Subsystem implements Item {
   public void startTwist(double heading, int distance, double targetYaw) {
     logger.info("heading={} distance={} targetYaw={}", heading, distance, targetYaw);
     twistController = new TwistController(swerve, heading, distance, targetYaw);
-    twistController.getPIDPrefs();
+    //    twistController.getPIDPrefs();
     twistController.start();
   }
 

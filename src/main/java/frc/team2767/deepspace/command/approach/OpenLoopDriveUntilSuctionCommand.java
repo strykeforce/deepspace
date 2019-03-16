@@ -13,7 +13,7 @@ public class OpenLoopDriveUntilSuctionCommand extends Command {
 
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VacuumSubsystem VACUUM = Robot.VACUUM;
-  private static final double TRANSITION_PRESSURE_DIFFERENCE = 4.0;
+  private static final double TRANSITION_PRESSURE_DIFFERENCE = 3.0;
   private static final double HATCH_SEAL_GOOD_ENOUGH = 10.0;
   private static final double OUT_DRIVE_SECONDS = 0.25;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -23,19 +23,20 @@ public class OpenLoopDriveUntilSuctionCommand extends Command {
   private double outDriveInitTime;
 
   public OpenLoopDriveUntilSuctionCommand() {
-    driveState = DriveState.FAST;
+
     setTimeout(5.0);
     requires(DRIVE);
   }
 
   @Override
   protected void initialize() {
-
+    driveState = DriveState.FAST;
     if (HATCH_SEAL_GOOD_ENOUGH < TRANSITION_PRESSURE_DIFFERENCE) {
       logger.warn("Transition pressures not set correctly");
     }
 
     initialPressure = VACUUM.getPressure();
+    logger.debug("init pressure = {}", initialPressure);
     DRIVE.setDriveMode(SwerveDrive.DriveMode.OPEN_LOOP);
     direction = 0.25;
 
@@ -51,6 +52,7 @@ public class OpenLoopDriveUntilSuctionCommand extends Command {
         DRIVE.setWheels(direction, DriveState.FAST.velocity);
 
         if (VACUUM.getPressure() - initialPressure > TRANSITION_PRESSURE_DIFFERENCE) {
+          logger.debug("current pressure = {}", VACUUM.getPressure());
           driveState = DriveState.SLOW;
         }
         break;
@@ -58,6 +60,7 @@ public class OpenLoopDriveUntilSuctionCommand extends Command {
       case SLOW:
         DRIVE.setWheels(direction, DriveState.SLOW.velocity);
         if (VACUUM.getPressure() - initialPressure > HATCH_SEAL_GOOD_ENOUGH) {
+          logger.debug("current pressure = {}", VACUUM.getPressure());
           outDriveInitTime = Timer.getFPGATimestamp();
           driveState = DriveState.OUT;
         }
@@ -84,7 +87,7 @@ public class OpenLoopDriveUntilSuctionCommand extends Command {
   }
 
   private enum DriveState {
-    SLOW(0.08),
+    SLOW(0.06),
     FAST(0.2),
     OUT(-0.4),
     DONE(0.0);

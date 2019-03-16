@@ -10,7 +10,6 @@ import frc.team2767.deepspace.command.HealthCheckCommand;
 import frc.team2767.deepspace.command.ResetAxisCommandGroup;
 import frc.team2767.deepspace.command.approach.DriveTwistCommand;
 import frc.team2767.deepspace.command.approach.OrthogonalMovementCommand;
-import frc.team2767.deepspace.command.approach.YawToTargetCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
 import frc.team2767.deepspace.command.climb.*;
@@ -189,9 +188,10 @@ public class SmartDashboardControls {
     //    SmartDashboard.putData("Test/Yaw Command", new YawCommand());
     SmartDashboard.putData(
         "Test/blinkLights", new BlinkLightsCommand(VisionSubsystem.LightPattern.GOT_HATCH));
-    SmartDashboard.putData("Test/TwistCommand", new DriveTwistCommand(180, 70));
+    SmartDashboard.putData("Test/Twist70at180", new DriveTwistCommand(180, 70, -90.0));
+    SmartDashboard.putData("Test/Twist70at0", new DriveTwistCommand(0, 70, -90.0));
     SmartDashboard.putData("Test/Pyeye", new QueryPyeyeCommand());
-    SmartDashboard.putData("Test/yawTo", new YawToTargetCommand(90.0));
+    //    SmartDashboard.putData("Test/yawTo", new YawToTargetCommand(90.0));
   }
 
   private void addVacuumCommands() {
