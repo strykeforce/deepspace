@@ -13,15 +13,15 @@ import org.slf4j.LoggerFactory;
 
 public class VisionSubsystem extends Subsystem {
 
-  private static final double CAMERA_X = 3.25;
+  private static final double CAMERA_X = 3.5;
   private static final double CAMERA_Y_LEFT = -13.5;
   private static final double CAMERA_Y_RIGHT = 13.5;
+  private static final double GLUE_CORRECTION_FACTOR = 1.5;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final DigitalOutput lightsOutput6 = new DigitalOutput(6);
   private final DigitalOutput lightsOutput5 = new DigitalOutput(5);
   private final double CAMERA_POSITION_BEARING_LEFT = -90.0;
   private final double CAMERA_POSITION_BEARING_RIGHT = 90.0;
-
   private final UsbCamera usbCamera;
   private final Timer blinkTimer = new Timer();
   public GamePiece gamePiece = GamePiece.NOTSET;
@@ -71,7 +71,7 @@ public class VisionSubsystem extends Subsystem {
   }
 
   public void setCorrectedHeading(double correctedBearing) {
-    this.correctedHeading = correctedBearing;
+    this.correctedHeading = correctedBearing - GLUE_CORRECTION_FACTOR;
   }
 
   public double getCameraPositionBearing() {
@@ -184,6 +184,10 @@ public class VisionSubsystem extends Subsystem {
   public void setTargetYaw(double targetYaw) {
     this.targetYaw = targetYaw;
     logger.debug("Set target yaw to {}", targetYaw);
+  }
+
+  public void pyeyeDump() {
+    logger.debug("PYEYE DUMP\nrange {} at {} degree\n", correctedRange, correctedHeading);
   }
 
   public enum Camera {

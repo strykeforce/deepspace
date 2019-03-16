@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.command.HealthCheckCommand;
 import frc.team2767.deepspace.command.ResetAxisCommandGroup;
-import frc.team2767.deepspace.command.YawCommand;
 import frc.team2767.deepspace.command.approach.DriveTwistCommand;
 import frc.team2767.deepspace.command.approach.OrthogonalMovementCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
@@ -31,6 +30,7 @@ import frc.team2767.deepspace.command.vacuum.VacuumCooldownCommandGroup;
 import frc.team2767.deepspace.command.vision.BlinkLightsCommand;
 import frc.team2767.deepspace.command.vision.LightsOffCommand;
 import frc.team2767.deepspace.command.vision.LightsOnCommand;
+import frc.team2767.deepspace.command.vision.QueryPyeyeCommand;
 import frc.team2767.deepspace.subsystem.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -188,10 +188,11 @@ public class SmartDashboardControls {
         "Test/Vacuum Hatch", new PressureSetCommand(VacuumSubsystem.kHatchPressureInHg));
     SmartDashboard.putData(
         "Test/Vacuum Climb", new PressureSetCommand(VacuumSubsystem.kClimbPressureInHg));
-    SmartDashboard.putData("Test/Yaw Command", new YawCommand());
+    //    SmartDashboard.putData("Test/Yaw Command", new YawCommand());
     SmartDashboard.putData(
         "Test/blinkLights", new BlinkLightsCommand(VisionSubsystem.LightPattern.GOT_HATCH));
     SmartDashboard.putData("Test/TwistCommand", new DriveTwistCommand(180, 70));
+    SmartDashboard.putData("Test/Pyeye", new QueryPyeyeCommand());
   }
 
   private void addVacuumCommands() {

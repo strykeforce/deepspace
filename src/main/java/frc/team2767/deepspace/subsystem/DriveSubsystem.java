@@ -30,6 +30,9 @@ public class DriveSubsystem extends Subsystem {
   private static final double ROBOT_LENGTH = 21.0;
   private static final double ROBOT_WIDTH = 26.0;
 
+  // 2272 up field
+  // 2398 down field
+
   private final SwerveDrive swerve = configSwerve();
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -94,6 +97,7 @@ public class DriveSubsystem extends Subsystem {
   public boolean isTwistFinished() {
     if (twistController.isFinished()) {
       SmartDashboard.putBoolean("Game/twistFinished", true);
+      logger.debug("end yaw = {}", Math.IEEEremainder(getGyro().getAngle(), 360));
       return true;
     }
 

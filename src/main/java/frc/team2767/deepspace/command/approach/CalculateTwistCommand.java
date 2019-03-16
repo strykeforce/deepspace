@@ -12,17 +12,17 @@ public class CalculateTwistCommand extends InstantCommand {
 
   private static final VisionSubsystem VISION = Robot.VISION;
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
-  private static final double TRIDENT_DISTANCE_OFFSET = 20.0;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private double offset;
 
-  public CalculateTwistCommand() {
-    requires(DRIVE);
-    requires(VISION);
+  public CalculateTwistCommand(double offset) {
+    this.offset = offset;
   }
 
   @Override
   protected void initialize() {
-    double targetYaw = 90.0;
+    double targetYaw = -90.0;
+    double cameraPositionBearing = VISION.getCameraPositionBearing();
 
     double yaw = Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360);
 
@@ -38,23 +38,22 @@ public class CalculateTwistCommand extends InstantCommand {
             VISION.getRawRange(),
             VISION.getCameraX(),
             VISION.getCameraY(),
-            VISION.getCameraPositionBearing(),
+            cameraPositionBearing,
             yaw,
             targetYaw);
 
-    double finalHeading = twistCalculator.getHeading();
-    double finalRange = twistCalculator.getRange();
+    double offsetX = offset * Math.cos(Math.toRadians(targetYaw + cameraPositionBearing));
+    double offsetY = offset * Math.sin(Math.toRadians(targetYaw + cameraPositionBearing));
 
-    double offsetX = TRIDENT_DISTANCE_OFFSET * Math.cos(Math.toRadians(targetYaw));
-    double offsetY = TRIDENT_DISTANCE_OFFSET * Math.sin(Math.toRadians(targetYaw));
+    double[] corrected = twistCalculator.getXYCorrected();
 
-    double newAngle = finalHeading - VISION.getCameraPositionBearing();
-    double newX = finalRange * Math.cos(Math.toRadians(newAngle)) - offsetX;
-    double newY = finalRange * Math.sin(Math.toRadians(newAngle)) - offsetY;
+    double newX = corrected[0] - offsetX;
+    double newY = corrected[1] - offsetY;
 
     logger.debug("x={} y={}", newX, newY);
-    finalRange = Math.hypot(newX, newY);
-    finalHeading = Math.atan2(newY, newX) + VISION.getCameraPositionBearing();
+
+    double finalRange = Math.hypot(newX, newY);
+    double finalHeading = Math.toDegrees(Math.atan2(newY, newX));
 
     VISION.setCorrectedHeading(finalHeading);
     VISION.setCorrectedRange(finalRange);

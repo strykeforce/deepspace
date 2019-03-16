@@ -28,7 +28,7 @@ class TwistController(
     private var kVProg = prefs.getInt(V_PROFILE, 120_000)
     private var kPDistance = prefs.getDouble(K_P_DISTANCE, 3.7)
     //    private val kGoodEnoughDistance = prefs.getInt(GOOD_ENOUGH_DISTANCE, 5500)
-    private val kPYaw = prefs.getDouble(K_P_YAW, 0.0)
+    private var kPYaw = prefs.getDouble(K_P_YAW, 0.018)
     private val kMaxYaw = prefs.getDouble(MAX_YAW, 0.01)
     private val kYawTpd = prefs.getDouble(YAW_TPD, 0.0)
     private val kExtraTime = prefs.getLong(EXTRA_TIME, 1000L)
@@ -77,6 +77,7 @@ class TwistController(
     fun getPIDPrefs() {
         kPDistance = prefs.getDouble(K_P_DISTANCE, 3.7)
         kVProg = prefs.getInt(V_PROFILE, 120_000)
+        kPYaw = prefs.getDouble(K_P_YAW, 0.018)
         logger.debug { "kPDistance = $kPDistance kVProg = $kVProg" }
     }
 

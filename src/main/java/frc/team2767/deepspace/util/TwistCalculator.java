@@ -15,6 +15,8 @@ public class TwistCalculator {
   private double cameraPositionBearing;
   private double swerveRotation;
   private double targetYaw;
+  private double xCorrected;
+  private double yCorrected;
 
   public TwistCalculator(
       double cameraAngle,
@@ -64,11 +66,11 @@ public class TwistCalculator {
 
     double initialHeading = cameraPositionBearing + swerveRotation + cameraAngle;
 
-    double headingX = range * Math.cos(Math.toRadians(initialHeading));
-    double headingY = range * Math.sin(Math.toRadians(initialHeading));
+    double rangeX = range * Math.cos(Math.toRadians(initialHeading));
+    double rangeY = range * Math.sin(Math.toRadians(initialHeading));
 
-    double xCorrected = headingX - deltaX;
-    double yCorrected = headingY - deltaY;
+    xCorrected = rangeX - deltaX;
+    yCorrected = rangeY - deltaY;
 
     finalHeading = Math.toDegrees(Math.atan2(yCorrected, xCorrected));
     finalRange = Math.hypot(xCorrected, yCorrected);
@@ -77,6 +79,10 @@ public class TwistCalculator {
   /** @return twist heading */
   public double getHeading() {
     return finalHeading;
+  }
+
+  public double[] getXYCorrected() {
+    return new double[] {xCorrected, yCorrected};
   }
 
   /** @return twist range */

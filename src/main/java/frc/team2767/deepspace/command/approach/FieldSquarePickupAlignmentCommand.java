@@ -3,7 +3,6 @@ package frc.team2767.deepspace.command.approach;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
 import frc.team2767.deepspace.Robot;
-import frc.team2767.deepspace.command.YawCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
 import frc.team2767.deepspace.subsystem.FieldDirection;
@@ -23,14 +22,14 @@ public class FieldSquarePickupAlignmentCommand extends ConditionalCommand {
         new CommandGroup() {
           {
             addSequential(new LogCommand("Field left"));
-            addSequential(new YawCommand(-90.0));
+            //            addSequential(new YawCommand(-90.0));
             addSequential(new SetTargetYawCommand(-90.0));
           }
         },
         new CommandGroup() {
           {
             addSequential(new LogCommand("Field right"));
-            addSequential(new YawCommand(90.0));
+            //            addSequential(new YawCommand(90.0));
             addSequential(new SetTargetYawCommand(90.0));
           }
         });
