@@ -22,14 +22,14 @@ public class FieldSquarePickupAlignmentCommand extends ConditionalCommand {
         new CommandGroup() {
           {
             addSequential(new LogCommand("Field left"));
-            //            addSequential(new YawCommand(-90.0));
+            addSequential(new YawToTargetCommand(-90.0));
             addSequential(new SetTargetYawCommand(-90.0));
           }
         },
         new CommandGroup() {
           {
             addSequential(new LogCommand("Field right"));
-            //            addSequential(new YawCommand(90.0));
+            addSequential(new YawToTargetCommand(90.0));
             addSequential(new SetTargetYawCommand(90.0));
           }
         });

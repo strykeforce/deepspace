@@ -43,9 +43,11 @@ public class DriveSubsystem extends Subsystem implements Item {
 
   private TwistController twistController;
   private PathController pathController;
+  private Wheel[] wheels;
 
   public DriveSubsystem() {
     swerve.setFieldOriented(true);
+    wheels = swerve.getWheels();
   }
 
   @Override
@@ -148,9 +150,24 @@ public class DriveSubsystem extends Subsystem implements Item {
     gyro.setAngleAdjustment(adj);
   }
 
+  public void setWheels(double azimuth, double veocity) {
+
+    for (Wheel w : getAllWheels()) {
+      w.set(azimuth, veocity);
+    }
+  }
+
+  public Wheel[] getAllWheels() {
+    return swerve.getWheels();
+  }
+
   public SwerveDrive getSwerveDrive() {
     return swerve;
   }
+
+  ////////////////////////////////////////////////////////////////////////////
+  // SWERVE CONFIG
+  ////////////////////////////////////////////////////////////////////////////
 
   public void setAngleOrthogonalAngle() {
     double[] angles = new double[] {-90.0, 0.0, 90.0, 180.0, -180.0};
@@ -170,10 +187,6 @@ public class DriveSubsystem extends Subsystem implements Item {
       }
     }
   }
-
-  ////////////////////////////////////////////////////////////////////////////
-  // SWERVE CONFIG
-  ////////////////////////////////////////////////////////////////////////////
 
   public SwerveDrive getSwerve() {
     return swerve;
@@ -250,10 +263,6 @@ public class DriveSubsystem extends Subsystem implements Item {
     }
 
     return wheels;
-  }
-
-  public Wheel[] getAllWheels() {
-    return swerve.getWheels();
   }
 
   @NotNull

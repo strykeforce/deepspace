@@ -13,10 +13,10 @@ import frc.team2767.deepspace.command.vision.LightsOnCommand;
 import frc.team2767.deepspace.command.vision.QueryPyeyeCommand;
 import frc.team2767.deepspace.subsystem.*;
 
-public class HatchSnapPickupCommandGroup extends CommandGroup {
+public class SnapDriveCommandGroup extends CommandGroup {
 
-  public HatchSnapPickupCommandGroup() {
-    addSequential(new LogCommand("BEGIN ATUO SNAP HATCH PICKUP"));
+  public SnapDriveCommandGroup() {
+    addSequential(new LogCommand("BEGIN ATUO SNAP DRIVE HATCH PICKUP"));
     addSequential(new LightsOnCommand());
     addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.PRESSURE_ACCUMULATE));
     addSequential(
@@ -28,22 +28,14 @@ public class HatchSnapPickupCommandGroup extends CommandGroup {
           }
         });
 
-    //    addSequential(new WaitCommand(0.2));
-    addSequential(new QueryPyeyeCommand());
-
     addSequential(new PressureSetCommand(VacuumSubsystem.kHatchPressureInHg));
     addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP));
+    addSequential(new QueryPyeyeCommand());
     addSequential(new CalculateRotationCommand());
     addSequential(new YawToTargetCommand());
     addSequential(new PositionExecuteCommandGroup());
-    addSequential(
-        new OpenLoopDriveUntilSuctionCommand(VacuumSubsystem.kHatchPressureInHg, 0.20), 10);
+    addSequential(new OpenLoopDriveUntilSuctionCommand(), 10);
     addParallel(new BlinkLightsCommand(VisionSubsystem.LightPattern.GOT_HATCH), 0.5);
-    addSequential(new DriveTwistCommand(0, 40));
-
-    addSequential(new LogCommand("END AUTO SNAP HATCH PICKUP"));
+    addSequential(new LogCommand("END AUTO SNAP DRIVE HATCH PICKUP"));
   }
 }
-//    addSequential(new FieldSquarePickupAlignmentCommand());
-//    addSequential(new CalculateTwistCommand(30.0));
-//    addSequential(new VisionTwistCommand());

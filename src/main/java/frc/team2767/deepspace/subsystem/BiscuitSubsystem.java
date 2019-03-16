@@ -163,39 +163,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
     return didZero;
   }
 
-  public double selectAngle() {
-    if (VISION.action == Action.PLACE
-        && VISION.gamePiece == GamePiece.CARGO
-        && VISION.elevatorLevel == ElevatorLevel.THREE) {
-      if (VISION.direction == FieldDirection.LEFT) {
-        return kTiltUpLeftPositionDeg;
-      }
-      if (VISION.direction == FieldDirection.RIGHT) {
-        return kTiltUpRightPositionDeg;
-      } else {
-        logger.warn("Direction not set");
-      }
-    }
-
-    if (VISION.action == Action.PICKUP && VISION.gamePiece == GamePiece.CARGO) {
-      double bearing = Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360);
-      if (bearing <= 0) {
-        return kBackStopRightPositionDeg;
-      } else {
-        return kBackStopLeftPositionDeg;
-      }
-    }
-
-    if (VISION.direction == FieldDirection.LEFT) {
-      return kLeftPositionDeg;
-    }
-    if (VISION.direction == FieldDirection.RIGHT) {
-      return kRightPositionDeg;
-    }
-    logger.warn("Direction not set");
-    return 2767;
-  }
-
   @SuppressWarnings("Duplicates")
   public void executePlan() {
     targetBiscuitPositionDeg = selectAngle();
@@ -211,6 +178,45 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
     } else {
       logger.warn("Biscuit execution failed");
     }
+  }
+
+  public double selectAngle() {
+    if (VISION.action == Action.PLACE
+        && VISION.gamePiece == GamePiece.CARGO
+        && VISION.elevatorLevel == ElevatorLevel.THREE) {
+      if (VISION.direction == FieldDirection.LEFT) {
+        return kTiltUpLeftPositionDeg;
+      }
+      if (VISION.direction == FieldDirection.RIGHT) {
+        return kTiltUpRightPositionDeg;
+      } else {
+        logger.warn("Direction not set");
+      }
+    }
+
+    if (VISION.action == Action.PICKUP) {
+      double bearing = Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360);
+      if (bearing <= 0) {
+        if (VISION.gamePiece == GamePiece.CARGO) {
+          return kBackStopRightPositionDeg;
+        }
+
+        if (VISION.gamePiece == GamePiece.HATCH) {
+          return kLeftPositionDeg;
+        }
+      } else {
+        if (VISION.gamePiece == GamePiece.CARGO) {
+          return kBackStopLeftPositionDeg;
+        }
+
+        if (VISION.gamePiece == GamePiece.HATCH) {
+          return kRightPositionDeg;
+        }
+      }
+    }
+
+    logger.warn("Direction not set");
+    return 2767.0;
   }
 
   public double getPosition() {

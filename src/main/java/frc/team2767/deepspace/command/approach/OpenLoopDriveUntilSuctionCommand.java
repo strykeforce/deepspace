@@ -1,68 +1,79 @@
 package frc.team2767.deepspace.command.approach;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
-import frc.team2767.deepspace.subsystem.FieldDirection;
 import frc.team2767.deepspace.subsystem.VacuumSubsystem;
-import frc.team2767.deepspace.subsystem.VisionSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
-import org.strykeforce.thirdcoast.swerve.Wheel;
 
 public class OpenLoopDriveUntilSuctionCommand extends Command {
 
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VacuumSubsystem VACUUM = Robot.VACUUM;
-  private static final VisionSubsystem VISION = Robot.VISION;
-  private static final double CLOSE_ENOUGH = 4; // inHg
-  private static final int STABLE_COUNT = 3;
+  private static final double TRANSITION_PRESSURE_DIFFERENCE = 4.0;
+  private static final double HATCH_SEAL_GOOD_ENOUGH = 10.0;
+  private static final double OUT_DRIVE_SECONDS = 0.25;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
-  private final double pressure;
-  private int stableCounts = 0;
-  private double velocity;
-  private Wheel[] wheels;
+  private double direction;
+  private double initialPressure;
+  private DriveState driveState;
+  private double outDriveInitTime;
 
-  public OpenLoopDriveUntilSuctionCommand(double pressure, double velocity) {
-    this(pressure, velocity, VISION.getCorrectedHeading());
-  }
-
-  public OpenLoopDriveUntilSuctionCommand(double pressure, double velocity, double heading) {
-    wheels = DRIVE.getAllWheels();
-    this.velocity = velocity;
-    this.pressure = pressure;
-    //    this.yaw = yaw;
+  public OpenLoopDriveUntilSuctionCommand() {
+    driveState = DriveState.FAST;
     setTimeout(5.0);
     requires(DRIVE);
   }
 
   @Override
   protected void initialize() {
-    DRIVE.setDriveMode(SwerveDrive.DriveMode.OPEN_LOOP);
-    double direction = 0.25;
 
-    if (VISION.direction == FieldDirection.LEFT) {
+    if (HATCH_SEAL_GOOD_ENOUGH < TRANSITION_PRESSURE_DIFFERENCE) {
+      logger.warn("Transition pressures not set correctly");
+    }
+
+    initialPressure = VACUUM.getPressure();
+    DRIVE.setDriveMode(SwerveDrive.DriveMode.OPEN_LOOP);
+    direction = 0.25;
+
+    if (Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360) < 0) {
       direction *= -1;
     }
+  }
 
-    for (Wheel w : wheels) {
-      w.set(direction, velocity);
+  @Override
+  protected void execute() {
+    switch (driveState) {
+      case FAST:
+        DRIVE.setWheels(direction, DriveState.FAST.velocity);
+
+        if (VACUUM.getPressure() - initialPressure > TRANSITION_PRESSURE_DIFFERENCE) {
+          driveState = DriveState.SLOW;
+        }
+        break;
+
+      case SLOW:
+        DRIVE.setWheels(direction, DriveState.SLOW.velocity);
+        if (VACUUM.getPressure() - initialPressure > HATCH_SEAL_GOOD_ENOUGH) {
+          outDriveInitTime = Timer.getFPGATimestamp();
+          driveState = DriveState.OUT;
+        }
+        break;
+
+      case OUT:
+        DRIVE.setWheels(direction, DriveState.OUT.velocity);
+        if (Timer.getFPGATimestamp() - outDriveInitTime > OUT_DRIVE_SECONDS) {
+          driveState = DriveState.DONE;
+        }
     }
-    stableCounts = 0;
   }
 
   @Override
   protected boolean isFinished() {
-    if (Math.abs(pressure - VACUUM.getPressure()) < CLOSE_ENOUGH) stableCounts++;
-    else stableCounts = 0;
-
-    if (stableCounts > STABLE_COUNT || isTimedOut()) {
-      DRIVE.stop();
-      return true;
-    }
-
-    return false;
+    return driveState == DriveState.DONE;
   }
 
   @Override
@@ -70,5 +81,18 @@ public class OpenLoopDriveUntilSuctionCommand extends Command {
     if (isTimedOut()) {
       logger.info("Timed Out");
     } else logger.info("Pressure Reached");
+  }
+
+  private enum DriveState {
+    SLOW(0.08),
+    FAST(0.2),
+    OUT(-0.4),
+    DONE(0.0);
+
+    private double velocity;
+
+    DriveState(double velocity) {
+      this.velocity = velocity;
+    }
   }
 }
