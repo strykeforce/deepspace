@@ -16,7 +16,7 @@ public class VisionSubsystem extends Subsystem {
   private static final double CAMERA_X = 3.5;
   private static final double CAMERA_Y_LEFT = -13.5;
   private static final double CAMERA_Y_RIGHT = 13.5;
-  private static final double GLUE_CORRECTION_FACTOR = 1.5;
+  private static final double GLUE_CORRECTION_FACTOR = 0;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final DigitalOutput lightsOutput6 = new DigitalOutput(6);
   private final DigitalOutput lightsOutput5 = new DigitalOutput(5);

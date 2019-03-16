@@ -14,6 +14,9 @@ import frc.team2767.deepspace.command.TeleOpDriveCommand;
 import frc.team2767.deepspace.motion.PathController;
 import frc.team2767.deepspace.motion.TwistController;
 import java.util.List;
+import java.util.Set;
+import java.util.function.DoubleSupplier;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
@@ -21,9 +24,11 @@ import org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode;
 import org.strykeforce.thirdcoast.swerve.SwerveDriveConfig;
 import org.strykeforce.thirdcoast.swerve.Wheel;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
+import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
+import org.strykeforce.thirdcoast.telemetry.item.Item;
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
-public class DriveSubsystem extends Subsystem {
+public class DriveSubsystem extends Subsystem implements Item {
 
   public static final double TICKS_PER_INCH = 2335;
   private static final double DRIVE_SETPOINT_MAX = 25_000.0;
@@ -105,17 +110,21 @@ public class DriveSubsystem extends Subsystem {
     return false;
   }
 
+  public AHRS getGyro() {
+    return swerve.getGyro();
+  }
+
   public void interruptTwist() {
     logger.info("twist command interrupted");
     twistController.interrupt();
   }
 
+  ////////////////////////////////////////////////////////////////////////////
+
   public void setWheelAzimuthPosition(List<Integer> positions) {
     Wheel[] wheels = swerve.getWheels();
     for (int i = 0; i < 4; i++) wheels[i].setAzimuthPosition(positions.get(i));
   }
-
-  ////////////////////////////////////////////////////////////////////////////
 
   public void zeroGyro() {
     AHRS gyro = swerve.getGyro();
@@ -160,10 +169,6 @@ public class DriveSubsystem extends Subsystem {
         minAngle = differences[i];
       }
     }
-  }
-
-  public AHRS getGyro() {
-    return swerve.getGyro();
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -238,6 +243,7 @@ public class DriveSubsystem extends Subsystem {
 
       telemetryService.register(new TalonItem(azimuthTalon, "Azimuth " + i));
       telemetryService.register(new TalonItem(driveTalon, "Drive " + (i + 10)));
+      telemetryService.register(this);
 
       Wheel wheel = new Wheel(azimuthTalon, driveTalon, DRIVE_SETPOINT_MAX);
       wheels[i] = wheel;
@@ -248,5 +254,44 @@ public class DriveSubsystem extends Subsystem {
 
   public Wheel[] getAllWheels() {
     return swerve.getWheels();
+  }
+
+  @NotNull
+  @Override
+  public String getDescription() {
+    return "Drive Subsystem";
+  }
+
+  @Override
+  public int getDeviceId() {
+    return 0;
+  }
+
+  @NotNull
+  @Override
+  public Set<Measure> getMeasures() {
+    return Set.of(Measure.ROTATION_RATE_Y);
+  }
+
+  @NotNull
+  @Override
+  public String getType() {
+    return "drive";
+  }
+
+  @Override
+  public int compareTo(@NotNull Item item) {
+    return 0;
+  }
+
+  @NotNull
+  @Override
+  public DoubleSupplier measurementFor(@NotNull Measure measure) {
+    switch (measure) {
+      case ROTATION_RATE_Y:
+        return () -> Math.IEEEremainder(getGyro().getAngle(), 360);
+      default:
+        return () -> 2767.0;
+    }
   }
 }

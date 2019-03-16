@@ -20,21 +20,33 @@ public class YawToTargetCommand extends PIDCommand {
   private int count;
   private PIDController controller;
 
+  private double setpoint;
+  private boolean setpointByVision = false;
+
   public YawToTargetCommand() {
+    this(0.0);
+    setpointByVision = true;
+  }
+
+  public YawToTargetCommand(double setpoint) {
     super(0.01, 0.0, 0.0, DRIVE);
     setInputRange(-180.0, 180.0);
     controller = getPIDController();
     controller.setContinuous();
     controller.setOutputRange(-1.0, 1.0);
     controller.setAbsoluteTolerance(1.0);
+    this.setpoint = setpoint;
     count = 0;
     logger.debug("construct yaw command");
   }
 
   @Override
   protected void initialize() {
-    double setpoint =
-        Math.IEEEremainder(VISION.getCorrectedHeading() - VISION.getCameraPositionBearing(), 360);
+    if (setpointByVision) {
+      setpoint =
+          Math.IEEEremainder(VISION.getCorrectedHeading() - VISION.getCameraPositionBearing(), 360);
+    }
+
     controller.setSetpoint(setpoint);
     DRIVE.setDriveMode(SwerveDrive.DriveMode.CLOSED_LOOP);
     logger.debug(
