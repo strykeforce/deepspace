@@ -46,7 +46,6 @@ class VacuumPressureTest(private val group: VacuumGroup) : Test, Reportable {
 
                 group.vacuumSubsystem.climbSolenoid.set(false)
                 group.vacuumSubsystem.tridentSolenoid.set(false)
-                group.vacuumSubsystem.pumpSolenoid.set(true)
 
                 state = RUNNING
             }
@@ -55,7 +54,6 @@ class VacuumPressureTest(private val group: VacuumGroup) : Test, Reportable {
             RUNNING -> {
                 if (group.vacuumSubsystem.onTarget()) {
                     iteration = 0
-                    group.vacuumSubsystem.pumpSolenoid.set(false)
                     logger.debug { "vacuum on target" }
                     state = SEALING
                 }

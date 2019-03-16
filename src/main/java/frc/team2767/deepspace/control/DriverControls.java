@@ -8,7 +8,7 @@ import frc.team2767.deepspace.command.approach.PlayerHatchAutonPickupCommandGrou
 import frc.team2767.deepspace.command.biscuit.BiscuitNegativeCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositiveCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
-import frc.team2767.deepspace.command.climb.LowerSuctionCupCommand;
+import frc.team2767.deepspace.command.climb.ClimbFormSealCommandGroup;
 import frc.team2767.deepspace.command.climb.RaiseClimbCommand;
 import frc.team2767.deepspace.command.climb.StopClimbCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
@@ -52,7 +52,7 @@ public class DriverControls {
     // Climb Commands
     new JoystickButton(joystick, Button.UP.id).whenPressed(new RaiseClimbCommand());
     new JoystickButton(joystick, Button.UP.id).whenReleased(new StopClimbCommand());
-    new JoystickButton(joystick, Button.DOWN.id).whenPressed(new LowerSuctionCupCommand());
+    new JoystickButton(joystick, Button.DOWN.id).whenPressed(new ClimbFormSealCommandGroup());
     new JoystickButton(joystick, Button.DOWN.id).whenReleased(new StopClimbCommand());
 
     // biscuit
