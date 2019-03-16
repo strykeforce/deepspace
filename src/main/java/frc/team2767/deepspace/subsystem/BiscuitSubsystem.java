@@ -1,7 +1,5 @@
 package frc.team2767.deepspace.subsystem;
 
-import static frc.team2767.deepspace.subsystem.ElevatorLevel.NOTSET;
-
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
@@ -32,15 +30,13 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   public static double kBackStopRightPositionDeg;
   public static double kTiltUpLeftPositionDeg;
   public static double kTiltUpRightPositionDeg;
-  public static double kDownRightPositionDeg;
-  public static double kDownLeftPositionDeg;
+  public static double kDownPosition = 179;
+  private static double kDownRightPositionDeg;
+  private static double kDownLeftPositionDeg;
   private static int kCloseEnoughTicks;
   private static int kAbsoluteZeroTicks;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private double targetBiscuitPositionDeg = 0;
-  private GamePiece currentGamePiece = GamePiece.NOTSET; // FIXME: remove
-  private ElevatorLevel targetLevel = NOTSET; // FIXME: remove
-  private FieldDirection targetDirection = FieldDirection.NOTSET; // FIXME: remove
   private TalonSRX biscuit = new TalonSRX(BISCUIT_ID);
   private int setpointTicks;
 
@@ -135,13 +131,13 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
     return "states="
         + "\n\t"
         + "current game piece = "
-        + currentGamePiece.name()
+        + VISION.gamePiece.name()
         + "\n\t"
         + "target level = "
-        + targetLevel.name()
+        + VISION.elevatorLevel.name()
         + "\n\t"
         + "target direction = "
-        + targetDirection.name()
+        + VISION.direction.name()
         + "\n\t"
         + "target position = "
         + targetBiscuitPositionDeg;
@@ -175,88 +171,54 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
     return didZero;
   }
 
-  @SuppressWarnings("Duplicates")
-  public void executePlan() {
-    targetLevel = VISION.elevatorLevel;
-    currentGamePiece = VISION.gamePiece;
-    Action currentAction = VISION.action;
-    targetDirection = VISION.direction;
-
-    logger.debug(
-        "plan running: level = {} gp = {} action = {}",
-        targetLevel,
-        currentGamePiece,
-        currentAction);
-
-    switch (currentAction) {
-      case PLACE:
-        if (currentGamePiece == GamePiece.CARGO && targetLevel == ElevatorLevel.THREE) {
-          switch (targetDirection) {
-            case LEFT:
-              targetBiscuitPositionDeg = kTiltUpLeftPositionDeg;
-              break;
-            case RIGHT:
-              targetBiscuitPositionDeg = kTiltUpRightPositionDeg;
-              break;
-            case NOTSET:
-              logger.warn("Direction not set");
-              break;
-          }
-        } else {
-          switch (targetDirection) {
-            case LEFT:
-              targetBiscuitPositionDeg = kLeftPositionDeg;
-              break;
-            case RIGHT:
-              targetBiscuitPositionDeg = kRightPositionDeg;
-              break;
-            case NOTSET:
-              logger.warn("Direction not set");
-              break;
-          }
-        }
-        break;
-
-      case PICKUP:
-        double bearing = Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360);
-        Angle currentAngle;
-        if (bearing <= 0) {
-          currentAngle = Angle.LEFT;
-        } else {
-          currentAngle = Angle.RIGHT;
-        }
-        switch (currentGamePiece) {
-          case CARGO:
-            switch (currentAngle) {
-              case LEFT:
-                targetBiscuitPositionDeg = kBackStopRightPositionDeg;
-                break;
-              case RIGHT:
-                targetBiscuitPositionDeg = kBackStopLeftPositionDeg;
-                break;
-            }
-            break;
-          case HATCH:
-            switch (currentAngle) {
-              case LEFT:
-                targetBiscuitPositionDeg = kLeftPositionDeg;
-                break;
-              case RIGHT:
-                targetBiscuitPositionDeg = kRightPositionDeg;
-                break;
-            }
-            break;
-          case NOTSET:
-            logger.warn("Gamepiece not set");
-            break;
-        }
-        break;
-      case NOTSET:
-        logger.warn("Action not set");
-        break;
+  public double selectAngle() {
+    if (VISION.action == Action.PLACE
+        && VISION.gamePiece == GamePiece.CARGO
+        && VISION.elevatorLevel == ElevatorLevel.THREE) {
+      if (VISION.direction == FieldDirection.LEFT) {
+        return kTiltUpLeftPositionDeg;
+      }
+      if (VISION.direction == FieldDirection.RIGHT) {
+        return kTiltUpRightPositionDeg;
+      } else {
+        logger.warn("Direction not set");
+      }
     }
 
-    setPosition(targetBiscuitPositionDeg);
+    if (VISION.action == Action.PICKUP && VISION.gamePiece == GamePiece.CARGO) {
+      double bearing = Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360);
+      if (bearing <= 0) {
+        return kBackStopRightPositionDeg;
+      } else {
+        return kBackStopLeftPositionDeg;
+      }
+    }
+
+    if (VISION.direction == FieldDirection.LEFT) {
+      return kLeftPositionDeg;
+    }
+    if (VISION.direction == FieldDirection.RIGHT) {
+      return kRightPositionDeg;
+    }
+    logger.warn("Direction not set");
+    return 2767;
+  }
+
+  @SuppressWarnings("Duplicates")
+  public void executePlan() {
+    targetBiscuitPositionDeg = selectAngle();
+
+    if (targetBiscuitPositionDeg != 2767) {
+      logger.debug(
+          "plan running: level = {} gp = {} action = {}",
+          VISION.elevatorLevel,
+          VISION.gamePiece,
+          VISION.action);
+
+      setPosition(targetBiscuitPositionDeg);
+    } else {
+      logger.warn("Biscuit execution failed");
+    }
   }
 
   public double getPosition() {
@@ -264,8 +226,12 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   }
 
   public void setPosition(double angle) {
-    if (angle == kDownRightPositionDeg && getPosition() < 0) {
+    if (angle == kDownPosition && getPosition() < 0) {
       angle = kDownLeftPositionDeg;
+      logger.info("Left down");
+    } else if (angle == kDownPosition) {
+      angle = kDownRightPositionDeg;
+      logger.info("Right down");
     }
     setpointTicks = (int) (TICKS_OFFSET - angle * TICKS_PER_DEGREE);
     logger.info("set position in degrees = {} in ticks = {}", angle, setpointTicks);
