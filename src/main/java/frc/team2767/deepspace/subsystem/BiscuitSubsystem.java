@@ -98,7 +98,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
     biscuitConfig.voltageCompSaturation = 12;
     biscuitConfig.voltageMeasurementFilter = 32;
 
-    //from the Safety Subsystem
+    // from the Safety Subsystem
     biscuitConfig.forwardSoftLimitThreshold = 1000;
     biscuitConfig.reverseSoftLimitThreshold = -1000;
 

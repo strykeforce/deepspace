@@ -89,7 +89,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
     shoulderConfig.motionCruiseVelocity = 900;
     shoulderConfig.motionAcceleration = 3500;
 
-    //from Safety Subsystem
+    // from Safety Subsystem
     shoulderConfig.forwardSoftLimitThreshold = 3932;
     shoulderConfig.reverseSoftLimitThreshold = -250;
 

@@ -94,18 +94,18 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
     elevatorConfig.slot0.kD = 40;
     elevatorConfig.slot0.kF = 0.25;
     elevatorConfig.slot0.integralZone = 0;
-    elevatorConfig.velocityMeasurementWindow = 64;//
-    elevatorConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms;//
+    elevatorConfig.velocityMeasurementWindow = 64; //
+    elevatorConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms; //
     elevatorConfig.slot0.allowableClosedloopError = 0;
     elevatorConfig.forwardSoftLimitThreshold = 32_000; // FIXME different for comp/proto
-    elevatorConfig.voltageCompSaturation = 12;//
-    elevatorConfig.voltageMeasurementFilter = 32;//
+    elevatorConfig.voltageCompSaturation = 12; //
+    elevatorConfig.voltageMeasurementFilter = 32; //
     elevatorConfig.motionAcceleration = 8000;
     elevatorConfig.motionCruiseVelocity = 4000;
 
-    //from the Safety Subsystem
-      elevatorConfig.forwardSoftLimitThreshold = 33000;
-      elevatorConfig.reverseSoftLimitThreshold = 0;
+    // from the Safety Subsystem
+    elevatorConfig.forwardSoftLimitThreshold = 33000;
+    elevatorConfig.reverseSoftLimitThreshold = 0;
 
     elevator.configAllSettings(elevatorConfig);
     elevator.enableCurrentLimit(true);
