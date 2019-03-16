@@ -137,8 +137,7 @@ public class SmartDashboardControls {
         "Test/Biscuit BS Right",
         new BiscuitSetPositionCommand(BiscuitSubsystem.kBackStopRightPositionDeg));
     SmartDashboard.putData(
-        "Test/Biscuit Down Right",
-        new BiscuitSetPositionCommand(BiscuitSubsystem.kDownRightPositionDeg));
+        "Test/Biscuit Down Right", new BiscuitSetPositionCommand(BiscuitSubsystem.kDownPosition));
     SmartDashboard.putData(
         "Test/Biscuit TU Left",
         new BiscuitSetPositionCommand(BiscuitSubsystem.kTiltUpLeftPositionDeg));
