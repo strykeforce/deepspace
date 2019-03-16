@@ -30,7 +30,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   public static double kBackStopRightPositionDeg;
   public static double kTiltUpLeftPositionDeg;
   public static double kTiltUpRightPositionDeg;
-  public static double kDownPosition;
+  public static double kDownPosition = 179;
   private static double kDownRightPositionDeg;
   private static double kDownLeftPositionDeg;
   private static int kCloseEnoughTicks;
@@ -220,8 +220,10 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   public void setPosition(double angle) {
     if (angle == kDownPosition && getPosition() < 0) {
       angle = kDownLeftPositionDeg;
-    } else {
+      logger.info("Left down");
+    } else if (angle == kDownPosition) {
       angle = kDownRightPositionDeg;
+      logger.info("Right down");
     }
     setpointTicks = (int) (TICKS_OFFSET - angle * TICKS_PER_DEGREE);
     logger.info("set position in degrees = {} in ticks = {}", angle, setpointTicks);
