@@ -9,7 +9,6 @@ import frc.team2767.deepspace.command.biscuit.BiscuitNegativeCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositiveCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
 import frc.team2767.deepspace.command.climb.ClimbFormSealCommandGroup;
-import frc.team2767.deepspace.command.climb.LowerSuctionCupCommand;
 import frc.team2767.deepspace.command.climb.RaiseClimbCommand;
 import frc.team2767.deepspace.command.climb.StopClimbCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;

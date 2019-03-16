@@ -5,7 +5,7 @@ import frc.team2767.deepspace.command.vision.BlinkLightsCommand;
 import frc.team2767.deepspace.subsystem.VisionSubsystem;
 
 public class ClimbFormSealCommandGroup extends CommandGroup {
-  public ClimbFormSealCommandGroup(){
+  public ClimbFormSealCommandGroup() {
     addSequential(new LowerSuctionCupCommand());
     addSequential(new BlinkLightsCommand(VisionSubsystem.LightPattern.CLIMB_GOOD));
   }

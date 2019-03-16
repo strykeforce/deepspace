@@ -3,11 +3,9 @@ package frc.team2767.deepspace.command.climb;
 import static frc.team2767.deepspace.subsystem.VacuumSubsystem.kClimbPressureInHg;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.ClimbSubsystem;
 import frc.team2767.deepspace.subsystem.VacuumSubsystem;
-import frc.team2767.deepspace.subsystem.VisionSubsystem;
 
 public class LowerSuctionCupCommand extends Command {
 

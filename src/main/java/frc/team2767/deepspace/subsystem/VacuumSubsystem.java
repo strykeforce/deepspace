@@ -223,8 +223,7 @@ public class VacuumSubsystem extends Subsystem {
 
   public enum Valve {
     TRIDENT(0),
-    CLIMB(2),
-    PUMP(1);
+    CLIMB(2);
 
     public final int ID;
 
