@@ -4,12 +4,11 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team2767.deepspace.command.biscuit.BiscuitGoToSideCommand;
 import frc.team2767.deepspace.command.climb.ClimbCommand;
 import frc.team2767.deepspace.command.climb.DeploySequenceCommand;
 import frc.team2767.deepspace.command.climb.StopClimbCommand;
-import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
-import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
-import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
+import frc.team2767.deepspace.command.elevator.*;
 import frc.team2767.deepspace.command.intake.RollerOutCommand;
 import frc.team2767.deepspace.command.intake.RollerStopCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
@@ -17,12 +16,8 @@ import frc.team2767.deepspace.command.sequences.CoconutPickupCommandGroup;
 import frc.team2767.deepspace.command.sequences.PlayerCargoCommandGroup;
 import frc.team2767.deepspace.command.sequences.PlayerHatchCommandGroup;
 import frc.team2767.deepspace.command.sequences.StowAllCommandGroup;
-import frc.team2767.deepspace.command.states.SetFieldDirectionCommand;
-import frc.team2767.deepspace.command.states.SetLevelCommand;
 import frc.team2767.deepspace.command.vacuum.SetSolenoidStatesCommand;
-import frc.team2767.deepspace.subsystem.ElevatorLevel;
-import frc.team2767.deepspace.subsystem.FieldDirection;
-import frc.team2767.deepspace.subsystem.VacuumSubsystem;
+import frc.team2767.deepspace.subsystem.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,19 +72,21 @@ public class XboxControls {
         };
 
     // ELEVATOR
-    new JoystickButton(xbox, Button.A.id).whenPressed(new SetLevelCommand(ElevatorLevel.ONE));
-    new JoystickButton(xbox, Button.B.id).whenPressed(new SetLevelCommand(ElevatorLevel.TWO));
+    new JoystickButton(xbox, Button.A.id).whenPressed(new ElevatorLevelOneCommand());
+    new JoystickButton(xbox, Button.B.id)
+        .whenPressed(new ElevatorLevelExecuteCommand(ElevatorLevel.TWO));
+    new JoystickButton(xbox, Button.Y.id)
+        .whenPressed(new ElevatorLevelExecuteCommand(ElevatorLevel.THREE));
     new JoystickButton(xbox, Button.X.id).whenPressed(new StowAllCommandGroup());
-    new JoystickButton(xbox, Button.Y.id).whenPressed(new SetLevelCommand(ElevatorLevel.THREE));
 
     RightStickUp.whenActive(new ElevatorOpenLoopUpCommand());
     RightStickUp.whenInactive(new ElevatorStopCommand());
     RightStickDown.whenActive(new ElevatorOpenLoopDownCommand());
     RightStickDown.whenInactive(new ElevatorStopCommand());
 
-    // FIELD DIRECTION STATE
-    LeftStickLeft.whenActive(new SetFieldDirectionCommand(FieldDirection.LEFT));
-    LeftStickRight.whenActive(new SetFieldDirectionCommand(FieldDirection.RIGHT));
+    // BISCUIT
+    LeftStickLeft.whenActive(new BiscuitGoToSideCommand(FieldDirection.LEFT));
+    LeftStickRight.whenActive(new BiscuitGoToSideCommand(FieldDirection.RIGHT));
 
     // Shoulders
     new JoystickButton(xbox, XboxControls.Shoulder.RIGHT.id)
