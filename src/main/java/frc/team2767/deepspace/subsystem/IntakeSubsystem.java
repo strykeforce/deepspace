@@ -88,7 +88,9 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
     shoulderConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms;
     shoulderConfig.motionCruiseVelocity = 900;
     shoulderConfig.motionAcceleration = 3500;
-    shoulderConfig.forwardSoftLimitThreshold = 9664;
+
+    // from Safety Subsystem
+    shoulderConfig.forwardSoftLimitThreshold = 3932;
     shoulderConfig.reverseSoftLimitThreshold = -250;
 
     TalonSRXConfiguration rollerConfig = new TalonSRXConfiguration();
