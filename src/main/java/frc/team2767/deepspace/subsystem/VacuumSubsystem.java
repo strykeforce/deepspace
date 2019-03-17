@@ -172,10 +172,10 @@ public class VacuumSubsystem extends Subsystem {
   @Override
   public void periodic() {
     if (!Robot.isEvent()) SmartDashboard.putNumber("Game/Temperature", getPumpTemperature());
-    if (getPumpTemperature() > TEMP_LIMIT) {
+    /*if (getPumpTemperature() > TEMP_LIMIT) {
       logger.error("Vacuum overheating!");
       setPeakOutput(0);
-    }
+    }*/
   }
 
   public boolean onTarget() {

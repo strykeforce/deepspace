@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.biscuit.BiscuitGoToSideCommand;
+import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
 import frc.team2767.deepspace.command.climb.ClimbCommand;
 import frc.team2767.deepspace.command.climb.DeploySequenceCommand;
 import frc.team2767.deepspace.command.climb.StopClimbCommand;
@@ -24,7 +25,8 @@ import org.slf4j.LoggerFactory;
 public class XboxControls {
 
   private final Joystick xbox;
-  private static final double DEADBAND = 0.5;
+  private static final double RIGHT_DEADBAND = 0.5;
+  private static final double LEFT_DEADBAND = 0.85;
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -43,7 +45,7 @@ public class XboxControls {
         new Trigger() {
           @Override
           public boolean get() {
-            return xbox.getRawAxis(Axis.RIGHT_Y.id) < -DEADBAND;
+            return xbox.getRawAxis(Axis.RIGHT_Y.id) < -RIGHT_DEADBAND;
           }
         };
 
@@ -51,7 +53,7 @@ public class XboxControls {
         new Trigger() {
           @Override
           public boolean get() {
-            return xbox.getRawAxis(Axis.RIGHT_Y.id) > DEADBAND;
+            return xbox.getRawAxis(Axis.RIGHT_Y.id) > RIGHT_DEADBAND;
           }
         };
 
@@ -59,7 +61,7 @@ public class XboxControls {
         new Trigger() {
           @Override
           public boolean get() {
-            return xbox.getRawAxis(Axis.LEFT_X.id) > DEADBAND;
+            return xbox.getRawAxis(Axis.LEFT_X.id) > LEFT_DEADBAND;
           }
         };
 
@@ -67,7 +69,7 @@ public class XboxControls {
         new Trigger() {
           @Override
           public boolean get() {
-            return xbox.getRawAxis(Axis.LEFT_X.id) < -DEADBAND;
+            return xbox.getRawAxis(Axis.LEFT_X.id) < -LEFT_DEADBAND;
           }
         };
 
@@ -87,6 +89,8 @@ public class XboxControls {
     // BISCUIT
     LeftStickLeft.whenActive(new BiscuitGoToSideCommand(FieldDirection.LEFT));
     LeftStickRight.whenActive(new BiscuitGoToSideCommand(FieldDirection.RIGHT));
+    new JoystickButton(xbox, Button.LEFT_STICK.id)
+        .whenPressed(new BiscuitSetPositionCommand(BiscuitSubsystem.kUpPositionDeg));
 
     // Shoulders
     new JoystickButton(xbox, XboxControls.Shoulder.RIGHT.id)

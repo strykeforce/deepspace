@@ -36,6 +36,7 @@ public class SnapDriveCommandGroup extends CommandGroup {
     addSequential(new PositionExecuteCommandGroup());
     addSequential(new OpenLoopDriveUntilSuctionCommand(), 10);
     addParallel(new BlinkLightsCommand(VisionSubsystem.LightPattern.GOT_HATCH), 0.5);
+    addParallel(new SetActionCommand(Action.PLACE));
     addSequential(new LogCommand("END AUTO SNAP DRIVE HATCH PICKUP"));
   }
 }
