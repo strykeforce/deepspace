@@ -117,6 +117,7 @@ public class SafetySubsystem extends Subsystem {
           case BISCUIT_120R_180R:
           case BISCUIT_180L:
           case BISCUIT_180R:
+          case BISCUIT_360:
             intakeLimit = INTAKE_STOW;
             break;
         }
@@ -137,6 +138,7 @@ public class SafetySubsystem extends Subsystem {
           case BISCUIT_120R_180R:
           case BISCUIT_180L:
           case BISCUIT_180R:
+          case BISCUIT_360:
             intakeLimit = INTAKE_STOW;
             break;
         }
@@ -168,6 +170,7 @@ public class SafetySubsystem extends Subsystem {
           case BISCUIT_120R_180R:
           case BISCUIT_180L:
           case BISCUIT_180R:
+          case BISCUIT_360:
             elevatorPosition = ELEVATOR_21;
             break;
         }
