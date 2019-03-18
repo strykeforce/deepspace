@@ -15,7 +15,7 @@ public class RollerInCommand extends InstantCommand {
 
   public RollerInCommand(double output) {
     this.output = output;
-    requires(INTAKE);
+    //    requires(INTAKE);
   }
 
   @Override

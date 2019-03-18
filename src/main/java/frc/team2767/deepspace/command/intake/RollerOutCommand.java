@@ -15,7 +15,6 @@ public class RollerOutCommand extends InstantCommand {
 
   public RollerOutCommand(double output) {
     this.output = output;
-    requires(INTAKE);
   }
 
   @Override

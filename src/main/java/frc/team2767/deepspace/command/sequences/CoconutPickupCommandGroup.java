@@ -19,35 +19,44 @@ public class CoconutPickupCommandGroup extends CommandGroup {
 
   public CoconutPickupCommandGroup() {
     addSequential(new LogCommand("BEGIN COCONUT PICKUP"));
-    addSequential(new RollerOutCommand(0.2));
-    addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.PRESSURE_ACCUMULATE));
-    addSequential(new PressureSetCommand(VacuumSubsystem.kBallPressureInHg), 0.5);
-    addSequential(new LogCommand("opening valves"));
-    addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP));
-    addSequential(new LogCommand("opened valves"));
 
     addSequential(
         new CommandGroup() {
           {
+            addParallel(new RollerOutCommand(0.2));
             addParallel(new SetActionCommand(Action.PLACE));
             addParallel(new SetGamePieceCommand(GamePiece.CARGO));
-            addParallel(new IntakePositionCommand(IntakeSubsystem.kMiddlePositionDeg));
+            addParallel(
+                new CommandGroup() {
+                  {
+                    addSequential(
+                        new SetSolenoidStatesCommand(
+                            VacuumSubsystem.SolenoidStates.PRESSURE_ACCUMULATE));
+                    addSequential(new PressureSetCommand(VacuumSubsystem.kBallPressureInHg), 0.5);
+                  }
+                });
+
+            addParallel(new ElevatorSetPositionCommand(19.54));
+          }
+        });
+    addParallel(new IntakePositionCommand(IntakeSubsystem.kMiddlePositionDeg));
+
+    addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.kDownPosition));
+
+    addSequential(
+        new CommandGroup() {
+          {
+            addParallel(
+                new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP));
+            addParallel(new ElevatorDownFastOpenLoopCommand());
+            addParallel(new IntakePositionCommand(105));
           }
         });
 
-    addSequential(new ElevatorSetPositionCommand(22.0));
-    addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.kDownPosition));
-
-    addSequential(new ElevatorSetPositionCommand(17.8));
-    addParallel(new IntakePositionCommand(105)); // 105
-
-    addSequential(new ElevatorDownFastOpenLoopCommand());
     addSequential(new WaitForPressureCommand(VacuumSubsystem.kBallPressureInHg));
     addSequential(new ElevatorSetPositionCommand(25.0));
-    addSequential(new SetActionCommand(Action.PLACE));
-    addSequential(new RollerStopCommand());
+    addParallel(new SetActionCommand(Action.PLACE));
+    addParallel(new RollerStopCommand());
     addSequential(new LogCommand("END COCONUT PICKUP"));
-    //        addSequential(new
-    // ElevatorSetPositionCommand(ElevatorSubsystem.ElevatorPosition.kStowPositionDeg));
   }
 }
