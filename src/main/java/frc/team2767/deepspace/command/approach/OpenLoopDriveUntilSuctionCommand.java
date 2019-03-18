@@ -23,7 +23,6 @@ public class OpenLoopDriveUntilSuctionCommand extends Command {
   private double outDriveInitTime;
 
   public OpenLoopDriveUntilSuctionCommand() {
-
     setTimeout(5.0);
     requires(DRIVE);
   }

@@ -7,15 +7,11 @@ import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
 import frc.team2767.deepspace.subsystem.FieldDirection;
 import frc.team2767.deepspace.subsystem.VisionSubsystem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FieldSquarePickupAlignmentCommand extends ConditionalCommand {
 
   private static final VisionSubsystem VISION = Robot.VISION;
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
-
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public FieldSquarePickupAlignmentCommand() {
     super(

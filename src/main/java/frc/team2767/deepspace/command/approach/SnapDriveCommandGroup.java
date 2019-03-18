@@ -1,8 +1,9 @@
 package frc.team2767.deepspace.command.approach;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
+import frc.team2767.deepspace.command.elevator.ElevatorExecutePlanCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
-import frc.team2767.deepspace.command.sequences.PositionExecuteCommandGroup;
 import frc.team2767.deepspace.command.states.SetActionCommand;
 import frc.team2767.deepspace.command.states.SetGamePieceCommand;
 import frc.team2767.deepspace.command.states.SetLevelCommand;
@@ -33,7 +34,13 @@ public class SnapDriveCommandGroup extends CommandGroup {
     addSequential(new QueryPyeyeCommand());
     addSequential(new CalculateRotationCommand());
     addSequential(new YawToTargetCommand());
-    addSequential(new PositionExecuteCommandGroup());
+    addSequential(
+        new CommandGroup() {
+          {
+            addParallel(new ElevatorExecutePlanCommand());
+            addParallel(new BiscuitExecutePlanCommand());
+          }
+        });
     addSequential(new OpenLoopDriveUntilSuctionCommand(), 10);
     addParallel(new BlinkLightsCommand(VisionSubsystem.LightPattern.GOT_HATCH), 0.5);
     addParallel(new SetActionCommand(Action.PLACE));

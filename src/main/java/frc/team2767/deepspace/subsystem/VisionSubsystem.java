@@ -1,5 +1,7 @@
 package frc.team2767.deepspace.subsystem;
 
+import static frc.team2767.deepspace.subsystem.FieldDirection.RIGHT;
+
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
@@ -16,19 +18,18 @@ public class VisionSubsystem extends Subsystem {
   private static final double CAMERA_X = 3.5;
   private static final double CAMERA_Y_LEFT = -13.5;
   private static final double CAMERA_Y_RIGHT = 13.5;
-  private static final double GLUE_CORRECTION_FACTOR = 2.905;
+  private static final double GLUE_CORRECTION_FACTOR_RIGHT = 2.905;
+  private static final double GLUE_CORRECTION_FACTOR_LEFT = 0.0;
+  private static final double CAMERA_POSITION_BEARING_LEFT = -90.0;
+  private static final double CAMERA_POSITION_BEARING_RIGHT = 90.0;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final DigitalOutput lightsOutput6 = new DigitalOutput(6);
   private final DigitalOutput lightsOutput5 = new DigitalOutput(5);
-  private final double CAMERA_POSITION_BEARING_LEFT = -90.0;
-  private final double CAMERA_POSITION_BEARING_RIGHT = 90.0;
-  private final UsbCamera usbCamera;
   private final Timer blinkTimer = new Timer();
   public GamePiece gamePiece = GamePiece.NOTSET;
   public Action action = Action.NOTSET;
   public FieldDirection direction = FieldDirection.NOTSET;
   public ElevatorLevel elevatorLevel = ElevatorLevel.NOTSET;
-  private NetworkTable table;
   private NetworkTableEntry bearingEntry;
   private NetworkTableEntry rangeEntry;
   private NetworkTableEntry cameraIDEntry;
@@ -45,14 +46,14 @@ public class VisionSubsystem extends Subsystem {
 
     CameraServer cameraServer = CameraServer.getInstance();
     NetworkTableInstance instance = NetworkTableInstance.getDefault();
-    table = instance.getTable("Pyeye");
+    NetworkTable table = instance.getTable("Pyeye");
     bearingEntry = table.getEntry("camera_bearing");
     rangeEntry = table.getEntry("camera_range");
     cameraIDEntry = table.getEntry("camera_id");
     bearingEntry.setNumber(0.0);
     rangeEntry.setNumber(-1.0);
 
-    usbCamera = cameraServer.startAutomaticCapture();
+    UsbCamera usbCamera = cameraServer.startAutomaticCapture();
     logger.info("camera is connected = {}", usbCamera.isConnected());
     lightsOutput6.set(true);
     lightsOutput5.set(true);
@@ -71,13 +72,13 @@ public class VisionSubsystem extends Subsystem {
   }
 
   public void setCorrectedHeading(double correctedBearing) {
-    this.correctedHeading = correctedBearing - GLUE_CORRECTION_FACTOR;
+    this.correctedHeading =
+        correctedBearing
+            - (direction == RIGHT ? GLUE_CORRECTION_FACTOR_RIGHT : GLUE_CORRECTION_FACTOR_LEFT);
   }
 
   public double getCameraPositionBearing() {
-    return direction == FieldDirection.RIGHT
-        ? CAMERA_POSITION_BEARING_RIGHT
-        : CAMERA_POSITION_BEARING_LEFT;
+    return direction == RIGHT ? CAMERA_POSITION_BEARING_RIGHT : CAMERA_POSITION_BEARING_LEFT;
   }
 
   public double getCameraX() {
@@ -85,7 +86,7 @@ public class VisionSubsystem extends Subsystem {
   }
 
   public double getCameraY() {
-    return direction == FieldDirection.RIGHT ? CAMERA_Y_RIGHT : CAMERA_Y_LEFT;
+    return direction == RIGHT ? CAMERA_Y_RIGHT : CAMERA_Y_LEFT;
   }
 
   public boolean isTargetAcquired() {
@@ -120,7 +121,7 @@ public class VisionSubsystem extends Subsystem {
   public void selectCamera() {
     VisionSubsystem.Camera camera;
     camera = Camera.LEFT;
-    if (direction == FieldDirection.RIGHT) {
+    if (direction == RIGHT) {
       camera = Camera.RIGHT;
     }
 

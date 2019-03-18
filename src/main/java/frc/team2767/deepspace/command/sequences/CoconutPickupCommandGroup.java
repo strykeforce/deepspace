@@ -37,7 +37,7 @@ public class CoconutPickupCommandGroup extends CommandGroup {
                   }
                 });
 
-            addParallel(new ElevatorSetPositionCommand(19.54));
+            addParallel(new ElevatorSetPositionCommand(20.25));
           }
         });
 
