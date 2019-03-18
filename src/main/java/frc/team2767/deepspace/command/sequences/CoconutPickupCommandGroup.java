@@ -5,7 +5,7 @@ import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorDownFastOpenLoopCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
 import frc.team2767.deepspace.command.intake.IntakePositionCommand;
-import frc.team2767.deepspace.command.intake.RollerOutCommand;
+import frc.team2767.deepspace.command.intake.RollerInCommand;
 import frc.team2767.deepspace.command.intake.RollerStopCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.states.SetActionCommand;
@@ -24,7 +24,7 @@ public class CoconutPickupCommandGroup extends CommandGroup {
     addSequential(
         new CommandGroup() {
           {
-            addParallel(new RollerOutCommand(0.2));
+            addParallel(new RollerInCommand(0.2));
             addParallel(new SetActionCommand(Action.PLACE));
             addParallel(new SetGamePieceCommand(GamePiece.CARGO));
             addParallel(

@@ -10,7 +10,7 @@ public class RollerOutCommand extends InstantCommand {
   private final double output;
 
   public RollerOutCommand() {
-    this(1.0);
+    this(0.9);
   }
 
   public RollerOutCommand(double output) {
