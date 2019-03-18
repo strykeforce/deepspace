@@ -194,6 +194,7 @@ public class SafetySubsystem extends Subsystem {
           case BISCUIT_120R_180R:
           case BISCUIT_120L:
           case BISCUIT_120R:
+          case BISCUIT_360:
             elevatorPosition = ELEVATOR_21;
             break;
         }
