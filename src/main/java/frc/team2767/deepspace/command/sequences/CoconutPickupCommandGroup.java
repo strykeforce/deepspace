@@ -20,6 +20,7 @@ public class CoconutPickupCommandGroup extends CommandGroup {
   public CoconutPickupCommandGroup() {
     addSequential(new LogCommand("BEGIN COCONUT PICKUP"));
 
+    addParallel(new IntakePositionCommand(IntakeSubsystem.kMiddlePositionDeg));
     addSequential(
         new CommandGroup() {
           {
@@ -39,17 +40,15 @@ public class CoconutPickupCommandGroup extends CommandGroup {
             addParallel(new ElevatorSetPositionCommand(19.54));
           }
         });
-    addParallel(new IntakePositionCommand(IntakeSubsystem.kMiddlePositionDeg));
 
+    addParallel(new IntakePositionCommand(105));
     addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.kDownPosition));
-
     addSequential(
         new CommandGroup() {
           {
             addParallel(
                 new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP));
             addParallel(new ElevatorDownFastOpenLoopCommand());
-            addParallel(new IntakePositionCommand(105));
           }
         });
 
