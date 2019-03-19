@@ -15,10 +15,6 @@ public class DriveTwistCommand extends Command {
   private double targetYaw;
   private double heading;
 
-  public DriveTwistCommand(double heading, double inches) {
-    this(heading, inches, Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360));
-  }
-
   public DriveTwistCommand(double heading, double inches, double targetYaw) {
 
     this.heading = heading;
