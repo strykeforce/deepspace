@@ -49,17 +49,18 @@ public class OpenLoopDriveUntilSuctionCommand extends Command {
     switch (driveState) {
       case FAST:
         DRIVE.setWheels(direction, DriveState.FAST.velocity);
-
-        if (VACUUM.getPressure() - initialPressure > TRANSITION_PRESSURE_DIFFERENCE) {
-          logger.debug("current pressure = {}", VACUUM.getPressure());
+        double currentFastPressure = VACUUM.getPressure();
+        if (currentFastPressure - initialPressure > TRANSITION_PRESSURE_DIFFERENCE) {
+          logger.debug("current pressure = {}", currentFastPressure);
           driveState = DriveState.SLOW;
         }
         break;
 
       case SLOW:
         DRIVE.setWheels(direction, DriveState.SLOW.velocity);
-        if (VACUUM.getPressure() - initialPressure > HATCH_SEAL_GOOD_ENOUGH) {
-          logger.debug("pressure reached: current pressure = {}", VACUUM.getPressure());
+        double currentSlowPressure = VACUUM.getPressure();
+        if (currentSlowPressure - initialPressure > HATCH_SEAL_GOOD_ENOUGH) {
+          logger.debug("pressure reached: current pressure = {}", currentSlowPressure);
           outDriveInitTime = Timer.getFPGATimestamp();
           driveState = DriveState.OUT;
         }
