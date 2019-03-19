@@ -59,7 +59,7 @@ public class OpenLoopDriveUntilSuctionCommand extends Command {
       case SLOW:
         DRIVE.setWheels(direction, DriveState.SLOW.velocity);
         if (VACUUM.getPressure() - initialPressure > HATCH_SEAL_GOOD_ENOUGH) {
-          logger.debug("current pressure = {}", VACUUM.getPressure());
+          logger.debug("pressure reached: current pressure = {}", VACUUM.getPressure());
           outDriveInitTime = Timer.getFPGATimestamp();
           driveState = DriveState.OUT;
         }
@@ -82,12 +82,12 @@ public class OpenLoopDriveUntilSuctionCommand extends Command {
   protected void end() {
     if (isTimedOut()) {
       logger.info("Timed Out");
-    } else logger.info("Pressure Reached");
+    }
   }
 
   private enum DriveState {
-    SLOW(0.06),
     FAST(0.2),
+    SLOW(0.06),
     OUT(-0.4),
     DONE(0.0);
 

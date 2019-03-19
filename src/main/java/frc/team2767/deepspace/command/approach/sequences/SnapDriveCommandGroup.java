@@ -1,6 +1,9 @@
-package frc.team2767.deepspace.command.approach;
+package frc.team2767.deepspace.command.approach.sequences;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.team2767.deepspace.command.approach.CalculateRotationCommand;
+import frc.team2767.deepspace.command.approach.OpenLoopDriveUntilSuctionCommand;
+import frc.team2767.deepspace.command.approach.YawToTargetCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorExecutePlanCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
@@ -17,7 +20,7 @@ import frc.team2767.deepspace.subsystem.*;
 public class SnapDriveCommandGroup extends CommandGroup {
 
   public SnapDriveCommandGroup() {
-    addSequential(new LogCommand("BEGIN ATUO SNAP DRIVE HATCH PICKUP"));
+    addSequential(new LogCommand("BEGIN AUTO SNAP DRIVE HATCH PICKUP"));
     addSequential(new LightsOnCommand());
     addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.PRESSURE_ACCUMULATE));
     addSequential(

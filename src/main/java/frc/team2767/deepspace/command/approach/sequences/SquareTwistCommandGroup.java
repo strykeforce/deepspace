@@ -1,7 +1,10 @@
-package frc.team2767.deepspace.command.approach;
+package frc.team2767.deepspace.command.approach.sequences;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
+import frc.team2767.deepspace.command.approach.CalculateTwistCommand;
+import frc.team2767.deepspace.command.approach.FieldSquarePickupAlignmentCommand;
+import frc.team2767.deepspace.command.approach.VisionTwistCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.vision.LightsOnCommand;
 import frc.team2767.deepspace.command.vision.QueryPyeyeCommand;

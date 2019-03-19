@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.ZeroGyroCommand;
-import frc.team2767.deepspace.command.approach.AutoHatchPickupCommandGroup;
+import frc.team2767.deepspace.command.approach.sequences.AutoHatchPickupCommandGroup;
 import frc.team2767.deepspace.command.biscuit.BiscuitNegativeCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositiveCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
