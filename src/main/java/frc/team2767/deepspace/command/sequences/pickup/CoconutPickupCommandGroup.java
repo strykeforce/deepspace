@@ -52,7 +52,7 @@ public class CoconutPickupCommandGroup extends CommandGroup {
           }
         });
 
-    addSequential(new WaitForPressureCommand(VacuumSubsystem.kBallPressureInHg));
+    addSequential(new WaitForPressureCommand());
     addSequential(new ElevatorSetPositionCommand(25.0));
     addParallel(new SetActionCommand(Action.PLACE));
     addParallel(new RollerStopCommand());

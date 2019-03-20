@@ -10,9 +10,14 @@ import frc.team2767.deepspace.subsystem.IntakeSubsystem;
 public class StowAllCommandGroup extends CommandGroup {
   public StowAllCommandGroup() {
     addSequential(new LogCommand("BEGIN STOW ALL"));
-    addParallel(new StowValveControlCommand());
-    addParallel(new StowElevatorConditionalCommand());
-    addParallel(new IntakePositionCommand(IntakeSubsystem.kStowPositionDeg));
+    addSequential(
+        new CommandGroup() {
+          {
+            addParallel(new StowValveControlCommand());
+            addParallel(new StowElevatorConditionalCommand());
+            addParallel(new IntakePositionCommand(IntakeSubsystem.kStowPositionDeg));
+          }
+        });
     addSequential(new LogCommand("END STOW ALL"));
   }
 }

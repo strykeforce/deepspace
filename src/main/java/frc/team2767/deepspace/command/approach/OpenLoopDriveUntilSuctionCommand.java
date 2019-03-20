@@ -89,7 +89,7 @@ public class OpenLoopDriveUntilSuctionCommand extends Command {
   private enum DriveState {
     FAST(0.2),
     SLOW(0.06),
-    OUT(-0.4),
+    OUT(-0.9),
     DONE(0.0);
 
     private double velocity;

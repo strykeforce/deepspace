@@ -26,7 +26,7 @@ public class XboxControls {
 
   private final Joystick xbox;
   private static final double RIGHT_DEADBAND = 0.5;
-  private static final double LEFT_DEADBAND = 0.85;
+  private static final double LEFT_DEADBAND = 0.8;
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

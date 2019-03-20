@@ -57,6 +57,7 @@ public class SmartDashboardControls {
     SmartDashboard.putBoolean("Game/onTarget", false);
     SmartDashboard.putData("Game/SandstormHatchPickUp", new SandstormHatchPickupCommandGroup());
     SmartDashboard.putData("Game/hatchPlace", new SandstormHatchPlaceCommandGroup());
+    SmartDashboard.putData("Game/Gyro", Robot.DRIVE.getGyro());
   }
 
   private void addClimbTab() {

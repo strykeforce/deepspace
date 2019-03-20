@@ -9,26 +9,26 @@ import org.slf4j.LoggerFactory;
 public class WaitForPressureCommand extends Command {
 
   private static final VacuumSubsystem VACUUM = Robot.VACUUM;
-  private final double pressure;
-  private static final double CLOSE_ENOUGH = 4; // inHg
+  private static final double DIFFERENTIAL = 13; // inHg
   private static final int STABLE_COUNT = 3;
-  private int stableCounts = 0;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private double initialPressure;
+  private int stableCounts = 0;
 
-  public WaitForPressureCommand(double pressure) {
-    this.pressure = pressure;
+  public WaitForPressureCommand() {
     setTimeout(2.0);
     requires(VACUUM);
   }
 
   @Override
   protected void initialize() {
+    initialPressure = VACUUM.getPressure();
     stableCounts = 0;
   }
 
   @Override
   protected boolean isFinished() {
-    if (Math.abs(pressure - VACUUM.getPressure()) < CLOSE_ENOUGH) stableCounts++;
+    if (Math.abs(VACUUM.getPressure() - initialPressure) > DIFFERENTIAL) stableCounts++;
     else stableCounts = 0;
 
     return ((stableCounts > STABLE_COUNT) || isTimedOut());

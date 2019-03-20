@@ -40,12 +40,12 @@ public class OpenLoopDriveUntilCurrentCommand extends Command {
         DRIVE.setWheels(DIRECTION, DriveState.FAST.velocity);
         double averageCurrent = DRIVE.getAverageOutputCurrent();
         if (averageCurrent > initialCurrent + TRANSITION_CURRENT_DIFFERENCE) {
-          driveState = DriveState.OPEN_SOLENOID;
+          driveState = DriveState.CLOSE_SOLENOID;
           logger.debug("set state to {}, current = {}", driveState, averageCurrent);
         }
         break;
-      case OPEN_SOLENOID:
-        DRIVE.setWheels(DIRECTION, DriveState.OPEN_SOLENOID.velocity);
+      case CLOSE_SOLENOID:
+        DRIVE.setWheels(DIRECTION, DriveState.CLOSE_SOLENOID.velocity);
         VACUUM.setSolenoidsState(VacuumSubsystem.SolenoidStates.PRESSURE_ACCUMULATE);
         solenoidDelayInit = Timer.getFPGATimestamp();
         driveState = DriveState.WAIT;
@@ -74,10 +74,10 @@ public class OpenLoopDriveUntilCurrentCommand extends Command {
   }
 
   private enum DriveState {
-    FAST(0.2),
-    OPEN_SOLENOID(0.6),
+    FAST(0.5),
+    CLOSE_SOLENOID(0.06),
     WAIT(0.06),
-    OUT(-0.4),
+    OUT(-0.6),
     DONE(0.0);
 
     private double velocity;
