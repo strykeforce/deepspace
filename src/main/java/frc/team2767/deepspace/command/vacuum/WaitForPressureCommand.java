@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 public class WaitForPressureCommand extends Command {
 
   private static final VacuumSubsystem VACUUM = Robot.VACUUM;
-  private static final double DIFFERENTIAL = 13; // inHg
-  private static final int STABLE_COUNT = 3;
+  private static final double DIFFERENTIAL = 5; // inHg
+  private static final int STABLE_COUNT = 5;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private double initialPressure;
   private int stableCounts = 0;
@@ -23,13 +23,16 @@ public class WaitForPressureCommand extends Command {
   @Override
   protected void initialize() {
     initialPressure = VACUUM.getPressure();
+    logger.info("Initial Pressure: {}", initialPressure);
     stableCounts = 0;
   }
 
   @Override
   protected boolean isFinished() {
-    if (Math.abs(VACUUM.getPressure() - initialPressure) > DIFFERENTIAL) stableCounts++;
-    else stableCounts = 0;
+    if (VACUUM.getPressure() - initialPressure > DIFFERENTIAL) {
+      stableCounts++;
+      logger.info("Stable Counts: {}, Pressure: {}", stableCounts, VACUUM.getPressure());
+    } else stableCounts = 0;
 
     return ((stableCounts > STABLE_COUNT) || isTimedOut());
   }
