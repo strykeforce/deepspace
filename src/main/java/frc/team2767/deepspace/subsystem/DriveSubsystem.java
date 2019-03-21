@@ -34,6 +34,7 @@ public class DriveSubsystem extends Subsystem implements Item {
   private static final double DRIVE_SETPOINT_MAX = 25_000.0;
   private static final double ROBOT_LENGTH = 21.0;
   private static final double ROBOT_WIDTH = 26.0;
+  private static final int NUM_WHEELS = 4;
 
   // 2272 up field
   // 2398 down field
@@ -67,6 +68,15 @@ public class DriveSubsystem extends Subsystem implements Item {
 
   public void stop() {
     swerve.stop();
+  }
+
+  public double getAverageOutputCurrent() {
+    double sum = 0;
+    for (Wheel w : wheels) {
+      sum += w.getDriveTalon().getOutputCurrent();
+    }
+
+    return sum / NUM_WHEELS;
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -123,7 +133,7 @@ public class DriveSubsystem extends Subsystem implements Item {
 
   public void setWheelAzimuthPosition(List<Integer> positions) {
     Wheel[] wheels = swerve.getWheels();
-    for (int i = 0; i < 4; i++) wheels[i].setAzimuthPosition(positions.get(i));
+    for (int i = 0; i < NUM_WHEELS; i++) wheels[i].setAzimuthPosition(positions.get(i));
   }
 
   public void zeroGyro() {
@@ -149,7 +159,6 @@ public class DriveSubsystem extends Subsystem implements Item {
   }
 
   public void setWheels(double azimuth, double veocity) {
-
     for (Wheel w : getAllWheels()) {
       w.set(azimuth, veocity);
     }

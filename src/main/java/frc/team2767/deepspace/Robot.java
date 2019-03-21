@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team2767.deepspace.command.sequences.SandstormHatchPickupCommandGroup;
+import frc.team2767.deepspace.command.sequences.pickup.SandstormHatchPickupCommandGroup;
 import frc.team2767.deepspace.control.Controls;
 import frc.team2767.deepspace.subsystem.*;
 import frc.team2767.deepspace.subsystem.safety.SafetySubsystem;

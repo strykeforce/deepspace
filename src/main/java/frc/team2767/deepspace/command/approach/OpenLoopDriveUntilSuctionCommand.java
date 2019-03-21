@@ -49,17 +49,18 @@ public class OpenLoopDriveUntilSuctionCommand extends Command {
     switch (driveState) {
       case FAST:
         DRIVE.setWheels(direction, DriveState.FAST.velocity);
-
-        if (VACUUM.getPressure() - initialPressure > TRANSITION_PRESSURE_DIFFERENCE) {
-          logger.debug("current pressure = {}", VACUUM.getPressure());
+        double currentFastPressure = VACUUM.getPressure();
+        if (currentFastPressure - initialPressure > TRANSITION_PRESSURE_DIFFERENCE) {
+          logger.debug("current pressure = {}", currentFastPressure);
           driveState = DriveState.SLOW;
         }
         break;
 
       case SLOW:
         DRIVE.setWheels(direction, DriveState.SLOW.velocity);
-        if (VACUUM.getPressure() - initialPressure > HATCH_SEAL_GOOD_ENOUGH) {
-          logger.debug("current pressure = {}", VACUUM.getPressure());
+        double currentSlowPressure = VACUUM.getPressure();
+        if (currentSlowPressure - initialPressure > HATCH_SEAL_GOOD_ENOUGH) {
+          logger.debug("pressure reached: current pressure = {}", currentSlowPressure);
           outDriveInitTime = Timer.getFPGATimestamp();
           driveState = DriveState.OUT;
         }
@@ -82,13 +83,13 @@ public class OpenLoopDriveUntilSuctionCommand extends Command {
   protected void end() {
     if (isTimedOut()) {
       logger.info("Timed Out");
-    } else logger.info("Pressure Reached");
+    }
   }
 
   private enum DriveState {
-    SLOW(0.06),
     FAST(0.2),
-    OUT(-0.4),
+    SLOW(0.06),
+    OUT(-0.9),
     DONE(0.0);
 
     private double velocity;

@@ -13,10 +13,10 @@ import frc.team2767.deepspace.command.elevator.*;
 import frc.team2767.deepspace.command.intake.RollerOutCommand;
 import frc.team2767.deepspace.command.intake.RollerStopCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
-import frc.team2767.deepspace.command.sequences.CoconutPickupCommandGroup;
-import frc.team2767.deepspace.command.sequences.PlayerCargoCommandGroup;
-import frc.team2767.deepspace.command.sequences.PlayerHatchCommandGroup;
 import frc.team2767.deepspace.command.sequences.StowAllCommandGroup;
+import frc.team2767.deepspace.command.sequences.pickup.CoconutPickupCommandGroup;
+import frc.team2767.deepspace.command.sequences.pickup.PlayerCargoCommandGroup;
+import frc.team2767.deepspace.command.sequences.pickup.PlayerHatchCommandGroup;
 import frc.team2767.deepspace.command.vacuum.SetSolenoidStatesCommand;
 import frc.team2767.deepspace.subsystem.*;
 import org.slf4j.Logger;
@@ -26,7 +26,7 @@ public class XboxControls {
 
   private final Joystick xbox;
   private static final double RIGHT_DEADBAND = 0.5;
-  private static final double LEFT_DEADBAND = 0.85;
+  private static final double LEFT_DEADBAND = 0.8;
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

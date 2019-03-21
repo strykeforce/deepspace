@@ -15,13 +15,16 @@ import org.slf4j.LoggerFactory;
 
 public class VisionSubsystem extends Subsystem {
 
+  // 36 in away
+  // gain test: 4in off both left and right
+
   private static final double CAMERA_X = 3.5;
   private static final double CAMERA_Y_LEFT = -13.5;
   private static final double CAMERA_Y_RIGHT = 13.5;
-  private static final double GLUE_CORRECTION_FACTOR_RIGHT = 2.905;
-  private static final double GLUE_CORRECTION_FACTOR_LEFT = 0.0;
-  private static final double CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_RIGHT = 1.0; // 1.0 is zero value
-  private static final double CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_LEFT = 1.0; // 1.0 is zero value
+  private static final double GLUE_CORRECTION_FACTOR_RIGHT = 2.0;
+  private static final double GLUE_CORRECTION_FACTOR_LEFT = 2.0;
+  private static final double CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_RIGHT = 0.7; // 1.0 is zero value
+  private static final double CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_LEFT = 0.7; // 1.0 is zero value
   private static final double CAMERA_POSITION_BEARING_LEFT = -90.0;
   private static final double CAMERA_POSITION_BEARING_RIGHT = 90.0;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -74,12 +77,7 @@ public class VisionSubsystem extends Subsystem {
   }
 
   public void setCorrectedHeading(double correctedBearing) {
-    this.correctedHeading =
-        (correctedBearing
-                - (direction == RIGHT ? GLUE_CORRECTION_FACTOR_RIGHT : GLUE_CORRECTION_FACTOR_LEFT))
-            * (direction == RIGHT
-                ? CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_RIGHT
-                : CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_LEFT);
+    this.correctedHeading = correctedBearing;
   }
 
   public double getCameraPositionBearing() {
@@ -165,15 +163,15 @@ public class VisionSubsystem extends Subsystem {
   }
 
   public boolean isBlinkFinished() {
-    if (blinkTimer.get() > currentPattern.duration) {
-      return true;
-    }
-
-    return false;
+    return blinkTimer.get() > currentPattern.duration;
   }
 
   public double getRawBearing() {
-    return rawBearing;
+    return (rawBearing
+            - (direction == RIGHT ? GLUE_CORRECTION_FACTOR_RIGHT : GLUE_CORRECTION_FACTOR_LEFT))
+        * (direction == RIGHT
+            ? CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_RIGHT
+            : CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_LEFT);
   }
 
   public double getRawRange() {

@@ -1,4 +1,4 @@
-package frc.team2767.deepspace.command.sequences;
+package frc.team2767.deepspace.command.sequences.pickup;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
@@ -33,7 +33,7 @@ public class SandstormHatchPickupCommandGroup extends CommandGroup {
         });
     addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP));
     addSequential(new ElevatorSetPositionCommand(9.0));
-    addSequential(new WaitForPressureCommand(VacuumSubsystem.kHatchPressureInHg));
+    addSequential(new WaitForPressureCommand());
     addSequential(new SandstormHatchIndicator(true));
     addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kHatchLowPositionInches));
     addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.kUpPositionDeg));
