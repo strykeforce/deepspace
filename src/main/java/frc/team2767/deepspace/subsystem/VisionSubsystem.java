@@ -167,8 +167,8 @@ public class VisionSubsystem extends Subsystem {
   }
 
   public double getRawBearing() {
-    return rawBearing
-        - (direction == RIGHT ? GLUE_CORRECTION_FACTOR_RIGHT : GLUE_CORRECTION_FACTOR_LEFT)
+    return (rawBearing
+        - (direction == RIGHT ? GLUE_CORRECTION_FACTOR_RIGHT : GLUE_CORRECTION_FACTOR_LEFT))
             * (direction == RIGHT
                 ? CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_RIGHT
                 : CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_LEFT);
