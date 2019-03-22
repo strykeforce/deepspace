@@ -72,11 +72,21 @@ public class DriveSubsystem extends Subsystem implements Item {
 
   public double getAverageOutputCurrent() {
     double sum = 0;
+
+    double max1 = Double.MIN_VALUE;
+    double max2 = Double.MIN_VALUE;
+
     for (Wheel w : wheels) {
-      sum += w.getDriveTalon().getOutputCurrent();
+      double current = w.getDriveTalon().getOutputCurrent();
+      if (current > max1) {
+        max2 = max1;
+        max1 = current;
+      } else if (current > max2) {
+        max2 = current;
+      }
     }
 
-    return sum / NUM_WHEELS;
+    return (max1 + max2) / 2;
   }
 
   ////////////////////////////////////////////////////////////////////////////

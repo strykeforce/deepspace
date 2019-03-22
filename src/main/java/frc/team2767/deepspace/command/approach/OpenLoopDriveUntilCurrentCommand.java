@@ -13,13 +13,15 @@ public class OpenLoopDriveUntilCurrentCommand extends Command {
 
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VacuumSubsystem VACUUM = Robot.VACUUM;
-  private static final double TRANSITION_CURRENT_DIFFERENCE = 26.0;
+  private static final double TRANSITION_CURRENT = 20.0;
   private static final int CURRENT_STABLE_COUNT = 2;
+  private static final double CURRENT_IGNORE = 0.3;
   private static final double DIRECTION = -0.25;
   private static final double OUT_DRIVE_SECONDS = 1.0;
   private static final double SOLENOID_DELAY = 0.2;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private DriveState driveState;
+  private double initBlankTime;
   private double initialCurrent;
   private double outDriveInitTime;
   private double solenoidDelayInit;
@@ -36,6 +38,7 @@ public class OpenLoopDriveUntilCurrentCommand extends Command {
     initialCurrent = DRIVE.getAverageOutputCurrent();
     currentStableCount = 0;
     DRIVE.setDriveMode(SwerveDrive.DriveMode.CLOSED_LOOP);
+    initBlankTime = Timer.getFPGATimestamp();
   }
 
   @Override
@@ -44,7 +47,8 @@ public class OpenLoopDriveUntilCurrentCommand extends Command {
       case FAST:
         DRIVE.setWheels(DIRECTION, DriveState.FAST.velocity);
         double averageCurrent = DRIVE.getAverageOutputCurrent();
-        if (averageCurrent > initialCurrent + TRANSITION_CURRENT_DIFFERENCE) {
+        if (Timer.getFPGATimestamp() - initBlankTime > CURRENT_IGNORE
+            && averageCurrent > initialCurrent + TRANSITION_CURRENT) {
           currentStableCount++;
         } else {
           currentStableCount = 0;

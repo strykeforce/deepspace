@@ -8,7 +8,6 @@ public class AutoHatchPickupCommandGroup extends CommandGroup {
 
   public AutoHatchPickupCommandGroup() {
     addSequential(new LogCommand("BEGIN AUTO HATCH PICKUP"));
-    //    addSequential(new SquareTwistCommandGroup());
     addSequential(new ApproachDirectionCommand());
     addSequential(new SnapDriveCommandGroup());
     addSequential(new LogCommand("END AUTO HATCH PICKUP"));
