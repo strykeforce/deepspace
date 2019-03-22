@@ -22,14 +22,26 @@ public class ClimbSubsystem extends Subsystem {
   private static final int LEFT_KICKSTAND = 2;
   private static final int RIGHT_KICKSTAND = 3;
   private static final int RATCHET_SERVO = 4;
-  private static final double kClimbSpeed = 0.85;
-  private static final double kLowerSuction = 0.15;
-  private static final double kUnwindSpeed = -0.1;
-  private static final double kRatchetReleaseSpeed = 0.2;
-  private static final double kRaiseToHeight = -0.4;
+  private static final double STRINGPOT_PER_IN = 1;//FIXME
+  private static final double STRINGPOT_OFFSET = 0;//FIXME
+  public static double kReleaseSpeed = 0.85;//FIXME
+  public static double kClimbSpeed = 0.85;//FIXME
+  public static double kLowerSpeed = 0.85;//FIXME
+  public static double kSealSpeed = 0.15;//FIXME
+  public static double kRaiseSpeed = -0.4;//FIXME
+  public static double kResetSpeed = -0.4;//FIXME
+  public static double kJogUpSpeed = -0.4;//FIXME
+  public static double kJogDownSpeed = -0.4;//FIXME
   private static final String PREFS = "Climb/Servos";
   private static int relStartTicks;
   private static int setpointTicks;
+  private double stringPotCloseEnoughIn; //FIXME
+  private double stringPotSetpointIn;
+  public static double kHabHoverIn;//FIXME
+  public static double kLowReleaseIn;//FIXME
+  public static double kHighReleaseIn;//FIXME
+  public static double kClimbIn;//FIXME
+  public static double kTooLowIn;//FIXME
   private static double kLeftKickstandHold;
   private static double kLeftKickstandRelease;
   private static double kRightKickstandHold;
@@ -43,17 +55,22 @@ public class ClimbSubsystem extends Subsystem {
   private final Servo leftKickstandServo = new Servo(LEFT_KICKSTAND);
   private final Servo ratchetServo = new Servo(RATCHET_SERVO);
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  public static IsReleased isReleased;
 
   public ClimbSubsystem() {
     climbPrefs();
     configTalon();
-
+    isReleased = IsReleased.pending;
     ratchetServo.set(kRatchetEngage);
     leftKickstandServo.set(kLeftKickstandHold);
     rightKickstandServo.set(kRightKickstandHold);
   }
 
   private void climbPrefs() {
+    kHabHoverIn = getPrefs("string_pot_low_in", 0); //FIXME
+    kLowReleaseIn = getPrefs("string_pot_medium_in", 0); //FIXME
+    kHighReleaseIn = getPrefs("string_pot_high_in", 0); //FIXME
+    kClimbIn = getPrefs("string_pot_climb_in", 0); //FIXME
     kLeftKickstandHold = getPrefs("L_kickstand_hold", 0.4);
     kLeftKickstandRelease = getPrefs("L_kickstand_release", 0.95);
     kRightKickstandHold = getPrefs("R_kickstand_hold", 0.5);
@@ -132,7 +149,7 @@ public class ClimbSubsystem extends Subsystem {
   }
 
   public void lowerSuctionCup() {
-    openLoopMove(kLowerSuction);
+    openLoopMove(kSealSpeed);
     logger.info("Lowering Suction Cup");
   }
 
@@ -141,15 +158,32 @@ public class ClimbSubsystem extends Subsystem {
     logger.info("Stopping Climb");
   }
 
-  public void unwind() {
-    openLoopMove(kUnwindSpeed);
-  }
-
   public void runTicks(int ticks) {
     setpointTicks = ticks;
     relStartTicks = rightMaster.getSelectedSensorPosition();
-    openLoopMove(kRatchetReleaseSpeed);
+    openLoopMove(kReleaseSpeed);
     logger.info("Running down {} ticks", setpointTicks);
+  }
+
+  public void runStringPot(double height){
+    stringPotSetpointIn = height;
+    if (height == kHabHoverIn) {
+      openLoopMove(kLowerSpeed);
+    }
+    if (height == kLowReleaseIn){
+      openLoopMove(kReleaseSpeed);
+      isReleased = IsReleased.released;
+    }
+    if (height == kHighReleaseIn) {
+      openLoopMove(kRaiseSpeed);
+    }
+    if (height == kClimbIn) {
+      openLoopMove(kClimbSpeed);
+    }
+  }
+
+  public boolean onStringPot () {
+    return Math.abs(getHeight() - stringPotSetpointIn) < stringPotCloseEnoughIn;
   }
 
   public boolean onTicks() {
@@ -158,6 +192,14 @@ public class ClimbSubsystem extends Subsystem {
 
   public int getTicks() {
     return Math.abs(rightMaster.getSelectedSensorPosition() - relStartTicks);
+  }
+
+  public int getStringPot(){
+    return rightMaster.getSensorCollection().getAnalogIn();
+  }
+
+  public double getHeight(){
+    return getStringPot() / STRINGPOT_PER_IN + STRINGPOT_OFFSET;
   }
 
   public void disableRatchet() {
@@ -171,7 +213,7 @@ public class ClimbSubsystem extends Subsystem {
   }
 
   public void raiseToHeight() {
-    openLoopMove(kRaiseToHeight);
+    openLoopMove(kRaiseSpeed);
     logger.info("Raising climber");
   }
 
@@ -183,4 +225,9 @@ public class ClimbSubsystem extends Subsystem {
 
   @Override
   protected void initDefaultCommand() {}
+
+  public enum IsReleased {
+    pending,
+    released;
+  }
 }

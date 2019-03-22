@@ -4,19 +4,18 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.ClimbSubsystem;
 
-public class ReleaseClimbCommand extends Command {
-  // Runs Down 4000 ticks to pull pin
-  // Disables ratchet after going at least 50 ticks
+public class ClimbPositionCommand extends Command {
+  ClimbSubsystem CLIMB = Robot.CLIMB;
+  double height;
 
-  private static final ClimbSubsystem CLIMB = Robot.CLIMB;
-
-  public ReleaseClimbCommand() {
+  public ClimbPositionCommand (double height){
+    this.height = height;
     requires(CLIMB);
   }
 
   @Override
   protected void initialize() {
-    CLIMB.runStringPot(ClimbSubsystem.kLowReleaseIn);
+    CLIMB.runStringPot(height);
   }
 
   @Override

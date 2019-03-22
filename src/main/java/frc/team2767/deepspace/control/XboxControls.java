@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.biscuit.BiscuitGoToSideCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
 import frc.team2767.deepspace.command.climb.ClimbCommand;
+import frc.team2767.deepspace.command.climb.ClimbLockCommand;
 import frc.team2767.deepspace.command.climb.DeploySequenceCommand;
 import frc.team2767.deepspace.command.climb.StopClimbCommand;
 import frc.team2767.deepspace.command.elevator.*;
@@ -108,7 +109,7 @@ public class XboxControls {
     directionPadAny.whenInactive(new RollerStopCommand());
 
     // Climb Commands
-    new JoystickButton(xbox, Button.START.id).whenPressed(new DeploySequenceCommand());
+    new JoystickButton(xbox, Button.START.id).whenPressed(new ClimbLockCommand());
     new JoystickButton(xbox, Button.START.id).whenReleased(new StopClimbCommand());
     new JoystickButton(xbox, Button.BACK.id).whenPressed(new ClimbCommand());
     new JoystickButton(xbox, Button.BACK.id).whenReleased(new StopClimbCommand());

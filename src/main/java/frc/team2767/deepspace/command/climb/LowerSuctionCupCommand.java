@@ -20,7 +20,6 @@ public class LowerSuctionCupCommand extends Command {
   @Override
   protected void initialize() {
     CLIMB.lowerSuctionCup();
-    VACUUM.setSolenoidsState(VacuumSubsystem.SolenoidStates.CLIMB);
     VACUUM.setPressure(kClimbPressureInHg);
   }
 

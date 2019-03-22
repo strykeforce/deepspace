@@ -4,6 +4,9 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.sequences.StowAllCommandGroup;
+import frc.team2767.deepspace.command.vacuum.PressureSetCommand;
+import frc.team2767.deepspace.command.vacuum.SetSolenoidStatesCommand;
+import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 
 public class DeploySequenceCommand extends CommandGroup {
   public DeploySequenceCommand() {
@@ -15,6 +18,9 @@ public class DeploySequenceCommand extends CommandGroup {
             addSequential(new ElevatorSetPositionCommand(5.0), 0.5);
           }
         });
+    addSequential(new PressureSetCommand(VacuumSubsystem.kClimbPressureInHg));
+    addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.CLIMB));
+    addSequential(new EngageRatchetCommand(false));
     addSequential(new ReleaseClimbCommand());
     addSequential(new RaiseClimbCommand());
     addSequential(new LogCommand("END DEPLOY SEQUENCE"));
