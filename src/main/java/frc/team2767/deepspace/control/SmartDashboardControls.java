@@ -98,6 +98,7 @@ public class SmartDashboardControls {
   }
 
   private void addPitCommands() {
+    SmartDashboard.putData("Game/SandstormHatchPickUp", new SandstormHatchPickupCommandGroup());
     addTestCommands();
     addVacuumCommands();
     SmartDashboard.putData("Pit/resetAxis", new ResetAxisCommandGroup());

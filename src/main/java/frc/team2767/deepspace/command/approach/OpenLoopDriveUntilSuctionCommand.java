@@ -34,6 +34,7 @@ public class OpenLoopDriveUntilSuctionCommand extends Command {
       logger.warn("Transition pressures not set correctly");
     }
 
+    DRIVE.setDriveMode(SwerveDrive.DriveMode.CLOSED_LOOP);
     initialPressure = VACUUM.getPressure();
     logger.debug("init pressure = {}", initialPressure);
     DRIVE.setDriveMode(SwerveDrive.DriveMode.OPEN_LOOP);
