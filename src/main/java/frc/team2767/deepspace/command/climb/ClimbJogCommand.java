@@ -4,21 +4,16 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.ClimbSubsystem;
 
-public class EngageRatchetCommand extends InstantCommand {
+public class ClimbJogCommand extends InstantCommand {
   ClimbSubsystem CLIMB = Robot.CLIMB;
+  double power;
 
-  boolean enabled;
-
-  EngageRatchetCommand(boolean enabled) {
-    this.enabled = enabled;
+  public ClimbJogCommand (double power) {
+    this.power = power;
   }
 
   @Override
   protected void _initialize() {
-    if (enabled) {
-      CLIMB.enableRatchet();
-    } else {
-      CLIMB.disableRatchet();
-    }
+    CLIMB.openLoopMove(power);
   }
 }

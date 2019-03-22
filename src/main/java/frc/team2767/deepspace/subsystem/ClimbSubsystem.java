@@ -22,26 +22,26 @@ public class ClimbSubsystem extends Subsystem {
   private static final int LEFT_KICKSTAND = 2;
   private static final int RIGHT_KICKSTAND = 3;
   private static final int RATCHET_SERVO = 4;
-  private static final double STRINGPOT_PER_IN = 1;//FIXME
-  private static final double STRINGPOT_OFFSET = 0;//FIXME
-  public static double kReleaseSpeed = 0.85;//FIXME
-  public static double kClimbSpeed = 0.85;//FIXME
-  public static double kLowerSpeed = 0.85;//FIXME
-  public static double kSealSpeed = 0.15;//FIXME
-  public static double kRaiseSpeed = -0.4;//FIXME
-  public static double kResetSpeed = -0.4;//FIXME
-  public static double kJogUpSpeed = -0.4;//FIXME
-  public static double kJogDownSpeed = -0.4;//FIXME
-  private static final String PREFS = "Climb/Servos";
+  private static final double STRINGPOT_PER_IN = 1; // FIXME
+  private static final double STRINGPOT_OFFSET = 0; // FIXME
+  public static double kReleaseSpeed = 0.85; // FIXME
+  public static double kClimbSpeed = 0.85; // FIXME
+  public static double kLowerSpeed = 0.85; // FIXME
+  public static double kSealSpeed = 0.15; // FIXME
+  public static double kRaiseSpeed = -0.4; // FIXME
+  public static double kResetSpeed = -0.4; // FIXME
+  public static double kJogUpSpeed = -0.4; // FIXME
+  public static double kJogDownSpeed = -0.4; // FIXME
+  private static final String PREFS = "ClimbSubsystem/Settings/";
   private static int relStartTicks;
   private static int setpointTicks;
-  private double stringPotCloseEnoughIn; //FIXME
-  private double stringPotSetpointIn;
-  public static double kHabHoverIn;//FIXME
-  public static double kLowReleaseIn;//FIXME
-  public static double kHighReleaseIn;//FIXME
-  public static double kClimbIn;//FIXME
-  public static double kTooLowIn;//FIXME
+  private int stringPotSetpointUnits;
+  private static double kStringPotCloseEnoughUnits; // FIXME
+  public static double kHabHoverIn; // FIXME
+  public static double kLowReleaseIn; // FIXME
+  public static double kHighReleaseIn; // FIXME
+  public static double kClimbIn; // FIXME
+  public static double kTooLowIn; // FIXME
   private static double kLeftKickstandHold;
   private static double kLeftKickstandRelease;
   private static double kRightKickstandHold;
@@ -55,22 +55,25 @@ public class ClimbSubsystem extends Subsystem {
   private final Servo leftKickstandServo = new Servo(LEFT_KICKSTAND);
   private final Servo ratchetServo = new Servo(RATCHET_SERVO);
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
-  public static IsReleased isReleased;
+  public static boolean isReleased;
 
   public ClimbSubsystem() {
     climbPrefs();
     configTalon();
-    isReleased = IsReleased.pending;
+    isReleased = false;
     ratchetServo.set(kRatchetEngage);
     leftKickstandServo.set(kLeftKickstandHold);
     rightKickstandServo.set(kRightKickstandHold);
   }
 
   private void climbPrefs() {
-    kHabHoverIn = getPrefs("string_pot_low_in", 0); //FIXME
-    kLowReleaseIn = getPrefs("string_pot_medium_in", 0); //FIXME
-    kHighReleaseIn = getPrefs("string_pot_high_in", 0); //FIXME
-    kClimbIn = getPrefs("string_pot_climb_in", 0); //FIXME
+    kHabHoverIn = getPrefs("low_position_in", 0); // FIXME
+    kLowReleaseIn = getPrefs("medium_position_in", 0); // FIXME
+    kHighReleaseIn = getPrefs("high_position_in", 0); // FIXME
+    kClimbIn = getPrefs("climb_position_in", 0); // FIXME
+    kTooLowIn = getPrefs("too_low_position_in", 0); // FIXME
+    kStringPotCloseEnoughUnits = getPrefs("close_onough", 0); // FIXME
+
     kLeftKickstandHold = getPrefs("L_kickstand_hold", 0.4);
     kLeftKickstandRelease = getPrefs("L_kickstand_release", 0.95);
     kRightKickstandHold = getPrefs("R_kickstand_hold", 0.5);
@@ -105,6 +108,10 @@ public class ClimbSubsystem extends Subsystem {
     rightMasterConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
     rightMasterConfig.forwardLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
     rightMasterConfig.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
+    rightMasterConfig.forwardSoftLimitThreshold = 30000; //FIXME
+    rightMasterConfig.reverseLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
+    rightMasterConfig.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
+    rightMasterConfig.reverseSoftLimitThreshold = 0; //FIXME
 
     leftSlave.configAllSettings(leftSlaveConfig, 10);
     rightMaster.configAllSettings(rightMasterConfig, 10);
@@ -165,14 +172,14 @@ public class ClimbSubsystem extends Subsystem {
     logger.info("Running down {} ticks", setpointTicks);
   }
 
-  public void runStringPot(double height){
-    stringPotSetpointIn = height;
+  public void runStringPot(double height) { // FIXME just replace with closed loop
+    stringPotSetpointUnits = (int) (height * STRINGPOT_PER_IN + STRINGPOT_OFFSET);
     if (height == kHabHoverIn) {
       openLoopMove(kLowerSpeed);
     }
-    if (height == kLowReleaseIn){
+    if (height == kLowReleaseIn) {
       openLoopMove(kReleaseSpeed);
-      isReleased = IsReleased.released;
+      isReleased = true;
     }
     if (height == kHighReleaseIn) {
       openLoopMove(kRaiseSpeed);
@@ -182,8 +189,8 @@ public class ClimbSubsystem extends Subsystem {
     }
   }
 
-  public boolean onStringPot () {
-    return Math.abs(getHeight() - stringPotSetpointIn) < stringPotCloseEnoughIn;
+  public boolean onStringPot() {
+    return Math.abs(getStringPot() - stringPotSetpointUnits) < kStringPotCloseEnoughUnits;
   }
 
   public boolean onTicks() {
@@ -194,12 +201,12 @@ public class ClimbSubsystem extends Subsystem {
     return Math.abs(rightMaster.getSelectedSensorPosition() - relStartTicks);
   }
 
-  public int getStringPot(){
+  public int getStringPot() {
     return rightMaster.getSensorCollection().getAnalogIn();
   }
 
-  public double getHeight(){
-    return getStringPot() / STRINGPOT_PER_IN + STRINGPOT_OFFSET;
+  public double getHeight() {
+    return (getStringPot() + STRINGPOT_OFFSET) / STRINGPOT_PER_IN;
   }
 
   public void disableRatchet() {
@@ -225,9 +232,4 @@ public class ClimbSubsystem extends Subsystem {
 
   @Override
   protected void initDefaultCommand() {}
-
-  public enum IsReleased {
-    pending,
-    released;
-  }
 }

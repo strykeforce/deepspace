@@ -8,7 +8,6 @@ import frc.team2767.deepspace.command.biscuit.BiscuitGoToSideCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
 import frc.team2767.deepspace.command.climb.ClimbCommand;
 import frc.team2767.deepspace.command.climb.ClimbLockCommand;
-import frc.team2767.deepspace.command.climb.DeploySequenceCommand;
 import frc.team2767.deepspace.command.climb.StopClimbCommand;
 import frc.team2767.deepspace.command.elevator.*;
 import frc.team2767.deepspace.command.intake.RollerOutCommand;

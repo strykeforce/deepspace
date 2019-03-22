@@ -1,9 +1,7 @@
 package frc.team2767.deepspace.command.climb;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team2767.deepspace.Robot;
-import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.subsystem.ClimbSubsystem;
 import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 
@@ -13,7 +11,7 @@ public class ClimbAutoCommand extends Command {
 
   ClimbState climbState;
 
-  ClimbAutoCommand () {
+  ClimbAutoCommand() {
     requires(VACUUM);
     requires(CLIMB);
   }
@@ -26,33 +24,32 @@ public class ClimbAutoCommand extends Command {
 
   @Override
   protected void execute() {
-    switch(climbState){
+    switch (climbState) {
       case FAST_LOWER:
-        if (CLIMB.getHeight() <= ClimbSubsystem.kHabHoverIn){
+        if (CLIMB.getHeight() <= ClimbSubsystem.kHabHoverIn) {
           climbState = ClimbState.FORM_SEAL;
           CLIMB.openLoopMove(ClimbSubsystem.kSealSpeed);
         }
         break;
       case FORM_SEAL:
-        if (VACUUM.isClimbOnTarget()){
+        if (VACUUM.isClimbOnTarget()) {
           climbState = ClimbState.FAST_CLIMB;
           CLIMB.enableRatchet();
           CLIMB.releaseKickstand();
           CLIMB.openLoopMove(ClimbSubsystem.kClimbSpeed);
         }
-
-        if (CLIMB.getHeight() <= ClimbSubsystem.kTooLowIn){
+        if (CLIMB.getHeight() <= ClimbSubsystem.kTooLowIn) {
           climbState = ClimbState.RESET;
           CLIMB.openLoopMove(ClimbSubsystem.kResetSpeed);
         }
         break;
       case FAST_CLIMB:
-        if (CLIMB.getHeight() <= ClimbSubsystem.kClimbIn){
+        if (CLIMB.getHeight() <= ClimbSubsystem.kClimbIn) {
           climbState = ClimbState.DONE;
         }
         break;
       case RESET:
-        if (CLIMB.getHeight() >= ClimbSubsystem.kHabHoverIn){
+        if (CLIMB.getHeight() >= ClimbSubsystem.kHabHoverIn) {
           climbState = ClimbState.FORM_SEAL;
           CLIMB.openLoopMove(ClimbSubsystem.kSealSpeed);
         }
@@ -70,7 +67,7 @@ public class ClimbAutoCommand extends Command {
     CLIMB.stop();
   }
 
-  private enum ClimbState{
+  private enum ClimbState {
     FAST_LOWER,
     FORM_SEAL,
     RESET,

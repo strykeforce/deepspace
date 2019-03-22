@@ -8,7 +8,7 @@ public class ClimbPositionCommand extends Command {
   ClimbSubsystem CLIMB = Robot.CLIMB;
   double height;
 
-  public ClimbPositionCommand (double height){
+  public ClimbPositionCommand(double height) {
     this.height = height;
     requires(CLIMB);
   }

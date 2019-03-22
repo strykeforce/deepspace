@@ -69,7 +69,6 @@ public class SmartDashboardControls {
         .withWidget(BuiltInWidgets.kCommand);
     Climb.add("Climb", new ClimbCommand()).withWidget(BuiltInWidgets.kCommand);
     Climb.add("Stop", new StopClimbCommand()).withWidget(BuiltInWidgets.kCommand);
-    Climb.add("Unwind", new UnwindClimbCommand()).withWidget(BuiltInWidgets.kCommand);
     Climb.add("Raise", new RaiseClimbCommand()).withWidget(BuiltInWidgets.kCommand);
     Climb.withPosition(1, 1);
 
@@ -103,7 +102,6 @@ public class SmartDashboardControls {
     SmartDashboard.putData("Pit/resetAxis", new ResetAxisCommandGroup());
     SmartDashboard.putData("Pit/LowerSuction", new LowerSuctionCupCommand());
     SmartDashboard.putData("Pit/Climb", new ClimbCommand());
-    SmartDashboard.putData("Pit/Unwind", new UnwindClimbCommand());
     SmartDashboard.putData("Pit/ClimbStop", new StopClimbCommand());
     SmartDashboard.putData("Pit/Health Check", new HealthCheckCommand());
   }
