@@ -15,9 +15,9 @@ public class OpenLoopDriveUntilCurrentCommand extends Command {
   private static final VacuumSubsystem VACUUM = Robot.VACUUM;
   private static final double TRANSITION_CURRENT = 20.0;
   private static final int CURRENT_STABLE_COUNT = 2;
-  private static final double CURRENT_IGNORE = 0.3;
+  private static final double CURRENT_IGNORE = 0.5;
   private static final double DIRECTION = -0.25;
-  private static final double OUT_DRIVE_SECONDS = 1.0;
+  private static final double OUT_DRIVE_SECONDS = 0.25;
   private static final double SOLENOID_DELAY = 0.2;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private DriveState driveState;
@@ -93,7 +93,7 @@ public class OpenLoopDriveUntilCurrentCommand extends Command {
     FAST(0.25),
     CLOSE_SOLENOID(0.08),
     WAIT(0.06),
-    OUT(-0.7),
+    OUT(-0.6),
     DONE(0.0);
 
     private double velocity;

@@ -34,7 +34,7 @@ public class YawToTargetCommand extends PIDCommand {
     controller = getPIDController();
     controller.setContinuous();
     controller.setOutputRange(-1.0, 1.0);
-    controller.setAbsoluteTolerance(1.0);
+    controller.setAbsoluteTolerance(0.35);
     this.setpoint = setpoint;
     count = 0;
     logger.debug("construct yaw command");

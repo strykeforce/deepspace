@@ -3,6 +3,7 @@ package frc.team2767.deepspace.command.approach.sequences;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team2767.deepspace.command.approach.CalculateRotationCommand;
 import frc.team2767.deepspace.command.approach.OpenLoopDriveUntilSuctionCommand;
+import frc.team2767.deepspace.command.approach.TalonConfigCommand;
 import frc.team2767.deepspace.command.approach.YawToTargetCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorExecutePlanCommand;
@@ -34,6 +35,7 @@ public class SnapDriveCommandGroup extends CommandGroup {
 
     addSequential(new PressureSetCommand(VacuumSubsystem.kHatchPressureInHg));
     addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP));
+    addSequential(new TalonConfigCommand(DriveSubsystem.DriveTalonConfig.YAW_CONFIG));
     addSequential(new QueryPyeyeCommand());
     addSequential(new CalculateRotationCommand());
     addSequential(new YawToTargetCommand());
@@ -44,6 +46,7 @@ public class SnapDriveCommandGroup extends CommandGroup {
             addParallel(new BiscuitExecutePlanCommand());
           }
         });
+    addSequential(new TalonConfigCommand(DriveSubsystem.DriveTalonConfig.DRIVE_CONFIG));
     addSequential(new OpenLoopDriveUntilSuctionCommand(), 10);
     addParallel(new BlinkLightsCommand(VisionSubsystem.LightPattern.GOT_HATCH), 0.5);
     addParallel(new SetActionCommand(Action.PLACE));

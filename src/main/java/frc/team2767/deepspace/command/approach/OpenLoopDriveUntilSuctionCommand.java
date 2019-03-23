@@ -14,7 +14,7 @@ public class OpenLoopDriveUntilSuctionCommand extends Command {
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VacuumSubsystem VACUUM = Robot.VACUUM;
   private static final double TRANSITION_PRESSURE_DIFFERENCE = 3.0;
-  private static final double HATCH_SEAL_GOOD_ENOUGH = 10.0;
+  private static final double HATCH_SEAL_GOOD_ENOUGH = 7.5;
   private static final double OUT_DRIVE_SECONDS = 0.25;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private double direction;

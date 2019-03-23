@@ -235,22 +235,31 @@ public class DriveSubsystem extends Subsystem implements Item {
     azimuthConfig.slot0.allowableClosedloopError = 0;
     azimuthConfig.motionAcceleration = 10_000;
     azimuthConfig.motionCruiseVelocity = 800;
+    azimuthConfig.velocityMeasurementWindow = 64;
     azimuthConfig.voltageCompSaturation = 12;
 
     TalonSRXConfiguration driveConfig = new TalonSRXConfiguration();
     driveConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
     driveConfig.continuousCurrentLimit = 40;
-    driveConfig.peakCurrentDuration = 0;
-    driveConfig.peakCurrentLimit = 0;
-    driveConfig.slot0.kP = 0.08;
+    driveConfig.peakCurrentDuration = 45;
+    driveConfig.peakCurrentLimit = 40;
+    driveConfig.slot0.kP = 0.05;
     driveConfig.slot0.kI = 0.0005;
     driveConfig.slot0.kD = 0.0;
-    driveConfig.slot0.kF = 0.028;
-    driveConfig.slot0.integralZone = 3000;
+    driveConfig.slot0.kF = 0.032;
+    driveConfig.slot0.integralZone = 1000;
+    driveConfig.slot0.maxIntegralAccumulator = 150_000;
     driveConfig.slot0.allowableClosedloopError = 0;
     driveConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms;
     driveConfig.velocityMeasurementWindow = 64;
     driveConfig.voltageCompSaturation = 12;
+
+    driveConfig.slot1.kP = 0.1;
+    driveConfig.slot1.kI = 0.0005;
+    driveConfig.slot1.kD = 4.0;
+    driveConfig.slot1.kF = 0.05;
+    driveConfig.slot1.integralZone = 500;
+    driveConfig.slot1.maxIntegralAccumulator = 250_000;
 
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
@@ -319,6 +328,34 @@ public class DriveSubsystem extends Subsystem implements Item {
         return () -> Math.IEEEremainder(getGyro().getAngle(), 360);
       default:
         return () -> 2767.0;
+    }
+  }
+
+  public void setSlotConfig(DriveTalonConfig slot) {
+    for (Wheel w : wheels) {
+      w.getDriveTalon().setIntegralAccumulator(0.0);
+      w.getDriveTalon().selectProfileSlot(slot.slotId, 0);
+      w.getDriveTalon().configContinuousCurrentLimit(slot.continuousCurrentLimit);
+      w.getDriveTalon().configPeakCurrentDuration(slot.limitDuration);
+      w.getDriveTalon().configPeakCurrentLimit(slot.peakCurrentLimit);
+    }
+  }
+
+  public enum DriveTalonConfig {
+    YAW_CONFIG(0, 10, 15, 40),
+    DRIVE_CONFIG(1, 40, 45, 40);
+
+    public int slotId;
+    public int continuousCurrentLimit;
+    public int peakCurrentLimit;
+    public int limitDuration;
+
+    DriveTalonConfig(
+        int slotId, int continuousCurrentLimit, int peakCurrentLimit, int limitDuration) {
+      this.slotId = slotId;
+      this.continuousCurrentLimit = continuousCurrentLimit;
+      this.peakCurrentLimit = peakCurrentLimit;
+      this.limitDuration = limitDuration;
     }
   }
 }
