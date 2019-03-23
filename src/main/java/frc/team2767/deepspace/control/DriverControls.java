@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.ZeroGyroCommand;
 import frc.team2767.deepspace.command.approach.sequences.AutoHatchPickupCommandGroup;
-import frc.team2767.deepspace.command.approach.sequences.SandstormHatchPlaceCommandGroup;
+import frc.team2767.deepspace.command.approach.sequences.HatchPlaceCommandGroup;
 import frc.team2767.deepspace.command.biscuit.BiscuitNegativeCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositiveCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
@@ -82,7 +82,7 @@ public class DriverControls {
         .whenPressed(
             new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.PRESSURE_ACCUMULATE));
     new JoystickButton(joystick, Shoulder.LEFT_UP.id)
-        .whenPressed(new SandstormHatchPlaceCommandGroup());
+        .whenPressed(new HatchPlaceCommandGroup());
   }
 
   private <E extends Enum<E>> Command log(E control) {
