@@ -1,6 +1,7 @@
 package frc.team2767.deepspace.command.sequences.pickup;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.team2767.deepspace.command.biscuit.BiscuitMoveSafeCommand;
 import frc.team2767.deepspace.command.intake.IntakePositionCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.sequences.place.PositionExecuteCommandGroup;
@@ -18,6 +19,7 @@ public class PlayerHatchCommandGroup extends CommandGroup {
     addSequential(new LogCommand("BEGIN PLAYER HATCH PICKUP"));
     addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.PRESSURE_ACCUMULATE));
     addParallel(new PressureSetCommand(VacuumSubsystem.kHatchPressureInHg));
+    addParallel(new BiscuitMoveSafeCommand());
     addSequential(
         new CommandGroup() {
           {
