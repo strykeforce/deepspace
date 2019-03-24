@@ -38,10 +38,10 @@ public class SnapDriveCommandGroup extends CommandGroup {
     addSequential(new TalonConfigCommand(DriveSubsystem.DriveTalonConfig.YAW_CONFIG));
     addSequential(new QueryPyeyeCommand());
     addSequential(new CalculateRotationCommand());
-    addSequential(new YawToTargetCommand());
     addSequential(
         new CommandGroup() {
           {
+            addParallel(new YawToTargetCommand());
             addParallel(new ElevatorExecutePlanCommand());
             addParallel(new BiscuitExecutePlanCommand());
           }

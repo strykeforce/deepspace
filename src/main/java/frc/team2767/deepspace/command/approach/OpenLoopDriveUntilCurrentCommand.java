@@ -18,7 +18,7 @@ public class OpenLoopDriveUntilCurrentCommand extends Command {
   private static final double CURRENT_IGNORE = 0.5;
   private static final double DIRECTION = -0.25;
   private static final double OUT_DRIVE_SECONDS = 0.25;
-  private static final double SOLENOID_DELAY = 0.2;
+  private static final double SOLENOID_DELAY = 0.5;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private DriveState driveState;
   private double initBlankTime;
@@ -86,7 +86,7 @@ public class OpenLoopDriveUntilCurrentCommand extends Command {
 
   @Override
   protected boolean isFinished() {
-    return false;
+    return driveState == DriveState.DONE;
   }
 
   private enum DriveState {

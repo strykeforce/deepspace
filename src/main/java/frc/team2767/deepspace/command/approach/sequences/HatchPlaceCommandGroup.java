@@ -32,11 +32,11 @@ public class HatchPlaceCommandGroup extends CommandGroup {
     addSequential(new QueryPyeyeCommand());
     addParallel(new TalonConfigCommand(DriveSubsystem.DriveTalonConfig.YAW_CONFIG));
     addSequential(new CalculateRotationCommand());
-    addSequential(new YawToTargetCommand());
     addSequential(
         new ConditionalCommand(
             new CommandGroup() {
               {
+                addParallel(new YawToTargetCommand());
                 addParallel(new ElevatorExecutePlanCommand());
                 addParallel(new BiscuitExecutePlanCommand());
               }
