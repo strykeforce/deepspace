@@ -4,22 +4,24 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.ClimbSubsystem;
 import frc.team2767.deepspace.subsystem.VacuumSubsystem;
+import frc.team2767.deepspace.subsystem.VisionSubsystem;
 
 public class ClimbAutoCommand extends Command {
   VacuumSubsystem VACUUM = Robot.VACUUM;
   ClimbSubsystem CLIMB = Robot.CLIMB;
-
+  VisionSubsystem VISION = Robot.VISION;
   ClimbState climbState;
 
-  ClimbAutoCommand() {
+  public ClimbAutoCommand() {
     requires(VACUUM);
     requires(CLIMB);
+    requires(VISION);
   }
 
   @Override
   protected void initialize() {
     climbState = ClimbState.FAST_LOWER;
-    CLIMB.openLoopMove(ClimbSubsystem.kLowerSpeed);
+    CLIMB.setHeight(ClimbSubsystem.kHabHoverIn);
   }
 
   @Override
@@ -28,7 +30,7 @@ public class ClimbAutoCommand extends Command {
       case FAST_LOWER:
         if (CLIMB.getHeight() <= ClimbSubsystem.kHabHoverIn) {
           climbState = ClimbState.FORM_SEAL;
-          CLIMB.openLoopMove(ClimbSubsystem.kSealSpeed);
+          CLIMB.openLoopMove(ClimbSubsystem.kSealVelocity);
         }
         break;
       case FORM_SEAL:
@@ -36,11 +38,12 @@ public class ClimbAutoCommand extends Command {
           climbState = ClimbState.FAST_CLIMB;
           CLIMB.enableRatchet();
           CLIMB.releaseKickstand();
-          CLIMB.openLoopMove(ClimbSubsystem.kClimbSpeed);
+          VISION.startLightBlink(VisionSubsystem.LightPattern.CLIMB_GOOD);
+          CLIMB.setHeight(ClimbSubsystem.kClimbIn);
         }
         if (CLIMB.getHeight() <= ClimbSubsystem.kTooLowIn) {
           climbState = ClimbState.RESET;
-          CLIMB.openLoopMove(ClimbSubsystem.kResetSpeed);
+          CLIMB.setHeight(ClimbSubsystem.kHabHoverIn);
         }
         break;
       case FAST_CLIMB:
@@ -51,7 +54,7 @@ public class ClimbAutoCommand extends Command {
       case RESET:
         if (CLIMB.getHeight() >= ClimbSubsystem.kHabHoverIn) {
           climbState = ClimbState.FORM_SEAL;
-          CLIMB.openLoopMove(ClimbSubsystem.kSealSpeed);
+          CLIMB.openLoopMove(ClimbSubsystem.kSealVelocity);
         }
         break;
     }

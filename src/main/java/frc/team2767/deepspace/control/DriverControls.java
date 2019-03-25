@@ -8,9 +8,7 @@ import frc.team2767.deepspace.command.approach.sequences.AutoHatchPickupCommandG
 import frc.team2767.deepspace.command.biscuit.BiscuitNegativeCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositiveCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
-import frc.team2767.deepspace.command.climb.ClimbFormSealCommandGroup;
 import frc.team2767.deepspace.command.climb.ClimbJogCommand;
-import frc.team2767.deepspace.command.climb.RaiseClimbCommand;
 import frc.team2767.deepspace.command.climb.StopClimbCommand;
 import frc.team2767.deepspace.command.intake.IntakeDownCommand;
 import frc.team2767.deepspace.command.intake.IntakeUpCommand;
@@ -47,9 +45,11 @@ public class DriverControls {
     new JoystickButton(joystick, Button.X.id).whenPressed(new StowAllCommandGroup());
 
     // Climb Commands
-    new JoystickButton(joystick, Button.UP.id).whenPressed(new ClimbJogCommand(ClimbSubsystem.kJogUpSpeed));
+    new JoystickButton(joystick, Button.UP.id)
+        .whenPressed(new ClimbJogCommand(ClimbSubsystem.kJogUpVelocity));
     new JoystickButton(joystick, Button.UP.id).whenReleased(new StopClimbCommand());
-    new JoystickButton(joystick, Button.UP.id).whenPressed(new ClimbJogCommand(ClimbSubsystem.kJogDownSpeed));
+    new JoystickButton(joystick, Button.DOWN.id)
+        .whenPressed(new ClimbJogCommand(ClimbSubsystem.kJogDownVelocity));
     new JoystickButton(joystick, Button.DOWN.id).whenReleased(new StopClimbCommand());
 
     // biscuit

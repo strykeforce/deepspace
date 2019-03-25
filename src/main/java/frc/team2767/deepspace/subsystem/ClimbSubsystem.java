@@ -24,24 +24,18 @@ public class ClimbSubsystem extends Subsystem {
   private static final int RATCHET_SERVO = 4;
   private static final double STRINGPOT_PER_IN = 1; // FIXME
   private static final double STRINGPOT_OFFSET = 0; // FIXME
-  public static double kReleaseSpeed = 0.85; // FIXME
-  public static double kClimbSpeed = 0.85; // FIXME
-  public static double kLowerSpeed = 0.85; // FIXME
-  public static double kSealSpeed = 0.15; // FIXME
-  public static double kRaiseSpeed = -0.4; // FIXME
-  public static double kResetSpeed = -0.4; // FIXME
-  public static double kJogUpSpeed = -0.4; // FIXME
-  public static double kJogDownSpeed = -0.4; // FIXME
+
+  public static double kSealVelocity;
+  public static double kJogUpVelocity = -300;
+  public static double kJogDownVelocity = 300;
   private static final String PREFS = "ClimbSubsystem/Settings/";
-  private static int relStartTicks;
-  private static int setpointTicks;
-  private int stringPotSetpointUnits;
-  private static double kStringPotCloseEnoughUnits; // FIXME
-  public static double kHabHoverIn; // FIXME
-  public static double kLowReleaseIn; // FIXME
-  public static double kHighReleaseIn; // FIXME
-  public static double kClimbIn; // FIXME
-  public static double kTooLowIn; // FIXME
+  private int stringPotSetpoint;
+  private static double kStringPotCloseEnoughUnits;
+  public static double kHabHoverIn;
+  public static double kLowReleaseIn;
+  public static double kHighReleaseIn;
+  public static double kClimbIn;
+  public static double kTooLowIn;
   private static double kLeftKickstandHold;
   private static double kLeftKickstandRelease;
   private static double kRightKickstandHold;
@@ -72,6 +66,7 @@ public class ClimbSubsystem extends Subsystem {
     kHighReleaseIn = getPrefs("high_position_in", 0); // FIXME
     kClimbIn = getPrefs("climb_position_in", 0); // FIXME
     kTooLowIn = getPrefs("too_low_position_in", 0); // FIXME
+    kSealVelocity = getPrefs("seal_velocity", 200);
     kStringPotCloseEnoughUnits = getPrefs("close_onough", 0); // FIXME
 
     kLeftKickstandHold = getPrefs("L_kickstand_hold", 0.4);
@@ -85,6 +80,10 @@ public class ClimbSubsystem extends Subsystem {
   @SuppressWarnings("Duplicates")
   private void configTalon() {
     TalonSRXConfiguration leftSlaveConfig = new TalonSRXConfiguration();
+    leftSlaveConfig.slot0.kP = 0.80;
+    leftSlaveConfig.slot0.kI = 0;
+    leftSlaveConfig.slot0.kD = 30;
+    leftSlaveConfig.slot0.kF = 0.6;
     leftSlaveConfig.peakOutputReverse = -1.0;
     leftSlaveConfig.peakCurrentLimit = 45;
     leftSlaveConfig.peakCurrentDuration = 40;
@@ -97,6 +96,11 @@ public class ClimbSubsystem extends Subsystem {
     leftSlaveConfig.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
 
     TalonSRXConfiguration rightMasterConfig = new TalonSRXConfiguration();
+    rightMasterConfig.slot0.kP = 0.80;
+    rightMasterConfig.slot0.kI = 0;
+    rightMasterConfig.slot0.kD = 30;
+    rightMasterConfig.slot0.kF = 0.6;
+    rightMasterConfig.slot0.integralZone = 0;
     rightMasterConfig.peakOutputReverse = -1.0;
     rightMasterConfig.peakCurrentLimit = 45;
     rightMasterConfig.peakCurrentDuration = 40;
@@ -105,13 +109,13 @@ public class ClimbSubsystem extends Subsystem {
     rightMasterConfig.voltageMeasurementFilter = 32;
     rightMasterConfig.velocityMeasurementWindow = 64;
     rightMasterConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms;
-    rightMasterConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
+    rightMasterConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.Analog;
+    rightMasterConfig.reverseSoftLimitThreshold = 842;
+    rightMasterConfig.forwardSoftLimitThreshold = 148;
     rightMasterConfig.forwardLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
     rightMasterConfig.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
-    rightMasterConfig.forwardSoftLimitThreshold = 30000; //FIXME
     rightMasterConfig.reverseLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
     rightMasterConfig.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
-    rightMasterConfig.reverseSoftLimitThreshold = 0; //FIXME
 
     leftSlave.configAllSettings(leftSlaveConfig, 10);
     rightMaster.configAllSettings(rightMasterConfig, 10);
@@ -122,6 +126,7 @@ public class ClimbSubsystem extends Subsystem {
     rightMaster.enableVoltageCompensation(true);
     leftSlave.follow(rightMaster);
 
+    // FIXME ?
     rightMaster.configForwardLimitSwitchSource(
         LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
 
@@ -145,19 +150,9 @@ public class ClimbSubsystem extends Subsystem {
     return pref;
   }
 
-  public void climb() {
-    openLoopMove(kClimbSpeed);
-    logger.info("Climbing");
-  }
-
-  public void openLoopMove(double percent) {
+  public void openLoopMove(double velocity) {
     leftSlave.follow(rightMaster);
-    rightMaster.set(ControlMode.PercentOutput, percent);
-  }
-
-  public void lowerSuctionCup() {
-    openLoopMove(kSealSpeed);
-    logger.info("Lowering Suction Cup");
+    rightMaster.set(ControlMode.Velocity, velocity);
   }
 
   public void stop() {
@@ -165,40 +160,14 @@ public class ClimbSubsystem extends Subsystem {
     logger.info("Stopping Climb");
   }
 
-  public void runTicks(int ticks) {
-    setpointTicks = ticks;
-    relStartTicks = rightMaster.getSelectedSensorPosition();
-    openLoopMove(kReleaseSpeed);
-    logger.info("Running down {} ticks", setpointTicks);
-  }
-
-  public void runStringPot(double height) { // FIXME just replace with closed loop
-    stringPotSetpointUnits = (int) (height * STRINGPOT_PER_IN + STRINGPOT_OFFSET);
-    if (height == kHabHoverIn) {
-      openLoopMove(kLowerSpeed);
-    }
-    if (height == kLowReleaseIn) {
-      openLoopMove(kReleaseSpeed);
-      isReleased = true;
-    }
-    if (height == kHighReleaseIn) {
-      openLoopMove(kRaiseSpeed);
-    }
-    if (height == kClimbIn) {
-      openLoopMove(kClimbSpeed);
-    }
+  public void setHeight(double height) {
+    stringPotSetpoint = (int) (height * STRINGPOT_PER_IN + STRINGPOT_OFFSET);
+    leftSlave.follow(rightMaster);
+    rightMaster.set(ControlMode.MotionMagic, stringPotSetpoint);
   }
 
   public boolean onStringPot() {
-    return Math.abs(getStringPot() - stringPotSetpointUnits) < kStringPotCloseEnoughUnits;
-  }
-
-  public boolean onTicks() {
-    return Math.abs(rightMaster.getSelectedSensorPosition() - relStartTicks) >= setpointTicks;
-  }
-
-  public int getTicks() {
-    return Math.abs(rightMaster.getSelectedSensorPosition() - relStartTicks);
+    return Math.abs(getStringPot() - stringPotSetpoint) < kStringPotCloseEnoughUnits;
   }
 
   public int getStringPot() {
@@ -217,11 +186,6 @@ public class ClimbSubsystem extends Subsystem {
   public void enableRatchet() {
     ratchetServo.set(kRatchetEngage);
     logger.info("Ratchet enabled");
-  }
-
-  public void raiseToHeight() {
-    openLoopMove(kRaiseSpeed);
-    logger.info("Raising climber");
   }
 
   public void releaseKickstand() {

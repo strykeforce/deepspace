@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.biscuit.BiscuitGoToSideCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
-import frc.team2767.deepspace.command.climb.ClimbCommand;
+import frc.team2767.deepspace.command.climb.ClimbAutoCommand;
 import frc.team2767.deepspace.command.climb.ClimbLockCommand;
 import frc.team2767.deepspace.command.climb.StopClimbCommand;
 import frc.team2767.deepspace.command.elevator.*;
@@ -110,7 +110,7 @@ public class XboxControls {
     // Climb Commands
     new JoystickButton(xbox, Button.START.id).whenPressed(new ClimbLockCommand());
     new JoystickButton(xbox, Button.START.id).whenReleased(new StopClimbCommand());
-    new JoystickButton(xbox, Button.BACK.id).whenPressed(new ClimbCommand());
+    new JoystickButton(xbox, Button.BACK.id).whenPressed(new ClimbAutoCommand());
     new JoystickButton(xbox, Button.BACK.id).whenReleased(new StopClimbCommand());
   }
 

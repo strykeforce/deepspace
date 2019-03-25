@@ -65,11 +65,17 @@ public class SmartDashboardControls {
 
     // Climb Commands
     ShuffleboardLayout Climb = ClimbTab.getLayout("Climb", "List Layout");
-    Climb.add("Lower Suction Cup", new LowerSuctionCupCommand())
-        .withWidget(BuiltInWidgets.kCommand);
-    Climb.add("Climb", new ClimbCommand()).withWidget(BuiltInWidgets.kCommand);
+    Climb.add("Climb", new ClimbAutoCommand()).withWidget(BuiltInWidgets.kCommand);
     Climb.add("Stop", new StopClimbCommand()).withWidget(BuiltInWidgets.kCommand);
-    Climb.add("Raise", new RaiseClimbCommand()).withWidget(BuiltInWidgets.kCommand);
+    Climb.add("Deploy", new DeploySequenceCommand()).withWidget(BuiltInWidgets.kCommand);
+    Climb.add("Low Release", new ClimbPositionCommand(ClimbSubsystem.kLowReleaseIn))
+        .withWidget(BuiltInWidgets.kCommand);
+    Climb.add("High Release", new ClimbPositionCommand(ClimbSubsystem.kHighReleaseIn))
+        .withWidget(BuiltInWidgets.kCommand);
+    Climb.add("Hab Hover", new ClimbPositionCommand(ClimbSubsystem.kHabHoverIn))
+        .withWidget(BuiltInWidgets.kCommand);
+    Climb.add("Climb Height", new ClimbPositionCommand(ClimbSubsystem.kClimbIn))
+        .withWidget(BuiltInWidgets.kCommand);
     Climb.withPosition(1, 1);
 
     // Solenoid Commands
@@ -91,17 +97,13 @@ public class SmartDashboardControls {
 
     // Release Mechanisms
     ShuffleboardLayout Servos = ClimbTab.getLayout("Servos", "List Layout");
-    Servos.add("Release Climb", new ReleaseClimbCommand()).withWidget(BuiltInWidgets.kCommand);
-    Servos.add("Release Kickstand", new ReleaseKickstandCommand())
-        .withWidget(BuiltInWidgets.kCommand);
   }
 
   private void addPitCommands() {
     addTestCommands();
     addVacuumCommands();
     SmartDashboard.putData("Pit/resetAxis", new ResetAxisCommandGroup());
-    SmartDashboard.putData("Pit/LowerSuction", new LowerSuctionCupCommand());
-    SmartDashboard.putData("Pit/Climb", new ClimbCommand());
+    SmartDashboard.putData("Pit/Climb", new ClimbAutoCommand());
     SmartDashboard.putData("Pit/ClimbStop", new StopClimbCommand());
     SmartDashboard.putData("Pit/Health Check", new HealthCheckCommand());
   }
