@@ -18,9 +18,9 @@ import frc.team2767.deepspace.command.vision.LightsOnCommand;
 import frc.team2767.deepspace.command.vision.QueryPyeyeCommand;
 import frc.team2767.deepspace.subsystem.*;
 
-public class SnapDriveCommandGroup extends CommandGroup {
+public class HatchPickupCommandGroup extends CommandGroup {
 
-  public SnapDriveCommandGroup() {
+  public HatchPickupCommandGroup() {
     addSequential(new LogCommand("BEGIN AUTO SNAP DRIVE HATCH PICKUP"));
     addSequential(new LightsOnCommand());
     addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.PRESSURE_ACCUMULATE));
