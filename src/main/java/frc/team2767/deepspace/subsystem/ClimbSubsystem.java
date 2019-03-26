@@ -14,6 +14,9 @@ import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
 public class ClimbSubsystem extends Subsystem {
 
+  // max 843
+  // min 139
+
   private static final int LEFT_SLAVE_ID = 50;
   private static final int RIGHT_MASTER_ID = 51;
   private static final int LEFT_KICKSTAND = 2;

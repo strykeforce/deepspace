@@ -4,11 +4,11 @@ import edu.wpi.first.wpilibj.command.ConditionalCommand;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.ElevatorSubsystem;
 
-public class MoveToSafePositionCommand extends ConditionalCommand {
+public class ElevatorMoveToSafePositionCommand extends ConditionalCommand {
 
   private static final ElevatorSubsystem ELEVATOR = Robot.ELEVATOR;
 
-  public MoveToSafePositionCommand() {
+  public ElevatorMoveToSafePositionCommand() {
     super(new ElevatorSetPositionCommand(ElevatorSubsystem.kHatchLowPositionInches));
   }
 

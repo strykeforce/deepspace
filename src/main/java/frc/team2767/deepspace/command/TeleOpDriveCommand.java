@@ -15,7 +15,7 @@ public final class TeleOpDriveCommand extends Command {
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static DriverControls controls;
 
-  private static final double DEADBAND = 0.09;
+  private static final double DEADBAND = 0.05;
 
   public TeleOpDriveCommand() {
     requires(DRIVE);

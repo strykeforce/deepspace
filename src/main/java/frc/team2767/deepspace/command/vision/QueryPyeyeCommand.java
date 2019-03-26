@@ -12,6 +12,7 @@ public class QueryPyeyeCommand extends Command {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public QueryPyeyeCommand() {
+    setInterruptible(true);
     requires(VISION);
   }
 

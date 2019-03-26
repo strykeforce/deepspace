@@ -4,22 +4,21 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.ZeroGyroCommand;
-import frc.team2767.deepspace.command.approach.PlayerHatchAutonPickupCommandGroup;
+import frc.team2767.deepspace.command.approach.sequences.AutoHatchPickupCommandGroup;
 import frc.team2767.deepspace.command.biscuit.BiscuitNegativeCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositiveCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
 import frc.team2767.deepspace.command.climb.ClimbFormSealCommandGroup;
 import frc.team2767.deepspace.command.climb.RaiseClimbCommand;
 import frc.team2767.deepspace.command.climb.StopClimbCommand;
-import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopDownCommand;
-import frc.team2767.deepspace.command.elevator.ElevatorOpenLoopUpCommand;
-import frc.team2767.deepspace.command.elevator.ElevatorStopCommand;
 import frc.team2767.deepspace.command.intake.IntakeDownCommand;
 import frc.team2767.deepspace.command.intake.IntakeUpCommand;
 import frc.team2767.deepspace.command.intake.ShoulderStopCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.log.SafetyLogDumpCommand;
-import frc.team2767.deepspace.command.sequences.*;
+import frc.team2767.deepspace.command.sequences.StowAllCommandGroup;
+import frc.team2767.deepspace.command.sequences.pickup.CargoGroundPickupCommandGroup;
+import frc.team2767.deepspace.command.sequences.pickup.CoconutPickupCommandGroup;
 import frc.team2767.deepspace.command.teleop.InterruptCommand;
 import frc.team2767.deepspace.command.vacuum.SetSolenoidStatesCommand;
 import frc.team2767.deepspace.subsystem.VacuumSubsystem;
@@ -43,10 +42,6 @@ public class DriverControls {
     new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id)
         .whenReleased(new CoconutPickupCommandGroup());
 
-    // left toggle
-    new JoystickButton(joystick, Toggle.LEFT_TOGGLE.id).whenPressed(new InterruptCommand());
-    new JoystickButton(joystick, Toggle.LEFT_TOGGLE.id).whenReleased(new InterruptCommand());
-
     new JoystickButton(joystick, Button.X.id).whenPressed(new StowAllCommandGroup());
 
     // Climb Commands
@@ -57,21 +52,19 @@ public class DriverControls {
 
     // biscuit
     new JoystickButton(joystick, Trim.RIGHT_Y_POS.id)
-        .whenPressed(new PlayerHatchAutonPickupCommandGroup());
+        .whenPressed(new AutoHatchPickupCommandGroup());
     new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id)
-        .whenPressed(new PlayerHatchAutonPickupCommandGroup());
+        .whenPressed(new AutoHatchPickupCommandGroup());
 
-    // elevator
-    new JoystickButton(joystick, Trim.LEFT_X_NEG.id).whenPressed(new ElevatorOpenLoopDownCommand());
-    new JoystickButton(joystick, Trim.LEFT_X_NEG.id).whenReleased(new ElevatorStopCommand());
-    new JoystickButton(joystick, Trim.LEFT_X_POS.id).whenPressed(new ElevatorOpenLoopUpCommand());
-    new JoystickButton(joystick, Trim.LEFT_X_POS.id).whenReleased(new ElevatorStopCommand());
+    // interrupt
+    new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenPressed(new InterruptCommand());
+    new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenPressed(new InterruptCommand());
 
     // biscuit
-    new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenPressed(new BiscuitPositiveCommand());
-    new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenReleased(new BiscuitStopCommand());
-    new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenPressed(new BiscuitNegativeCommand());
-    new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenReleased(new BiscuitStopCommand());
+    new JoystickButton(joystick, Trim.LEFT_X_POS.id).whenPressed(new BiscuitPositiveCommand());
+    new JoystickButton(joystick, Trim.LEFT_X_POS.id).whenReleased(new BiscuitStopCommand());
+    new JoystickButton(joystick, Trim.LEFT_X_NEG.id).whenPressed(new BiscuitNegativeCommand());
+    new JoystickButton(joystick, Trim.LEFT_X_NEG.id).whenReleased(new BiscuitStopCommand());
 
     // intake
     new JoystickButton(joystick, Trim.RIGHT_X_POS.id).whenPressed(new IntakeUpCommand());

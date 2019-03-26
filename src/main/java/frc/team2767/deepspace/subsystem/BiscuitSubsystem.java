@@ -171,39 +171,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
     return didZero;
   }
 
-  public double selectAngle() {
-    if (VISION.action == Action.PLACE
-        && VISION.gamePiece == GamePiece.CARGO
-        && VISION.elevatorLevel == ElevatorLevel.THREE) {
-      if (VISION.direction == FieldDirection.LEFT) {
-        return kTiltUpLeftPositionDeg;
-      }
-      if (VISION.direction == FieldDirection.RIGHT) {
-        return kTiltUpRightPositionDeg;
-      } else {
-        logger.warn("Direction not set");
-      }
-    }
-
-    if (VISION.action == Action.PICKUP && VISION.gamePiece == GamePiece.CARGO) {
-      double bearing = Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360);
-      if (bearing <= 0) {
-        return kBackStopRightPositionDeg;
-      } else {
-        return kBackStopLeftPositionDeg;
-      }
-    }
-
-    if (VISION.direction == FieldDirection.LEFT) {
-      return kLeftPositionDeg;
-    }
-    if (VISION.direction == FieldDirection.RIGHT) {
-      return kRightPositionDeg;
-    }
-    logger.warn("Direction not set");
-    return 2767;
-  }
-
   @SuppressWarnings("Duplicates")
   public void executePlan() {
     targetBiscuitPositionDeg = selectAngle();
@@ -219,6 +186,66 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
     } else {
       logger.warn("Biscuit execution failed");
     }
+  }
+
+  @SuppressWarnings("Duplicates")
+  public double selectAngle() {
+    if (VISION.action == Action.PLACE
+        && VISION.gamePiece == GamePiece.CARGO
+        && VISION.elevatorLevel == ElevatorLevel.THREE) {
+      if (VISION.direction == FieldDirection.LEFT) {
+        logger.debug("tilt up left");
+        return kTiltUpLeftPositionDeg;
+      }
+      if (VISION.direction == FieldDirection.RIGHT) {
+        logger.debug("tilt up right");
+        return kTiltUpRightPositionDeg;
+      }
+      logger.warn("Direction not set");
+      return 2767.0;
+
+    } else if (VISION.action == Action.PLACE) {
+      if (VISION.direction == FieldDirection.LEFT) {
+        logger.debug("left");
+        return kLeftPositionDeg;
+      }
+
+      if (VISION.direction == FieldDirection.RIGHT) {
+        logger.debug("right");
+        return kRightPositionDeg;
+      }
+
+      logger.warn("Direction not set");
+      return 2767.0;
+    }
+
+    if (VISION.action == Action.PICKUP) {
+      double bearing = Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360);
+      if (bearing <= 0) {
+        if (VISION.gamePiece == GamePiece.CARGO) {
+          logger.debug("backstop right");
+          return kBackStopRightPositionDeg;
+        }
+
+        if (VISION.gamePiece == GamePiece.HATCH) {
+          logger.debug("left hatch");
+          return kLeftPositionDeg;
+        }
+      } else {
+        if (VISION.gamePiece == GamePiece.CARGO) {
+          logger.debug("backstop right");
+          return kBackStopLeftPositionDeg;
+        }
+
+        if (VISION.gamePiece == GamePiece.HATCH) {
+          logger.debug("right hatch");
+          return kRightPositionDeg;
+        }
+      }
+    }
+
+    logger.warn("Direction not set");
+    return 2767.0;
   }
 
   public double getPosition() {

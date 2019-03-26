@@ -1,8 +1,9 @@
-package frc.team2767.deepspace.command.sequences;
+package frc.team2767.deepspace.command.sequences.pickup;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team2767.deepspace.command.intake.IntakePositionCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
+import frc.team2767.deepspace.command.sequences.place.PositionExecuteCommandGroup;
 import frc.team2767.deepspace.command.states.SetActionCommand;
 import frc.team2767.deepspace.command.states.SetFieldDirectionCommand;
 import frc.team2767.deepspace.command.states.SetGamePieceCommand;
