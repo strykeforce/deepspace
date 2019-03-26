@@ -5,15 +5,16 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.ClimbSubsystem;
 
 public class ClimbJogCommand extends InstantCommand {
-  ClimbSubsystem CLIMB = Robot.CLIMB;
-  double velocity;
+
+  private static final ClimbSubsystem CLIMB = Robot.CLIMB;
+  private double velocity;
 
   public ClimbJogCommand(double velocity) {
     this.velocity = velocity;
   }
 
   @Override
-  protected void _initialize() {
-    CLIMB.openLoopMove(velocity);
+  protected void initialize() {
+    CLIMB.setVelocity(velocity);
   }
 }

@@ -5,9 +5,10 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.ClimbSubsystem;
 
 public class EngageRatchetCommand extends InstantCommand {
-  ClimbSubsystem CLIMB = Robot.CLIMB;
 
-  boolean enabled;
+  private static final ClimbSubsystem CLIMB = Robot.CLIMB;
+
+  private boolean enabled;
 
   EngageRatchetCommand(boolean enabled) {
     this.enabled = enabled;

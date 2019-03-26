@@ -60,8 +60,8 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
   }
 
   private void elevatorPreferences() {
-    kUpOutput = getPreference("up_output", 0.2);
-    kDownOutput = getPreference("down_output", -0.2);
+    kUpOutput = getPreference("up_output", 0.35);
+    kDownOutput = getPreference("down_output", -0.35);
 
     kCloseEnoughTicks = (int) getPreference("close_enough_ticks", 500);
     kAbsoluteZeroTicks = (int) getPreference("absolute_zero_ticks", 2064);

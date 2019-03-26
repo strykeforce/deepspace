@@ -14,7 +14,6 @@ public class StopClimbCommand extends InstantCommand {
 
   @Override
   protected void initialize() {
-
     CLIMB.stop();
   }
 }

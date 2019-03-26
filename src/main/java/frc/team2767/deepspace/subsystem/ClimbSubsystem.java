@@ -3,6 +3,7 @@ package frc.team2767.deepspace.subsystem;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -50,6 +51,8 @@ public class ClimbSubsystem extends Subsystem {
   private final Servo ratchetServo = new Servo(RATCHET_SERVO);
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   public static boolean isReleased;
+
+  private static final AnalogInput stringPot = new AnalogInput(0);
 
   public ClimbSubsystem() {
     climbPrefs();
@@ -150,13 +153,13 @@ public class ClimbSubsystem extends Subsystem {
     return pref;
   }
 
-  public void openLoopMove(double velocity) {
+  public void setVelocity(double velocity) {
     leftSlave.follow(rightMaster);
     rightMaster.set(ControlMode.Velocity, velocity);
   }
 
   public void stop() {
-    openLoopMove(0.0);
+    setVelocity(0.0);
     logger.info("Stopping Climb");
   }
 
@@ -170,7 +173,7 @@ public class ClimbSubsystem extends Subsystem {
     return Math.abs(getStringPot() - stringPotSetpoint) < kStringPotCloseEnoughUnits;
   }
 
-  public int getStringPot() {
+  private int getStringPot() {
     return rightMaster.getSensorCollection().getAnalogIn();
   }
 

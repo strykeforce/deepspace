@@ -7,10 +7,11 @@ import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 import frc.team2767.deepspace.subsystem.VisionSubsystem;
 
 public class ClimbAutoCommand extends Command {
-  VacuumSubsystem VACUUM = Robot.VACUUM;
-  ClimbSubsystem CLIMB = Robot.CLIMB;
-  VisionSubsystem VISION = Robot.VISION;
-  ClimbState climbState;
+
+  private static final VacuumSubsystem VACUUM = Robot.VACUUM;
+  private static final ClimbSubsystem CLIMB = Robot.CLIMB;
+  private static final VisionSubsystem VISION = Robot.VISION;
+  private ClimbState climbState;
 
   public ClimbAutoCommand() {
     requires(VACUUM);
@@ -30,8 +31,9 @@ public class ClimbAutoCommand extends Command {
       case FAST_LOWER:
         if (CLIMB.getHeight() <= ClimbSubsystem.kHabHoverIn) {
           climbState = ClimbState.FORM_SEAL;
-          CLIMB.openLoopMove(ClimbSubsystem.kSealVelocity);
+          CLIMB.setVelocity(ClimbSubsystem.kSealVelocity);
         }
+
         break;
       case FORM_SEAL:
         if (VACUUM.isClimbOnTarget()) {
@@ -41,10 +43,12 @@ public class ClimbAutoCommand extends Command {
           VISION.startLightBlink(VisionSubsystem.LightPattern.CLIMB_GOOD);
           CLIMB.setHeight(ClimbSubsystem.kClimbIn);
         }
+
         if (CLIMB.getHeight() <= ClimbSubsystem.kTooLowIn) {
           climbState = ClimbState.RESET;
           CLIMB.setHeight(ClimbSubsystem.kHabHoverIn);
         }
+
         break;
       case FAST_CLIMB:
         if (CLIMB.getHeight() <= ClimbSubsystem.kClimbIn) {
@@ -54,7 +58,7 @@ public class ClimbAutoCommand extends Command {
       case RESET:
         if (CLIMB.getHeight() >= ClimbSubsystem.kHabHoverIn) {
           climbState = ClimbState.FORM_SEAL;
-          CLIMB.openLoopMove(ClimbSubsystem.kSealVelocity);
+          CLIMB.setVelocity(ClimbSubsystem.kSealVelocity);
         }
         break;
     }
@@ -75,6 +79,6 @@ public class ClimbAutoCommand extends Command {
     FORM_SEAL,
     RESET,
     FAST_CLIMB,
-    DONE;
+    DONE
   }
 }

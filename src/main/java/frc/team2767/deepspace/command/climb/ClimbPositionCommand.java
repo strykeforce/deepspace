@@ -5,8 +5,9 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.ClimbSubsystem;
 
 public class ClimbPositionCommand extends Command {
+
   private static final ClimbSubsystem CLIMB = Robot.CLIMB;
-  double height;
+  private double height;
 
   public ClimbPositionCommand(double height) {
     this.height = height;
