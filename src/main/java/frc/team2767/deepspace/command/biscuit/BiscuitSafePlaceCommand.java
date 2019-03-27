@@ -13,6 +13,6 @@ public class BiscuitSafePlaceCommand extends ConditionalCommand {
 
   @Override
   protected boolean condition() {
-    return (Math.abs(BISCUIT.getPosition()) > 97);
+    return (Math.abs(BISCUIT.getPosition()) > 110);
   }
 }

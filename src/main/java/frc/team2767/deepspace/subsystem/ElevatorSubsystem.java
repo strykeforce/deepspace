@@ -128,6 +128,10 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
     return pref;
   }
 
+  public ElevatorLevel getElevatorLevel() {
+    return elevatorLevel;
+  }
+
   public List<TalonSRX> getTalons() {
     return List.of(elevator);
   }

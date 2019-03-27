@@ -13,8 +13,13 @@ public class PositionExecuteCommandGroup extends CommandGroup {
     addSequential(new LogCommand("BEGIN POSITION EXECUTE"));
     addSequential(new ElevatorMoveToSafePositionCommand());
     addSequential(new BiscuitMoveSafeCommand());
-    addSequential(new ElevatorExecutePlanCommand());
-    addSequential(new BiscuitExecutePlanCommand());
+    addSequential(
+        new CommandGroup() {
+          {
+            addParallel(new ElevatorExecutePlanCommand());
+            addParallel(new BiscuitExecutePlanCommand());
+          }
+        });
     addSequential(new LogCommand("END POSITION EXECUTE"));
   }
 }
