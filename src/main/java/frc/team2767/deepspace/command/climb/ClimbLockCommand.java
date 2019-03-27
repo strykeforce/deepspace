@@ -6,7 +6,7 @@ import frc.team2767.deepspace.subsystem.ClimbSubsystem;
 public class ClimbLockCommand extends ConditionalCommand {
 
   public ClimbLockCommand() {
-    super(new DeploySequenceCommand());
+    super(new DeploySequenceCommandGroup());
   }
 
   @Override

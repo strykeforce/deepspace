@@ -67,15 +67,7 @@ public class SmartDashboardControls {
     ShuffleboardLayout Climb = ClimbTab.getLayout("Climb", "List Layout");
     Climb.add("Climb", new ClimbAutoCommand()).withWidget(BuiltInWidgets.kCommand);
     Climb.add("Stop", new StopClimbCommand()).withWidget(BuiltInWidgets.kCommand);
-    Climb.add("Deploy", new DeploySequenceCommand()).withWidget(BuiltInWidgets.kCommand);
-    Climb.add("Low Release", new ClimbPositionCommand(ClimbSubsystem.kLowReleaseIn))
-        .withWidget(BuiltInWidgets.kCommand);
-    Climb.add("High Release", new ClimbPositionCommand(ClimbSubsystem.kHighReleaseIn))
-        .withWidget(BuiltInWidgets.kCommand);
-    Climb.add("Hab Hover", new ClimbPositionCommand(ClimbSubsystem.kHabHoverIn))
-        .withWidget(BuiltInWidgets.kCommand);
-    Climb.add("Climb Height", new ClimbPositionCommand(ClimbSubsystem.kClimbIn))
-        .withWidget(BuiltInWidgets.kCommand);
+    Climb.add("Deploy", new DeploySequenceCommandGroup()).withWidget(BuiltInWidgets.kCommand);
     Climb.withPosition(1, 1);
 
     // Solenoid Commands

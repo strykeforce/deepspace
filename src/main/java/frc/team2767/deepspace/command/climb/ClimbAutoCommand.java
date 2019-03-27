@@ -5,12 +5,16 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.ClimbSubsystem;
 import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 import frc.team2767.deepspace.subsystem.VisionSubsystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ClimbAutoCommand extends Command {
 
   private static final VacuumSubsystem VACUUM = Robot.VACUUM;
   private static final ClimbSubsystem CLIMB = Robot.CLIMB;
   private static final VisionSubsystem VISION = Robot.VISION;
+  private static final int GOOD_ENOUGH = 5;
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private ClimbState climbState;
 
   public ClimbAutoCommand() {
@@ -21,43 +25,66 @@ public class ClimbAutoCommand extends Command {
 
   @Override
   protected void initialize() {
+    if (!CLIMB.setOpenLoopFeedbackSensor(true)) {
+      climbState = ClimbState.DONE;
+    }
     climbState = ClimbState.FAST_LOWER;
-    CLIMB.setHeight(ClimbSubsystem.kHabHoverIn);
+    CLIMB.setLowerLimit(ClimbSubsystem.kHabHover);
+    CLIMB.openLoop(ClimbSubsystem.kDownOpenLoopOutput);
   }
 
   @Override
   protected void execute() {
     switch (climbState) {
       case FAST_LOWER:
-        if (CLIMB.getHeight() <= ClimbSubsystem.kHabHoverIn) {
+        if (CLIMB.getStringpotPosition() >= ClimbSubsystem.kHabHover - GOOD_ENOUGH) {
+          if (!CLIMB.setOpenLoopFeedbackSensor(false)) {
+            climbState = ClimbState.DONE;
+          }
           climbState = ClimbState.FORM_SEAL;
           CLIMB.setVelocity(ClimbSubsystem.kSealVelocity);
+          logger.debug("forming seal");
         }
 
         break;
+
       case FORM_SEAL:
         if (VACUUM.isClimbOnTarget()) {
+          logger.debug("fast climbing");
           climbState = ClimbState.FAST_CLIMB;
+          if (!CLIMB.setOpenLoopFeedbackSensor(true)) {
+            climbState = ClimbState.DONE;
+          }
           CLIMB.enableRatchet();
           CLIMB.releaseKickstand();
           VISION.startLightBlink(VisionSubsystem.LightPattern.CLIMB_GOOD);
-          CLIMB.setHeight(ClimbSubsystem.kClimbIn);
+          CLIMB.setLowerLimit(ClimbSubsystem.kClimb);
+          CLIMB.openLoop(ClimbSubsystem.kDownClimbOutput);
         }
 
-        if (CLIMB.getHeight() <= ClimbSubsystem.kTooLowIn) {
+        if (CLIMB.getStringpotPosition() >= ClimbSubsystem.kTooLowIn - GOOD_ENOUGH) {
+          logger.debug("resetting");
+          if (!CLIMB.setOpenLoopFeedbackSensor(true)) {
+            climbState = ClimbState.DONE;
+          }
           climbState = ClimbState.RESET;
-          CLIMB.setHeight(ClimbSubsystem.kHabHoverIn);
+          CLIMB.setUpperLimit(ClimbSubsystem.kHabHover);
+          CLIMB.openLoop(ClimbSubsystem.kUpOpenLoopOutput);
         }
 
         break;
       case FAST_CLIMB:
-        if (CLIMB.getHeight() <= ClimbSubsystem.kClimbIn) {
+        if (CLIMB.getStringpotPosition() >= ClimbSubsystem.kClimb) {
           climbState = ClimbState.DONE;
+          logger.debug("done climbing");
         }
         break;
       case RESET:
-        if (CLIMB.getHeight() >= ClimbSubsystem.kHabHoverIn) {
+        if (CLIMB.getStringpotPosition() <= ClimbSubsystem.kHabHover + GOOD_ENOUGH) {
           climbState = ClimbState.FORM_SEAL;
+          if (!CLIMB.setOpenLoopFeedbackSensor(false)) {
+            climbState = ClimbState.DONE;
+          }
           CLIMB.setVelocity(ClimbSubsystem.kSealVelocity);
         }
         break;
@@ -71,6 +98,7 @@ public class ClimbAutoCommand extends Command {
 
   @Override
   protected void end() {
+    logger.debug("emd climb");
     CLIMB.stop();
   }
 
