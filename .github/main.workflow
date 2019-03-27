@@ -10,7 +10,7 @@ action "gradle build" {
 
 workflow "process pull request" {
   on = "pull_request"
-  resolves = ["post gif on fail", "branch cleanup"]
+  resolves = ["branch cleanup"]
 }
 
 action "post gif on fail" {

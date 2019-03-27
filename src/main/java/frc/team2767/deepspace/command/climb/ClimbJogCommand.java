@@ -4,17 +4,17 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.ClimbSubsystem;
 
-public class UnwindClimbCommand extends InstantCommand {
+public class ClimbJogCommand extends InstantCommand {
 
   private static final ClimbSubsystem CLIMB = Robot.CLIMB;
+  private double velocity;
 
-  public UnwindClimbCommand() {
-    requires(CLIMB);
+  public ClimbJogCommand(double velocity) {
+    this.velocity = velocity;
   }
 
   @Override
   protected void initialize() {
-
-    CLIMB.unwind();
+    CLIMB.setVelocity(velocity);
   }
 }
