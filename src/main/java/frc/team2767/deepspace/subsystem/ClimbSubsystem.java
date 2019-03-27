@@ -1,5 +1,6 @@
 package frc.team2767.deepspace.subsystem;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
@@ -7,12 +8,17 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team2767.deepspace.Robot;
+import java.util.Set;
+import java.util.function.DoubleSupplier;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
+import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
+import org.strykeforce.thirdcoast.telemetry.item.Item;
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
-public class ClimbSubsystem extends Subsystem {
+public class ClimbSubsystem extends Subsystem implements Item {
 
   // max 843
   // min 139
@@ -22,21 +28,26 @@ public class ClimbSubsystem extends Subsystem {
   private static final int LEFT_KICKSTAND = 2;
   private static final int RIGHT_KICKSTAND = 3;
   private static final int RATCHET_SERVO = 4;
-  private static final double kClimbSpeed = 0.85;
-  private static final double kLowerSuction = 0.15;
-  private static final double kUnwindSpeed = -0.1;
-  private static final double kRatchetReleaseSpeed = 0.2;
-  private static final double kRaiseToHeight = -0.4;
-  private static final String PREFS = "Climb/Servos";
-  private static int relStartTicks;
-  private static int setpointTicks;
+  private static final String PREFS = "ClimbSubsystem/Settings/";
+  private static final double BACKUP = 2767;
+  public static double kSealVelocity;
+  public static double kJogUpVelocity = -0.20;
+  public static double kJogDownVelocity = 0.20;
+  public static double kDownOpenLoopOutput = 1.0;
+  public static double kUpOpenLoopOutput = -1.0;
+  public static double kDownClimbOutput = 0.75;
+  public static int kHabHover;
+  public static int kLowRelease;
+  public static int kHighRelease;
+  public static int kClimb;
+  public static int kTooLowIn;
+  public static boolean isReleased;
   private static double kLeftKickstandHold;
   private static double kLeftKickstandRelease;
   private static double kRightKickstandHold;
   private static double kRightKickstandRelease;
   private static double kRatchetDisable;
   private static double kRatchetEngage;
-  private static double BACKUP = 2767;
   private final TalonSRX leftSlave = new TalonSRX(LEFT_SLAVE_ID);
   private final TalonSRX rightMaster = new TalonSRX(RIGHT_MASTER_ID);
   private final Servo rightKickstandServo = new Servo(RIGHT_KICKSTAND);
@@ -47,13 +58,20 @@ public class ClimbSubsystem extends Subsystem {
   public ClimbSubsystem() {
     climbPrefs();
     configTalon();
-
+    isReleased = false;
     ratchetServo.set(kRatchetEngage);
     leftKickstandServo.set(kLeftKickstandHold);
     rightKickstandServo.set(kRightKickstandHold);
   }
 
   private void climbPrefs() {
+    kHabHover = (int) getPrefs("low_position", 180);
+    kLowRelease = (int) getPrefs("medium_position", 675);
+    kHighRelease = (int) getPrefs("high_position", 175);
+    kClimb = (int) getPrefs("climb_position", 870);
+    kTooLowIn = (int) getPrefs("too_low_position", 280);
+    kSealVelocity = getPrefs("seal_velocity", 50);
+
     kLeftKickstandHold = getPrefs("L_kickstand_hold", 0.4);
     kLeftKickstandRelease = getPrefs("L_kickstand_release", 0.95);
     kRightKickstandHold = getPrefs("R_kickstand_hold", 0.5);
@@ -71,12 +89,14 @@ public class ClimbSubsystem extends Subsystem {
     leftSlaveConfig.continuousCurrentLimit = 40;
     leftSlaveConfig.voltageCompSaturation = 12;
     leftSlaveConfig.voltageMeasurementFilter = 32;
-    leftSlaveConfig.velocityMeasurementWindow = 64;
-    leftSlaveConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms;
-    leftSlaveConfig.forwardLimitSwitchSource = LimitSwitchSource.RemoteTalonSRX;
-    leftSlaveConfig.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
 
     TalonSRXConfiguration rightMasterConfig = new TalonSRXConfiguration();
+    rightMasterConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
+    rightMasterConfig.slot0.kP = 0.80;
+    rightMasterConfig.slot0.kI = 0;
+    rightMasterConfig.slot0.kD = 30;
+    rightMasterConfig.slot0.kF = 0.6;
+    rightMasterConfig.slot0.integralZone = 0;
     rightMasterConfig.peakOutputReverse = -1.0;
     rightMasterConfig.peakCurrentLimit = 45;
     rightMasterConfig.peakCurrentDuration = 40;
@@ -85,21 +105,24 @@ public class ClimbSubsystem extends Subsystem {
     rightMasterConfig.voltageMeasurementFilter = 32;
     rightMasterConfig.velocityMeasurementWindow = 64;
     rightMasterConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms;
-    rightMasterConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
     rightMasterConfig.forwardLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
     rightMasterConfig.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
+    rightMasterConfig.reverseLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
+    rightMasterConfig.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
 
     leftSlave.configAllSettings(leftSlaveConfig, 10);
     rightMaster.configAllSettings(rightMasterConfig, 10);
 
-    leftSlave.enableCurrentLimit(true);
-    rightMaster.enableCurrentLimit(true);
-    leftSlave.enableVoltageCompensation(true);
-    rightMaster.enableVoltageCompensation(true);
-    leftSlave.follow(rightMaster);
+    rightMaster.setNeutralMode(NeutralMode.Brake);
+    leftSlave.setNeutralMode(NeutralMode.Brake);
 
-    rightMaster.configForwardLimitSwitchSource(
-        LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+    rightMaster.enableCurrentLimit(true);
+    rightMaster.enableVoltageCompensation(true);
+    rightMaster.configForwardSoftLimitEnable(true);
+    rightMaster.configReverseSoftLimitEnable(true);
+    leftSlave.enableCurrentLimit(true);
+    leftSlave.enableVoltageCompensation(true);
+    leftSlave.follow(rightMaster);
 
     logger.info("Configured Climber Talons");
 
@@ -107,6 +130,7 @@ public class ClimbSubsystem extends Subsystem {
     telemetryService.stop();
     telemetryService.register(new TalonItem(leftSlave, "climbLeftSlave"));
     telemetryService.register(new TalonItem(rightMaster, "climbRightMaster"));
+    telemetryService.register(this);
   }
 
   @SuppressWarnings("Duplicates")
@@ -121,43 +145,47 @@ public class ClimbSubsystem extends Subsystem {
     return pref;
   }
 
-  public void climb() {
-    openLoopMove(kClimbSpeed);
-    logger.info("Climbing");
-  }
-
-  public void openLoopMove(double percent) {
+  public void openLoop(double percent) {
     leftSlave.follow(rightMaster);
     rightMaster.set(ControlMode.PercentOutput, percent);
   }
 
-  public void lowerSuctionCup() {
-    openLoopMove(kLowerSuction);
-    logger.info("Lowering Suction Cup");
+  public boolean setOpenLoopFeedbackSensor(boolean isOpenLoop) {
+    if (isOpenLoop) {
+      ErrorCode e = rightMaster.configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, 10);
+      if (!e.equals(ErrorCode.OK)) {
+        logger.warn("talon sensor not configured correctly");
+        return false;
+      }
+    } else {
+      ErrorCode e =
+          rightMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+      if (!e.equals(ErrorCode.OK)) {
+        logger.warn("talon sensor not configured correctly");
+        return false;
+      }
+    }
+    return true;
+  }
+
+  public void setUpperLimit(int limit) {
+    leftSlave.follow(rightMaster);
+    rightMaster.configReverseSoftLimitThreshold(limit);
+  }
+
+  public void setLowerLimit(int limit) {
+    leftSlave.follow(rightMaster);
+    rightMaster.configForwardSoftLimitThreshold(limit);
   }
 
   public void stop() {
-    openLoopMove(0.0);
+    setVelocity(0.0);
     logger.info("Stopping Climb");
   }
 
-  public void unwind() {
-    openLoopMove(kUnwindSpeed);
-  }
-
-  public void runTicks(int ticks) {
-    setpointTicks = ticks;
-    relStartTicks = rightMaster.getSelectedSensorPosition();
-    openLoopMove(kRatchetReleaseSpeed);
-    logger.info("Running down {} ticks", setpointTicks);
-  }
-
-  public boolean onTicks() {
-    return Math.abs(rightMaster.getSelectedSensorPosition() - relStartTicks) >= setpointTicks;
-  }
-
-  public int getTicks() {
-    return Math.abs(rightMaster.getSelectedSensorPosition() - relStartTicks);
+  public void setVelocity(double velocity) {
+    leftSlave.follow(rightMaster);
+    rightMaster.set(ControlMode.Velocity, velocity);
   }
 
   public void disableRatchet() {
@@ -170,11 +198,6 @@ public class ClimbSubsystem extends Subsystem {
     logger.info("Ratchet enabled");
   }
 
-  public void raiseToHeight() {
-    openLoopMove(kRaiseToHeight);
-    logger.info("Raising climber");
-  }
-
   public void releaseKickstand() {
     leftKickstandServo.set(kLeftKickstandRelease);
     rightKickstandServo.set(kRightKickstandRelease);
@@ -183,4 +206,47 @@ public class ClimbSubsystem extends Subsystem {
 
   @Override
   protected void initDefaultCommand() {}
+
+  @NotNull
+  @Override
+  public String getDescription() {
+    return "climber";
+  }
+
+  @Override
+  public int getDeviceId() {
+    return 0;
+  }
+
+  @NotNull
+  @Override
+  public Set<Measure> getMeasures() {
+    return Set.of(Measure.ANALOG_IN_RAW);
+  }
+
+  @NotNull
+  @Override
+  public String getType() {
+    return "climb";
+  }
+
+  @Override
+  public int compareTo(@NotNull Item item) {
+    return 0;
+  }
+
+  @NotNull
+  @Override
+  public DoubleSupplier measurementFor(@NotNull Measure measure) {
+    switch (measure) {
+      case ANALOG_IN_RAW:
+        return this::getStringpotPosition;
+      default:
+        return () -> 2767.0;
+    }
+  }
+
+  public double getStringpotPosition() {
+    return rightMaster.getSensorCollection().getAnalogInRaw();
+  }
 }

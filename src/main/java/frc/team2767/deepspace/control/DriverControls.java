@@ -8,8 +8,7 @@ import frc.team2767.deepspace.command.approach.sequences.AutoHatchPickupCommandG
 import frc.team2767.deepspace.command.biscuit.BiscuitNegativeCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositiveCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
-import frc.team2767.deepspace.command.climb.ClimbFormSealCommandGroup;
-import frc.team2767.deepspace.command.climb.RaiseClimbCommand;
+import frc.team2767.deepspace.command.climb.ClimbJogCommand;
 import frc.team2767.deepspace.command.climb.StopClimbCommand;
 import frc.team2767.deepspace.command.intake.IntakeDownCommand;
 import frc.team2767.deepspace.command.intake.IntakeUpCommand;
@@ -21,6 +20,7 @@ import frc.team2767.deepspace.command.sequences.pickup.CargoGroundPickupCommandG
 import frc.team2767.deepspace.command.sequences.pickup.CoconutPickupCommandGroup;
 import frc.team2767.deepspace.command.teleop.InterruptCommand;
 import frc.team2767.deepspace.command.vacuum.SetSolenoidStatesCommand;
+import frc.team2767.deepspace.subsystem.ClimbSubsystem;
 import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,9 +45,11 @@ public class DriverControls {
     new JoystickButton(joystick, Button.X.id).whenPressed(new StowAllCommandGroup());
 
     // Climb Commands
-    new JoystickButton(joystick, Button.UP.id).whenPressed(new RaiseClimbCommand());
+    new JoystickButton(joystick, Button.UP.id)
+        .whenPressed(new ClimbJogCommand(ClimbSubsystem.kJogUpVelocity));
     new JoystickButton(joystick, Button.UP.id).whenReleased(new StopClimbCommand());
-    new JoystickButton(joystick, Button.DOWN.id).whenPressed(new ClimbFormSealCommandGroup());
+    new JoystickButton(joystick, Button.DOWN.id)
+        .whenPressed(new ClimbJogCommand(ClimbSubsystem.kJogDownVelocity));
     new JoystickButton(joystick, Button.DOWN.id).whenReleased(new StopClimbCommand());
 
     // biscuit
