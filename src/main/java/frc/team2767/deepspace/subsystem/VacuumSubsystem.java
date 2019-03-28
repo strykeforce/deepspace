@@ -90,7 +90,7 @@ public class VacuumSubsystem extends Subsystem {
     kHatchPressureInHg = getPreference("hatch_pressure_inHg", 16);
     kClimbPressureInHg = getPreference("climb_pressure_inHg", 24.4);
     kGoodEnoughGamePiece = (int) getPreference("gamepiece_good_enough_inTicks", 80);
-    kGoodEnoughClimb = (int) getPreference("climb_good_enough_inTicks", 200);
+    kGoodEnoughClimb = (int) getPreference("climb_good_enough_inTicks", 400);
   }
 
   @SuppressWarnings("Duplicates")

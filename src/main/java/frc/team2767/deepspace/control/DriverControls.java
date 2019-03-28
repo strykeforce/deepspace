@@ -47,10 +47,10 @@ public class DriverControls {
 
     // Climb Commands
     new JoystickButton(joystick, Button.UP.id)
-        .whenPressed(new ClimbJogCommand(ClimbSubsystem.kJogUpVelocity));
+        .whenPressed(new ClimbJogCommand(ClimbSubsystem.kJogUpPercent));
     new JoystickButton(joystick, Button.UP.id).whenReleased(new StopClimbCommand());
     new JoystickButton(joystick, Button.DOWN.id)
-        .whenPressed(new ClimbJogCommand(ClimbSubsystem.kJogDownVelocity));
+        .whenPressed(new ClimbJogCommand(ClimbSubsystem.kJogDownPercent));
     new JoystickButton(joystick, Button.DOWN.id).whenReleased(new StopClimbCommand());
 
     // biscuit

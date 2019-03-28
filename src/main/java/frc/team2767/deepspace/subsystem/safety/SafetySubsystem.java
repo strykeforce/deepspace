@@ -212,29 +212,17 @@ public class SafetySubsystem extends Subsystem {
 
     return "current="
         + "\n\t"
-        + elevatorCurrent
-        + "\t"
         + elevatorSubsystem.getTicks()
         + "\n\t"
-        + intakeCurrent
-        + "\t"
         + intakeSubsystem.getTicks()
         + "\n\t"
-        + biscuitCurrent
-        + "\t"
         + biscuitSubsystem.getTicks()
         + "\nlimits="
         + "\n\t"
         + elevatorLimit
-        + "\t"
-        + elevatorLimit.toString()
         + "\n\t"
         + intakeLimit
-        + "\t"
-        + intakeLimit.toString()
         + "\n\t"
-        + biscuitLimit
-        + "\t"
-        + biscuitLimit.toString();
+        + biscuitLimit;
   }
 }

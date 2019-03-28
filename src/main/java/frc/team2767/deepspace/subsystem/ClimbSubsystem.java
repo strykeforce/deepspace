@@ -31,8 +31,8 @@ public class ClimbSubsystem extends Subsystem implements Item {
   private static final String PREFS = "ClimbSubsystem/Settings/";
   private static final double BACKUP = 2767;
   public static double kSealVelocity;
-  public static double kJogUpVelocity = -0.20;
-  public static double kJogDownVelocity = 0.20;
+  public static double kJogUpPercent = -0.20;
+  public static double kJogDownPercent = 0.20;
   public static double kDownOpenLoopOutput = 1.0;
   public static double kUpOpenLoopOutput = -1.0;
   public static double kDownClimbOutput = 0.75;
@@ -65,11 +65,11 @@ public class ClimbSubsystem extends Subsystem implements Item {
   }
 
   private void climbPrefs() {
-    kHabHover = (int) getPrefs("low_position", 180);
-    kLowRelease = (int) getPrefs("medium_position", 675);
-    kHighRelease = (int) getPrefs("high_position", 175);
-    kClimb = (int) getPrefs("climb_position", 870);
-    kTooLowIn = (int) getPrefs("too_low_position", 280);
+    kHabHover = (int) getPrefs("low_position", 195);
+    kLowRelease = (int) getPrefs("medium_position", 679);
+    kHighRelease = (int) getPrefs("high_position", 189);
+    kClimb = (int) getPrefs("climb_position", 884);
+    kTooLowIn = (int) getPrefs("too_low_position", 240);
     kSealVelocity = getPrefs("seal_velocity", 50);
 
     kLeftKickstandHold = getPrefs("L_kickstand_hold", 0.4);
