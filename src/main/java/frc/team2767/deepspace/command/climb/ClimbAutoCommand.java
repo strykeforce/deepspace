@@ -25,9 +25,7 @@ public class ClimbAutoCommand extends Command {
 
   @Override
   protected void initialize() {
-    if (!CLIMB.setOpenLoopFeedbackSensor(true)) {
-      climbState = ClimbState.DONE;
-    }
+    logger.info("BEGIN CLIMB SEQUENCE");
     climbState = ClimbState.FAST_LOWER;
     CLIMB.setLowerLimit(ClimbSubsystem.kHabHover);
     CLIMB.openLoop(ClimbSubsystem.kDownOpenLoopOutput);
@@ -38,11 +36,9 @@ public class ClimbAutoCommand extends Command {
     switch (climbState) {
       case FAST_LOWER:
         if (CLIMB.getStringpotPosition() >= ClimbSubsystem.kHabHover - GOOD_ENOUGH) {
-          if (!CLIMB.setOpenLoopFeedbackSensor(false)) {
-            climbState = ClimbState.DONE;
-          }
           climbState = ClimbState.FORM_SEAL;
-          CLIMB.setVelocity(ClimbSubsystem.kSealVelocity);
+          CLIMB.openLoop(ClimbSubsystem.kSealOutputPercent);
+          CLIMB.setLowerLimit(ClimbSubsystem.kTooLowIn);
           logger.debug("forming seal");
         }
 
@@ -52,9 +48,6 @@ public class ClimbAutoCommand extends Command {
         if (VACUUM.isClimbOnTarget()) {
           logger.debug("fast climbing");
           climbState = ClimbState.FAST_CLIMB;
-          if (!CLIMB.setOpenLoopFeedbackSensor(true)) {
-            climbState = ClimbState.DONE;
-          }
           CLIMB.enableRatchet();
           CLIMB.releaseKickstand();
           VISION.startLightBlink(VisionSubsystem.LightPattern.CLIMB_GOOD);
@@ -64,9 +57,6 @@ public class ClimbAutoCommand extends Command {
 
         if (CLIMB.getStringpotPosition() >= ClimbSubsystem.kTooLowIn - GOOD_ENOUGH) {
           logger.debug("resetting");
-          if (!CLIMB.setOpenLoopFeedbackSensor(true)) {
-            climbState = ClimbState.DONE;
-          }
           climbState = ClimbState.RESET;
           CLIMB.setUpperLimit(ClimbSubsystem.kHabHover);
           CLIMB.openLoop(ClimbSubsystem.kUpOpenLoopOutput);
@@ -82,10 +72,7 @@ public class ClimbAutoCommand extends Command {
       case RESET:
         if (CLIMB.getStringpotPosition() <= ClimbSubsystem.kHabHover + GOOD_ENOUGH) {
           climbState = ClimbState.FORM_SEAL;
-          if (!CLIMB.setOpenLoopFeedbackSensor(false)) {
-            climbState = ClimbState.DONE;
-          }
-          CLIMB.setVelocity(ClimbSubsystem.kSealVelocity);
+          CLIMB.openLoop(ClimbSubsystem.kSealOutputPercent);
         }
         break;
     }
@@ -98,8 +85,8 @@ public class ClimbAutoCommand extends Command {
 
   @Override
   protected void end() {
-    logger.debug("emd climb");
     CLIMB.stop();
+    logger.info("END CLIMB SEQUENCE");
   }
 
   private enum ClimbState {
