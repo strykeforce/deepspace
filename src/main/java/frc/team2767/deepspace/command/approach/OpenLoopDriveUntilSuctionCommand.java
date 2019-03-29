@@ -68,7 +68,7 @@ public class OpenLoopDriveUntilSuctionCommand extends Command {
         break;
 
       case OUT:
-        DRIVE.setWheels(direction, DriveState.OUT.velocity);
+        //        DRIVE.setWheels(direction, DriveState.OUT.velocity);
         if (Timer.getFPGATimestamp() - outDriveInitTime > OUT_DRIVE_SECONDS) {
           driveState = DriveState.DONE;
         }

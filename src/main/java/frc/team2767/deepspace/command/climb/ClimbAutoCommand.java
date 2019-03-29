@@ -39,14 +39,14 @@ public class ClimbAutoCommand extends Command {
           climbState = ClimbState.FORM_SEAL;
           CLIMB.openLoop(ClimbSubsystem.kSealOutputPercent);
           CLIMB.setLowerLimit(ClimbSubsystem.kTooLowIn);
-          logger.debug("forming seal");
+          logger.info("forming seal");
         }
 
         break;
 
       case FORM_SEAL:
         if (VACUUM.isClimbOnTarget()) {
-          logger.debug("fast climbing");
+          logger.info("fast climbing");
           climbState = ClimbState.FAST_CLIMB;
           CLIMB.enableRatchet();
           CLIMB.releaseKickstand();
@@ -56,7 +56,7 @@ public class ClimbAutoCommand extends Command {
         }
 
         if (CLIMB.getStringpotPosition() >= ClimbSubsystem.kTooLowIn - GOOD_ENOUGH) {
-          logger.debug("resetting");
+          logger.info("resetting");
           climbState = ClimbState.RESET;
           CLIMB.setUpperLimit(ClimbSubsystem.kHabHover);
           CLIMB.openLoop(ClimbSubsystem.kUpOpenLoopOutput);
@@ -66,7 +66,7 @@ public class ClimbAutoCommand extends Command {
       case FAST_CLIMB:
         if (CLIMB.getStringpotPosition() >= ClimbSubsystem.kClimb) {
           climbState = ClimbState.DONE;
-          logger.debug("done climbing");
+          logger.info("done climbing");
         }
         break;
       case RESET:
