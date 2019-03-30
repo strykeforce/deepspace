@@ -34,9 +34,9 @@ public class SandstormHatchPickupCommandGroup extends CommandGroup {
     addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP));
     addSequential(new ElevatorSetPositionCommand(9.0));
     addSequential(new WaitForPressureCommand());
-    addSequential(new SandstormHatchIndicator(true));
-    addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kHatchLowPositionInches));
     addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.kUpPositionDeg));
+    addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kHatchLowPositionInches));
+    addSequential(new SandstormHatchIndicator(true));
     addSequential(new LogCommand("END SANDSTORM HATCH PICKUP"));
   }
 }
