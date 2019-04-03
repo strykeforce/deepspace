@@ -26,7 +26,7 @@ public class VisionYawControlCommand extends Command {
   private static final double DRIVE_EXPO = 0.5;
   private static final double YAW_EXPO = 0.5;
   private static final double DEADBAND = 0.05;
-  private static final double kP = 0.1;
+  private static final double kP = 0.01; // 0.00625 tuning for NT method
   private static final double MAX_YAW = 0.3;
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -55,30 +55,32 @@ public class VisionYawControlCommand extends Command {
   @Override
   protected void execute() {
     // Pyeye Method:
-    /*VISION.queryPyeye(); // gets corrected heading and range from NT
-    double error = VISION.getCorrectedHeading();
-    boolean isGood = error >= 0; // check if range is good (we have a target), not -1
+    VISION.queryPyeye(); // gets corrected heading and range from NT
+    double error = VISION.getRawBearing();
+    logger.info("error: {}", error);
+    // boolean isGood = error >= 0; // check if range is good (we have a target), not -1
+    boolean isGood = true;
     double yaw;
 
-    if (isGood){
-        yaw = kP * error; // corrected heading is error from camera center
+    if (isGood) {
+      yaw = kP * error; // corrected heading is error from camera center
 
-        // normalize yaw
-        if (yaw > MAX_YAW) {
-            yaw = MAX_YAW;
-        } else if (yaw < -MAX_YAW) {
-            yaw = -MAX_YAW;
-        }
+      // normalize yaw
+      if (yaw > MAX_YAW) {
+        yaw = MAX_YAW;
+      } else if (yaw < -MAX_YAW) {
+        yaw = -MAX_YAW;
+      }
     } else {
-        yaw = yawExpo.apply(controls.getYaw());
-    }*/
+      yaw = yawExpo.apply(controls.getYaw());
+    }
 
     // NT Input Method
-    double error = targetYaw - DRIVE.getGyro().getAngle();
+    /*double error = targetYaw - DRIVE.getGyro().getAngle();
     double yaw = kP * error;
     if (yaw > MAX_YAW) yaw = MAX_YAW;
     if (yaw < -MAX_YAW) yaw = -MAX_YAW;
-
+    */
     // forward and strafe are still normal
     double forward = driveExpo.apply(controls.getForward());
     double strafe = driveExpo.apply(controls.getStrafe());
