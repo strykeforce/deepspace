@@ -15,23 +15,20 @@ import org.strykeforce.thirdcoast.swerve.SwerveDrive;
 import org.strykeforce.thirdcoast.util.ExpoScale;
 
 public class VisionYawControlCommand extends Command {
-  private static DriverControls controls;
+  public static final double kP_STRAFE = 0.01;
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VisionSubsystem VISION = Robot.VISION;
-
-  private final ExpoScale driveExpo;
-  private final ExpoScale yawExpo;
-  private NetworkTableEntry yawEntry;
-
   private static final double DRIVE_EXPO = 0.5;
   private static final double YAW_EXPO = 0.5;
   private static final double DEADBAND = 0.05;
-  private static final double kP = 0.01; // 0.00625 tuning for NT method
+  private static final double kP_YAW = 0.01; // 0.00625 tuning for NT method
   private static final double MAX_YAW = 0.3;
-
+  private static DriverControls controls;
+  private final ExpoScale driveExpo;
+  private final ExpoScale yawExpo;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   Preferences preferences;
-
+  private NetworkTableEntry yawEntry;
   private double targetYaw;
 
   public VisionYawControlCommand() {
@@ -47,7 +44,7 @@ public class VisionYawControlCommand extends Command {
   @Override
   protected void initialize() {
     controls = Robot.CONTROLS.getDriverControls();
-    DRIVE.setDriveMode(SwerveDrive.DriveMode.TELEOP);
+    DRIVE.setDriveMode(SwerveDrive.DriveMode.CLOSED_LOOP);
     targetYaw = yawEntry.getDouble(0.0);
     logger.info("Target Yaw: {}", targetYaw);
   }
@@ -56,14 +53,22 @@ public class VisionYawControlCommand extends Command {
   protected void execute() {
     // Pyeye Method:
     VISION.queryPyeye(); // gets corrected heading and range from NT
-    double error = VISION.getRawBearing();
-    logger.info("error: {}", error);
+    double yawError = VISION.getRawBearing();
+    logger.info("error: {}", yawError);
     // boolean isGood = error >= 0; // check if range is good (we have a target), not -1
     boolean isGood = true;
     double yaw;
 
+    double strafeError =
+        Math.sin(
+                Math.toRadians(
+                    VISION.getRawBearing()
+                        - VISION.getCameraPositionBearing()
+                        - Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360)))
+            / VISION.getRawRange();
+
     if (isGood) {
-      yaw = kP * error; // corrected heading is error from camera center
+      yaw = kP_YAW * yawError; // corrected heading is error from camera center
 
       // normalize yaw
       if (yaw > MAX_YAW) {
@@ -77,15 +82,15 @@ public class VisionYawControlCommand extends Command {
 
     // NT Input Method
     /*double error = targetYaw - DRIVE.getGyro().getAngle();
-    double yaw = kP * error;
+    double yaw = kP_YAW * error;
     if (yaw > MAX_YAW) yaw = MAX_YAW;
     if (yaw < -MAX_YAW) yaw = -MAX_YAW;
     */
     // forward and strafe are still normal
     double forward = driveExpo.apply(controls.getForward());
-    double strafe = driveExpo.apply(controls.getStrafe());
+    double strafe = strafeError * kP_STRAFE * forward;
 
-    DRIVE.drive(forward, strafe, yaw);
+    DRIVE.drive(forward, strafe, deadband(yaw));
   }
 
   @Override
@@ -96,5 +101,10 @@ public class VisionYawControlCommand extends Command {
   @Override
   protected void end() {
     DRIVE.stop();
+  }
+
+  private double deadband(double value) {
+    if (Math.abs(value) < DEADBAND) return 0.0;
+    return value;
   }
 }
