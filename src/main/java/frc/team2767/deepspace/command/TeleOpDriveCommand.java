@@ -59,8 +59,8 @@ public final class TeleOpDriveCommand extends Command {
         yaw = -maxYawVelocity;
       }
     } else {*/
-     yaw = yawExpo.apply(controls.getYaw());
-    //}
+    yaw = yawExpo.apply(controls.getYaw());
+    // }
 
     // forward and strafe are still normal
     double forward = driveExpo.apply(controls.getForward());
