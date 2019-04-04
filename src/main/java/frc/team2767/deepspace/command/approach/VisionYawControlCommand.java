@@ -21,7 +21,7 @@ public class VisionYawControlCommand extends Command {
   private static final double DRIVE_EXPO = 0.5;
   private static final double YAW_EXPO = 0.5;
   private static final double DEADBAND = 0.05;
-  private static final double kP_YAW = 0.01; // 0.00625 tuning for NT method
+  private static final double kP_YAW = 0.00625; // 0.00625 tuning for NT method, 0.01 pyeye
   private static final double MAX_YAW = 0.3;
   private static DriverControls controls;
   private final ExpoScale driveExpo;
@@ -84,13 +84,14 @@ public class VisionYawControlCommand extends Command {
     /*double error = targetYaw - DRIVE.getGyro().getAngle();
     double yaw = kP_YAW * error;
     if (yaw > MAX_YAW) yaw = MAX_YAW;
-    if (yaw < -MAX_YAW) yaw = -MAX_YAW;
-    */
+    if (yaw < -MAX_YAW) yaw = -MAX_YAW;*/
+
     // forward and strafe are still normal
     double forward = driveExpo.apply(controls.getForward());
     double strafe = strafeError * kP_STRAFE * forward;
+    //double strafe = driveExpo.apply(controls.getStrafe());
 
-    DRIVE.drive(forward, strafe, deadband(yaw));
+    DRIVE.drive(forward, strafe, yaw);
   }
 
   @Override

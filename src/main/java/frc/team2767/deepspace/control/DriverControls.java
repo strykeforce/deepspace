@@ -80,6 +80,7 @@ public class DriverControls {
     new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(new ReleaseGamepieceCommand());
     new JoystickButton(joystick, Shoulder.LEFT_UP.id)
         .whenPressed(new DriverRocketPlaceAssistCommand());
+    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased(new InterruptCommand());
   }
 
   private <E extends Enum<E>> Command log(E control) {
