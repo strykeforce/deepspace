@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.ZeroGyroCommand;
 import frc.team2767.deepspace.command.approach.VisionYawControlCommand;
-import frc.team2767.deepspace.command.approach.sequences.HatchPlaceCommandGroup;
 import frc.team2767.deepspace.command.biscuit.BiscuitNegativeCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositiveCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
@@ -19,10 +18,10 @@ import frc.team2767.deepspace.command.log.SafetyLogDumpCommand;
 import frc.team2767.deepspace.command.sequences.StowAllCommandGroup;
 import frc.team2767.deepspace.command.sequences.pickup.CargoGroundPickupCommandGroup;
 import frc.team2767.deepspace.command.sequences.pickup.CoconutPickupCommandGroup;
+import frc.team2767.deepspace.command.teleop.DriverRocketPlaceAssistCommand;
 import frc.team2767.deepspace.command.teleop.InterruptCommand;
-import frc.team2767.deepspace.command.vacuum.SetSolenoidStatesCommand;
+import frc.team2767.deepspace.command.teleop.ReleaseGamepieceCommand;
 import frc.team2767.deepspace.subsystem.ClimbSubsystem;
-import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,10 +77,9 @@ public class DriverControls {
     new JoystickButton(joystick, Button.HAMBURGER.id).whenPressed(new SafetyLogDumpCommand());
 
     // shoulder
-    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id)
-        .whenPressed(
-            new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.PRESSURE_ACCUMULATE));
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed(new HatchPlaceCommandGroup());
+    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(new ReleaseGamepieceCommand());
+    new JoystickButton(joystick, Shoulder.LEFT_UP.id)
+        .whenPressed(new DriverRocketPlaceAssistCommand());
   }
 
   private <E extends Enum<E>> Command log(E control) {

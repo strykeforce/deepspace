@@ -121,7 +121,6 @@ public class VisionSubsystem extends Subsystem implements Item {
   public void queryPyeye() {
     rawBearing = (double) bearingEntry.getNumber(0.0);
     rawRange = (double) rangeEntry.getNumber(-1.0);
-    logger.debug("Raw Bearing: {}, Raw Range: {}", rawBearing, rawRange);
   }
 
   public void setGamePiece(GamePiece gamePiece) {
