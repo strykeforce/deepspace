@@ -19,8 +19,8 @@ public class DriverRocketPlaceAssistCommand extends Command {
   private static final double DEADBAND = 0.05;
   private static final double kP = 0.00625;
   private static final double MAX_YAW = 0.3;
-  private static final double YAW_RIGHT = 60.0;
-  private static final double YAW_LEFT = -60.0;
+  private static final double YAW_RIGHT = -30.0;
+  private static final double YAW_LEFT = 30.0;
   private static double targetYaw;
   private static double angleAdjust;
 
