@@ -171,7 +171,7 @@ public class DriveSubsystem extends Subsystem implements Item {
   public void RocketAngleAdjust(double angle) {
     AHRS gyro = swerve.getGyro();
     double adj;
-    adj = gyro.getAngle() % 360;
+    adj = gyro.getAngleAdjustment();
     adj += angle;
     logger.info("Rocket Angle Adjust: {}", adj);
     gyro.setAngleAdjustment(adj);
