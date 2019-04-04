@@ -89,7 +89,7 @@ public class VisionYawControlCommand extends Command {
     // forward and strafe are still normal
     double forward = driveExpo.apply(controls.getForward());
     double strafe = strafeError * kP_STRAFE * forward;
-    //double strafe = driveExpo.apply(controls.getStrafe());
+    // double strafe = driveExpo.apply(controls.getStrafe());
 
     DRIVE.drive(forward, strafe, yaw);
   }
