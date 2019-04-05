@@ -95,8 +95,8 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
 
     TalonSRXConfiguration rollerConfig = new TalonSRXConfiguration();
     rollerConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
-    rollerConfig.continuousCurrentLimit = 10;
-    rollerConfig.peakCurrentLimit = 0;
+    rollerConfig.continuousCurrentLimit = 20;
+    rollerConfig.peakCurrentLimit = 25;
     rollerConfig.peakCurrentDuration = 0;
 
     shoulder.configForwardSoftLimitEnable(true);
