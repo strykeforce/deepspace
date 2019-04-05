@@ -19,8 +19,8 @@ public class DriverRocketPlaceAssistCommand extends Command {
   private static final double DEADBAND = 0.05;
   private static final double kP = 0.00625;
   private static final double MAX_YAW = 0.3;
-  private static final double YAW_RIGHT = -30.0;
-  private static final double YAW_LEFT = 30.0;
+  private static final double YAW_RIGHT = -20.0;
+  private static final double YAW_LEFT = 20.0;
   private static double targetYaw;
   private static double angleAdjust;
 
@@ -60,7 +60,6 @@ public class DriverRocketPlaceAssistCommand extends Command {
   private void setAngleAdjust() {
     double currentAngle = Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0);
     double fullAngle = DRIVE.getGyro().getAngle();
-    int rotations = (int) fullAngle / 360;
     logger.info("Current Angle: {}", currentAngle);
     /*if (currentAngle > 0) {
       logger.info("Adjust Angle By: {}", YAW_LEFT);
@@ -87,11 +86,19 @@ public class DriverRocketPlaceAssistCommand extends Command {
       targetYaw = -90.0;
       angleAdjust = YAW_RIGHT;
     }
-    targetYaw += (rotations * 360);
+
     logger.info("Target Yaw: {}, Current Yaw: {}", targetYaw, fullAngle);
     logger.info("Adjust Angle By: {}", angleAdjust);
     DRIVE.RocketAngleAdjust(angleAdjust);
     logger.info("Yaw post adjust: {}", DRIVE.getGyro().getAngle());
+    double anglePostAdj = DRIVE.getGyro().getAngle();
+    if (anglePostAdj > 180.0) {
+      targetYaw += 360.0;
+    }
+    if (anglePostAdj < -180.0) {
+      targetYaw -= 360.0;
+    }
+    logger.info("New Target Yaw: {}", targetYaw);
   }
 
   private void undoAngleAdjust() {

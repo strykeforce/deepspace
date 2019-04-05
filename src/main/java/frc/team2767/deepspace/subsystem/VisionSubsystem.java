@@ -29,8 +29,8 @@ public class VisionSubsystem extends Subsystem implements Item {
   private static final double CAMERA_X = 3.5;
   private static final double CAMERA_Y_LEFT = -13.5;
   private static final double CAMERA_Y_RIGHT = 13.5;
-  private static final double GLUE_CORRECTION_FACTOR_RIGHT = 0.0; // 2.0
-  private static final double GLUE_CORRECTION_FACTOR_LEFT = -3.0; // 2.0
+  private static final double GLUE_CORRECTION_FACTOR_RIGHT = 0.0; // 2.0 0.0 comp
+  private static final double GLUE_CORRECTION_FACTOR_LEFT = 0.0; // 2.0 -3.0 comp
   private static final double CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_RIGHT =
       0.85; // 1.0 is zero value 0.7
   private static final double CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_LEFT =
