@@ -13,9 +13,9 @@ enum BiscuitPosition {
   BISCUIT_120R_180R(-4196, -6044),
   BISCUIT_180L(6244, 6044),
   BISCUIT_180R(-6044, -6644),
-  BISCUIT_270L(),
-  BISCUIT_270R(),
-  BISCUIT_360(6244, -6244);
+  BISCUIT_270L(-9000, -11228),
+  BISCUIT_270R(11033, 9000),
+  BISCUIT_360(11033, -11228);
 
   public final int forwardLimit;
   public final int reverseLimit;
@@ -31,8 +31,8 @@ enum BiscuitPosition {
     }
 
     if (position > 0) {
-      if (position > _____){
-        return BISCUIT_270L;
+      if (position > 6244) {
+        return BISCUIT_270R;
       }
       if (position > 6044) {
         return BISCUIT_180L;
@@ -53,8 +53,8 @@ enum BiscuitPosition {
       return BISCUIT_90L;
     }
 
-    if (position < ____){
-      return BISCUIT_270R;
+    if (position < -6644) {
+      return BISCUIT_270L;
     }
 
     if (position < -6044) {
@@ -82,12 +82,11 @@ enum BiscuitPosition {
         || this == BiscuitPosition.BISCUIT_120L
         || this == BiscuitPosition.BISCUIT_120L_180L
         || this == BiscuitPosition.BISCUIT_180L
-        || this == BiscuitPosition.BISCUIT_270L ;
+        || this == BiscuitPosition.BISCUIT_270L;
   }
 
-  public boolean isWrapped(){
-    return this == BiscuitPosition.BISCUIT_270L
-            || this == BiscuitPosition.BISCUIT_270R;
+  public boolean isWrapped() {
+    return this == BiscuitPosition.BISCUIT_270L || this == BiscuitPosition.BISCUIT_270R;
   }
 
   @Override
