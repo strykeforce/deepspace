@@ -1,5 +1,6 @@
 package frc.team2767.deepspace.command.teleop;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.control.DriverControls;
@@ -23,6 +24,7 @@ public class DriverRocketPlaceAssistCommand extends Command {
   private static final double YAW_LEFT = 20.0;
   private static double targetYaw;
   private static double angleAdjust;
+  private static boolean isAuton;
 
   public DriverRocketPlaceAssistCommand() {
     this.driveExpo = new ExpoScale(DEADBAND, DRIVE_EXPO);
@@ -34,6 +36,7 @@ public class DriverRocketPlaceAssistCommand extends Command {
     controls = Robot.CONTROLS.getDriverControls();
     DRIVE.setDriveMode(SwerveDrive.DriveMode.TELEOP);
     setAngleAdjust();
+    isAuton = DriverStation.getInstance().isAutonomous();
   }
 
   @Override
@@ -61,35 +64,36 @@ public class DriverRocketPlaceAssistCommand extends Command {
     double currentAngle = Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0);
     double fullAngle = DRIVE.getGyro().getAngle();
     logger.info("Current Angle: {}", currentAngle);
-    /*if (currentAngle > 0) {
-      logger.info("Adjust Angle By: {}", YAW_LEFT);
-      DRIVE.RocketAngleAdjust(YAW_LEFT);
-      angleAdjust = YAW_LEFT;
-      targetYaw = 90.0;
-    } else {
-      logger.info("Adjust Angle By: {}", YAW_RIGHT);
-      DRIVE.RocketAngleAdjust(YAW_RIGHT);
-      angleAdjust = YAW_RIGHT;
-      targetYaw = -90.0;
-    }*/
-
-    if (currentAngle > 90.0) {
-      targetYaw = 90.0;
-      angleAdjust = YAW_RIGHT;
-    } else if (currentAngle < -90.0) {
-      targetYaw = -90.0;
-      angleAdjust = YAW_LEFT;
-    } else if (currentAngle > 0.0) {
-      targetYaw = 90.0;
-      angleAdjust = YAW_LEFT;
-    } else {
-      targetYaw = -90.0;
-      angleAdjust = YAW_RIGHT;
+    if(isAuton){
+     //45 - -135 = right of cargo ship
+     //46 - 135 = front of cargo ship
+      //136 - 180 = left of cargo ship
+      // -136 - -180 = away from stuff
+      if(currentAngle < 45){
+        //RIGHT OF CARGO SHIP
+        targetYaw = -90.0;
+        angleAdjust = -90.0;
+      }else if()
+    }
+    else {
+      if (currentAngle > 90.0) {
+        targetYaw = 90.0;
+        angleAdjust = YAW_RIGHT;
+      } else if (currentAngle < -90.0) {
+        targetYaw = -90.0;
+        angleAdjust = YAW_LEFT;
+      } else if (currentAngle > 0.0) {
+        targetYaw = 90.0;
+        angleAdjust = YAW_LEFT;
+      } else {
+        targetYaw = -90.0;
+        angleAdjust = YAW_RIGHT;
+      }
     }
 
     logger.info("Target Yaw: {}, Current Yaw: {}", targetYaw, fullAngle);
     logger.info("Adjust Angle By: {}", angleAdjust);
-    DRIVE.RocketAngleAdjust(angleAdjust);
+    DRIVE.SetGyroOffset(angleAdjust);
     logger.info("Yaw post adjust: {}", DRIVE.getGyro().getAngle());
     double anglePostAdj = DRIVE.getGyro().getAngle();
     if (anglePostAdj > 180.0) {
@@ -103,6 +107,6 @@ public class DriverRocketPlaceAssistCommand extends Command {
 
   private void undoAngleAdjust() {
     logger.info("Undo Angle Adjustment");
-    DRIVE.RocketAngleAdjust(-angleAdjust);
+    DRIVE.UndoGyroOffset();
   }
 }

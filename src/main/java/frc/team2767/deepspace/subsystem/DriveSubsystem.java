@@ -36,6 +36,8 @@ public class DriveSubsystem extends Subsystem implements Item {
   private static final double ROBOT_WIDTH = 26.0;
   private static final int NUM_WHEELS = 4;
 
+  private static double offsetGyro;
+
   // 2272 up field
   // 2398 down field
   private static Wheel[] wheels;
@@ -168,12 +170,21 @@ public class DriveSubsystem extends Subsystem implements Item {
     gyro.setAngleAdjustment(adj);
   }
 
-  public void RocketAngleAdjust(double angle) {
+  public void SetGyroOffset(double angle) {
     AHRS gyro = swerve.getGyro();
+    offsetGyro = angle;
     double adj;
     adj = gyro.getAngleAdjustment();
     adj += angle;
-    logger.info("Rocket Angle Adjust: {}", adj);
+    logger.info("Gyro Angle Adjust: {}", adj);
+    gyro.setAngleAdjustment(adj);
+  }
+
+  public void UndoGyroOffset(){
+    AHRS gyro = swerve.getGyro();
+    double adj = gyro.getAngleAdjustment();
+    adj -= offsetGyro;
+    logger.info("Undo Gyro Angle Adjust: {}", adj);
     gyro.setAngleAdjustment(adj);
   }
 
