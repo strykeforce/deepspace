@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.ZeroGyroCommand;
-import frc.team2767.deepspace.command.approach.VisionYawControlCommand;
+import frc.team2767.deepspace.command.approach.sequences.AutoHatchPickupCommandGroup;
 import frc.team2767.deepspace.command.biscuit.BiscuitNegativeCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositiveCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
@@ -53,8 +53,10 @@ public class DriverControls {
     new JoystickButton(joystick, Button.DOWN.id).whenReleased(new StopClimbCommand());
 
     // vision
-    new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenPressed(new VisionYawControlCommand());
-    new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenPressed(new VisionYawControlCommand());
+    new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id)
+        .whenPressed(new AutoHatchPickupCommandGroup());
+    new JoystickButton(joystick, Trim.RIGHT_Y_POS.id)
+        .whenPressed(new AutoHatchPickupCommandGroup());
 
     // interrupt
     new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenPressed(new InterruptCommand());

@@ -1,13 +1,10 @@
 package frc.team2767.deepspace.command.approach;
 
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.control.DriverControls;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
+import frc.team2767.deepspace.subsystem.FieldDirection;
 import frc.team2767.deepspace.subsystem.VisionSubsystem;
 import java.util.Set;
 import java.util.function.DoubleSupplier;
@@ -20,18 +17,20 @@ import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 import org.strykeforce.thirdcoast.telemetry.item.Item;
 import org.strykeforce.thirdcoast.util.ExpoScale;
 
-public class VisionYawControlCommand extends Command implements Item {
+public class VisionAutoAlignPickupCommand extends Command implements Item {
   public static final double kP_STRAFE = 0.05;
-  private static final DriveSubsystem DRIVE = Robot.DRIVE;
-  private static final VisionSubsystem VISION = Robot.VISION;
   private static final double DRIVE_EXPO = 0.5;
   private static final double YAW_EXPO = 0.5;
   private static final double DEADBAND = 0.05;
   private static final double kP_YAW = 0.01; // 0.00625 tuning for NT method, 0.01 pyeye
   private static final double MAX_YAW = 0.3;
-  private static final double transferSlope = 1.2449;
-  private static final double transferIntercept = -4.3949;
+  private static final double MIN_RANGE = 70.0;
+  private static final double FWD_SCALE = 0.3;
   private static final double goodEnoughYaw = 1.0;
+
+  private static final DriveSubsystem DRIVE = Robot.DRIVE;
+  private static final VisionSubsystem VISION = Robot.VISION;
+
   private static double range;
   private static double strafeError;
   private static double yawError;
@@ -39,18 +38,14 @@ public class VisionYawControlCommand extends Command implements Item {
   private final ExpoScale driveExpo;
   private final ExpoScale yawExpo;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
-  Preferences preferences;
-  private NetworkTableEntry yawEntry;
   private double targetYaw;
+  private boolean isGood = false;
 
-  public VisionYawControlCommand() {
+  public VisionAutoAlignPickupCommand() {
     requires(DRIVE);
     this.driveExpo = new ExpoScale(DEADBAND, DRIVE_EXPO);
     this.yawExpo = new ExpoScale(DEADBAND, YAW_EXPO);
 
-    NetworkTableInstance instance = NetworkTableInstance.getDefault();
-    NetworkTable table = instance.getTable("Pyeye");
-    yawEntry = table.getEntry("target_yaw");
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
     telemetryService.register(this);
@@ -58,9 +53,13 @@ public class VisionYawControlCommand extends Command implements Item {
 
   @Override
   protected void initialize() {
+    logger.info("Begin Vision Auto Align Pickup");
     controls = Robot.CONTROLS.getDriverControls();
     DRIVE.setDriveMode(SwerveDrive.DriveMode.CLOSED_LOOP);
-    targetYaw = yawEntry.getDouble(0.0);
+
+    if (VISION.direction == FieldDirection.LEFT) {
+      targetYaw = -90.0;
+    } else targetYaw = 90.0;
     logger.info("Target Yaw: {}", targetYaw);
   }
 
@@ -68,56 +67,38 @@ public class VisionYawControlCommand extends Command implements Item {
   protected void execute() {
     // Pyeye Method:
     VISION.queryPyeye(); // gets corrected heading and range from NT
-    // yawError = VISION.getRawBearing();
-    logger.info("error: {}", yawError);
     range = VISION.getRawRange();
-    boolean isGood = range >= 0; // check if range is good (we have a target), not -1
-    // double yaw;
+    isGood = range >= 0; // check if range is good (we have a target), not -1
 
-    /*if (isGood) {
-      yaw = kP_YAW * yawError; // corrected heading is error from camera center
-
-      // normalize yaw
-      if (yaw > MAX_YAW) {
-        yaw = MAX_YAW;
-      } else if (yaw < -MAX_YAW) {
-        yaw = -MAX_YAW;
-      }
-    } else {
-      yaw = yawExpo.apply(controls.getYaw());
-    }*/
-
-    // NT Input Method
+    // Calculate Yaw Term based on gyro
     yawError = targetYaw - DRIVE.getGyro().getAngle();
     double yaw = kP_YAW * yawError;
     if (yaw > MAX_YAW) yaw = MAX_YAW;
     if (yaw < -MAX_YAW) yaw = -MAX_YAW;
 
+    // Determine if actual yaw is close enough to target
     boolean onTarget = Math.abs(yawError) <= goodEnoughYaw;
 
-    // Strafe correction
-    range = range * transferSlope + transferIntercept;
+    // forward is still normal
+    double forward = driveExpo.apply(controls.getForward()) * FWD_SCALE;
 
-    strafeError = Math.sin(Math.toRadians(VISION.getRawBearing())) * range;
-
-    // forward and strafe are still normal
-    double forward = driveExpo.apply(controls.getForward());
     double strafe;
+    strafeError = Math.sin(Math.toRadians(VISION.getRawBearing())) * range;
+    // Only take over strafe control if pyeye has a target and the robot is straight to the field
     if (isGood && onTarget) strafe = strafeError * kP_STRAFE * forward;
     else strafe = driveExpo.apply(controls.getStrafe());
-    // double strafe = driveExpo.apply(controls.getStrafe());
 
     DRIVE.drive(forward, strafe, yaw);
   }
 
   @Override
   protected boolean isFinished() {
-    return false;
+    return (range <= MIN_RANGE && isGood);
   }
 
   @Override
   protected void end() {
-    DRIVE.stop();
+    logger.info("End Auto Align Vision");
   }
 
   private double deadband(double value) {

@@ -37,6 +37,8 @@ public class VisionSubsystem extends Subsystem implements Item {
       0.85; // 1.0 is zero value 0.7
   private static final double CAMERA_POSITION_BEARING_LEFT = -90.0;
   private static final double CAMERA_POSITION_BEARING_RIGHT = 90.0;
+  private static final double CAMERA_RANGE_SLOPE = 1.2449;
+  private static final double CAMERA_RANGE_OFFSET = -4.3949;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final DigitalOutput lightsOutput6 = new DigitalOutput(6);
   private final DigitalOutput lightsOutput5 = new DigitalOutput(5);
@@ -195,7 +197,7 @@ public class VisionSubsystem extends Subsystem implements Item {
   }
 
   public double getRawRange() {
-    return rawRange;
+    return (rawRange * CAMERA_RANGE_SLOPE + CAMERA_RANGE_OFFSET);
   }
 
   @Override
