@@ -73,6 +73,14 @@ public class XboxControls {
           }
         };
 
+    Trigger RightTrigger =
+        new Trigger() {
+          @Override
+          public boolean get() {
+            return xbox.getRawAxis(Axis.RIGHT_TRIGGER.id) > 0;
+          }
+        };
+
     // ELEVATOR
     new JoystickButton(xbox, Button.A.id).whenPressed(new ElevatorLevelOneCommand());
     new JoystickButton(xbox, Button.B.id)
@@ -109,6 +117,9 @@ public class XboxControls {
     new JoystickButton(xbox, Button.START.id).whenReleased(new StopClimbCommand());
     new JoystickButton(xbox, Button.BACK.id).whenPressed(new ClimbAutoCommand());
     new JoystickButton(xbox, Button.BACK.id).whenReleased(new StopClimbCommand());
+
+    // Interruput
+    RightTrigger.whenActive(new InterruptCommand());
   }
 
   public double getLX() {
