@@ -17,7 +17,7 @@ import frc.team2767.deepspace.command.sequences.StowAllCommandGroup;
 import frc.team2767.deepspace.command.sequences.pickup.CoconutPickupCommandGroup;
 import frc.team2767.deepspace.command.sequences.pickup.PlayerCargoCommandGroup;
 import frc.team2767.deepspace.command.sequences.pickup.PlayerHatchCommandGroup;
-import frc.team2767.deepspace.command.vacuum.SetSolenoidStatesCommand;
+import frc.team2767.deepspace.command.teleop.InterruptCommand;
 import frc.team2767.deepspace.subsystem.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,9 +99,7 @@ public class XboxControls {
         .whenReleased(new CoconutPickupCommandGroup());
     new JoystickButton(xbox, XboxControls.Shoulder.LEFT.id)
         .whenPressed(new PlayerHatchCommandGroup());
-    new JoystickButton(xbox, XboxControls.Shoulder.LEFT.id)
-        .whenReleased(
-            new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP));
+    new JoystickButton(xbox, XboxControls.Shoulder.LEFT.id).whenReleased(new InterruptCommand());
 
     // Dpad
     directionPadAny.whenActive(new RollerOutCommand());

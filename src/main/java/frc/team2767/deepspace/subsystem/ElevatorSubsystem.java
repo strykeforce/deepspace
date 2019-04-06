@@ -84,9 +84,9 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
     elevatorConfig.forwardSoftLimitEnable = true;
     elevatorConfig.reverseSoftLimitEnable = true;
 
-    elevatorConfig.continuousCurrentLimit = 20;
+    elevatorConfig.continuousCurrentLimit = 25;
     elevatorConfig.peakCurrentDuration = 40;
-    elevatorConfig.peakCurrentLimit = 25;
+    elevatorConfig.peakCurrentLimit = 30;
     elevatorConfig.peakOutputForward = 1.0;
     elevatorConfig.peakOutputReverse = -1.0;
     elevatorConfig.slot0.kP = 1;
