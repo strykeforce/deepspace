@@ -17,8 +17,6 @@ import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.log.SafetyLogDumpCommand;
 import frc.team2767.deepspace.command.sequences.StowAllCommandGroup;
 import frc.team2767.deepspace.command.sequences.pickup.AutoCargoPickupCommandGroup;
-import frc.team2767.deepspace.command.sequences.pickup.CargoGroundPickupCommandGroup;
-import frc.team2767.deepspace.command.sequences.pickup.CoconutPickupCommandGroup;
 import frc.team2767.deepspace.command.teleop.DriverRocketPlaceAssistCommand;
 import frc.team2767.deepspace.command.teleop.InterruptCommand;
 import frc.team2767.deepspace.command.teleop.ReleaseGamepieceCommand;
@@ -40,8 +38,6 @@ public class DriverControls {
     // intake pickup
     new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id)
         .whenPressed(new AutoCargoPickupCommandGroup());
-    // new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id)
-    //    .whenReleased(new CoconutPickupCommandGroup());
 
     new JoystickButton(joystick, Button.X.id).whenPressed(new StowAllCommandGroup());
 
