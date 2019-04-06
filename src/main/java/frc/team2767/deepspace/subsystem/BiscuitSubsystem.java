@@ -38,6 +38,8 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
   public static double kDownPosition = 179;
   private static double kDownRightPositionDeg;
   private static double kDownLeftPositionDeg;
+  private static double kLeft270PositionDeg;
+  private static double kRight270PositionDeg;
   private static int kCloseEnoughTicks;
   private static int kAbsoluteZeroTicks;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -76,6 +78,8 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
     kBackStopRightPositionDeg = getPreference("backstop_R_deg", 135);
     kTiltUpLeftPositionDeg = getPreference("tilt_up_L_deg", -65);
     kTiltUpRightPositionDeg = getPreference("tilt_up_R_deg", 64);
+    kLeft270PositionDeg = getPreference("left_270_deg", 270);
+    kRight270PositionDeg = getPreference("right_270_deg", -270);
   }
 
   private void configTalon() {
@@ -267,6 +271,15 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
     } else if (angle == kDownPosition) {
       angle = kDownRightPositionDeg;
       logger.info("Right down");
+    }
+    // 270 Wrap Allow
+    if (angle == kRightPositionDeg && getPosition() < -120) {
+      angle = kRight270PositionDeg;
+      logger.info("270 Wrap Right");
+    }
+    if (angle == kLeftPositionDeg && getPosition() > 120) {
+      angle = kLeft270PositionDeg;
+      logger.info("270 Wrap Left");
     }
     setpointTicks = (int) (TICKS_OFFSET - angle * TICKS_PER_DEGREE);
     logger.info("set position in degrees = {} in ticks = {}", angle, setpointTicks);

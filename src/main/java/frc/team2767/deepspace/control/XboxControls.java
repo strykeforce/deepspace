@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.biscuit.BiscuitGoToSideCommand;
-import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
+import frc.team2767.deepspace.command.biscuit.BiscuitTuckCommand;
 import frc.team2767.deepspace.command.climb.ClimbAutoCommand;
 import frc.team2767.deepspace.command.climb.ClimbLockCommand;
 import frc.team2767.deepspace.command.climb.StopClimbCommand;
@@ -89,8 +89,7 @@ public class XboxControls {
     // BISCUIT
     LeftStickLeft.whenActive(new BiscuitGoToSideCommand(FieldDirection.LEFT));
     LeftStickRight.whenActive(new BiscuitGoToSideCommand(FieldDirection.RIGHT));
-    new JoystickButton(xbox, Button.LEFT_STICK.id)
-        .whenPressed(new BiscuitSetPositionCommand(BiscuitSubsystem.kUpPositionDeg));
+    new JoystickButton(xbox, Button.LEFT_STICK.id).whenPressed(new BiscuitTuckCommand());
 
     // Shoulders
     new JoystickButton(xbox, XboxControls.Shoulder.RIGHT.id)
