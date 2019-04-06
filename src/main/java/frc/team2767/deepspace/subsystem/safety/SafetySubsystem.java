@@ -57,6 +57,7 @@ public class SafetySubsystem extends Subsystem {
       ElevatorPosition elevatorCurrent) {
     BiscuitPosition biscuitLimit = null;
     boolean isLeft = biscuitCurrent.isLeft();
+    boolean isWrapped = biscuitCurrent.isWrapped();
     switch (intakeCurrent) {
       case INTAKE_INTAKE:
         switch (elevatorCurrent) {
@@ -66,7 +67,8 @@ public class SafetySubsystem extends Subsystem {
             break;
           case ELEVATOR_10: // fall-through
           case ELEVATOR_16:
-            biscuitLimit = isLeft ? BISCUIT_90L : BISCUIT_90R;
+            if (isWrapped)biscuitLimit = isLeft ? BISCUIT_270L : BISCUIT_270R;
+            else biscuitLimit = isLeft ? BISCUIT_90L : BISCUIT_90R;
             break;
           case ELEVATOR_21:
             biscuitLimit = BISCUIT_360;
@@ -86,7 +88,8 @@ public class SafetySubsystem extends Subsystem {
                 || biscuitCurrent == BISCUIT_120R_180R) {
               biscuitLimit = isLeft ? BISCUIT_180L : BISCUIT_180R;
             } else {
-              biscuitLimit = isLeft ? BISCUIT_90L : BISCUIT_90R;
+              if (isWrapped) biscuitLimit = isLeft ? BISCUIT_270L : BISCUIT_270R;
+              else biscuitLimit = isLeft ? BISCUIT_90L : BISCUIT_90R;
             }
             break;
           case ELEVATOR_21:
@@ -117,6 +120,8 @@ public class SafetySubsystem extends Subsystem {
           case BISCUIT_120R_180R:
           case BISCUIT_180L:
           case BISCUIT_180R:
+          case BISCUIT_270L:
+          case BISCUIT_270R:
           case BISCUIT_360:
             intakeLimit = INTAKE_STOW;
             break;
@@ -128,6 +133,8 @@ public class SafetySubsystem extends Subsystem {
           case BISCUIT_0: // fall-through
           case BISCUIT_90L:
           case BISCUIT_90R:
+          case BISCUIT_270L:
+          case BISCUIT_270R:
             intakeLimit = INTAKE_INTAKE;
             break;
           case BISCUIT_90L_120L: // fall-through
@@ -160,8 +167,10 @@ public class SafetySubsystem extends Subsystem {
           case BISCUIT_0: // fall-through
             elevatorPosition = ELEVATOR_4;
             break;
-          case BISCUIT_90L:
+          case BISCUIT_90L:  //fall-through
           case BISCUIT_90R:
+          case BISCUIT_270L:
+          case BISCUIT_270R:
             elevatorPosition = ELEVATOR_9;
             break;
           case BISCUIT_180L:
@@ -186,6 +195,8 @@ public class SafetySubsystem extends Subsystem {
             break;
           case BISCUIT_90L: // fall-through
           case BISCUIT_90R:
+          case BISCUIT_270L:
+          case BISCUIT_270R:
             elevatorPosition = ELEVATOR_9;
             break;
           case BISCUIT_180L: // fall-through
