@@ -98,8 +98,8 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
     biscuitConfig.velocityMeasurementWindow = 64;
     biscuitConfig.voltageCompSaturation = 12;
     biscuitConfig.voltageMeasurementFilter = 32;
-    biscuitConfig.motionCruiseVelocity = 1_000;
-    biscuitConfig.motionAcceleration = 2_000;
+    biscuitConfig.motionCruiseVelocity = 1_000; // 1000
+    biscuitConfig.motionAcceleration = 2_500; // 2000
     biscuitConfig.clearPositionOnLimitF = false;
     biscuitConfig.clearPositionOnLimitR = false;
     biscuitConfig.clearPositionOnQuadIdx = false;

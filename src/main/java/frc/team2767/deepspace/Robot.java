@@ -19,8 +19,8 @@ import org.strykeforce.thirdcoast.trapper.Session;
 public class Robot extends TimedRobot {
   // Instantiate this before Subsystems because they use telemetry service.
   public static TelemetryService TELEMETRY;
-  public static DriveSubsystem DRIVE;
   public static VisionSubsystem VISION;
+  public static DriveSubsystem DRIVE;
   public static ElevatorSubsystem ELEVATOR;
   public static BiscuitSubsystem BISCUIT;
   public static IntakeSubsystem INTAKE;
