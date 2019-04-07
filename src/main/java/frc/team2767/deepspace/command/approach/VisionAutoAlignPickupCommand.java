@@ -24,7 +24,7 @@ public class VisionAutoAlignPickupCommand extends Command implements Item {
   private static final double DEADBAND = 0.05;
   private static final double kP_YAW = 0.01; // 0.00625 tuning for NT method, 0.01 pyeye
   private static final double MAX_YAW = 0.3;
-  private static final double MIN_RANGE = 70.0;
+  private static final double MIN_RANGE = 40.0;
   private static final double FWD_SCALE = 0.3;
   private static final double goodEnoughYaw = 1.0;
 
@@ -40,6 +40,7 @@ public class VisionAutoAlignPickupCommand extends Command implements Item {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private double targetYaw;
   private boolean isGood = false;
+  private static double strafeCorrection;
 
   public VisionAutoAlignPickupCommand() {
     requires(DRIVE);
@@ -56,7 +57,7 @@ public class VisionAutoAlignPickupCommand extends Command implements Item {
     logger.info("Begin Vision Auto Align Pickup");
     controls = Robot.CONTROLS.getDriverControls();
     DRIVE.setDriveMode(SwerveDrive.DriveMode.CLOSED_LOOP);
-
+    strafeCorrection = VISION.getStrafeCorrection();
     if (VISION.direction == FieldDirection.LEFT) {
       targetYaw = -90.0;
     } else targetYaw = 90.0;
@@ -83,7 +84,7 @@ public class VisionAutoAlignPickupCommand extends Command implements Item {
     double forward = driveExpo.apply(controls.getForward()) * FWD_SCALE;
 
     double strafe;
-    strafeError = Math.sin(Math.toRadians(VISION.getRawBearing())) * range;
+    strafeError = Math.sin(Math.toRadians(VISION.getRawBearing())) * range - strafeCorrection;
     // Only take over strafe control if pyeye has a target and the robot is straight to the field
     if (isGood && onTarget) strafe = strafeError * kP_STRAFE * forward;
     else strafe = driveExpo.apply(controls.getStrafe());

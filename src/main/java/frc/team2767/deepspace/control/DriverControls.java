@@ -8,11 +8,11 @@ import frc.team2767.deepspace.command.approach.sequences.AutoHatchPickupCommandG
 import frc.team2767.deepspace.command.biscuit.BiscuitNegativeCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositiveCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
+import frc.team2767.deepspace.command.biscuit.BiscuitZeroCommand;
 import frc.team2767.deepspace.command.climb.ClimbJogCommand;
 import frc.team2767.deepspace.command.climb.StopClimbCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.log.SafetyLogDumpCommand;
-import frc.team2767.deepspace.command.sequences.StowAllCommandGroup;
 import frc.team2767.deepspace.command.sequences.pickup.AutoCargoPickupCommandGroup;
 import frc.team2767.deepspace.command.teleop.DriverPlaceAssistCommand;
 import frc.team2767.deepspace.command.teleop.InterruptCommand;
@@ -37,7 +37,7 @@ public class DriverControls {
     new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id)
         .whenPressed(new AutoCargoPickupCommandGroup());
 
-    new JoystickButton(joystick, Button.X.id).whenPressed(new StowAllCommandGroup());
+    new JoystickButton(joystick, Button.X.id).whenPressed(new BiscuitZeroCommand());
 
     // Climb Commands
     new JoystickButton(joystick, Button.UP.id)

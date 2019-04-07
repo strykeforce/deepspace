@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.control.DriverControls;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
+import frc.team2767.deepspace.subsystem.VisionSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
@@ -12,19 +13,28 @@ import org.strykeforce.thirdcoast.util.ExpoScale;
 
 public class DriverPlaceAssistCommand extends Command {
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
+  private static final VisionSubsystem VISION = Robot.VISION;
   private final ExpoScale driveExpo;
   private static DriverControls controls;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   private static final double DRIVE_EXPO = 0.5;
   private static final double DEADBAND = 0.05;
-  private static final double kP = 0.00625;
+  private static final double kP_YAW = 0.01; // 0.00625
+  private static final double kP_STRAFE = 0.05;
   private static final double MAX_YAW = 0.3;
   private static final double YAW_RIGHT = -20.0;
   private static final double YAW_LEFT = 20.0;
+  private static final double goodEnoughYaw = 1.0;
+
   private static double targetYaw;
   private static double angleAdjust;
   private static boolean isAuton;
+  private static double range;
+  private static double bearing;
+  private static boolean isGood;
+  private static boolean onTarget;
+  private static double strafeCorrection;
 
   public DriverPlaceAssistCommand() {
     this.driveExpo = new ExpoScale(DEADBAND, DRIVE_EXPO);
@@ -35,19 +45,40 @@ public class DriverPlaceAssistCommand extends Command {
   protected void initialize() {
     controls = Robot.CONTROLS.getDriverControls();
     DRIVE.setDriveMode(SwerveDrive.DriveMode.TELEOP);
-    setAngleAdjust();
     isAuton = DriverStation.getInstance().isAutonomous();
+    strafeCorrection = VISION.getStrafeCorrection();
+    setAngleAdjust();
     logger.info("Is Auton: {}", isAuton);
   }
 
   @Override
   protected void execute() {
     double forward = driveExpo.apply(controls.getForward());
-    double strafe = driveExpo.apply(controls.getStrafe());
-    double angle = Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0);
-    double yaw = (targetYaw - angle) * kP;
+
+    double yawError = targetYaw - Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0);
+    double yaw = (yawError) * kP_YAW;
     if (yaw > MAX_YAW) yaw = MAX_YAW;
     if (yaw < -MAX_YAW) yaw = -MAX_YAW;
+
+    double strafe;
+    if (isAuton) {
+      VISION.queryPyeye();
+      range = VISION.getRawRange();
+      bearing = VISION.getRawBearing();
+      isGood = range > 0;
+      onTarget = Math.abs(yawError) <= goodEnoughYaw;
+
+      double strafeError = Math.sin(Math.toRadians(bearing)) * range - strafeCorrection;
+
+      isGood = false;
+
+      if (onTarget && isGood) {
+        strafe = strafeError * kP_STRAFE * forward;
+      } else strafe = driveExpo.apply(controls.getStrafe());
+
+    } else {
+      strafe = driveExpo.apply(controls.getStrafe());
+    }
 
     DRIVE.drive(forward, strafe, yaw);
   }
