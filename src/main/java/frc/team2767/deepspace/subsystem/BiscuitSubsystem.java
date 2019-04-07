@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.health.Zeroable;
 import frc.team2767.deepspace.subsystem.safety.Limitable;
@@ -65,6 +66,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
         LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
   }
 
+
   private void biscuitPreferences() {
     // ticks
     kAbsoluteZeroTicks = (int) getPreference("absolute_zero_ticks", 2450);
@@ -107,7 +109,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
     biscuitConfig.voltageCompSaturation = 12;
     biscuitConfig.voltageMeasurementFilter = 32;
     biscuitConfig.motionCruiseVelocity = 1_000; // 1000
-    biscuitConfig.motionAcceleration = 2_500; // 2000
+    biscuitConfig.motionAcceleration = 2_500; // 2500 16000
     biscuitConfig.clearPositionOnLimitF = false;
     biscuitConfig.clearPositionOnLimitR = false;
     biscuitConfig.clearPositionOnQuadIdx = false;

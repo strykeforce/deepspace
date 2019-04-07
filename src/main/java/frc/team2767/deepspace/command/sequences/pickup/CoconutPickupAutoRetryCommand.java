@@ -38,6 +38,7 @@ public class CoconutPickupAutoRetryCommand extends Command {
     startSealTime = System.currentTimeMillis();
     initialPressure = VACUUM.getPressure();
     stableCounts = 0;
+    hasRetried = false;
   }
 
   @Override
@@ -79,6 +80,11 @@ public class CoconutPickupAutoRetryCommand extends Command {
   @Override
   protected boolean isFinished() {
     return state == PickupState.DONE;
+  }
+
+  @Override
+  protected void end() {
+    ELEVATOR.stop();
   }
 
   private enum PickupState {

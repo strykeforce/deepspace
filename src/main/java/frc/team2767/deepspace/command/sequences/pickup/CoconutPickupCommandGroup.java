@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
 import frc.team2767.deepspace.command.intake.IntakePositionCommand;
-import frc.team2767.deepspace.command.intake.RollerInCommand;
 import frc.team2767.deepspace.command.intake.RollerStopCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.states.SetActionCommand;
@@ -22,7 +21,7 @@ public class CoconutPickupCommandGroup extends CommandGroup {
     addSequential(
         new CommandGroup() {
           {
-            addParallel(new RollerInCommand(0.2));
+            // addParallel(new RollerInCommand(0.2));
             addParallel(new SetActionCommand(Action.PLACE));
             addParallel(new SetGamePieceCommand(GamePiece.CARGO));
             addParallel(
@@ -34,8 +33,8 @@ public class CoconutPickupCommandGroup extends CommandGroup {
                     addSequential(new PressureSetCommand(VacuumSubsystem.kBallPressureInHg), 0.5);
                   }
                 });
-
-            addParallel(new ElevatorSetPositionCommand(20.25));
+            // 20.25
+            addParallel(new ElevatorSetPositionCommand(21.25));
           }
         });
 

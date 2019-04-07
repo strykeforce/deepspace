@@ -9,7 +9,7 @@ public class WaitForBeamBreakCommand extends Command {
   private static boolean hasBroken;
   private static double breakTime;
   private static double currentTime;
-  private static double WAIT_TIIME_MS = 200;
+  private static double WAIT_TIME_MS = 200;
 
   @Override
   protected void initialize() {
@@ -27,6 +27,11 @@ public class WaitForBeamBreakCommand extends Command {
   @Override
   protected boolean isFinished() {
     currentTime = System.currentTimeMillis();
-    return hasBroken && (currentTime - breakTime > WAIT_TIIME_MS);
+    return hasBroken && (currentTime - breakTime > WAIT_TIME_MS);
+  }
+
+  @Override
+  protected void end() {
+    INTAKE.rollerStop();
   }
 }
