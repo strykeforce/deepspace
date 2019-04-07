@@ -71,7 +71,7 @@ public class VisionAutoAlignPickupCommand extends Command implements Item {
     isGood = range >= 0; // check if range is good (we have a target), not -1
 
     // Calculate Yaw Term based on gyro
-    yawError = targetYaw - DRIVE.getGyro().getAngle();
+    yawError = targetYaw - Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0);
     double yaw = kP_YAW * yawError;
     if (yaw > MAX_YAW) yaw = MAX_YAW;
     if (yaw < -MAX_YAW) yaw = -MAX_YAW;
