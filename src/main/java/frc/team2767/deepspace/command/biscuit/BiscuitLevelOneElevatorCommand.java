@@ -35,12 +35,12 @@ public class BiscuitLevelOneElevatorCommand extends ConditionalCommand {
   @Override
   protected boolean condition() {
     elevatorPosition = ELEVATOR.getPosition();
-    biscuitPosition = BISCUIT.getPosition();
+    biscuitPosition = Math.abs(BISCUIT.getPosition());
     logger.info(
         "Tucking Biscuit Up, ElevatorPosition: {}, BiscuitPosition{}",
         elevatorPosition,
         biscuitPosition);
     // If Biscuit is wrapped past 180 and elevator is too low to swing under, reposition elevator
-    return (biscuitPosition > 185 || biscuitPosition < -185) && elevatorPosition < 21.0;
+    return (biscuitPosition > 110 && biscuitPosition < 250) && elevatorPosition < 21.0;
   }
 }
