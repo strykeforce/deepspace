@@ -85,7 +85,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     DRIVE.setAngleAdjustment(true);
-    getHatch.start();
+    // getHatch.start();
   }
 
   @Override

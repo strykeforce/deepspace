@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
 import org.strykeforce.thirdcoast.util.ExpoScale;
 
-public class DriverRocketPlaceAssistCommand extends Command {
+public class DriverPlaceAssistCommand extends Command {
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private final ExpoScale driveExpo;
   private static DriverControls controls;
@@ -26,7 +26,7 @@ public class DriverRocketPlaceAssistCommand extends Command {
   private static double angleAdjust;
   private static boolean isAuton;
 
-  public DriverRocketPlaceAssistCommand() {
+  public DriverPlaceAssistCommand() {
     this.driveExpo = new ExpoScale(DEADBAND, DRIVE_EXPO);
     requires(DRIVE);
   }
@@ -37,13 +37,15 @@ public class DriverRocketPlaceAssistCommand extends Command {
     DRIVE.setDriveMode(SwerveDrive.DriveMode.TELEOP);
     setAngleAdjust();
     isAuton = DriverStation.getInstance().isAutonomous();
+    logger.info("Is Auton: {}", isAuton);
   }
 
   @Override
   protected void execute() {
     double forward = driveExpo.apply(controls.getForward());
     double strafe = driveExpo.apply(controls.getStrafe());
-    double yaw = (targetYaw - DRIVE.getGyro().getAngle()) * kP;
+    double angle = Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0);
+    double yaw = (targetYaw - angle) * kP;
     if (yaw > MAX_YAW) yaw = MAX_YAW;
     if (yaw < -MAX_YAW) yaw = -MAX_YAW;
 
@@ -57,35 +59,49 @@ public class DriverRocketPlaceAssistCommand extends Command {
 
   @Override
   protected void end() {
-    undoAngleAdjust();
+    if (!isAuton) {
+      undoAngleAdjust();
+    }
   }
 
   private void setAngleAdjust() {
     double currentAngle = Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0);
     double fullAngle = DRIVE.getGyro().getAngle();
     logger.info("Current Angle: {}", currentAngle);
-    if(isAuton){
-     //45 - -135 = right of cargo ship
-     //46 - 135 = front of cargo ship
-      //136 - 180 = left of cargo ship
-      // -136 - -180 = away from stuff
-      if(currentAngle < 45){
-        //RIGHT OF CARGO SHIP
-        targetYaw = -90.0;
+
+    // IN AUTON ONLY USE THIS FOR CARGO SHIP
+    if (isAuton) {
+      if (currentAngle <= 45 && currentAngle > -135) {
+        // RIGHT OF CARGO SHIP: -135 to 45
+        targetYaw = 90.0;
+        angleAdjust = 90.0;
+      } else if (currentAngle > 45 && currentAngle <= 135) {
+        // FRONT OF CARGO SHIP: 45 to 135
+        targetYaw = 90.0;
+        angleAdjust = 0.0;
+      } else {
+        // LEFT OF CARGO SHIP: 135 to 180 OR -135 to -180
+        targetYaw = 90.0;
         angleAdjust = -90.0;
-      }else if()
+      }
     }
+
+    // IN TELEOP ONLY USE THIS FOR THE ROCKET
     else {
       if (currentAngle > 90.0) {
+        // ROBOT LEFT TO ROCKET (RIGHT) FRONT, RIGHT TO ROCKET (LEFT) BACK
         targetYaw = 90.0;
         angleAdjust = YAW_RIGHT;
       } else if (currentAngle < -90.0) {
+        // ROBOT RIGHT TO ROCKET (LEFT) FRONT, LEFT TO ROCKET (RIGHT) BACK
         targetYaw = -90.0;
         angleAdjust = YAW_LEFT;
       } else if (currentAngle > 0.0) {
+        // ROBOT LEFT TO ROCKET (LEFT) FRONT, RIGHT TO ROCKET (RIGHT) BACK
         targetYaw = 90.0;
         angleAdjust = YAW_LEFT;
       } else {
+        // ROBOT RIGHT TO ROCKET (RIGHT) FRONT, LEFT TO ROCKET (LEFT) BACK
         targetYaw = -90.0;
         angleAdjust = YAW_RIGHT;
       }
@@ -95,14 +111,14 @@ public class DriverRocketPlaceAssistCommand extends Command {
     logger.info("Adjust Angle By: {}", angleAdjust);
     DRIVE.SetGyroOffset(angleAdjust);
     logger.info("Yaw post adjust: {}", DRIVE.getGyro().getAngle());
-    double anglePostAdj = DRIVE.getGyro().getAngle();
-    if (anglePostAdj > 180.0) {
+    // double anglePostAdj = DRIVE.getGyro().getAngle();
+    /*if (anglePostAdj > 180.0) {
       targetYaw += 360.0;
     }
     if (anglePostAdj < -180.0) {
       targetYaw -= 360.0;
     }
-    logger.info("New Target Yaw: {}", targetYaw);
+    logger.info("New Target Yaw: {}", targetYaw);*/
   }
 
   private void undoAngleAdjust() {

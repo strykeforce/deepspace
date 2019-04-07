@@ -10,14 +10,11 @@ import frc.team2767.deepspace.command.biscuit.BiscuitPositiveCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
 import frc.team2767.deepspace.command.climb.ClimbJogCommand;
 import frc.team2767.deepspace.command.climb.StopClimbCommand;
-import frc.team2767.deepspace.command.intake.IntakeDownCommand;
-import frc.team2767.deepspace.command.intake.IntakeUpCommand;
-import frc.team2767.deepspace.command.intake.ShoulderStopCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.log.SafetyLogDumpCommand;
 import frc.team2767.deepspace.command.sequences.StowAllCommandGroup;
 import frc.team2767.deepspace.command.sequences.pickup.AutoCargoPickupCommandGroup;
-import frc.team2767.deepspace.command.teleop.DriverRocketPlaceAssistCommand;
+import frc.team2767.deepspace.command.teleop.DriverPlaceAssistCommand;
 import frc.team2767.deepspace.command.teleop.InterruptCommand;
 import frc.team2767.deepspace.command.teleop.ReleaseGamepieceCommand;
 import frc.team2767.deepspace.subsystem.ClimbSubsystem;
@@ -65,21 +62,18 @@ public class DriverControls {
     new JoystickButton(joystick, Trim.LEFT_X_NEG.id).whenPressed(new BiscuitNegativeCommand());
     new JoystickButton(joystick, Trim.LEFT_X_NEG.id).whenReleased(new BiscuitStopCommand());
 
-    // intake
-    new JoystickButton(joystick, Trim.RIGHT_X_POS.id).whenPressed(new IntakeUpCommand());
-    new JoystickButton(joystick, Trim.RIGHT_X_NEG.id).whenPressed(new IntakeDownCommand());
-    new JoystickButton(joystick, Trim.RIGHT_X_POS.id).whenReleased(new ShoulderStopCommand());
-    new JoystickButton(joystick, Trim.RIGHT_X_NEG.id).whenReleased(new ShoulderStopCommand());
+    // interrupts
+    new JoystickButton(joystick, Trim.RIGHT_X_POS.id).whenPressed(new InterruptCommand());
+    new JoystickButton(joystick, Trim.RIGHT_X_NEG.id).whenPressed(new InterruptCommand());
 
     // ZEROS / LOG DUMPS
     new JoystickButton(joystick, Button.RESET.id).whenPressed(new ZeroGyroCommand());
     new JoystickButton(joystick, Button.HAMBURGER.id).whenPressed(new SafetyLogDumpCommand());
 
-    // shoulder
+    // gamepiece place
     new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(new ReleaseGamepieceCommand());
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id)
-        .whenPressed(new DriverRocketPlaceAssistCommand());
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased(new InterruptCommand());
+    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed(new DriverPlaceAssistCommand());
+    // new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased(new InterruptCommand());
   }
 
   private <E extends Enum<E>> Command log(E control) {

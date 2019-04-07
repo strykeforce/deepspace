@@ -180,12 +180,13 @@ public class DriveSubsystem extends Subsystem implements Item {
     gyro.setAngleAdjustment(adj);
   }
 
-  public void UndoGyroOffset(){
+  public void UndoGyroOffset() {
     AHRS gyro = swerve.getGyro();
     double adj = gyro.getAngleAdjustment();
     adj -= offsetGyro;
     logger.info("Undo Gyro Angle Adjust: {}", adj);
     gyro.setAngleAdjustment(adj);
+    offsetGyro = 0.0;
   }
 
   public void setWheels(double azimuth, double veocity) {
