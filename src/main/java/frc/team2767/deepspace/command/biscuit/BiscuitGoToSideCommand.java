@@ -9,6 +9,6 @@ public class BiscuitGoToSideCommand extends CommandGroup {
   public BiscuitGoToSideCommand(FieldDirection direction) {
     addSequential(new SetFieldDirectionCommand(direction));
     addSequential(new SetLevelTiltCommand());
-    addSequential(new BiscuitExecutePlanCommand());
+    addSequential(new BiscuitSafeExecutePlanCommand());
   }
 }
