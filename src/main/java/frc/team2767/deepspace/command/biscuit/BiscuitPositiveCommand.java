@@ -8,14 +8,8 @@ public class BiscuitPositiveCommand extends InstantCommand {
 
   private static final BiscuitSubsystem BISCUIT = Robot.BISCUIT;
 
-  private double setpoint = 0.0;
-
   public BiscuitPositiveCommand() {
     requires(BISCUIT);
-  }
-
-  public BiscuitPositiveCommand(double setpoint) {
-    this.setpoint = setpoint;
   }
 
   @Override

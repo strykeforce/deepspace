@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 public class BiscuitTuckCommand extends ConditionalCommand {
   private static final ElevatorSubsystem ELEVATOR = Robot.ELEVATOR;
-  private static final BiscuitSubsystem BISCUIT = Robot.BISCUIT;
   private static final VisionSubsystem VISION = Robot.VISION;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
