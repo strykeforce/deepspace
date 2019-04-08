@@ -41,8 +41,9 @@ public class VisionSubsystem extends Subsystem implements Item {
   private static final double CAMERA_RANGE_OFFSET_RIGHT = -5.913; // -4.3949
   private static final double CAMERA_RANGE_SLOPE_LEFT = 0.8244;
   private static final double CAMERA_RANGE_OFFSET_LEFT = -6.5404;
-  private static final double STRAFE_CORRECTION_RIGHT = 0.0;
-  private static final double STRAFE_CORRECTION_LEFT = 0.0;
+  // NEGATIVE = TOWARDS FIELD LEFT
+  private static final double STRAFE_CORRECTION_RIGHT = -2.5;
+  private static final double STRAFE_CORRECTION_LEFT = 1.0;
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final DigitalOutput lightsOutput6 = new DigitalOutput(6);

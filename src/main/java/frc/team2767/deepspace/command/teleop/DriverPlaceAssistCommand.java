@@ -26,6 +26,8 @@ public class DriverPlaceAssistCommand extends Command {
   private static final double YAW_RIGHT = -20.0;
   private static final double YAW_LEFT = 20.0;
   private static final double goodEnoughYaw = 1.0;
+  private static final double MIN_RANGE = 20.0;
+  private static final double FWD_SCALE = 0.3;
 
   private static double targetYaw;
   private static double angleAdjust;
@@ -62,6 +64,7 @@ public class DriverPlaceAssistCommand extends Command {
 
     double strafe;
     if (isAuton) {
+      forward *= FWD_SCALE;
       VISION.queryPyeye();
       range = VISION.getRawRange();
       bearing = VISION.getRawBearing();
@@ -85,6 +88,9 @@ public class DriverPlaceAssistCommand extends Command {
 
   @Override
   protected boolean isFinished() {
+    if (isAuton && isGood) {
+      return range <= MIN_RANGE;
+    }
     return false;
   }
 
