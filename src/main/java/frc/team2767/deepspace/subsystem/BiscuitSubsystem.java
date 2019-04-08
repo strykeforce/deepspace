@@ -4,8 +4,8 @@ import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.health.Zeroable;
 import frc.team2767.deepspace.subsystem.safety.Limitable;
@@ -27,6 +27,8 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
   private static final int BISCUIT_ID = 40;
   private static final double TICKS_PER_DEGREE = 34.1;
   private static final double TICKS_OFFSET = 0;
+  private static final int KRAKEN_ACTUATE_ID = 5;
+  private static final int KRAKEN_LOCK_ID = 6;
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VisionSubsystem VISION = Robot.VISION;
   public static double kUpPositionDeg;
@@ -45,9 +47,17 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
   private static double kRight270TiltPositionDeg;
   private static int kCloseEnoughTicks;
   private static int kAbsoluteZeroTicks;
+  private static double kKrakenRelease;
+  private static double kKrakenHide;
+  private static double kKrakenLock;
+  private static double kKrakenUnlock;
+  public static final int kSlowAccel = 2_500;
+  public static final int kFastAccel = 16_000;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private double targetBiscuitPositionDeg = 0;
   private TalonSRX biscuit = new TalonSRX(BISCUIT_ID);
+  private Servo krakenActuate = new Servo(KRAKEN_ACTUATE_ID);
+  private Servo krakenLock = new Servo(KRAKEN_LOCK_ID);
   private int setpointTicks;
 
   private int graphCount;
@@ -65,7 +75,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
     biscuit.configForwardLimitSwitchSource(
         LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
   }
-
 
   private void biscuitPreferences() {
     // ticks
@@ -86,6 +95,10 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
     kRight270PositionDeg = getPreference("right_270_deg", -270);
     kLeft270TiltPositionDeg = getPreference("tilt_270_L_deg", 295);
     kRight270TiltPositionDeg = getPreference("tilt_270_R_deg", -295);
+    kKrakenRelease = getPreference("kraken_release", 0.9);
+    kKrakenHide = getPreference("kraken_hide", 0.0);
+    kKrakenLock = getPreference("kraken_lock", 0.0);
+    kKrakenUnlock = getPreference("kraken_unlock", 0.0);
   }
 
   private void configTalon() {
@@ -109,7 +122,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
     biscuitConfig.voltageCompSaturation = 12;
     biscuitConfig.voltageMeasurementFilter = 32;
     biscuitConfig.motionCruiseVelocity = 1_000; // 1000
-    biscuitConfig.motionAcceleration = 2_500; // 2500 16000
+    biscuitConfig.motionAcceleration = kSlowAccel; // 2500 16000
     biscuitConfig.clearPositionOnLimitF = false;
     biscuitConfig.clearPositionOnLimitR = false;
     biscuitConfig.clearPositionOnQuadIdx = false;
@@ -312,6 +325,11 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
     return false;
   }
 
+  public void setMotionMagicAccel(int accel) {
+    logger.info("Setting Biscuit Motion Magic Accel to: {}", accel);
+    biscuit.configMotionAcceleration(accel);
+  }
+
   public void runOpenLoop(double power) {
     biscuit.set(ControlMode.PercentOutput, power);
   }
@@ -357,6 +375,19 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
     RIGHT,
   }
 
+  // --------------------------KRAKEN---------------------------------
+  public void releaseKraken(boolean release) {
+    logger.info("Releasing Kraken: {}", release);
+    double position = release ? kKrakenRelease : kKrakenHide;
+    krakenActuate.set(position);
+  }
+
+  public void lockKraken(boolean lock) {
+    logger.info("Locking Kraken: {}", lock);
+    double position = lock ? kKrakenLock : kKrakenUnlock;
+  }
+
+  // --------------------------GRAPHER---------------------------------
   @NotNull
   @Override
   public String getDescription() {
