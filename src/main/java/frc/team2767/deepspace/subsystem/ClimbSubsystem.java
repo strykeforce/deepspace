@@ -1,5 +1,6 @@
 package frc.team2767.deepspace.subsystem;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
@@ -29,7 +30,7 @@ public class ClimbSubsystem extends Subsystem implements Item {
   private static final int RATCHET_SERVO = 4;
   private static final String PREFS = "ClimbSubsystem/Settings/";
   private static final double BACKUP = 2767;
-  public static double kSealOutputPercent;
+  public static double kSealOutputVelocity;
   public static double kJogUpPercent = -0.20;
   public static double kJogDownPercent = 0.20;
   public static double kDownOpenLoopOutput = 1.0;
@@ -69,7 +70,7 @@ public class ClimbSubsystem extends Subsystem implements Item {
     kHighRelease = (int) getPrefs("high_position", 189);
     kClimb = (int) getPrefs("climb_position", 884);
     kTooLowIn = (int) getPrefs("too_low_position", 240);
-    kSealOutputPercent = getPrefs("seal_velocity", 0.15);
+    kSealOutputVelocity = getPrefs("seal_velocity", 0.15);
 
     kLeftKickstandHold = getPrefs("L_kickstand_hold", 0.4);
     kLeftKickstandRelease = getPrefs("L_kickstand_release", 0.95);
@@ -90,7 +91,7 @@ public class ClimbSubsystem extends Subsystem implements Item {
     leftSlaveConfig.voltageMeasurementFilter = 32;
 
     TalonSRXConfiguration rightMasterConfig = new TalonSRXConfiguration();
-    rightMasterConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.Analog;
+    rightMasterConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
     rightMasterConfig.slot0.kP = 0.80;
     rightMasterConfig.slot0.kI = 0;
     rightMasterConfig.slot0.kD = 30;
@@ -147,6 +148,29 @@ public class ClimbSubsystem extends Subsystem implements Item {
   public void openLoop(double percent) {
     leftSlave.follow(rightMaster);
     rightMaster.set(ControlMode.PercentOutput, percent);
+  }
+
+  public void setVelocity(double velocity) {
+    leftSlave.follow(rightMaster);
+    rightMaster.set(ControlMode.Velocity, velocity);
+  }
+
+  public boolean setOpenLoopFeedbackSensor(boolean isOpenLoop) {
+    if (isOpenLoop) {
+      ErrorCode e = rightMaster.configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, 10);
+      if (!e.equals(ErrorCode.OK)) {
+        logger.warn("talon sensor not configured correctly");
+        return false;
+      }
+    } else {
+      ErrorCode e =
+          rightMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+      if (!e.equals(ErrorCode.OK)) {
+        logger.warn("talon sensor not configured correctly");
+        return false;
+      }
+    }
+    return true;
   }
 
   public void setUpperLimit(int limit) {
