@@ -23,8 +23,8 @@ public class DriverPlaceAssistCommand extends Command {
   private static final double kP_YAW = 0.01; // 0.00625
   private static final double kP_STRAFE = 0.05;
   private static final double MAX_YAW = 0.3;
-  private static final double YAW_RIGHT = -20.0;
-  private static final double YAW_LEFT = 20.0;
+  private static final double YAW_RIGHT = -30.0;
+  private static final double YAW_LEFT = 30.0;
   private static final double goodEnoughYaw = 1.0;
   private static final double MIN_RANGE = 20.0;
   private static final double FWD_SCALE = 0.3;
@@ -146,7 +146,7 @@ public class DriverPlaceAssistCommand extends Command {
 
     logger.info("Target Yaw: {}, Current Yaw: {}", targetYaw, fullAngle);
     logger.info("Adjust Angle By: {}", angleAdjust);
-    DRIVE.SetGyroOffset(angleAdjust);
+    DRIVE.setGyroOffset(angleAdjust);
     logger.info("Yaw post adjust: {}", DRIVE.getGyro().getAngle());
     // double anglePostAdj = DRIVE.getGyro().getAngle();
     /*if (anglePostAdj > 180.0) {
@@ -160,6 +160,6 @@ public class DriverPlaceAssistCommand extends Command {
 
   private void undoAngleAdjust() {
     logger.info("Undo Angle Adjustment");
-    DRIVE.UndoGyroOffset();
+    DRIVE.undoGyroOffset();
   }
 }
