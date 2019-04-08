@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.ZeroGyroCommand;
+import frc.team2767.deepspace.command.approach.sandstorm.SandstormHatchPlaceConditionalCommand;
 import frc.team2767.deepspace.command.approach.sequences.AutoHatchPickupCommandGroup;
 import frc.team2767.deepspace.command.biscuit.*;
 import frc.team2767.deepspace.command.climb.ClimbJogCommand;
@@ -11,11 +12,9 @@ import frc.team2767.deepspace.command.climb.StopClimbCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.log.SafetyLogDumpCommand;
 import frc.team2767.deepspace.command.sequences.pickup.AutoCargoPickupCommandGroup;
-import frc.team2767.deepspace.command.teleop.DriverPlaceAssistCommand;
 import frc.team2767.deepspace.command.teleop.InterruptCommand;
 import frc.team2767.deepspace.command.teleop.ReleaseGamepieceCommand;
 import frc.team2767.deepspace.subsystem.ClimbSubsystem;
-import javax.swing.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +71,8 @@ public class DriverControls {
 
     // gamepiece place
     new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(new ReleaseGamepieceCommand());
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed(new DriverPlaceAssistCommand());
+    new JoystickButton(joystick, Shoulder.LEFT_UP.id)
+        .whenPressed(new SandstormHatchPlaceConditionalCommand());
     // new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased(new InterruptCommand());
   }
 

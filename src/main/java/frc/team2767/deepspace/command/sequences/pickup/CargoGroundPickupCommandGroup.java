@@ -24,7 +24,7 @@ public class CargoGroundPickupCommandGroup extends CommandGroup {
             addParallel(new BiscuitSetPositionCommand(BiscuitSubsystem.kDownPosition));
           }
         });
-    addSequential(new ElevatorSetPositionCommand(21.25));
+    addSequential(new ElevatorSetPositionCommand(21.75));
     addSequential(new LogCommand("END CARGO GROUND PICKUP"));
   }
 }
