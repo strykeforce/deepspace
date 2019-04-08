@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.command.AdjustAzimuthCommand;
+import frc.team2767.deepspace.command.AzimuthZeroPositionCommand;
 import frc.team2767.deepspace.command.HealthCheckCommand;
 import frc.team2767.deepspace.command.ResetAxisCommandGroup;
 import frc.team2767.deepspace.command.approach.DriveTwistCommand;
@@ -106,15 +107,17 @@ public class SmartDashboardControls {
   }
 
   private void addAzimuthCommands() {
-    SmartDashboard.putData("Azimuth/0inc", new AdjustAzimuthCommand(0,1));
-    SmartDashboard.putData("Azimuth/0dec", new AdjustAzimuthCommand(0,-1));
-    SmartDashboard.putData("Azimuth/1inc", new AdjustAzimuthCommand(1,1));
-    SmartDashboard.putData("Azimuth/1dec", new AdjustAzimuthCommand(1,-1));
-    SmartDashboard.putData("Azimuth/2inc", new AdjustAzimuthCommand(2,1));
-    SmartDashboard.putData("Azimuth/2dec", new AdjustAzimuthCommand(2,-1));
-    SmartDashboard.putData("Azimuth/3inc", new AdjustAzimuthCommand(3,1));
-    SmartDashboard.putData("Azimuth/3dec", new AdjustAzimuthCommand(3,-1));
+    SmartDashboard.putData("Azimuth/0inc", new AdjustAzimuthCommand(0, 1));
+    SmartDashboard.putData("Azimuth/0dec", new AdjustAzimuthCommand(0, -1));
+    SmartDashboard.putData("Azimuth/1inc", new AdjustAzimuthCommand(1, 1));
+    SmartDashboard.putData("Azimuth/1dec", new AdjustAzimuthCommand(1, -1));
+    SmartDashboard.putData("Azimuth/2inc", new AdjustAzimuthCommand(2, 1));
+    SmartDashboard.putData("Azimuth/2dec", new AdjustAzimuthCommand(2, -1));
+    SmartDashboard.putData("Azimuth/3inc", new AdjustAzimuthCommand(3, 1));
+    SmartDashboard.putData("Azimuth/3dec", new AdjustAzimuthCommand(3, -1));
+    SmartDashboard.putData("ZeroAzimuths", new AzimuthZeroPositionCommand());
   }
+
   private void addVisionCommands() {
     SmartDashboard.putData("Game/OrthogMvmt", new OrthogonalMovementCommand());
     SmartDashboard.putData("Pit/LightsOn", new LightsOnCommand());

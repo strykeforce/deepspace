@@ -32,7 +32,7 @@ import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 public class DriveSubsystem extends Subsystem implements Item {
 
   public static final double TICKS_PER_INCH = 2369;
-  public static final double TICKS_PER_TOOTH = 2767; //FIXME
+  public static final double TICKS_PER_TOOTH = 107.8;
   private static final double DRIVE_SETPOINT_MAX = 25_000.0;
   private static final double ROBOT_LENGTH = 21.0;
   private static final double ROBOT_WIDTH = 26.0;
@@ -178,7 +178,7 @@ public class DriveSubsystem extends Subsystem implements Item {
 
   public void adjustZero (int wheel, int teeth){
     Preferences prefs = Preferences.getInstance();
-    String wheelKey = swerve.getPreferenceKeyForWheel(wheel);
+    String wheelKey = SwerveDrive.getPreferenceKeyForWheel(wheel);
     int oldZero = prefs.getInt(wheelKey, 2767);
     int newZero = (int)(oldZero + teeth * TICKS_PER_TOOTH);
 

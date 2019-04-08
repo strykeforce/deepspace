@@ -9,7 +9,7 @@ public class AdjustAzimuthCommand extends InstantCommand {
   int wheel;
   int teeth;
 
-  public AdjustAzimuthCommand (int wheel, int teeth){
+  public AdjustAzimuthCommand(int wheel, int teeth) {
     requires(DRIVE);
     this.wheel = wheel;
     this.teeth = teeth;
