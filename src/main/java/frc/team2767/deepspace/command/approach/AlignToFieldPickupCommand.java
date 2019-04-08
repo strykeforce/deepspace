@@ -43,7 +43,7 @@ public class AlignToFieldPickupCommand extends Command {
   @Override
   protected void execute() {
     // Calculate Yaw Term based on gyro
-    yawError = targetYaw - DRIVE.getGyro().getAngle();
+    yawError = targetYaw - Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360);
     double yaw = kP_YAW * yawError;
     if (yaw > MAX_YAW) yaw = MAX_YAW;
     if (yaw < -MAX_YAW) yaw = -MAX_YAW;
