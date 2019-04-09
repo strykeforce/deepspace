@@ -20,6 +20,9 @@ public class ClimbDeployCommand extends Command {
   @Override
   protected void initialize() {
     currentState = State.RELEASE;
+    if (!CLIMB.setOpenLoopFeedbackSensor(true)) {
+      currentState = State.DONE;
+    }
     CLIMB.setLowerLimit(ClimbSubsystem.kLowRelease);
     CLIMB.openLoop(ClimbSubsystem.kDownOpenLoopOutput);
   }

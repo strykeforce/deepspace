@@ -29,7 +29,7 @@ public class VisionSubsystem extends Subsystem implements Item {
   private static final double CAMERA_X = 3.5;
   private static final double CAMERA_Y_LEFT = -13.5;
   private static final double CAMERA_Y_RIGHT = 13.5;
-  private static final double GLUE_CORRECTION_FACTOR_RIGHT = -1.8206; // 2.0 0.0 comp
+  private static final double GLUE_CORRECTION_FACTOR_RIGHT = -1.8784; // 2.0 0.0 comp
   private static final double GLUE_CORRECTION_FACTOR_LEFT = -0.9536; // FROM CAMERA CAL -3.0 comp
   private static final double CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_RIGHT =
       1.0; // 1.0 is zero value 0.85
@@ -42,7 +42,7 @@ public class VisionSubsystem extends Subsystem implements Item {
   private static final double CAMERA_RANGE_SLOPE_LEFT = 0.8244;
   private static final double CAMERA_RANGE_OFFSET_LEFT = -6.5404;
   // NEGATIVE = TOWARDS FIELD LEFT
-  private static final double STRAFE_CORRECTION_RIGHT = -2.5;
+  private static final double STRAFE_CORRECTION_RIGHT = 0.8; // -2.5
   private static final double STRAFE_CORRECTION_LEFT = 1.0;
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());

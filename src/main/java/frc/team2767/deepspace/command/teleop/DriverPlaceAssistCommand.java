@@ -62,26 +62,7 @@ public class DriverPlaceAssistCommand extends Command {
     if (yaw > MAX_YAW) yaw = MAX_YAW;
     if (yaw < -MAX_YAW) yaw = -MAX_YAW;
 
-    double strafe;
-    if (isAuton) {
-      forward *= FWD_SCALE;
-      VISION.queryPyeye();
-      range = VISION.getRawRange();
-      bearing = VISION.getRawBearing();
-      isGood = range > 0;
-      onTarget = Math.abs(yawError) <= goodEnoughYaw;
-
-      double strafeError = Math.sin(Math.toRadians(bearing)) * range - strafeCorrection;
-
-      isGood = false;
-
-      if (onTarget && isGood) {
-        strafe = strafeError * kP_STRAFE * forward;
-      } else strafe = driveExpo.apply(controls.getStrafe());
-
-    } else {
-      strafe = driveExpo.apply(controls.getStrafe());
-    }
+    double strafe = driveExpo.apply(controls.getStrafe());
 
     DRIVE.drive(forward, strafe, yaw);
   }
@@ -148,14 +129,6 @@ public class DriverPlaceAssistCommand extends Command {
     logger.info("Adjust Angle By: {}", angleAdjust);
     DRIVE.setGyroOffset(angleAdjust);
     logger.info("Yaw post adjust: {}", DRIVE.getGyro().getAngle());
-    // double anglePostAdj = DRIVE.getGyro().getAngle();
-    /*if (anglePostAdj > 180.0) {
-      targetYaw += 360.0;
-    }
-    if (anglePostAdj < -180.0) {
-      targetYaw -= 360.0;
-    }
-    logger.info("New Target Yaw: {}", targetYaw);*/
   }
 
   private void undoAngleAdjust() {

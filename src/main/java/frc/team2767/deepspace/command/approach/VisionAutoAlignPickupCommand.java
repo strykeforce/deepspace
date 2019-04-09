@@ -16,17 +16,19 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 import org.strykeforce.thirdcoast.telemetry.item.Item;
 import org.strykeforce.thirdcoast.util.ExpoScale;
+import org.strykeforce.thirdcoast.util.RateLimit;
 
 public class VisionAutoAlignPickupCommand extends Command implements Item {
-  public static final double kP_STRAFE = 0.05;
+  public static final double kP_STRAFE = 0.1; // 0.09
   private static final double DRIVE_EXPO = 0.5;
   private static final double YAW_EXPO = 0.5;
   private static final double DEADBAND = 0.05;
   private static final double kP_YAW = 0.01; // 0.00625 tuning for NT method, 0.01 pyeye
   private static final double MAX_YAW = 0.3;
-  private static final double MIN_RANGE = 40.0;
+  private static final double MIN_RANGE = 35.0;
   private static final double FWD_SCALE = 0.3;
-  private static final double goodEnoughYaw = 1.0;
+  private static final double FWD_SCALE_FAST = 0.5;
+  private static final double goodEnoughYaw = 1.5;
 
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VisionSubsystem VISION = Robot.VISION;
@@ -41,11 +43,13 @@ public class VisionAutoAlignPickupCommand extends Command implements Item {
   private double targetYaw;
   private boolean isGood = false;
   private static double strafeCorrection;
+  private RateLimit rateLimit;
 
   public VisionAutoAlignPickupCommand() {
     requires(DRIVE);
     this.driveExpo = new ExpoScale(DEADBAND, DRIVE_EXPO);
     this.yawExpo = new ExpoScale(DEADBAND, YAW_EXPO);
+    rateLimit = new RateLimit(0.015);
 
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
@@ -80,16 +84,18 @@ public class VisionAutoAlignPickupCommand extends Command implements Item {
     // Determine if actual yaw is close enough to target
     boolean onTarget = Math.abs(yawError) <= goodEnoughYaw;
 
+    double forward;
     // forward is still normal
-    double forward = driveExpo.apply(controls.getForward()) * FWD_SCALE;
-
+    if (isGood) {
+      forward = driveExpo.apply(controls.getForward()) * FWD_SCALE;
+    } else forward = driveExpo.apply(controls.getForward()) * FWD_SCALE_FAST;
     double strafe;
     strafeError = Math.sin(Math.toRadians(VISION.getRawBearing())) * range - strafeCorrection;
     // Only take over strafe control if pyeye has a target and the robot is straight to the field
     if (isGood && onTarget) strafe = strafeError * kP_STRAFE * forward;
     else strafe = driveExpo.apply(controls.getStrafe());
 
-    DRIVE.drive(forward, strafe, yaw);
+    DRIVE.drive(forward, rateLimit.apply(strafe), yaw);
   }
 
   @Override
@@ -143,6 +149,8 @@ public class VisionAutoAlignPickupCommand extends Command implements Item {
         return () -> yawError;
       case RANGE:
         return () -> strafeError;
+        //      case COMPONENT_STRAFE:
+        //        return () -> strafe;
       default:
         return () -> 2767;
     }
