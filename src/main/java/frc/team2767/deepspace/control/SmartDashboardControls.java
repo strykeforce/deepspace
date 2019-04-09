@@ -115,7 +115,7 @@ public class SmartDashboardControls {
     SmartDashboard.putData("Azimuth/2dec", new AdjustAzimuthCommand(2, -1));
     SmartDashboard.putData("Azimuth/3inc", new AdjustAzimuthCommand(3, 1));
     SmartDashboard.putData("Azimuth/3dec", new AdjustAzimuthCommand(3, -1));
-    SmartDashboard.putData("ZeroAzimuths", new AzimuthZeroPositionCommand());
+    SmartDashboard.putData("Azimuth/ZeroAzimuths", new AzimuthZeroPositionCommand());
   }
 
   private void addVisionCommands() {

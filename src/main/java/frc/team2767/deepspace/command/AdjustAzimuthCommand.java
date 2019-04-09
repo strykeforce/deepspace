@@ -11,6 +11,7 @@ public class AdjustAzimuthCommand extends InstantCommand {
 
   public AdjustAzimuthCommand(int wheel, int teeth) {
     requires(DRIVE);
+    setRunWhenDisabled(true);
     this.wheel = wheel;
     this.teeth = teeth;
   }

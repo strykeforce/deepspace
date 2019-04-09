@@ -185,11 +185,11 @@ public class DriveSubsystem extends Subsystem implements Item {
     }
   }
 
-  public void adjustZero (int wheel, int teeth){
+  public void adjustZero(int wheel, int teeth) {
     Preferences prefs = Preferences.getInstance();
     String wheelKey = SwerveDrive.getPreferenceKeyForWheel(wheel);
     int oldZero = prefs.getInt(wheelKey, 2767);
-    int newZero = (int)(oldZero + teeth * TICKS_PER_TOOTH);
+    int newZero = (int) (oldZero + teeth * TICKS_PER_TOOTH);
 
     prefs.putInt(wheelKey, newZero);
     swerve.zeroAzimuthEncoders();
