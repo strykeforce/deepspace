@@ -24,6 +24,7 @@ public class InterruptCommand extends InstantCommand {
 
   @Override
   protected void initialize() {
+    DRIVE.setSlotConfig(DriveSubsystem.DriveTalonConfig.DRIVE_CONFIG);
     logger.debug("INTERRUPT INIT");
     VISION.setAction(Action.PLACE);
   }

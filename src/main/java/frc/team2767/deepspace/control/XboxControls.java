@@ -5,9 +5,9 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.biscuit.BiscuitGoToSideCommand;
-import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
-import frc.team2767.deepspace.command.climb.ClimbCommand;
-import frc.team2767.deepspace.command.climb.DeploySequenceCommand;
+import frc.team2767.deepspace.command.biscuit.BiscuitTuckCommand;
+import frc.team2767.deepspace.command.climb.ClimbAutoCommand;
+import frc.team2767.deepspace.command.climb.ClimbLockCommand;
 import frc.team2767.deepspace.command.climb.StopClimbCommand;
 import frc.team2767.deepspace.command.elevator.*;
 import frc.team2767.deepspace.command.intake.RollerOutCommand;
@@ -17,7 +17,7 @@ import frc.team2767.deepspace.command.sequences.StowAllCommandGroup;
 import frc.team2767.deepspace.command.sequences.pickup.CoconutPickupCommandGroup;
 import frc.team2767.deepspace.command.sequences.pickup.PlayerCargoCommandGroup;
 import frc.team2767.deepspace.command.sequences.pickup.PlayerHatchCommandGroup;
-import frc.team2767.deepspace.command.vacuum.SetSolenoidStatesCommand;
+import frc.team2767.deepspace.command.teleop.InterruptCommand;
 import frc.team2767.deepspace.subsystem.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +73,14 @@ public class XboxControls {
           }
         };
 
+    Trigger RightTrigger =
+        new Trigger() {
+          @Override
+          public boolean get() {
+            return xbox.getRawAxis(Axis.RIGHT_TRIGGER.id) > 0;
+          }
+        };
+
     // ELEVATOR
     new JoystickButton(xbox, Button.A.id).whenPressed(new ElevatorLevelOneCommand());
     new JoystickButton(xbox, Button.B.id)
@@ -89,8 +97,7 @@ public class XboxControls {
     // BISCUIT
     LeftStickLeft.whenActive(new BiscuitGoToSideCommand(FieldDirection.LEFT));
     LeftStickRight.whenActive(new BiscuitGoToSideCommand(FieldDirection.RIGHT));
-    new JoystickButton(xbox, Button.LEFT_STICK.id)
-        .whenPressed(new BiscuitSetPositionCommand(BiscuitSubsystem.kUpPositionDeg));
+    new JoystickButton(xbox, Button.LEFT_STICK.id).whenPressed(new BiscuitTuckCommand());
 
     // Shoulders
     new JoystickButton(xbox, XboxControls.Shoulder.RIGHT.id)
@@ -99,19 +106,20 @@ public class XboxControls {
         .whenReleased(new CoconutPickupCommandGroup());
     new JoystickButton(xbox, XboxControls.Shoulder.LEFT.id)
         .whenPressed(new PlayerHatchCommandGroup());
-    new JoystickButton(xbox, XboxControls.Shoulder.LEFT.id)
-        .whenReleased(
-            new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP));
+    new JoystickButton(xbox, XboxControls.Shoulder.LEFT.id).whenReleased(new InterruptCommand());
 
     // Dpad
     directionPadAny.whenActive(new RollerOutCommand());
     directionPadAny.whenInactive(new RollerStopCommand());
 
     // Climb Commands
-    new JoystickButton(xbox, Button.START.id).whenPressed(new DeploySequenceCommand());
+    new JoystickButton(xbox, Button.START.id).whenPressed(new ClimbLockCommand());
     new JoystickButton(xbox, Button.START.id).whenReleased(new StopClimbCommand());
-    new JoystickButton(xbox, Button.BACK.id).whenPressed(new ClimbCommand());
+    new JoystickButton(xbox, Button.BACK.id).whenPressed(new ClimbAutoCommand());
     new JoystickButton(xbox, Button.BACK.id).whenReleased(new StopClimbCommand());
+
+    // Interruput
+    RightTrigger.whenActive(new InterruptCommand());
   }
 
   public double getLX() {

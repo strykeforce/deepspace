@@ -10,7 +10,9 @@ import frc.team2767.deepspace.command.HealthCheckCommand;
 import frc.team2767.deepspace.command.ResetAxisCommandGroup;
 import frc.team2767.deepspace.command.approach.DriveTwistCommand;
 import frc.team2767.deepspace.command.approach.OrthogonalMovementCommand;
-import frc.team2767.deepspace.command.approach.sequences.SandstormHatchPlaceCommandGroup;
+import frc.team2767.deepspace.command.approach.TalonConfigCommand;
+import frc.team2767.deepspace.command.approach.YawToTargetCommand;
+import frc.team2767.deepspace.command.approach.sequences.HatchPlaceCommandGroup;
 import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
 import frc.team2767.deepspace.command.climb.*;
@@ -56,7 +58,7 @@ public class SmartDashboardControls {
     SmartDashboard.putData("Game/tridentSol", VACUUM.getTridentSolenoid());
     SmartDashboard.putBoolean("Game/onTarget", false);
     SmartDashboard.putData("Game/SandstormHatchPickUp", new SandstormHatchPickupCommandGroup());
-    SmartDashboard.putData("Game/hatchPlace", new SandstormHatchPlaceCommandGroup());
+    SmartDashboard.putData("Game/hatchPlace", new HatchPlaceCommandGroup());
     SmartDashboard.putData("Game/Gyro", Robot.DRIVE.getGyro());
   }
 
@@ -65,12 +67,9 @@ public class SmartDashboardControls {
 
     // Climb Commands
     ShuffleboardLayout Climb = ClimbTab.getLayout("Climb", "List Layout");
-    Climb.add("Lower Suction Cup", new LowerSuctionCupCommand())
-        .withWidget(BuiltInWidgets.kCommand);
-    Climb.add("Climb", new ClimbCommand()).withWidget(BuiltInWidgets.kCommand);
+    Climb.add("Climb", new ClimbAutoCommand()).withWidget(BuiltInWidgets.kCommand);
     Climb.add("Stop", new StopClimbCommand()).withWidget(BuiltInWidgets.kCommand);
-    Climb.add("Unwind", new UnwindClimbCommand()).withWidget(BuiltInWidgets.kCommand);
-    Climb.add("Raise", new RaiseClimbCommand()).withWidget(BuiltInWidgets.kCommand);
+    Climb.add("Deploy", new DeploySequenceCommandGroup()).withWidget(BuiltInWidgets.kCommand);
     Climb.withPosition(1, 1);
 
     // Solenoid Commands
@@ -92,18 +91,14 @@ public class SmartDashboardControls {
 
     // Release Mechanisms
     ShuffleboardLayout Servos = ClimbTab.getLayout("Servos", "List Layout");
-    Servos.add("Release Climb", new ReleaseClimbCommand()).withWidget(BuiltInWidgets.kCommand);
-    Servos.add("Release Kickstand", new ReleaseKickstandCommand())
-        .withWidget(BuiltInWidgets.kCommand);
   }
 
   private void addPitCommands() {
+    SmartDashboard.putData("Game/SandstormHatchPickUp", new SandstormHatchPickupCommandGroup());
     addTestCommands();
     addVacuumCommands();
     SmartDashboard.putData("Pit/resetAxis", new ResetAxisCommandGroup());
-    SmartDashboard.putData("Pit/LowerSuction", new LowerSuctionCupCommand());
-    SmartDashboard.putData("Pit/Climb", new ClimbCommand());
-    SmartDashboard.putData("Pit/Unwind", new UnwindClimbCommand());
+    SmartDashboard.putData("Pit/Climb", new ClimbAutoCommand());
     SmartDashboard.putData("Pit/ClimbStop", new StopClimbCommand());
     SmartDashboard.putData("Pit/Health Check", new HealthCheckCommand());
   }
@@ -194,7 +189,9 @@ public class SmartDashboardControls {
     SmartDashboard.putData("Test/Twist70at180", new DriveTwistCommand(180, 70, -90.0));
     SmartDashboard.putData("Test/Twist70at0", new DriveTwistCommand(0, 70, -90.0));
     SmartDashboard.putData("Test/Pyeye", new QueryPyeyeCommand());
-    //    SmartDashboard.putData("Test/yawTo", new YawToTargetCommand(90.0));
+    SmartDashboard.putData("Test/yawTo", new YawToTargetCommand(90.0));
+    SmartDashboard.putData(
+        "Test/setTalonConfig", new TalonConfigCommand(DriveSubsystem.DriveTalonConfig.YAW_CONFIG));
   }
 
   private void addVacuumCommands() {

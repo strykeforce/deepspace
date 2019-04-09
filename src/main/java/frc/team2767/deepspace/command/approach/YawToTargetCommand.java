@@ -34,7 +34,7 @@ public class YawToTargetCommand extends PIDCommand {
     controller = getPIDController();
     controller.setContinuous();
     controller.setOutputRange(-1.0, 1.0);
-    controller.setAbsoluteTolerance(1.0);
+    controller.setAbsoluteTolerance(0.35);
     this.setpoint = setpoint;
     count = 0;
     logger.debug("construct yaw command");
@@ -49,7 +49,7 @@ public class YawToTargetCommand extends PIDCommand {
 
     controller.setSetpoint(setpoint);
     DRIVE.setDriveMode(SwerveDrive.DriveMode.CLOSED_LOOP);
-    logger.debug(
+    logger.info(
         "start angle = {} setpoint = {}", returnPIDInput(), getPIDController().getSetpoint());
   }
 
@@ -80,7 +80,7 @@ public class YawToTargetCommand extends PIDCommand {
 
   @Override
   protected void end() {
-    logger.debug(
+    logger.info(
         "end angle = {} error = {}",
         returnPIDInput(),
         Math.IEEEremainder(getPIDController().getSetpoint() - DRIVE.getGyro().getAngle(), 360));

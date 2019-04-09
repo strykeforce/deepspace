@@ -27,6 +27,6 @@ public class CalculateRotationCommand extends InstantCommand {
 
     VISION.setCorrectedHeading(rotationCalculator.getHeading());
 
-    logger.debug("heading = {}", VISION.getCorrectedHeading());
+    logger.info("heading = {}", VISION.getCorrectedHeading());
   }
 }

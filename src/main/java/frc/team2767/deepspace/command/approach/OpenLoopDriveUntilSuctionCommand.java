@@ -14,7 +14,7 @@ public class OpenLoopDriveUntilSuctionCommand extends Command {
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VacuumSubsystem VACUUM = Robot.VACUUM;
   private static final double TRANSITION_PRESSURE_DIFFERENCE = 3.0;
-  private static final double HATCH_SEAL_GOOD_ENOUGH = 10.0;
+  private static final double HATCH_SEAL_GOOD_ENOUGH = 7.5;
   private static final double OUT_DRIVE_SECONDS = 0.25;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private double direction;
@@ -34,8 +34,9 @@ public class OpenLoopDriveUntilSuctionCommand extends Command {
       logger.warn("Transition pressures not set correctly");
     }
 
+    DRIVE.setDriveMode(SwerveDrive.DriveMode.CLOSED_LOOP);
     initialPressure = VACUUM.getPressure();
-    logger.debug("init pressure = {}", initialPressure);
+    logger.info("init pressure = {}", initialPressure);
     DRIVE.setDriveMode(SwerveDrive.DriveMode.OPEN_LOOP);
     direction = 0.25;
 
@@ -51,7 +52,7 @@ public class OpenLoopDriveUntilSuctionCommand extends Command {
         DRIVE.setWheels(direction, DriveState.FAST.velocity);
         double currentFastPressure = VACUUM.getPressure();
         if (currentFastPressure - initialPressure > TRANSITION_PRESSURE_DIFFERENCE) {
-          logger.debug("current pressure = {}", currentFastPressure);
+          logger.info("current pressure = {}", currentFastPressure);
           driveState = DriveState.SLOW;
         }
         break;
@@ -60,14 +61,14 @@ public class OpenLoopDriveUntilSuctionCommand extends Command {
         DRIVE.setWheels(direction, DriveState.SLOW.velocity);
         double currentSlowPressure = VACUUM.getPressure();
         if (currentSlowPressure - initialPressure > HATCH_SEAL_GOOD_ENOUGH) {
-          logger.debug("pressure reached: current pressure = {}", currentSlowPressure);
+          logger.info("pressure reached: current pressure = {}", currentSlowPressure);
           outDriveInitTime = Timer.getFPGATimestamp();
           driveState = DriveState.OUT;
         }
         break;
 
       case OUT:
-        DRIVE.setWheels(direction, DriveState.OUT.velocity);
+        //        DRIVE.setWheels(direction, DriveState.OUT.velocity);
         if (Timer.getFPGATimestamp() - outDriveInitTime > OUT_DRIVE_SECONDS) {
           driveState = DriveState.DONE;
         }

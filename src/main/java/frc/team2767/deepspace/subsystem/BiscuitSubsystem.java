@@ -9,12 +9,17 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.health.Zeroable;
 import frc.team2767.deepspace.subsystem.safety.Limitable;
 import java.util.List;
+import java.util.Set;
+import java.util.function.DoubleSupplier;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
+import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
+import org.strykeforce.thirdcoast.telemetry.item.Item;
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
-public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
+public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, Item {
 
   private static final String PREFS = "BiscuitSubsystem/Position/";
   private static final int BACKUP = 2767;
@@ -33,12 +38,18 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   public static double kDownPosition = 179;
   private static double kDownRightPositionDeg;
   private static double kDownLeftPositionDeg;
+  private static double kLeft270PositionDeg;
+  private static double kRight270PositionDeg;
+  private static double kLeft270TiltPositionDeg;
+  private static double kRight270TiltPositionDeg;
   private static int kCloseEnoughTicks;
   private static int kAbsoluteZeroTicks;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private double targetBiscuitPositionDeg = 0;
   private TalonSRX biscuit = new TalonSRX(BISCUIT_ID);
   private int setpointTicks;
+
+  private int graphCount;
 
   private int currentForwardLimit;
   private int currentReverseLimit;
@@ -69,6 +80,10 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
     kBackStopRightPositionDeg = getPreference("backstop_R_deg", 135);
     kTiltUpLeftPositionDeg = getPreference("tilt_up_L_deg", -65);
     kTiltUpRightPositionDeg = getPreference("tilt_up_R_deg", 64);
+    kLeft270PositionDeg = getPreference("left_270_deg", 270);
+    kRight270PositionDeg = getPreference("right_270_deg", -270);
+    kLeft270TiltPositionDeg = getPreference("tilt_270_L_deg", 295);
+    kRight270TiltPositionDeg = getPreference("tilt_270_R_deg", -295);
   }
 
   private void configTalon() {
@@ -91,17 +106,17 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
     biscuitConfig.velocityMeasurementWindow = 64;
     biscuitConfig.voltageCompSaturation = 12;
     biscuitConfig.voltageMeasurementFilter = 32;
-    biscuitConfig.motionCruiseVelocity = 1_000;
-    biscuitConfig.motionAcceleration = 2_000;
-    biscuitConfig.velocityMeasurementWindow = 64;
-    biscuitConfig.velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms;
-    biscuitConfig.voltageCompSaturation = 12;
-    biscuitConfig.voltageMeasurementFilter = 32;
+    biscuitConfig.motionCruiseVelocity = 1_000; // 1000
+    biscuitConfig.motionAcceleration = 2_500; // 2000
+    biscuitConfig.clearPositionOnLimitF = false;
+    biscuitConfig.clearPositionOnLimitR = false;
+    biscuitConfig.clearPositionOnQuadIdx = false;
 
     // from the Safety Subsystem
     biscuitConfig.forwardSoftLimitThreshold = 1000;
     biscuitConfig.reverseSoftLimitThreshold = -1000;
 
+    biscuit.setStatusFramePeriod(StatusFrame.Status_4_AinTempVbat, 5);
     biscuit.enableCurrentLimit(true);
     biscuit.enableVoltageCompensation(true);
     biscuit.configAllSettings(biscuitConfig);
@@ -109,6 +124,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
     telemetryService.register(new TalonItem(biscuit, "Biscuit"));
+    telemetryService.register(this);
   }
 
   @SuppressWarnings("Duplicates")
@@ -160,7 +176,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
       logger.info("New relative position = {}", offset);
       didZero = true;
     } else {
-      logger.error("Intake zero failed - biscuit not vertical");
+      logger.error("Biscuit zero failed - biscuit not vertical");
       biscuit.configPeakOutputForward(0, 0);
       biscuit.configPeakOutputReverse(0, 0);
     }
@@ -260,6 +276,25 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
       angle = kDownRightPositionDeg;
       logger.info("Right down");
     }
+    // 270 Wrap Allow
+    if (angle == kRightPositionDeg && getPosition() < -120) {
+      angle = kRight270PositionDeg;
+      logger.info("270 Wrap Right");
+    }
+    if (angle == kLeftPositionDeg && getPosition() > 120) {
+      angle = kLeft270PositionDeg;
+      logger.info("270 Wrap Left");
+    }
+
+    if (angle == kTiltUpLeftPositionDeg && getPosition() > 120) {
+      angle = kLeft270TiltPositionDeg;
+      logger.info("270 Wrap Tilt Up Left");
+    }
+
+    if (angle == kTiltUpRightPositionDeg && getPosition() < -120) {
+      angle = kRight270TiltPositionDeg;
+      logger.info("270 Wrap Tilt Up Right");
+    }
     setpointTicks = (int) (TICKS_OFFSET - angle * TICKS_PER_DEGREE);
     logger.info("set position in degrees = {} in ticks = {}", angle, setpointTicks);
     biscuit.set(ControlMode.MotionMagic, setpointTicks);
@@ -298,19 +333,64 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable {
   @SuppressWarnings("Duplicates")
   @Override
   public void setLimits(int forward, int reverse) {
+    if (biscuit.hasResetOccurred()) {
+      logger.warn("BISCUIT TALON RESET");
+    }
+    graphCount = 0;
     if (forward != currentForwardLimit) {
       biscuit.configForwardSoftLimitThreshold(forward, 0);
       currentForwardLimit = forward;
+      graphCount++;
     }
 
     if (reverse != currentReverseLimit) {
       biscuit.configReverseSoftLimitThreshold(reverse, 0);
       currentReverseLimit = reverse;
+      graphCount += 2;
     }
   }
 
   public enum Angle {
     LEFT,
     RIGHT,
+  }
+
+  @NotNull
+  @Override
+  public String getDescription() {
+    return "Biscuit subsystem";
+  }
+
+  @Override
+  public int getDeviceId() {
+    return 0;
+  }
+
+  @NotNull
+  @Override
+  public Set<Measure> getMeasures() {
+    return Set.of(Measure.VALUE);
+  }
+
+  @NotNull
+  @Override
+  public String getType() {
+    return "biscuit";
+  }
+
+  @Override
+  public int compareTo(@NotNull Item item) {
+    return 0;
+  }
+
+  @NotNull
+  @Override
+  public DoubleSupplier measurementFor(@NotNull Measure measure) {
+    switch (measure) {
+      case VALUE:
+        return () -> graphCount;
+      default:
+        return () -> 2767.0;
+    }
   }
 }

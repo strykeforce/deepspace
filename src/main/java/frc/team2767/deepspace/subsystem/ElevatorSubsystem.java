@@ -58,8 +58,8 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
   }
 
   private void elevatorPreferences() {
-    kUpOutput = getPreference("up_output", 0.2);
-    kDownOutput = getPreference("down_output", -0.2);
+    kUpOutput = getPreference("up_output", 0.35);
+    kDownOutput = getPreference("down_output", -0.35);
 
     kCloseEnoughTicks = (int) getPreference("close_enough_ticks", 500);
     kAbsoluteZeroTicks = (int) getPreference("absolute_zero_ticks", 2064);
@@ -82,9 +82,9 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
     elevatorConfig.forwardSoftLimitEnable = true;
     elevatorConfig.reverseSoftLimitEnable = true;
 
-    elevatorConfig.continuousCurrentLimit = 20;
+    elevatorConfig.continuousCurrentLimit = 25;
     elevatorConfig.peakCurrentDuration = 40;
-    elevatorConfig.peakCurrentLimit = 25;
+    elevatorConfig.peakCurrentLimit = 30;
     elevatorConfig.peakOutputForward = 1.0;
     elevatorConfig.peakOutputReverse = -1.0;
     elevatorConfig.slot0.kP = 1;
@@ -124,6 +124,10 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
     double pref = preferences.getDouble(prefName, BACKUP);
     logger.info("{}={}", name, pref);
     return pref;
+  }
+
+  public ElevatorLevel getElevatorLevel() {
+    return elevatorLevel;
   }
 
   public List<TalonSRX> getTalons() {

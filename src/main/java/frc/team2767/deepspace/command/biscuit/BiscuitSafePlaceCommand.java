@@ -6,6 +6,7 @@ import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 
 public class BiscuitSafePlaceCommand extends ConditionalCommand {
   private static final BiscuitSubsystem BISCUIT = Robot.BISCUIT;
+  private static double biscuitPosition;
 
   public BiscuitSafePlaceCommand() {
     super(new BiscuitSetPositionCommand(0));
@@ -13,6 +14,7 @@ public class BiscuitSafePlaceCommand extends ConditionalCommand {
 
   @Override
   protected boolean condition() {
-    return (Math.abs(BISCUIT.getPosition()) > 97);
+    biscuitPosition = Math.abs(BISCUIT.getPosition());
+    return (biscuitPosition > 110 && biscuitPosition < 250);
   }
 }
