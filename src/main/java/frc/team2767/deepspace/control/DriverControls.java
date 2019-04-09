@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.ZeroGyroCommand;
 import frc.team2767.deepspace.command.approach.sequences.AutoHatchPickupCommandGroup;
-import frc.team2767.deepspace.command.approach.sequences.HatchPlaceCommandGroup;
 import frc.team2767.deepspace.command.biscuit.BiscuitNegativeCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositiveCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
@@ -17,12 +16,11 @@ import frc.team2767.deepspace.command.intake.ShoulderStopCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.log.SafetyLogDumpCommand;
 import frc.team2767.deepspace.command.sequences.StowAllCommandGroup;
-import frc.team2767.deepspace.command.sequences.pickup.CargoGroundPickupCommandGroup;
-import frc.team2767.deepspace.command.sequences.pickup.CoconutPickupCommandGroup;
+import frc.team2767.deepspace.command.sequences.pickup.AutoCargoPickupCommandGroup;
+import frc.team2767.deepspace.command.teleop.DriverRocketPlaceAssistCommand;
 import frc.team2767.deepspace.command.teleop.InterruptCommand;
-import frc.team2767.deepspace.command.vacuum.SetSolenoidStatesCommand;
+import frc.team2767.deepspace.command.teleop.ReleaseGamepieceCommand;
 import frc.team2767.deepspace.subsystem.ClimbSubsystem;
-import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,9 +37,7 @@ public class DriverControls {
 
     // intake pickup
     new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id)
-        .whenPressed(new CargoGroundPickupCommandGroup());
-    new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id)
-        .whenReleased(new CoconutPickupCommandGroup());
+        .whenPressed(new AutoCargoPickupCommandGroup());
 
     new JoystickButton(joystick, Button.X.id).whenPressed(new StowAllCommandGroup());
 
@@ -53,10 +49,10 @@ public class DriverControls {
         .whenPressed(new ClimbJogCommand(ClimbSubsystem.kJogDownPercent));
     new JoystickButton(joystick, Button.DOWN.id).whenReleased(new StopClimbCommand());
 
-    // biscuit
-    new JoystickButton(joystick, Trim.RIGHT_Y_POS.id)
-        .whenPressed(new AutoHatchPickupCommandGroup());
+    // vision
     new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id)
+        .whenPressed(new AutoHatchPickupCommandGroup());
+    new JoystickButton(joystick, Trim.RIGHT_Y_POS.id)
         .whenPressed(new AutoHatchPickupCommandGroup());
 
     // interrupt
@@ -80,10 +76,10 @@ public class DriverControls {
     new JoystickButton(joystick, Button.HAMBURGER.id).whenPressed(new SafetyLogDumpCommand());
 
     // shoulder
-    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id)
-        .whenPressed(
-            new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.PRESSURE_ACCUMULATE));
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed(new HatchPlaceCommandGroup());
+    new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(new ReleaseGamepieceCommand());
+    new JoystickButton(joystick, Shoulder.LEFT_UP.id)
+        .whenPressed(new DriverRocketPlaceAssistCommand());
+    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased(new InterruptCommand());
   }
 
   private <E extends Enum<E>> Command log(E control) {

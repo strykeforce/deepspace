@@ -3,23 +3,30 @@ package frc.team2767.deepspace.subsystem;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.health.Zeroable;
 import frc.team2767.deepspace.subsystem.safety.Limitable;
 import java.util.List;
+import java.util.Set;
+import java.util.function.DoubleSupplier;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
+import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
+import org.strykeforce.thirdcoast.telemetry.item.Item;
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
-public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
+public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable, Item {
 
   private static final int TICKS_PER_DEGREE = 90;
   private static final int TICKS_OFFSET = 9664;
   private static final int SHOULDER_ID = 20;
   private static final int ROLLER_ID = 21;
+  private static final int BEAM_BREAK_ID = 8;
   private static final int STABLE_THRESH = 4;
   private static final String PREFS_NAME = "IntakeSubsystem/Settings/";
   public static double kStowPositionDeg;
@@ -33,6 +40,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final TalonSRX shoulder = new TalonSRX(SHOULDER_ID);
   private final TalonSRX roller = new TalonSRX(ROLLER_ID);
+  private final DigitalInput beamBreak = new DigitalInput(BEAM_BREAK_ID);
   private int stableCount;
   private int setpointTicks;
 
@@ -95,8 +103,8 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
 
     TalonSRXConfiguration rollerConfig = new TalonSRXConfiguration();
     rollerConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
-    rollerConfig.continuousCurrentLimit = 10;
-    rollerConfig.peakCurrentLimit = 0;
+    rollerConfig.continuousCurrentLimit = 20;
+    rollerConfig.peakCurrentLimit = 25;
     rollerConfig.peakCurrentDuration = 0;
 
     shoulder.configForwardSoftLimitEnable(true);
@@ -114,6 +122,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
     telemetryService.stop();
     telemetryService.register(new TalonItem(shoulder, "IntakeShoulder"));
     telemetryService.register(new TalonItem(roller, "IntakeRoller"));
+    telemetryService.register(this);
   }
 
   @SuppressWarnings("Duplicates")
@@ -200,6 +209,15 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
     roller.set(ControlMode.PercentOutput, 0.0);
   }
 
+  public boolean isBeamBroken() {
+    return !beamBreak.get();
+  }
+
+  public double graphBeam() {
+    if (isBeamBroken()) return 1.0;
+    else return 0.0;
+  }
+
   public void dump() {
     logger.info("intake position degrees = {} ticks = {}", getPosition(), getTicks());
   }
@@ -238,5 +256,48 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable {
     setpointTicks = (int) (TICKS_OFFSET - TICKS_PER_DEGREE * angle);
     logger.info("setting shoulder position={}", setpointTicks);
     shoulder.set(ControlMode.MotionMagic, setpointTicks);
+  }
+
+  ////////////////////////////////////////////////////////////////////////////
+  // GRAPHER
+
+  @NotNull
+  @Override
+  public String getDescription() {
+    return "Intake Subsystem";
+  }
+
+  @Override
+  public int getDeviceId() {
+    return 0;
+  }
+
+  @NotNull
+  @Override
+  public Set<Measure> getMeasures() {
+    return Set.of(Measure.VALUE);
+  }
+
+  @NotNull
+  @Override
+  public String getType() {
+    return "intake";
+  }
+
+  @Override
+  public int compareTo(@NotNull Item item) {
+    return 0;
+  }
+
+  @NotNull
+  @Override
+  public DoubleSupplier measurementFor(@NotNull Measure measure) {
+    switch (measure) {
+      case VALUE:
+        return () -> graphBeam();
+
+      default:
+        return () -> 2767;
+    }
   }
 }

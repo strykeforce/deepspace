@@ -14,6 +14,6 @@ public class ElevatorDownFastOpenLoopCommand extends InstantCommand {
 
   @Override
   protected void initialize() {
-    ELEVATOR.openLoopMove(-0.3);
+    ELEVATOR.openLoopMove(-0.23);
   }
 }

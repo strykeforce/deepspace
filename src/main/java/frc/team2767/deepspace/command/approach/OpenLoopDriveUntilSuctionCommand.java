@@ -36,7 +36,7 @@ public class OpenLoopDriveUntilSuctionCommand extends Command {
 
     DRIVE.setDriveMode(SwerveDrive.DriveMode.CLOSED_LOOP);
     initialPressure = VACUUM.getPressure();
-    logger.debug("init pressure = {}", initialPressure);
+    logger.info("init pressure = {}", initialPressure);
     DRIVE.setDriveMode(SwerveDrive.DriveMode.OPEN_LOOP);
     direction = 0.25;
 
@@ -52,7 +52,7 @@ public class OpenLoopDriveUntilSuctionCommand extends Command {
         DRIVE.setWheels(direction, DriveState.FAST.velocity);
         double currentFastPressure = VACUUM.getPressure();
         if (currentFastPressure - initialPressure > TRANSITION_PRESSURE_DIFFERENCE) {
-          logger.debug("current pressure = {}", currentFastPressure);
+          logger.info("current pressure = {}", currentFastPressure);
           driveState = DriveState.SLOW;
         }
         break;
@@ -61,14 +61,14 @@ public class OpenLoopDriveUntilSuctionCommand extends Command {
         DRIVE.setWheels(direction, DriveState.SLOW.velocity);
         double currentSlowPressure = VACUUM.getPressure();
         if (currentSlowPressure - initialPressure > HATCH_SEAL_GOOD_ENOUGH) {
-          logger.debug("pressure reached: current pressure = {}", currentSlowPressure);
+          logger.info("pressure reached: current pressure = {}", currentSlowPressure);
           outDriveInitTime = Timer.getFPGATimestamp();
           driveState = DriveState.OUT;
         }
         break;
 
       case OUT:
-        DRIVE.setWheels(direction, DriveState.OUT.velocity);
+        //        DRIVE.setWheels(direction, DriveState.OUT.velocity);
         if (Timer.getFPGATimestamp() - outDriveInitTime > OUT_DRIVE_SECONDS) {
           driveState = DriveState.DONE;
         }
