@@ -26,7 +26,7 @@ public class HoldHeadingUntilSuctionCommand extends Command {
   private static double outInitTime;
 
   private static final double HATCH_SEAL_GOOD_ENOUGH = 7.5;
-  private static final double FWD_SCALE = 0.3;
+  private static final double FWD_SCALE = 0.2;
   private static final double DRIVE_EXPO = 0.5;
   private static final double DEADBAND = 0.05;
   private static final double OUT_TIME_SEC = 0.25;
