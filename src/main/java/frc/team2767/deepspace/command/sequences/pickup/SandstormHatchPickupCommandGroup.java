@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
 import frc.team2767.deepspace.command.biscuit.ReleaseKrakenCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
+import frc.team2767.deepspace.command.intake.IntakePositionCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.log.SandstormHatchIndicator;
 import frc.team2767.deepspace.command.states.SetActionCommand;
@@ -31,6 +32,7 @@ public class SandstormHatchPickupCommandGroup extends CommandGroup {
             addParallel(new SetFieldDirectionCommand(FieldDirection.LEFT));
             addParallel(new SetLevelCommand(ElevatorLevel.ONE));
             addParallel(new ReleaseKrakenCommand(false)); // Hatch staged with Kraken stowed
+            addParallel(new IntakePositionCommand(IntakeSubsystem.kStowPositionDeg));
           }
         });
     addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP));

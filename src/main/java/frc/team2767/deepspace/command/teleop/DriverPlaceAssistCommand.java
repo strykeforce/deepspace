@@ -14,10 +14,6 @@ import org.strykeforce.thirdcoast.util.ExpoScale;
 public class DriverPlaceAssistCommand extends Command {
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VisionSubsystem VISION = Robot.VISION;
-  private final ExpoScale driveExpo;
-  private static DriverControls controls;
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
   private static final double DRIVE_EXPO = 0.5;
   private static final double DEADBAND = 0.05;
   private static final double kP_YAW = 0.01; // 0.00625
@@ -28,7 +24,7 @@ public class DriverPlaceAssistCommand extends Command {
   private static final double goodEnoughYaw = 1.0;
   private static final double MIN_RANGE = 20.0;
   private static final double FWD_SCALE = 0.3;
-
+  private static DriverControls controls;
   private static double targetYaw;
   private static double angleAdjust;
   private static boolean isAuton;
@@ -37,6 +33,8 @@ public class DriverPlaceAssistCommand extends Command {
   private static boolean isGood;
   private static boolean onTarget;
   private static double strafeCorrection;
+  private final ExpoScale driveExpo;
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public DriverPlaceAssistCommand() {
     this.driveExpo = new ExpoScale(DEADBAND, DRIVE_EXPO);
@@ -56,13 +54,17 @@ public class DriverPlaceAssistCommand extends Command {
   @Override
   protected void execute() {
     double forward = driveExpo.apply(controls.getForward());
+    double strafe = driveExpo.apply(controls.getStrafe());
 
     double yawError = targetYaw - Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0);
     double yaw = (yawError) * kP_YAW;
     if (yaw > MAX_YAW) yaw = MAX_YAW;
     if (yaw < -MAX_YAW) yaw = -MAX_YAW;
 
-    double strafe = driveExpo.apply(controls.getStrafe());
+    if (isAuton) {
+      forward *= FWD_SCALE;
+      strafe *= FWD_SCALE;
+    }
 
     DRIVE.drive(forward, strafe, yaw);
   }
@@ -80,6 +82,11 @@ public class DriverPlaceAssistCommand extends Command {
     if (!isAuton) {
       undoAngleAdjust();
     }
+  }
+
+  private void undoAngleAdjust() {
+    logger.info("Undo Angle Adjustment");
+    DRIVE.undoGyroOffset();
   }
 
   private void setAngleAdjust() {
@@ -129,10 +136,5 @@ public class DriverPlaceAssistCommand extends Command {
     logger.info("Adjust Angle By: {}", angleAdjust);
     DRIVE.setGyroOffset(angleAdjust);
     logger.info("Yaw post adjust: {}", DRIVE.getGyro().getAngle());
-  }
-
-  private void undoAngleAdjust() {
-    logger.info("Undo Angle Adjustment");
-    DRIVE.undoGyroOffset();
   }
 }

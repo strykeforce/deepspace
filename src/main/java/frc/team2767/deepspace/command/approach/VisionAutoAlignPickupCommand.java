@@ -1,6 +1,7 @@
 package frc.team2767.deepspace.command.approach;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.control.DriverControls;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
@@ -58,6 +59,7 @@ public class VisionAutoAlignPickupCommand extends Command implements Item {
 
   @Override
   protected void initialize() {
+    SmartDashboard.putBoolean("Game/haveHatch", false);
     logger.info("Begin Vision Auto Align Pickup");
     controls = Robot.CONTROLS.getDriverControls();
     DRIVE.setDriveMode(SwerveDrive.DriveMode.CLOSED_LOOP);

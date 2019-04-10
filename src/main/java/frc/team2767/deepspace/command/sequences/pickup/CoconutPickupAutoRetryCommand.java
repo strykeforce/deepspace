@@ -21,7 +21,7 @@ public class CoconutPickupAutoRetryCommand extends Command {
   private static double stableCounts;
 
   private static double DOWN_SPEED = -0.23;
-  private static double PRESSURE_DIFFERENTIAL = 5; // inHg
+  private static double PRESSURE_DIFFERENTIAL = 2.5; // inHg
   private static double STABLE_COUNTS = 5;
   private static double WAIT_TIME = 1000; // ms
   private static double RESET_HEIGHT = 20.25;
@@ -68,7 +68,7 @@ public class CoconutPickupAutoRetryCommand extends Command {
         }
         break;
       case RESET:
-        if (ELEVATOR.onTarget()) {
+        if (ELEVATOR.onTarget() && (currentPressure - initialPressure) < PRESSURE_DIFFERENTIAL) {
           startSealTime = System.currentTimeMillis();
           ELEVATOR.openLoopMove(DOWN_SPEED);
           state = PickupState.DOWN;

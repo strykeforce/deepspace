@@ -2,6 +2,7 @@ package frc.team2767.deepspace.command.approach;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.control.DriverControls;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
@@ -54,6 +55,7 @@ public class HoldHeadingUntilSuctionCommand extends Command {
         if ((currentPressure - initialPressure) > HATCH_SEAL_GOOD_ENOUGH) {
           driveState = DriveState.OUT;
           VISION.enableLights(false);
+          SmartDashboard.putBoolean("Game/haveHatch", true);
           outInitTime = Timer.getFPGATimestamp();
           logger.info("Have Seal");
         }

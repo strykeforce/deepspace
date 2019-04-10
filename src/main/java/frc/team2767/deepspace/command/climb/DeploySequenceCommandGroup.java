@@ -11,17 +11,22 @@ import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 public class DeploySequenceCommandGroup extends CommandGroup {
   public DeploySequenceCommandGroup() {
     addSequential(new LogCommand("BEGIN DEPLOY SEQUENCE"));
-    addSequential(new PressureSetCommand(VacuumSubsystem.kClimbPressureInHg), 0.3);
-    addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.CLIMB));
-    addParallel(
+    addSequential(
         new CommandGroup() {
           {
-            addSequential(new StowElevatorConditionalCommand());
-            addSequential(new ElevatorSetPositionCommand(5.0), 0.5);
+            addSequential(new PressureSetCommand(VacuumSubsystem.kClimbPressureInHg), 0.3);
+            addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.CLIMB));
+            addParallel(
+                new CommandGroup() {
+                  {
+                    addSequential(new StowElevatorConditionalCommand());
+                    addSequential(new ElevatorSetPositionCommand(5.0), 0.5);
+                  }
+                });
+            addParallel(new EngageRatchetCommand(false));
+            addParallel(new ClimbDeployCommand());
           }
         });
-    addParallel(new EngageRatchetCommand(false));
-    addParallel(new ClimbDeployCommand());
     addSequential(new LogCommand("END DEPLOY SEQUENCE"));
   }
 }

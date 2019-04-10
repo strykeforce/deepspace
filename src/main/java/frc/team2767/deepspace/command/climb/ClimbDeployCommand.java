@@ -19,27 +19,30 @@ public class ClimbDeployCommand extends Command {
 
   @Override
   protected void initialize() {
+    logger.debug("releasing");
     currentState = State.RELEASE;
-    if (!CLIMB.setOpenLoopFeedbackSensor(true)) {
-      currentState = State.DONE;
-    }
-    CLIMB.setLowerLimit(ClimbSubsystem.kLowRelease);
-    CLIMB.openLoop(ClimbSubsystem.kDownOpenLoopOutput);
+    CLIMB.setSlowTalonConfig(false);
+    CLIMB.setSlowTalonConfig(false);
+    //    CLIMB.setLowerLimit(ClimbSubsystem.kLowRelease);
+    CLIMB.setVelocity(ClimbSubsystem.kDownVelocity);
   }
 
   @Override
   protected void execute() {
     switch (currentState) {
       case RELEASE:
-        if (CLIMB.getStringpotPosition() >= ClimbSubsystem.kLowRelease - GOOD_ENOUGH) {
-          CLIMB.setUpperLimit(ClimbSubsystem.kHighRelease);
-          CLIMB.openLoop(ClimbSubsystem.kUpOpenLoopOutput);
+        if (CLIMB.getStringPotPosition() >= ClimbSubsystem.kLowRelease - GOOD_ENOUGH) {
+          //          CLIMB.setUpperLimit(ClimbSubsystem.kHighRelease);
+          CLIMB.openLoop(-1.0); // kUpVel
           currentState = State.POSITION;
+          logger.debug("released, climber position = {}", CLIMB.getStringPotPosition());
         }
         break;
       case POSITION:
-        if (CLIMB.getStringpotPosition() <= ClimbSubsystem.kHighRelease + GOOD_ENOUGH) {
+        if (CLIMB.getStringPotPosition() <= ClimbSubsystem.kHighRelease + GOOD_ENOUGH) {
+          logger.debug("climber position = {}", CLIMB.getStringPotPosition());
           currentState = State.DONE;
+          CLIMB.stop();
         }
 
         break;
@@ -54,7 +57,7 @@ public class ClimbDeployCommand extends Command {
   @Override
   protected void end() {
     logger.debug("climb deploy finished");
-    CLIMB.stop();
+    //    CLIMB.stop();
   }
 
   private enum State {

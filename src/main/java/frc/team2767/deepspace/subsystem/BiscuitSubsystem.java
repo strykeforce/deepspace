@@ -95,8 +95,8 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
     kRight270PositionDeg = getPreference("right_270_deg", -270);
     kLeft270TiltPositionDeg = getPreference("tilt_270_L_deg", 295);
     kRight270TiltPositionDeg = getPreference("tilt_270_R_deg", -295);
-    kKrakenRelease = getPreference("kraken_release", 0.9);
-    kKrakenHide = getPreference("kraken_hide", 0.0);
+    kKrakenRelease = getPreference("kraken_release", 0.0);
+    kKrakenHide = getPreference("kraken_hide", 0.9);
     kKrakenLock = getPreference("kraken_lock", 0.0);
     kKrakenUnlock = getPreference("kraken_unlock", 0.0);
   }
