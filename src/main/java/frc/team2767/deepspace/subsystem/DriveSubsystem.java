@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,6 +32,7 @@ import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 public class DriveSubsystem extends Subsystem implements Item {
 
   public static final double TICKS_PER_INCH = 2369;
+  public static final double TICKS_PER_TOOTH = 107.8;
   private static final double DRIVE_SETPOINT_MAX = 25_000.0;
   private static final double ROBOT_LENGTH = 21.0;
   private static final double ROBOT_WIDTH = 26.0;
@@ -181,6 +183,16 @@ public class DriveSubsystem extends Subsystem implements Item {
     for (Wheel w : getAllWheels()) {
       w.set(azimuth, veocity);
     }
+  }
+
+  public void adjustZero(int wheel, int teeth) {
+    Preferences prefs = Preferences.getInstance();
+    String wheelKey = SwerveDrive.getPreferenceKeyForWheel(wheel);
+    int oldZero = prefs.getInt(wheelKey, 2767);
+    int newZero = (int) (oldZero + teeth * TICKS_PER_TOOTH);
+
+    prefs.putInt(wheelKey, newZero);
+    swerve.zeroAzimuthEncoders();
   }
 
   public Wheel[] getAllWheels() {
