@@ -22,10 +22,15 @@ Vacuum       | vacuum      | 60 | 1
 
 ## Servos
 
-Subsystem   | Servo | PWM
------------ | ----- | ---
-CargoCenter | left  | 0
-CargoCenter | right | 1
+Subsystem   | Servo          | PWM
+----------- | -------------- | ---
+CargoCenter | left           | 0
+CargoCenter | right          | 1
+Climb       | leftKickstand  | 2
+Climb       | rightKickstand | 3
+Climb       | ratchet        | 4
+Biscuit     | krakenRelease  | 5
+Biscuit     | krakenLock     | 6
 
 ## CANifier
 
@@ -39,15 +44,18 @@ Pin # | Name | Attached To
 
 ## DIO
 
-Subsystem   | I/O    | DIO
------------ | ------ | ---
-AutonSwitch |  0     | 0
-AutonSwitch |  1     | 1
-AutonSwitch |  2     | 2
-AutonSwitch |  3     | 3
-AutonSwitch |  4     | 4
-AutonSwitch |  5     | 5
-Vision      | lights | 6
+Subsystem   | I/O          | DIO
+----------- | -------------| ---
+AutonSwitch |  0           | 0
+AutonSwitch |  1           | 1
+AutonSwitch |  2           | 2
+AutonSwitch |  3           | 3
+AutonSwitch |  4           | 4
+AutonSwitch |  5           | 5
+Vision      | lights       | 6
+Vision      | lights       | 7
+Intake      | beamBreak    | 8
+Vision      | rightCamTune | 9
 
 ## PCM
 
