@@ -57,6 +57,8 @@ public class VisionSubsystem extends Subsystem implements Item {
   private NetworkTableEntry rangeEntry;
   private NetworkTableEntry cameraIDEntry;
   private NetworkTableEntry targetYawEntry;
+  private NetworkTableEntry tuningEntry;
+  private NetworkTableEntry tuningFinished;
   private double rawRange;
   private double rawBearing;
   private double correctedRange;
@@ -76,9 +78,12 @@ public class VisionSubsystem extends Subsystem implements Item {
     rangeEntry = table.getEntry("camera_range");
     cameraIDEntry = table.getEntry("camera_id");
     targetYawEntry = table.getEntry("target_yaw");
+    tuningEntry = table.getEntry("tuning_id");
+    tuningFinished = table.getEntry("tuning_finished");
     targetYawEntry.setNumber(0.0);
     bearingEntry.setNumber(0.0);
     rangeEntry.setNumber(-1.0);
+    tuningEntry.setNumber(-1.0);
 
     UsbCamera usbCamera = cameraServer.startAutomaticCapture();
     logger.info("camera is connected = {}", usbCamera.isConnected());
@@ -145,6 +150,14 @@ public class VisionSubsystem extends Subsystem implements Item {
     this.direction = direction;
     selectCamera();
     logger.info("set direction to {}", direction);
+  }
+
+  public void runTuning(int camID) {
+    tuningEntry.setNumber(camID);
+  }
+
+  public boolean tuneFinished() {
+    return ((int) tuningFinished.getNumber(0) == 1);
   }
 
   public void selectCamera() {
