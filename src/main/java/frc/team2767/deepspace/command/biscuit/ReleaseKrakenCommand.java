@@ -4,16 +4,16 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 
-public class BiscuitPositiveCommand extends InstantCommand {
-
+public class ReleaseKrakenCommand extends InstantCommand {
   private static final BiscuitSubsystem BISCUIT = Robot.BISCUIT;
+  private boolean release;
 
-  public BiscuitPositiveCommand() {
-    requires(BISCUIT);
+  public ReleaseKrakenCommand(boolean release) {
+    this.release = release;
   }
 
   @Override
   protected void initialize() {
-    BISCUIT.runOpenLoop(.15);
+    BISCUIT.releaseKraken(release);
   }
 }

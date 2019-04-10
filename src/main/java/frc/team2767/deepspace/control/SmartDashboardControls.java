@@ -14,7 +14,7 @@ import frc.team2767.deepspace.command.approach.DriveTwistCommand;
 import frc.team2767.deepspace.command.approach.OrthogonalMovementCommand;
 import frc.team2767.deepspace.command.approach.TalonConfigCommand;
 import frc.team2767.deepspace.command.approach.YawToTargetCommand;
-import frc.team2767.deepspace.command.approach.sequences.HatchPlaceCommandGroup;
+import frc.team2767.deepspace.command.approach.sequences.AutoHatchPlaceCommandGroup;
 import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
 import frc.team2767.deepspace.command.climb.*;
@@ -61,7 +61,7 @@ public class SmartDashboardControls {
     SmartDashboard.putData("Game/tridentSol", VACUUM.getTridentSolenoid());
     SmartDashboard.putBoolean("Game/onTarget", false);
     SmartDashboard.putData("Game/SandstormHatchPickUp", new SandstormHatchPickupCommandGroup());
-    SmartDashboard.putData("Game/hatchPlace", new HatchPlaceCommandGroup());
+    SmartDashboard.putData("Game/hatchPlace", new AutoHatchPlaceCommandGroup());
     SmartDashboard.putData("Game/Gyro", Robot.DRIVE.getGyro());
   }
 

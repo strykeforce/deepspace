@@ -78,6 +78,7 @@ public class Robot extends TimedRobot {
     }
 
     SmartDashboard.putBoolean("Game/SandstormPickUp", false);
+    SmartDashboard.putBoolean("Game/haveHatch", false);
 
     //    new SmartDashboardControls();
   }

@@ -4,16 +4,16 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 
-public class BiscuitPositiveCommand extends InstantCommand {
-
+public class BiscuitConfigMotionAccelCommand extends InstantCommand {
   private static final BiscuitSubsystem BISCUIT = Robot.BISCUIT;
+  private int accel;
 
-  public BiscuitPositiveCommand() {
-    requires(BISCUIT);
+  public BiscuitConfigMotionAccelCommand(int accel) {
+    this.accel = accel;
   }
 
   @Override
   protected void initialize() {
-    BISCUIT.runOpenLoop(.15);
+    BISCUIT.setMotionMagicAccel(accel);
   }
 }

@@ -22,6 +22,8 @@ public class ClimbSubsystem extends Subsystem implements Item {
   // max 843
   // min 139
 
+  // 2500 = %1000
+
   private static final int LEFT_SLAVE_ID = 50;
   private static final int RIGHT_MASTER_ID = 51;
   private static final int LEFT_KICKSTAND = 2;
@@ -29,12 +31,12 @@ public class ClimbSubsystem extends Subsystem implements Item {
   private static final int RATCHET_SERVO = 4;
   private static final String PREFS = "ClimbSubsystem/Settings/";
   private static final double BACKUP = 2767;
-  public static double kSealOutputPercent;
+  public static int kSealOutputVelocity;
   public static double kJogUpPercent = -0.20;
   public static double kJogDownPercent = 0.20;
-  public static double kDownOpenLoopOutput = 1.0;
-  public static double kUpOpenLoopOutput = -1.0;
-  public static double kDownClimbOutput = 0.75;
+  public static int kDownVelocity = 2500;
+  public static int kUpVelocity = -2500;
+  public static int kDownClimbVelocity = 1750;
   public static int kHabHover;
   public static int kLowRelease;
   public static int kHighRelease;
@@ -69,7 +71,7 @@ public class ClimbSubsystem extends Subsystem implements Item {
     kHighRelease = (int) getPrefs("high_position", 189);
     kClimb = (int) getPrefs("climb_position", 884);
     kTooLowIn = (int) getPrefs("too_low_position", 240);
-    kSealOutputPercent = getPrefs("seal_velocity", 0.15);
+    kSealOutputVelocity = (int) getPrefs("seal_velocity", 300);
 
     kLeftKickstandHold = getPrefs("L_kickstand_hold", 0.4);
     kLeftKickstandRelease = getPrefs("L_kickstand_release", 0.95);
@@ -90,12 +92,22 @@ public class ClimbSubsystem extends Subsystem implements Item {
     leftSlaveConfig.voltageMeasurementFilter = 32;
 
     TalonSRXConfiguration rightMasterConfig = new TalonSRXConfiguration();
-    rightMasterConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.Analog;
+    rightMasterConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
     rightMasterConfig.slot0.kP = 0.80;
     rightMasterConfig.slot0.kI = 0;
     rightMasterConfig.slot0.kD = 30;
     rightMasterConfig.slot0.kF = 0.6;
+    //    rightMasterConfig.slot0.kP = 0.0;
+    //    rightMasterConfig.slot0.kI = 0;
+    //    rightMasterConfig.slot0.kD = 0;
+    //    rightMasterConfig.slot0.kF = 0.4;
     rightMasterConfig.slot0.integralZone = 0;
+
+    rightMasterConfig.slot1.kP = 0.0;
+    rightMasterConfig.slot1.kI = 0.0;
+    rightMasterConfig.slot1.kD = 0.0;
+    rightMasterConfig.slot1.kF = 0.4;
+
     rightMasterConfig.peakOutputReverse = -1.0;
     rightMasterConfig.peakCurrentLimit = 45;
     rightMasterConfig.peakCurrentDuration = 40;
@@ -115,10 +127,12 @@ public class ClimbSubsystem extends Subsystem implements Item {
     rightMaster.setNeutralMode(NeutralMode.Brake);
     leftSlave.setNeutralMode(NeutralMode.Brake);
 
+    rightMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat, 10);
+    rightMaster.configOpenloopRamp(0.1);
     rightMaster.enableCurrentLimit(true);
     rightMaster.enableVoltageCompensation(true);
-    rightMaster.configForwardSoftLimitEnable(true);
-    rightMaster.configReverseSoftLimitEnable(true);
+    rightMaster.configForwardSoftLimitEnable(false);
+    rightMaster.configReverseSoftLimitEnable(false);
     leftSlave.enableCurrentLimit(true);
     leftSlave.enableVoltageCompensation(true);
     leftSlave.follow(rightMaster);
@@ -144,24 +158,31 @@ public class ClimbSubsystem extends Subsystem implements Item {
     return pref;
   }
 
-  public void openLoop(double percent) {
+  public void setSlowTalonConfig(boolean isSlow) {
     leftSlave.follow(rightMaster);
-    rightMaster.set(ControlMode.PercentOutput, percent);
-  }
-
-  public void setUpperLimit(int limit) {
-    leftSlave.follow(rightMaster);
-    rightMaster.configReverseSoftLimitThreshold(limit);
-  }
-
-  public void setLowerLimit(int limit) {
-    leftSlave.follow(rightMaster);
-    rightMaster.configForwardSoftLimitThreshold(limit);
+    if (isSlow) {
+      rightMaster.selectProfileSlot(0, 0);
+      logger.debug("selected profile slot = {}", 0);
+    } else {
+      rightMaster.selectProfileSlot(1, 0);
+      logger.debug("selected profile slot = {}", 1);
+    }
+    rightMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat, 10);
   }
 
   public void stop() {
     openLoop(0.0);
     logger.info("Stopping Climb");
+  }
+
+  public void openLoop(double percent) {
+    leftSlave.follow(rightMaster);
+    rightMaster.set(ControlMode.PercentOutput, percent);
+  }
+
+  public void setVelocity(int velocity) {
+    leftSlave.follow(rightMaster);
+    rightMaster.set(ControlMode.Velocity, velocity);
   }
 
   public void disableRatchet() {
@@ -216,13 +237,13 @@ public class ClimbSubsystem extends Subsystem implements Item {
   public DoubleSupplier measurementFor(@NotNull Measure measure) {
     switch (measure) {
       case ANALOG_IN_RAW:
-        return this::getStringpotPosition;
+        return this::getStringPotPosition;
       default:
         return () -> 2767.0;
     }
   }
 
-  public double getStringpotPosition() {
+  public double getStringPotPosition() {
     return rightMaster.getSensorCollection().getAnalogInRaw();
   }
 }

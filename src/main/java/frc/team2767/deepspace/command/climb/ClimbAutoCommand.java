@@ -1,5 +1,6 @@
 package frc.team2767.deepspace.command.climb;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.ClimbSubsystem;
@@ -13,8 +14,10 @@ public class ClimbAutoCommand extends Command {
   private static final VacuumSubsystem VACUUM = Robot.VACUUM;
   private static final ClimbSubsystem CLIMB = Robot.CLIMB;
   private static final VisionSubsystem VISION = Robot.VISION;
+  private static final double PAUSE_WAIT = 0.2;
   private static final int GOOD_ENOUGH = 5;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private double pauseInitTime;
   private ClimbState climbState;
 
   public ClimbAutoCommand() {
@@ -26,53 +29,67 @@ public class ClimbAutoCommand extends Command {
   @Override
   protected void initialize() {
     logger.info("BEGIN CLIMB SEQUENCE");
-    climbState = ClimbState.FAST_LOWER;
-    CLIMB.setLowerLimit(ClimbSubsystem.kHabHover);
-    CLIMB.openLoop(ClimbSubsystem.kDownOpenLoopOutput);
+    CLIMB.setSlowTalonConfig(true);
+    climbState = ClimbState.FORM_SEAL;
+    CLIMB.setVelocity(ClimbSubsystem.kSealOutputVelocity);
+    logger.info("forming seal");
+    //    CLIMB.setSlowTalonConfig(false);
+    //    climbState = ClimbState.FAST_LOWER;
+    //    CLIMB.setLowerLimit(ClimbSubsystem.kHabHover);
+    //    CLIMB.setVelocity(ClimbSubsystem.kDownVelocity);
   }
 
   @Override
   protected void execute() {
     switch (climbState) {
       case FAST_LOWER:
-        if (CLIMB.getStringpotPosition() >= ClimbSubsystem.kHabHover - GOOD_ENOUGH) {
+        if (CLIMB.getStringPotPosition() >= ClimbSubsystem.kHabHover - GOOD_ENOUGH) {
+          CLIMB.setSlowTalonConfig(true);
           climbState = ClimbState.FORM_SEAL;
-          CLIMB.openLoop(ClimbSubsystem.kSealOutputPercent);
-          CLIMB.setLowerLimit(ClimbSubsystem.kTooLowIn);
+          CLIMB.setVelocity(ClimbSubsystem.kSealOutputVelocity);
           logger.info("forming seal");
         }
-
         break;
 
       case FORM_SEAL:
         if (VACUUM.isClimbOnTarget()) {
           logger.info("fast climbing");
+          CLIMB.setSlowTalonConfig(false);
           climbState = ClimbState.FAST_CLIMB;
           CLIMB.enableRatchet();
           CLIMB.releaseKickstand();
           VISION.startLightBlink(VisionSubsystem.LightPattern.CLIMB_GOOD);
-          CLIMB.setLowerLimit(ClimbSubsystem.kClimb);
-          CLIMB.openLoop(ClimbSubsystem.kDownClimbOutput);
+          //          CLIMB.setLowerLimit(ClimbSubsystem.kClimb);
+          CLIMB.setVelocity(ClimbSubsystem.kDownClimbVelocity);
         }
 
-        if (CLIMB.getStringpotPosition() >= ClimbSubsystem.kTooLowIn - GOOD_ENOUGH) {
+        if (CLIMB.getStringPotPosition() >= ClimbSubsystem.kTooLowIn - GOOD_ENOUGH) {
           logger.info("resetting");
+          CLIMB.setSlowTalonConfig(false);
           climbState = ClimbState.RESET;
-          CLIMB.setUpperLimit(ClimbSubsystem.kHabHover);
-          CLIMB.openLoop(ClimbSubsystem.kUpOpenLoopOutput);
+          //          CLIMB.setUpperLimit(ClimbSubsystem.kHabHover);
+          CLIMB.setVelocity(ClimbSubsystem.kUpVelocity);
         }
 
         break;
       case FAST_CLIMB:
-        if (CLIMB.getStringpotPosition() >= ClimbSubsystem.kClimb) {
+        if (CLIMB.getStringPotPosition() >= ClimbSubsystem.kClimb) {
           climbState = ClimbState.DONE;
           logger.info("done climbing");
         }
         break;
-      case RESET:
-        if (CLIMB.getStringpotPosition() <= ClimbSubsystem.kHabHover + GOOD_ENOUGH) {
+      case PAUSE:
+        if (Timer.getFPGATimestamp() - pauseInitTime >= PAUSE_WAIT) {
           climbState = ClimbState.FORM_SEAL;
-          CLIMB.openLoop(ClimbSubsystem.kSealOutputPercent);
+          CLIMB.setSlowTalonConfig(true);
+          CLIMB.setVelocity(ClimbSubsystem.kSealOutputVelocity);
+        }
+        break;
+      case RESET:
+        if (CLIMB.getStringPotPosition() <= ClimbSubsystem.kHabHover + GOOD_ENOUGH) {
+          climbState = ClimbState.PAUSE;
+          CLIMB.stop();
+          pauseInitTime = Timer.getFPGATimestamp();
         }
         break;
     }
@@ -93,6 +110,7 @@ public class ClimbAutoCommand extends Command {
     FAST_LOWER,
     FORM_SEAL,
     RESET,
+    PAUSE,
     FAST_CLIMB,
     DONE
   }
