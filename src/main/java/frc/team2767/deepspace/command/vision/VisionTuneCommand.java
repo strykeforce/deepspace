@@ -24,4 +24,14 @@ public class VisionTuneCommand extends InstantCommand {
     VISION.enableLights(true);
     VISION.runTuning(tuningID);
   }
+
+  @Override
+  protected boolean isFinished() {
+    return VISION.tuneFinished();
+  }
+
+  @Override
+  protected void end() {
+    VISION.enableLights(false);
+  }
 }

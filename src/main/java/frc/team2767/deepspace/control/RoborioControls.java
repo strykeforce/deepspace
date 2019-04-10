@@ -24,7 +24,7 @@ public class RoborioControls {
           }
         };
 
-    visionButton.whenActive(new VisionTuneCommand(0));
-    userButton.whenActive(new VisionTuneCommand(1));
+    userButton.whenActive(new VisionTuneCommand(0));
+    visionButton.whenActive(new VisionTuneCommand(1));
   }
 }
