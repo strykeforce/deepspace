@@ -35,6 +35,7 @@ public class VacuumSubsystem extends Subsystem {
   private static int kGoodEnoughClimb;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final int STABLE_THRESHOLD = 4;
+  private final int STABLE_THRESHOLD_CLIMB = 2;
   private final Solenoid tridentSolenoid = new Solenoid(0, Valve.TRIDENT.ID);
   private final Solenoid climbSolenoid = new Solenoid(0, Valve.CLIMB.ID);
   private final TalonSRX vacuum = new TalonSRX(VACUUM_ID);
@@ -198,7 +199,6 @@ public class VacuumSubsystem extends Subsystem {
     return false;
   }
 
-  // FIXME
   public boolean isClimbOnTarget() {
     if (vacuum.getSelectedSensorPosition() >= kGoodEnoughClimb) {
       climbStableCounts++;
@@ -206,7 +206,7 @@ public class VacuumSubsystem extends Subsystem {
       climbStableCounts = 0;
     }
 
-    if (climbStableCounts > STABLE_THRESHOLD) {
+    if (climbStableCounts > STABLE_THRESHOLD_CLIMB) {
       SmartDashboard.putBoolean("Game/climbOnTarget", true);
       return true;
     } else {

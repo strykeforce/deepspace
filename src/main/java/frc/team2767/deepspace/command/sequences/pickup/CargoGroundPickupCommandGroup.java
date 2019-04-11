@@ -1,13 +1,10 @@
 package frc.team2767.deepspace.command.sequences.pickup;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
 import frc.team2767.deepspace.command.biscuit.ReleaseKrakenCommand;
-import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
 import frc.team2767.deepspace.command.intake.IntakePositionCommand;
 import frc.team2767.deepspace.command.intake.RollerInCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
-import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 import frc.team2767.deepspace.subsystem.IntakeSubsystem;
 
 public class CargoGroundPickupCommandGroup extends CommandGroup {
@@ -17,14 +14,13 @@ public class CargoGroundPickupCommandGroup extends CommandGroup {
     addSequential(
         new CommandGroup() {
           {
-            addParallel(new ElevatorSetPositionCommand(22.0));
             addParallel(new ReleaseKrakenCommand(false));
             addParallel(new IntakePositionCommand(IntakeSubsystem.kLoadPositionDeg));
             addParallel(new RollerInCommand());
-            addParallel(new BiscuitSetPositionCommand(BiscuitSubsystem.kDownPosition));
+            addParallel(new HatchToBallConditionalCommand());
           }
         });
-    addSequential(new ElevatorSetPositionCommand(21.75));
+    //    addSequential(new ElevatorSetPositionCommand(22.25));
     addSequential(new LogCommand("END CARGO GROUND PICKUP"));
   }
 }

@@ -39,6 +39,7 @@ public class ClimbAutoCommand extends Command {
     //    CLIMB.setVelocity(ClimbSubsystem.kDownVelocity);
   }
 
+  @SuppressWarnings("Duplicates")
   @Override
   protected void execute() {
     switch (climbState) {
@@ -86,6 +87,17 @@ public class ClimbAutoCommand extends Command {
         }
         break;
       case RESET:
+        if (VACUUM.isClimbOnTarget()) {
+          logger.info("fast climbing during reset");
+          CLIMB.setSlowTalonConfig(false);
+          climbState = ClimbState.FAST_CLIMB;
+          CLIMB.enableRatchet();
+          CLIMB.releaseKickstand();
+          VISION.startLightBlink(VisionSubsystem.LightPattern.CLIMB_GOOD);
+          CLIMB.setVelocity(ClimbSubsystem.kDownClimbVelocity);
+          break;
+        }
+
         if (CLIMB.getStringPotPosition() <= ClimbSubsystem.kHabHover + GOOD_ENOUGH) {
           climbState = ClimbState.PAUSE;
           CLIMB.stop();

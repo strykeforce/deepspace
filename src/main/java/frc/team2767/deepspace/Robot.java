@@ -85,6 +85,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    BISCUIT.setPosition(BISCUIT.getPosition());
     DRIVE.setAngleAdjustment(true);
     getHatch.start();
   }

@@ -9,7 +9,7 @@ public class WaitForBeamBreakCommand extends Command {
   private static boolean hasBroken;
   private static double breakTime;
   private static double currentTime;
-  private static double WAIT_TIME_MS = 200;
+  private static double WAIT_TIME_MS = 300;
 
   @Override
   protected void initialize() {

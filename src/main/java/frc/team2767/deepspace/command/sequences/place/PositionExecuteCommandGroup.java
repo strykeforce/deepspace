@@ -1,12 +1,11 @@
 package frc.team2767.deepspace.command.sequences.place;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitMoveSafeCommand;
 import frc.team2767.deepspace.command.biscuit.ReleaseKrakenCommand;
-import frc.team2767.deepspace.command.elevator.ElevatorExecutePlanCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorMoveToSafePositionCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
+import frc.team2767.deepspace.command.sequences.pickup.BallToHatchConditionalCommand;
 
 public class PositionExecuteCommandGroup extends CommandGroup {
 
@@ -17,8 +16,7 @@ public class PositionExecuteCommandGroup extends CommandGroup {
     addSequential(
         new CommandGroup() {
           {
-            addParallel(new ElevatorExecutePlanCommand());
-            addParallel(new BiscuitExecutePlanCommand());
+            addParallel(new BallToHatchConditionalCommand());
             addParallel(new ReleaseKrakenCommand(true));
           }
         });
