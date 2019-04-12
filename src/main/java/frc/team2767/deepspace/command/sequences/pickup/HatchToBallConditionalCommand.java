@@ -13,18 +13,19 @@ public class HatchToBallConditionalCommand extends ConditionalCommand {
 
   private static final BiscuitSubsystem BISCUIT = Robot.BISCUIT;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static final double ELEVATOR_HEIGHT = 22.75;
 
   public HatchToBallConditionalCommand() {
     super(
         new CommandGroup() {
           {
-            addParallel(new ElevatorSetPositionCommand(22.25));
+            addParallel(new ElevatorSetPositionCommand(ELEVATOR_HEIGHT));
             addParallel(new BiscuitSetPositionCommand(BiscuitSubsystem.kDownPosition));
           }
         },
         new CommandGroup() {
           {
-            addSequential(new ElevatorSetPositionCommand(22.25));
+            addSequential(new ElevatorSetPositionCommand(ELEVATOR_HEIGHT));
             addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.kDownPosition));
           }
         });

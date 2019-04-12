@@ -65,7 +65,7 @@ public class VacuumSubsystem extends Subsystem {
     vacuumConfig.peakCurrentLimit = 30;
     vacuumConfig.slot0.kP = 16;
     vacuumConfig.slot0.kI = 0;
-    vacuumConfig.slot0.kD = 150;
+    vacuumConfig.slot0.kD = 100;
     vacuumConfig.slot0.kF = 0;
     vacuumConfig.slot0.integralZone = 0;
     vacuumConfig.slot0.allowableClosedloopError = 0;

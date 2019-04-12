@@ -36,17 +36,17 @@ class HealthCheckCommand : Command() {
 //            }
 
             // pump tests are highly dependent on valve states set in pressure tests
-            talonCheck {
-                name = "pump tests"
-                talons = Robot.VACUUM.talons
-
-                timedTest {
-                    percentOutput = 0.25
-                    currentRange = 0.0..0.0
-                    speedRange = 0..0
-                    duration = 5.0
-                }
-            }
+//            talonCheck {
+//                name = "pump tests"
+//                talons = Robot.VACUUM.talons
+//
+//                timedTest {
+//                    percentOutput = 0.25
+//                    currentRange = 0.0..0.0
+//                    speedRange = 0..0
+//                    duration = 5.0
+//                }
+//            }
 
 
             talonCheck {
@@ -136,7 +136,7 @@ class HealthCheckCommand : Command() {
                 timedTest {
                     percentOutput = -1.0
                     currentRange = volt12currentRange
-                    speedRange = -38500 .. -34750
+                    speedRange = -38500..-34750
                 }
             }
 
