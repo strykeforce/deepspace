@@ -4,11 +4,8 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.IntakeSubsystem;
 
-public class WaitForBeamBreakCommand extends Command {
-  private static final double WAIT_TIME_MS = 300;
+public class WaitForIntakeBeamCommand extends Command {
   private boolean hasBroken;
-  private double breakTime;
-  private double currentTime;
   private final IntakeSubsystem INTAKE = Robot.INTAKE;
 
   @Override
@@ -18,16 +15,15 @@ public class WaitForBeamBreakCommand extends Command {
 
   @Override
   protected void execute() {
-    if (INTAKE.isBeamBroken() && !hasBroken) {
+    if (INTAKE.isIntakeSlowBeamBroken() && !hasBroken) {
       hasBroken = true;
-      breakTime = System.currentTimeMillis();
+      INTAKE.rollerOpenLoop(0.50);
     }
   }
 
   @Override
   protected boolean isFinished() {
-    currentTime = System.currentTimeMillis();
-    return hasBroken && (currentTime - breakTime > WAIT_TIME_MS);
+    return hasBroken && !INTAKE.isIntakeSlowBeamBroken();
   }
 
   @Override
