@@ -2,7 +2,7 @@
 
 ## Talons
 
-Subsystem    | Talon   | ID | PDP
+Subsystem    | Talon       | ID | PDP
 ------------ | ----------- | -- | ---
 Drive        | azimuth     | 0  | 11
 Drive        | azimuth     | 1  | 9
