@@ -33,10 +33,6 @@ public class ClimbAutoCommand extends Command {
     climbState = ClimbState.FORM_SEAL;
     CLIMB.setVelocity(ClimbSubsystem.kSealOutputVelocity);
     logger.info("forming seal");
-    //    CLIMB.setSlowTalonConfig(false);
-    //    climbState = ClimbState.FAST_LOWER;
-    //    CLIMB.setLowerLimit(ClimbSubsystem.kHabHover);
-    //    CLIMB.setVelocity(ClimbSubsystem.kDownVelocity);
   }
 
   @SuppressWarnings("Duplicates")
@@ -60,18 +56,36 @@ public class ClimbAutoCommand extends Command {
           CLIMB.enableRatchet();
           CLIMB.releaseKickstand();
           VISION.startLightBlink(VisionSubsystem.LightPattern.CLIMB_GOOD);
-          //          CLIMB.setLowerLimit(ClimbSubsystem.kClimb);
           CLIMB.setVelocity(ClimbSubsystem.kDownClimbVelocity);
+          break;
         }
 
         if (CLIMB.getStringPotPosition() >= ClimbSubsystem.kTooLowIn - GOOD_ENOUGH) {
           logger.info("resetting");
+          if (VACUUM.isClimbPrecheck()) {
+            climbState = ClimbState.PRECHECK;
+            logger.debug("going to precheck");
+            CLIMB.stop();
+            break;
+          }
           CLIMB.setSlowTalonConfig(false);
           climbState = ClimbState.RESET;
-          //          CLIMB.setUpperLimit(ClimbSubsystem.kHabHover);
           CLIMB.setVelocity(ClimbSubsystem.kUpVelocity);
+
+          break;
         }
 
+        break;
+      case PRECHECK:
+        if (VACUUM.isClimbOnTarget()) {
+          logger.info("fast climbing");
+          CLIMB.setSlowTalonConfig(false);
+          climbState = ClimbState.FAST_CLIMB;
+          CLIMB.enableRatchet();
+          CLIMB.releaseKickstand();
+          VISION.startLightBlink(VisionSubsystem.LightPattern.CLIMB_GOOD);
+          CLIMB.setVelocity(ClimbSubsystem.kDownClimbVelocity);
+        }
         break;
       case FAST_CLIMB:
         if (CLIMB.getStringPotPosition() >= ClimbSubsystem.kClimb) {
@@ -103,6 +117,7 @@ public class ClimbAutoCommand extends Command {
           CLIMB.stop();
           pauseInitTime = Timer.getFPGATimestamp();
         }
+
         break;
     }
   }
@@ -122,6 +137,7 @@ public class ClimbAutoCommand extends Command {
     FAST_LOWER,
     FORM_SEAL,
     RESET,
+    PRECHECK,
     PAUSE,
     FAST_CLIMB,
     DONE
