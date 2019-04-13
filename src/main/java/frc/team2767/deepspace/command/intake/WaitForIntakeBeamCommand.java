@@ -5,7 +5,7 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.IntakeSubsystem;
 
 public class WaitForIntakeBeamCommand extends Command {
-  private static final double SLOWER_WAIT_TIME_MS = 400;
+  private static final double SLOWER_WAIT_TIME_MS = 500;
   private static final IntakeSubsystem INTAKE = Robot.INTAKE;
   private static final double SLOW_SPEED = 0.5;
   private static final double SLOWER_SPEED = 0.3;
