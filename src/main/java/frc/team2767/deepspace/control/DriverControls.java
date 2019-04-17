@@ -7,12 +7,14 @@ import frc.team2767.deepspace.command.ZeroGyroCommand;
 import frc.team2767.deepspace.command.approach.sequences.AutoHatchPickupCommandGroup;
 import frc.team2767.deepspace.command.biscuit.*;
 import frc.team2767.deepspace.command.climb.ClimbJogCommand;
+import frc.team2767.deepspace.command.climb.ClimbSlowVelocityCommand;
 import frc.team2767.deepspace.command.climb.StopClimbCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.log.SafetyLogDumpCommand;
 import frc.team2767.deepspace.command.sequences.pickup.AutoCargoPickupCommandGroup;
 import frc.team2767.deepspace.command.teleop.DriverPlaceAssistCommand;
 import frc.team2767.deepspace.command.teleop.InterruptCommand;
+import frc.team2767.deepspace.command.teleop.InterruptIntakeCommand;
 import frc.team2767.deepspace.command.teleop.ReleaseGamepieceCommand;
 import frc.team2767.deepspace.subsystem.ClimbSubsystem;
 import org.slf4j.Logger;
@@ -32,6 +34,7 @@ public class DriverControls {
     // intake pickup
     new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id)
         .whenPressed(new AutoCargoPickupCommandGroup());
+    new JoystickButton(joystick, Shoulder.RIGHT_DOWN.id).whenReleased(new InterruptIntakeCommand());
 
     new JoystickButton(joystick, Button.X.id).whenPressed(new BiscuitZeroCommand());
 
@@ -39,8 +42,7 @@ public class DriverControls {
     new JoystickButton(joystick, Button.UP.id)
         .whenPressed(new ClimbJogCommand(ClimbSubsystem.kJogUpPercent));
     new JoystickButton(joystick, Button.UP.id).whenReleased(new StopClimbCommand());
-    new JoystickButton(joystick, Button.DOWN.id)
-        .whenPressed(new ClimbJogCommand(ClimbSubsystem.kJogDownPercent));
+    new JoystickButton(joystick, Button.DOWN.id).whenPressed(new ClimbSlowVelocityCommand());
     new JoystickButton(joystick, Button.DOWN.id).whenReleased(new StopClimbCommand());
 
     // vision

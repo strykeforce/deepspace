@@ -27,6 +27,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable, I
   private static final int SHOULDER_ID = 20;
   private static final int ROLLER_ID = 21;
   private static final int BEAM_BREAK_ID = 8;
+  private static final int INTAKE_SLOW_BEAM_ID = 4;
   private static final int STABLE_THRESH = 4;
   private static final String PREFS_NAME = "IntakeSubsystem/Settings/";
   public static double kStowPositionDeg;
@@ -41,6 +42,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable, I
   private final TalonSRX shoulder = new TalonSRX(SHOULDER_ID);
   private final TalonSRX roller = new TalonSRX(ROLLER_ID);
   private final DigitalInput beamBreak = new DigitalInput(BEAM_BREAK_ID);
+  private final DigitalInput intakeBeamBreak = new DigitalInput(INTAKE_SLOW_BEAM_ID);
   private int stableCount;
   private int setpointTicks;
 
@@ -113,6 +115,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable, I
     shoulder.enableVoltageCompensation(true);
     logger.debug("configured shoulder talon");
 
+    roller.setNeutralMode(NeutralMode.Brake);
     roller.configAllSettings(rollerConfig);
     roller.enableCurrentLimit(true);
     roller.enableVoltageCompensation(true);
@@ -147,10 +150,6 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable, I
 
   @Override
   protected void initDefaultCommand() {}
-
-  ////////////////////////////////////////////////////////////////////////////
-  // SHOULDER
-  ////////////////////////////////////////////////////////////////////////////
 
   public void shoulderOpenLoop(double setpoint) {
     logger.debug("shoulder open loop at {}", setpoint);
@@ -209,15 +208,6 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable, I
     roller.set(ControlMode.PercentOutput, 0.0);
   }
 
-  public boolean isBeamBroken() {
-    return !beamBreak.get();
-  }
-
-  public double graphBeam() {
-    if (isBeamBroken()) return 1.0;
-    else return 0.0;
-  }
-
   public void dump() {
     logger.info("intake position degrees = {} ticks = {}", getPosition(), getTicks());
   }
@@ -228,10 +218,6 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable, I
     logger.debug("position in degrees = {}", angle);
     return angle;
   }
-
-  ////////////////////////////////////////////////////////////////////////////
-  // ROLLER
-  ////////////////////////////////////////////////////////////////////////////
 
   @Override
   public int getTicks() {
@@ -258,9 +244,6 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable, I
     shoulder.set(ControlMode.MotionMagic, setpointTicks);
   }
 
-  ////////////////////////////////////////////////////////////////////////////
-  // GRAPHER
-
   @NotNull
   @Override
   public String getDescription() {
@@ -275,7 +258,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable, I
   @NotNull
   @Override
   public Set<Measure> getMeasures() {
-    return Set.of(Measure.VALUE);
+    return Set.of(Measure.VALUE, Measure.UNKNOWN);
   }
 
   @NotNull
@@ -294,10 +277,29 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable, I
   public DoubleSupplier measurementFor(@NotNull Measure measure) {
     switch (measure) {
       case VALUE:
-        return () -> graphBeam();
-
+        return this::graphBeam;
+      case UNKNOWN:
+        return this::graphIntakeBeam;
       default:
         return () -> 2767;
     }
+  }
+
+  public double graphBeam() {
+    if (isBeamBroken()) return 1.0;
+    else return 0.0;
+  }
+
+  public double graphIntakeBeam() {
+    if (isIntakeSlowBeamBroken()) return 1.0;
+    else return 0.0;
+  }
+
+  public boolean isBeamBroken() {
+    return !beamBreak.get();
+  }
+
+  public boolean isIntakeSlowBeamBroken() {
+    return !intakeBeamBreak.get();
   }
 }

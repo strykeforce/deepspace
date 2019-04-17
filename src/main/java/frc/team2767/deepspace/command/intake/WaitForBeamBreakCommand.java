@@ -5,11 +5,10 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.IntakeSubsystem;
 
 public class WaitForBeamBreakCommand extends Command {
+  private static final double WAIT_TIME_MS = 300;
+  private double breakTime;
+  private boolean hasBroken;
   private final IntakeSubsystem INTAKE = Robot.INTAKE;
-  private static boolean hasBroken;
-  private static double breakTime;
-  private static double currentTime;
-  private static double WAIT_TIME_MS = 200;
 
   @Override
   protected void initialize() {
@@ -26,8 +25,7 @@ public class WaitForBeamBreakCommand extends Command {
 
   @Override
   protected boolean isFinished() {
-    currentTime = System.currentTimeMillis();
-    return hasBroken && (currentTime - breakTime > WAIT_TIME_MS);
+    return hasBroken && (System.currentTimeMillis() - breakTime > WAIT_TIME_MS);
   }
 
   @Override

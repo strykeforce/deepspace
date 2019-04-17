@@ -79,12 +79,14 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putBoolean("Game/SandstormPickUp", false);
     SmartDashboard.putBoolean("Game/haveHatch", false);
-
+    SmartDashboard.putBoolean("Game/climbOnTarget", false);
+    SmartDashboard.putBoolean("Game/climbPrecheck", false);
     //    new SmartDashboardControls();
   }
 
   @Override
   public void autonomousInit() {
+    BISCUIT.setPosition(BISCUIT.getPosition());
     DRIVE.setAngleAdjustment(true);
     getHatch.start();
   }

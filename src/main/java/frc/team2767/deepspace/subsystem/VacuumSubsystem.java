@@ -12,12 +12,17 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
 import java.util.List;
+import java.util.Set;
+import java.util.function.DoubleSupplier;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
+import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
+import org.strykeforce.thirdcoast.telemetry.item.Item;
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
-public class VacuumSubsystem extends Subsystem {
+public class VacuumSubsystem extends Subsystem implements Item {
 
   private static final double COUNTS_PER_INHG = 35.533;
   private static final double COUNTS_OFFSET = 31.98;
@@ -28,6 +33,9 @@ public class VacuumSubsystem extends Subsystem {
   private static final int BACKUP = 2767;
   private static final int VACUUM_ID = 60;
   private static final int TEMPERATURE_ID = 0;
+  private static final int CLIMB_PRESSURE = 1;
+  private static final int CLIMB_GOOD_ENOUGH = 800;
+  private static final int CLIMB_PRE_CHECK = 350;
   public static double kBallPressureInHg;
   public static double kHatchPressureInHg;
   public static double kClimbPressureInHg;
@@ -35,10 +43,13 @@ public class VacuumSubsystem extends Subsystem {
   private static int kGoodEnoughClimb;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final int STABLE_THRESHOLD = 4;
+  private final int STABLE_THRESHOLD_CLIMB = 2;
   private final Solenoid tridentSolenoid = new Solenoid(0, Valve.TRIDENT.ID);
   private final Solenoid climbSolenoid = new Solenoid(0, Valve.CLIMB.ID);
   private final TalonSRX vacuum = new TalonSRX(VACUUM_ID);
   private final AnalogInput analogInput = new AnalogInput(TEMPERATURE_ID);
+  private final AnalogInput climbPressure = new AnalogInput(CLIMB_PRESSURE);
+  private boolean climbing;
   private int setpoint;
   private int stableCount;
   private int climbStableCounts;;
@@ -50,6 +61,8 @@ public class VacuumSubsystem extends Subsystem {
 
     climbSolenoid.set(false);
     tridentSolenoid.set(false);
+
+    climbing = false;
 
     configTalon();
     vacuumPreferences();
@@ -64,7 +77,7 @@ public class VacuumSubsystem extends Subsystem {
     vacuumConfig.peakCurrentLimit = 30;
     vacuumConfig.slot0.kP = 16;
     vacuumConfig.slot0.kI = 0;
-    vacuumConfig.slot0.kD = 150;
+    vacuumConfig.slot0.kD = 100;
     vacuumConfig.slot0.kF = 0;
     vacuumConfig.slot0.integralZone = 0;
     vacuumConfig.slot0.allowableClosedloopError = 0;
@@ -83,6 +96,7 @@ public class VacuumSubsystem extends Subsystem {
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
     telemetryService.register(new TalonItem(vacuum, "Vacuum"));
+    telemetryService.register(this);
   }
 
   private void vacuumPreferences() {
@@ -122,6 +136,7 @@ public class VacuumSubsystem extends Subsystem {
       case CLIMB:
         climbSolenoid.set(true);
         tridentSolenoid.set(false);
+        climbing = true;
         break;
       case STOP: // fall through
       case PRESSURE_ACCUMULATE:
@@ -175,10 +190,50 @@ public class VacuumSubsystem extends Subsystem {
   @Override
   public void periodic() {
     if (!Robot.isEvent()) SmartDashboard.putNumber("Game/Temperature", getPumpTemperature());
-    /*if (getPumpTemperature() > TEMP_LIMIT) {
-      logger.error("Vacuum overheating!");
-      setPeakOutput(0);
-    }*/
+    if (climbing) {
+      SmartDashboard.putBoolean("Game/climbOnTarget", isClimbOnTarget());
+      SmartDashboard.putBoolean("Game/climbPrecheck", isClimbPrecheck());
+    }
+  }
+
+  public double getPumpTemperature() {
+    return (analogInput.getVoltage() - TEMP_OFFSET) / VOLTS_PER_CELSIUS;
+  }
+
+  @SuppressWarnings("Duplicates")
+  public boolean isClimbOnTarget() {
+    if (climbPressure.getValue() >= CLIMB_GOOD_ENOUGH) {
+      climbStableCounts++;
+    } else {
+      climbStableCounts = 0;
+    }
+
+    if (climbStableCounts > STABLE_THRESHOLD_CLIMB) {
+      SmartDashboard.putBoolean("Game/climbOnTarget", true);
+      return true;
+    } else {
+      SmartDashboard.putBoolean("Game/climbOnTarget", false);
+    }
+
+    return false;
+  }
+
+  @SuppressWarnings("Duplicates")
+  public boolean isClimbPrecheck() {
+    if (climbPressure.getValue() >= CLIMB_PRE_CHECK) {
+      climbStableCounts++;
+    } else {
+      climbStableCounts = 0;
+    }
+
+    if (climbStableCounts > STABLE_THRESHOLD_CLIMB) {
+      SmartDashboard.putBoolean("Game/climbPrecheck", true);
+      return true;
+    } else {
+      SmartDashboard.putBoolean("Game/climbPrecheck", false);
+    }
+
+    return false;
   }
 
   public boolean onTarget() {
@@ -198,30 +253,51 @@ public class VacuumSubsystem extends Subsystem {
     return false;
   }
 
-  // FIXME
-  public boolean isClimbOnTarget() {
-    if (vacuum.getSelectedSensorPosition() >= kGoodEnoughClimb) {
-      climbStableCounts++;
-    } else {
-      climbStableCounts = 0;
-    }
-
-    if (climbStableCounts > STABLE_THRESHOLD) {
-      SmartDashboard.putBoolean("Game/climbOnTarget", true);
-      return true;
-    } else {
-      SmartDashboard.putBoolean("Game/climbOnTarget", false);
-    }
-
-    return false;
-  }
-
-  public double getPumpTemperature() {
-    return (analogInput.getVoltage() - TEMP_OFFSET) / VOLTS_PER_CELSIUS;
-  }
-
   public void setPeakOutput(double peakOutput) {
     vacuum.configPeakOutputForward(peakOutput, 0);
+  }
+
+  @NotNull
+  @Override
+  public String getDescription() {
+    return "Vacuum subsystem";
+  }
+
+  @Override
+  public int getDeviceId() {
+    return 0;
+  }
+
+  @NotNull
+  @Override
+  public Set<Measure> getMeasures() {
+    return Set.of(Measure.ANALOG_IN);
+  }
+
+  @NotNull
+  @Override
+  public String getType() {
+    return "vacuum";
+  }
+
+  @Override
+  public int compareTo(@NotNull Item item) {
+    return 0;
+  }
+
+  @NotNull
+  @Override
+  public DoubleSupplier measurementFor(@NotNull Measure measure) {
+    switch (measure) {
+      case ANALOG_IN:
+        return this::getClimbPressure;
+      default:
+        return () -> 2767.0;
+    }
+  }
+
+  public double getClimbPressure() {
+    return climbPressure.getValue();
   }
 
   public enum Valve {
