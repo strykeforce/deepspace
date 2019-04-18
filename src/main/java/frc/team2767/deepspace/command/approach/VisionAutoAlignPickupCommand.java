@@ -20,14 +20,14 @@ import org.strykeforce.thirdcoast.util.ExpoScale;
 import org.strykeforce.thirdcoast.util.RateLimit;
 
 public class VisionAutoAlignPickupCommand extends Command implements Item {
-  public static final double kP_STRAFE = 0.1; // 0.09
+  public static final double kP_STRAFE = 0.06; // 0.1
   private static final double DRIVE_EXPO = 0.5;
   private static final double YAW_EXPO = 0.5;
   private static final double DEADBAND = 0.05;
   private static final double kP_YAW = 0.01; // 0.00625 tuning for NT method, 0.01 pyeye
   private static final double MAX_YAW = 0.3;
   private static final double MIN_RANGE = 35.0;
-  private static final double FWD_SCALE = 0.3;
+  private static final double FWD_SCALE = 0.5;
   private static final double FWD_SCALE_FAST = 0.5;
   private static final double goodEnoughYaw = 1.5;
 
@@ -50,7 +50,7 @@ public class VisionAutoAlignPickupCommand extends Command implements Item {
     requires(DRIVE);
     this.driveExpo = new ExpoScale(DEADBAND, DRIVE_EXPO);
     this.yawExpo = new ExpoScale(DEADBAND, YAW_EXPO);
-    rateLimit = new RateLimit(0.015);
+    rateLimit = new RateLimit(0.04); // 0.015
 
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
