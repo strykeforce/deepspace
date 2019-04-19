@@ -19,7 +19,7 @@ public class BiscuitPositionAboveCameraCommand extends Command {
 
   @Override
   protected void initialize() {
-    BISCUIT.setMotionMagicAccel(BiscuitSubsystem.kFastAccel);
+    BISCUIT.setMotionMagicAccel(BiscuitSubsystem.kSlowAccel);
     if (VISION.direction == FieldDirection.RIGHT) BISCUIT.setPosition(ANGLE_RIGHT);
     else BISCUIT.setPosition(ANGLE_LEFT);
   }
