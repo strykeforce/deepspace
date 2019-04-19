@@ -67,6 +67,7 @@ public class HoldHeadingUntilCompressionCommand extends Command {
           SmartDashboard.putBoolean("Game/haveHatch", false);
           outInitTime = Timer.getFPGATimestamp();
         }
+        break;
 
       case OUT:
         if (Timer.getFPGATimestamp() - outInitTime > OUT_TIME_SEC) {
