@@ -51,6 +51,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
   private static double kKrakenHide;
   private static double kKrakenLock;
   private static double kKrakenUnlock;
+  private static double kCompressionLimit;
   public static final int kSlowAccel = 2_500;
   public static final int kFastAccel = 16_000;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -99,6 +100,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
     kKrakenHide = getPreference("kraken_hide", 0.9);
     kKrakenLock = getPreference("kraken_lock", 0.0);
     kKrakenUnlock = getPreference("kraken_unlock", 0.0);
+    kCompressionLimit = getPreference("compression_limit", 215.0);
   }
 
   private void configTalon() {
@@ -283,6 +285,14 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
     return (TICKS_OFFSET - biscuit.getSelectedSensorPosition()) / TICKS_PER_DEGREE;
   }
 
+  public double getCompression() {
+    return biscuit.getSensorCollection().getAnalogInRaw();
+  }
+
+  public boolean isCompressed() {
+    return biscuit.getSensorCollection().getAnalogInRaw() < kCompressionLimit;
+  }
+
   public void setPosition(double angle) {
     if (angle == kDownPosition && getPosition() < 0) {
       angle = kDownLeftPositionDeg;
@@ -402,7 +412,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
   @NotNull
   @Override
   public Set<Measure> getMeasures() {
-    return Set.of(Measure.VALUE);
+    return Set.of(Measure.VALUE, Measure.ANALOG_IN_RAW);
   }
 
   @NotNull
@@ -422,6 +432,8 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
     switch (measure) {
       case VALUE:
         return () -> graphCount;
+      case ANALOG_IN_RAW:
+        return () -> getCompression();
       default:
         return () -> 2767.0;
     }
