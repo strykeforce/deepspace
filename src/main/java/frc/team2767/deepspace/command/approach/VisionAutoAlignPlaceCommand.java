@@ -18,11 +18,11 @@ import org.strykeforce.thirdcoast.telemetry.item.Item;
 import org.strykeforce.thirdcoast.util.RateLimit;
 
 public class VisionAutoAlignPlaceCommand extends Command implements Item {
-  public static final double kP_FORWARD = -0.06; // 0.1
+  private static final double kP_FORWARD = -0.11; // 0.1
   private static final double kP_YAW = 0.01; // 0.00625 tuning for NT method, 0.01 pyeye
   private static final double MAX_YAW = 0.3;
   private static final double MIN_RANGE = 35.0;
-  private static final double STRAFE_OUTPUT = .1;
+  private static final double STRAFE_OUTPUT = 0.2;
   private static final double goodEnoughYaw = 1.5;
 
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
@@ -40,7 +40,7 @@ public class VisionAutoAlignPlaceCommand extends Command implements Item {
 
   public VisionAutoAlignPlaceCommand() {
     requires(DRIVE);
-    rateLimit = new RateLimit(0.04); // 0.015
+    rateLimit = new RateLimit(0.05); // 0.015
 
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
@@ -63,6 +63,7 @@ public class VisionAutoAlignPlaceCommand extends Command implements Item {
     logger.info("Target Yaw: {}", targetYaw);
   }
 
+  @SuppressWarnings("Duplicates")
   @Override
   protected void execute() {
     // Pyeye Method:
@@ -95,7 +96,6 @@ public class VisionAutoAlignPlaceCommand extends Command implements Item {
 
   @Override
   protected void end() {
-    DRIVE.stop();
     logger.info("End Auto Align Place Vision");
   }
 

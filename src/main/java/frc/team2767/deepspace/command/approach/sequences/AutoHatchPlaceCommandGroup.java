@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
 import frc.team2767.deepspace.command.approach.*;
-import frc.team2767.deepspace.command.biscuit.BiscuitFastExecuteCommand;
+import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositionAboveCameraCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
@@ -39,7 +39,7 @@ public class AutoHatchPlaceCommandGroup extends CommandGroup {
     addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kHatchLowPositionInches));
     addSequential(new BiscuitPositionAboveCameraCommand());
     addSequential(new VisionAutoAlignPlaceCommand());
-    addSequential(new BiscuitFastExecuteCommand());
+    addSequential(new BiscuitExecutePlanCommand());
     addSequential(new HoldHeadingUntilCompressionCommand());
     addSequential(new LogCommand("END HATCH PLACE"));
   }

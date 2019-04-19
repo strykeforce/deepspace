@@ -89,7 +89,7 @@ public class Robot extends TimedRobot {
     BISCUIT.setPosition(BISCUIT.getPosition());
     DRIVE.setAngleAdjustment(true);
     VISION.startSide = StartSide.RIGHT;
-    // getHatch.start();
+    getHatch.start();
   }
 
   @Override
