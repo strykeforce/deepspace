@@ -42,7 +42,7 @@ public class VisionSubsystem extends Subsystem implements Item {
   private static final double CAMERA_RANGE_SLOPE_LEFT = 1.0499; // 0.8259
   private static final double CAMERA_RANGE_OFFSET_LEFT = -4.8818; // -5.6325
   // NEGATIVE = TOWARDS FIELD LEFT
-  private static final double STRAFE_CORRECTION_RIGHT = 0.0; // -1.0
+  private static final double STRAFE_CORRECTION_RIGHT = 1.0; // -1.0
   private static final double STRAFE_CORRECTION_LEFT = 1.0;
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());

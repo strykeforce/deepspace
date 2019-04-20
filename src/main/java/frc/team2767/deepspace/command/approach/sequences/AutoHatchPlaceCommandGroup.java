@@ -3,7 +3,8 @@ package frc.team2767.deepspace.command.approach.sequences;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
-import frc.team2767.deepspace.command.approach.*;
+import frc.team2767.deepspace.command.approach.HoldHeadingUntilCompressionCommand;
+import frc.team2767.deepspace.command.approach.VisionAutoAlignPlaceCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositionAboveCameraCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
@@ -21,7 +22,7 @@ public class AutoHatchPlaceCommandGroup extends CommandGroup {
     addSequential(new LogCommand("BEGIN AUTO HATCH PLACE"));
 
     addSequential(
-        new ConditionalCommand(new SetFieldDirectionCommand(FieldDirection.LEFT)) {
+        new ConditionalCommand(new SetFieldDirectionCommand(FieldDirection.RIGHT)) {
           @Override
           protected boolean condition() {
             return DriverStation.getInstance().isAutonomous();

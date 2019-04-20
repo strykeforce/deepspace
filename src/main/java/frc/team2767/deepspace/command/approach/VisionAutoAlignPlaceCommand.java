@@ -54,10 +54,10 @@ public class VisionAutoAlignPlaceCommand extends Command implements Item {
     DRIVE.setDriveMode(SwerveDrive.DriveMode.CLOSED_LOOP);
     forwardCorrection = VISION.getStrafeCorrection();
     if (VISION.startSide == StartSide.LEFT) {
-      targetYaw = 180.0;
+      targetYaw = 0.0;
       strafe = STRAFE_OUTPUT;
     } else {
-      targetYaw = 0.0;
+      targetYaw = 180.0;
       strafe = STRAFE_OUTPUT * -1;
     }
     logger.debug("strafe = {}", strafe);

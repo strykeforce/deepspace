@@ -30,7 +30,7 @@ public class HoldHeadingUntilSuctionCommand extends Command {
   private static final double FWD_SCALE = 0.2;
   private static final double DRIVE_EXPO = 0.5;
   private static final double DEADBAND = 0.05;
-  private static final double OUT_TIME_SEC = 0.25;
+  private static final double OUT_TIME_SEC = 1.5;
 
   public HoldHeadingUntilSuctionCommand() {
     requires(DRIVE);
