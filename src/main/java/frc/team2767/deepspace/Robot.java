@@ -88,7 +88,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     BISCUIT.setPosition(BISCUIT.getPosition());
     DRIVE.setAngleAdjustment(true);
-    VISION.startSide = StartSide.RIGHT;
+    VISION.startSide = StartSide.LEFT;
     getHatch.start();
   }
 

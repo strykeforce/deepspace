@@ -32,10 +32,10 @@ public class VisionAutoAlignPlaceCommand extends Command implements Item {
   private static double strafe;
   private static double forwardError;
   private static double yawError;
+  private static double forwardCorrection;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private double targetYaw;
   private boolean isGood = false;
-  private static double forwardCorrection;
   private RateLimit rateLimit;
 
   public VisionAutoAlignPlaceCommand() {
@@ -60,6 +60,7 @@ public class VisionAutoAlignPlaceCommand extends Command implements Item {
       targetYaw = 0.0;
       strafe = STRAFE_OUTPUT * -1;
     }
+    logger.debug("strafe = {}", strafe);
     logger.info("Target Yaw: {}", targetYaw);
   }
 

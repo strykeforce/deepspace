@@ -104,11 +104,12 @@ public class Trajectory {
         position[iteration]);
   }
 
-  static class Segment {
-    double heading;
+  public static class Segment {
+
+    public double heading;
     double acceleration;
-    double velocity;
-    double position;
+    public double velocity;
+    public double position;
     double x;
     double y;
 

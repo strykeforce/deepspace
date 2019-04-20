@@ -1,9 +1,7 @@
 package frc.team2767.deepspace.motion;
 
-import static frc.team2767.deepspace.subsystem.DriveSubsystem.TICKS_PER_INCH;
-
 import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.Preferences;
+import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
 import java.io.File;
 import org.slf4j.Logger;
@@ -14,37 +12,36 @@ import org.strykeforce.thirdcoast.swerve.Wheel;
 public class PathController implements Runnable {
 
   private static final int NUM_WHEELS = 4;
+  private static final int TICKS_PER_INCH = 2300;
+  private static final DriveSubsystem DRIVE = Robot.DRIVE;
+
+  @SuppressWarnings("FieldCanBeLocal")
+  private static final double yawKp = 0.03; // 0.03
+
+  private static final double yawHoldKp = 0.01;
+
+  private static final double percentToDone = 0.60;
+  private static final double DT = 0.04;
+  private static final double GOOD_ENOUGH_YAW = 0.5;
+  //  private static final double RATE_CAP = 0.35;
+  //  private static final RateLimit rateLimit = new RateLimit(0.015);
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
   private final int PID = 0;
-
-  @SuppressWarnings("FieldCanBeLocal")
-  private final double accelerationKf = 0.0;
-
-  private SwerveDrive DRIVE;
-
-  @SuppressWarnings("FieldCanBeLocal")
-  private double distanceKp;
-
-  @SuppressWarnings("FieldCanBeLocal")
-  private double yawKp;
-
-  private Preferences preferences;
+  private double yawDelta;
+  private double currentYawTarget;
   private Trajectory trajectory;
   private Notifier notifier;
   private Wheel[] wheels;
   private States state;
   private double maxVelocityInSec;
   private double targetYaw;
-  private double DT = 0.05;
   private int iteration;
   private int[] start;
+  private boolean isYawing = true;
 
-  public PathController(SwerveDrive swerveDrive, String pathName, double targetYaw) {
-    DRIVE = swerveDrive;
+  public PathController(String pathName, double targetYaw) {
     this.targetYaw = targetYaw;
-    wheels = DRIVE.getWheels();
-    preferences = Preferences.getInstance();
+    wheels = DRIVE.getAllWheels();
     File csvFile = new File("home/lvuser/deploy/paths/" + pathName + ".pf1.csv");
 
     trajectory = new Trajectory(csvFile);
@@ -68,8 +65,7 @@ public class PathController implements Runnable {
       case STARTING:
         logState();
         double ticksPerSecMax = wheels[0].getDriveSetpointMax() * 10.0;
-        setPreferences();
-        maxVelocityInSec = ticksPerSecMax / DriveSubsystem.TICKS_PER_INCH;
+        maxVelocityInSec = ticksPerSecMax / TICKS_PER_INCH;
         iteration = 0;
         DRIVE.setDriveMode(SwerveDrive.DriveMode.CLOSED_LOOP);
 
@@ -77,37 +73,33 @@ public class PathController implements Runnable {
           start[i] = wheels[i].getDriveTalon().getSelectedSensorPosition(PID);
         }
 
+        currentYawTarget = Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360);
+        yawDelta = (targetYaw - currentYawTarget) / (trajectory.length() * percentToDone);
+
+        logger.debug("yaw delta = {}", yawDelta);
+
         logInit();
         state = States.RUNNING;
         break;
       case RUNNING:
-        logState();
         if (iteration == trajectory.length() - 1) {
-
           state = States.STOPPING;
         }
 
+        if (isYawing) {
+          currentYawTarget += yawDelta;
+        } else {
+          currentYawTarget = targetYaw;
+        }
+
         Trajectory.Segment segment = trajectory.getIteration(iteration);
-        double desiredVelocity = segment.velocity / (maxVelocityInSec);
-        double setpointVelocity =
-            desiredVelocity
-                + distanceKp * distanceError(segment.position)
-                + accelerationKf * segment.acceleration;
+
+        double setpointVelocity = (segment.velocity) / maxVelocityInSec;
+
         double forward = Math.cos(segment.heading) * setpointVelocity;
         double strafe = Math.sin(segment.heading) * setpointVelocity;
-        double yaw =
-            -yawKp
-                * (Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0)
-                    - Math.toDegrees(targetYaw));
-        logger.debug(
-            "{} : x={} y={} forward = {} strafe = {}, dist err = {} yaw = {}",
-            iteration,
-            segment.x,
-            segment.y,
-            forward,
-            strafe,
-            distanceError(segment.position),
-            yaw);
+
+        double yaw = (isYawing ? yawKp * getYawError() : yawHoldKp * getYawError());
 
         if (forward > 1d || strafe > 1d) logger.warn("forward = {} strafe = {}", forward, strafe);
 
@@ -131,23 +123,27 @@ public class PathController implements Runnable {
     logger.info("{}", state);
   }
 
-  private void setPreferences() {
-    yawKp = preferences.getDouble("PathController/pathYawKp", 0.01);
-    distanceKp = preferences.getDouble("PathController/pathDistKp", 0.000001);
-  }
-
   private void logInit() {
     logger.info(
-        "Path start yawKp = {} distKp = {} targetYaw = {} maxVelocity in/s = {}",
+        "Path start yawKp = {} targetYaw = {} maxVelocity in/s = {}",
         yawKp,
-        distanceKp,
         targetYaw,
         maxVelocityInSec);
   }
 
+  public double getYawError() {
+    if (!isYawing
+        || Math.abs(targetYaw - Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360))
+            < GOOD_ENOUGH_YAW) {
+      isYawing = false;
+      return targetYaw - (Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0));
+    }
+
+    return currentYawTarget - (Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0));
+  }
+
   private double distanceError(double position) {
-    double desired = TICKS_PER_INCH * position;
-    return desired - getDistance();
+    return TICKS_PER_INCH * position - getDistance();
   }
 
   private double getDistance() {
