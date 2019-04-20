@@ -1,5 +1,6 @@
 package frc.team2767.deepspace.command.approach;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
@@ -30,6 +31,7 @@ public class VisionAutoAlignPickupCommand extends Command implements Item {
   private static final double FWD_SCALE = 0.5;
   private static final double FWD_SCALE_FAST = 0.5;
   private static final double goodEnoughYaw = 1.5;
+  private static final double AUTON_OUTPUT = -0.35;
 
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VisionSubsystem VISION = Robot.VISION;
@@ -38,12 +40,13 @@ public class VisionAutoAlignPickupCommand extends Command implements Item {
   private static double strafeError;
   private static double yawError;
   private static DriverControls controls;
+  private static double strafeCorrection;
   private final ExpoScale driveExpo;
   private final ExpoScale yawExpo;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private boolean isAuton;
   private double targetYaw;
   private boolean isGood = false;
-  private static double strafeCorrection;
   private RateLimit rateLimit;
 
   public VisionAutoAlignPickupCommand() {
@@ -59,6 +62,7 @@ public class VisionAutoAlignPickupCommand extends Command implements Item {
 
   @Override
   protected void initialize() {
+    isAuton = DriverStation.getInstance().isAutonomous();
     SmartDashboard.putBoolean("Game/haveHatch", false);
     logger.info("Begin Vision Auto Align Pickup");
     controls = Robot.CONTROLS.getDriverControls();
@@ -70,6 +74,7 @@ public class VisionAutoAlignPickupCommand extends Command implements Item {
     logger.info("Target Yaw: {}", targetYaw);
   }
 
+  @SuppressWarnings("Duplicates")
   @Override
   protected void execute() {
     // Pyeye Method:
@@ -88,9 +93,14 @@ public class VisionAutoAlignPickupCommand extends Command implements Item {
 
     double forward;
     // forward is still normal
-    if (isGood) {
+    if (isAuton) {
+      forward = AUTON_OUTPUT;
+    } else if (isGood) {
       forward = driveExpo.apply(controls.getForward()) * FWD_SCALE;
-    } else forward = driveExpo.apply(controls.getForward()) * FWD_SCALE_FAST;
+    } else {
+      forward = driveExpo.apply(controls.getForward()) * FWD_SCALE_FAST;
+    }
+
     double strafe;
     strafeError = Math.sin(Math.toRadians(VISION.getRawBearing())) * range - strafeCorrection;
     // Only take over strafe control if pyeye has a target and the robot is straight to the field

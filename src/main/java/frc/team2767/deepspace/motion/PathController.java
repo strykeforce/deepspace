@@ -3,6 +3,7 @@ package frc.team2767.deepspace.motion;
 import edu.wpi.first.wpilibj.Notifier;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
+import frc.team2767.deepspace.util.Setpoint;
 import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,19 +17,17 @@ public class PathController implements Runnable {
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
 
   @SuppressWarnings("FieldCanBeLocal")
-  private static final double yawKp = 0.03; // 0.03
+  private static final double yawKp = 0.01; // 0.03
 
-  private static final double yawHoldKp = 0.01;
-
-  private static final double percentToDone = 0.60;
+  private static final double percentToDone = 0.50;
   private static final double DT = 0.04;
-  private static final double GOOD_ENOUGH_YAW = 0.5;
+
+  private static final double MIN_VEL = 45.0;
+
   //  private static final double RATE_CAP = 0.35;
   //  private static final RateLimit rateLimit = new RateLimit(0.015);
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final int PID = 0;
-  private double yawDelta;
-  private double currentYawTarget;
   private Trajectory trajectory;
   private Notifier notifier;
   private Wheel[] wheels;
@@ -37,7 +36,9 @@ public class PathController implements Runnable {
   private double targetYaw;
   private int iteration;
   private int[] start;
-  private boolean isYawing = true;
+  private Setpoint setpoint;
+  private double setpointPos;
+  private double yawError;
 
   public PathController(String pathName, double targetYaw) {
     this.targetYaw = targetYaw;
@@ -73,10 +74,9 @@ public class PathController implements Runnable {
           start[i] = wheels[i].getDriveTalon().getSelectedSensorPosition(PID);
         }
 
-        currentYawTarget = Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360);
-        yawDelta = (targetYaw - currentYawTarget) / (trajectory.length() * percentToDone);
-
-        logger.debug("yaw delta = {}", yawDelta);
+        setpoint =
+            new Setpoint(
+                Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360), targetYaw, percentToDone);
 
         logInit();
         state = States.RUNNING;
@@ -86,12 +86,6 @@ public class PathController implements Runnable {
           state = States.STOPPING;
         }
 
-        if (isYawing) {
-          currentYawTarget += yawDelta;
-        } else {
-          currentYawTarget = targetYaw;
-        }
-
         Trajectory.Segment segment = trajectory.getIteration(iteration);
 
         double setpointVelocity = (segment.velocity) / maxVelocityInSec;
@@ -99,7 +93,18 @@ public class PathController implements Runnable {
         double forward = Math.cos(segment.heading) * setpointVelocity;
         double strafe = Math.sin(segment.heading) * setpointVelocity;
 
-        double yaw = (isYawing ? yawKp * getYawError() : yawHoldKp * getYawError());
+        double currentProgress = iteration / (double) trajectory.length();
+
+        if (currentProgress > percentToDone && segment.velocity < MIN_VEL) {
+          state = States.STOPPING;
+        }
+
+        setpointPos = setpoint.getSetpoint(currentProgress);
+
+        yawError = setpointPos - Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360);
+        double yaw;
+
+        yaw = yawError * yawKp;
 
         if (forward > 1d || strafe > 1d) logger.warn("forward = {} strafe = {}", forward, strafe);
 
@@ -113,7 +118,7 @@ public class PathController implements Runnable {
         break;
       case STOPPED:
         logState();
-        DRIVE.stop();
+        //        DRIVE.stop();
         notifier.close();
         break;
     }
@@ -132,14 +137,11 @@ public class PathController implements Runnable {
   }
 
   public double getYawError() {
-    if (!isYawing
-        || Math.abs(targetYaw - Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360))
-            < GOOD_ENOUGH_YAW) {
-      isYawing = false;
-      return targetYaw - (Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0));
-    }
+    return yawError;
+  }
 
-    return currentYawTarget - (Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0));
+  public double getSetpointPos() {
+    return setpointPos;
   }
 
   private double distanceError(double position) {
