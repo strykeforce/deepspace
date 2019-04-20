@@ -73,6 +73,12 @@ public class CoconutPickupAutoRetryCommand extends Command {
           ELEVATOR.openLoopMove(DOWN_SPEED);
           state = PickupState.DOWN;
           logger.info("Moving Down");
+          break;
+        }
+        if (currentPressure - initialPressure > PRESSURE_DIFFERENTIAL) {
+          state = PickupState.DONE;
+          logger.info("Got Seal on RESET");
+          break;
         }
     }
   }
