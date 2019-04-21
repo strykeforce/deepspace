@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.command.approach.sandstorm.SandstormCommandGroup;
+import frc.team2767.deepspace.control.AutonChooser;
 import frc.team2767.deepspace.control.Controls;
 import frc.team2767.deepspace.subsystem.*;
 import frc.team2767.deepspace.subsystem.safety.SafetySubsystem;
@@ -30,7 +31,9 @@ public class Robot extends TimedRobot {
 
   public static Controls CONTROLS;
   private static boolean isEvent;
+  private static AutonChooser AUTON;
   private static CommandGroup sandstorm;
+  private boolean isAutonDone = false;
 
   private Logger logger;
 
@@ -59,6 +62,7 @@ public class Robot extends TimedRobot {
     SAFETY = new SafetySubsystem();
     VACUUM = new VacuumSubsystem();
     CLIMB = new ClimbSubsystem();
+    AUTON = new AutonChooser();
 
     // Controls initialize Commands so this should be instantiated last to prevent
     // NullPointerExceptions in commands that require() Subsystems above.
@@ -87,8 +91,9 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     BISCUIT.setPosition(BISCUIT.getPosition());
+    AUTON.checkSwitch();
     DRIVE.setAngleAdjustment(true);
-    VISION.startSide = StartSide.LEFT;
+    isAutonDone = true;
     sandstorm.start();
   }
 
@@ -99,6 +104,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
+
+    if (!isAutonDone) {
+      AUTON.checkSwitch();
+    }
     Scheduler.getInstance().run();
   }
 
