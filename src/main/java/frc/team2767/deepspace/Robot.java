@@ -91,7 +91,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     BISCUIT.setPosition(BISCUIT.getPosition());
-    AUTON.checkSwitch();
     DRIVE.setAngleAdjustment(true);
     isAutonDone = true;
     sandstorm.start();
@@ -104,7 +103,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-
     if (!isAutonDone) {
       AUTON.checkSwitch();
     }

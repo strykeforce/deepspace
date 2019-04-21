@@ -1,11 +1,10 @@
 package frc.team2767.deepspace.control;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AutonSwitch {
   private static final int BITS = 6;

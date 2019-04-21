@@ -185,7 +185,7 @@ public class DriveSubsystem extends Subsystem implements Item {
     double adj;
     adj = gyro.getAngleAdjustment();
     adj += angle;
-    logger.info("Gyro Angle Adjust: {}", adj);
+    logger.info("gyro angle adjust = {}", adj);
     gyro.setAngleAdjustment(adj);
   }
 
@@ -193,7 +193,7 @@ public class DriveSubsystem extends Subsystem implements Item {
     AHRS gyro = swerve.getGyro();
     double adj = gyro.getAngleAdjustment();
     adj -= offsetGyro;
-    logger.info("Undo Gyro Angle Adjust: {}", adj);
+    logger.info("undo gyro angle adjust = {}", adj);
     gyro.setAngleAdjustment(adj);
     offsetGyro = 0.0;
   }

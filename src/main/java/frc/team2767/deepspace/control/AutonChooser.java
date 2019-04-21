@@ -1,12 +1,12 @@
 package frc.team2767.deepspace.control;
 
+import static frc.team2767.deepspace.subsystem.StartSide.LEFT;
+import static frc.team2767.deepspace.subsystem.StartSide.RIGHT;
+
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.VisionSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static frc.team2767.deepspace.subsystem.StartSide.LEFT;
-import static frc.team2767.deepspace.subsystem.StartSide.RIGHT;
 
 public class AutonChooser {
   public static final VisionSubsystem VISION = Robot.VISION;
