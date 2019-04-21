@@ -346,7 +346,7 @@ public class DriveSubsystem extends Subsystem implements Item {
   @NotNull
   @Override
   public Set<Measure> getMeasures() {
-    return Set.of(Measure.ROTATION_RATE_Y, Measure.CLOSED_LOOP_ERROR, Measure.CLOSED_LOOP_TARGET);
+    return Set.of(Measure.ANGLE, Measure.CLOSED_LOOP_ERROR, Measure.CLOSED_LOOP_TARGET);
   }
 
   @NotNull
@@ -364,7 +364,7 @@ public class DriveSubsystem extends Subsystem implements Item {
   @Override
   public DoubleSupplier measurementFor(@NotNull Measure measure) {
     switch (measure) {
-      case ROTATION_RATE_Y:
+      case ANGLE:
         return () -> Math.IEEEremainder(getGyro().getAngle(), 360);
       case CLOSED_LOOP_ERROR:
         return () -> (isPath ? pathController.getYawError() : 0.0);

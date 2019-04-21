@@ -102,7 +102,7 @@ public class VisionAutoAlignPickupCommand extends Command implements Item {
     }
 
     double strafe;
-    strafeError = Math.sin(Math.toRadians(VISION.getRawBearing())) * range - strafeCorrection;
+    strafeError = Math.sin(Math.toRadians(VISION.getCorrectedBearing())) * range - strafeCorrection;
     // Only take over strafe control if pyeye has a target and the robot is straight to the field
     if (isGood && onTarget) strafe = strafeError * kP_STRAFE * forward;
     else strafe = driveExpo.apply(controls.getStrafe());

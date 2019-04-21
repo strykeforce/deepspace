@@ -50,13 +50,12 @@ public class SandstormCommandGroup extends CommandGroup {
             addParallel(
                 new ChooseAutonFieldSideCommand(
                     new PathCommand("loading_to_cargo_side_l", 0.0),
-                    new PathCommand("loading_to_cargo_side_l", 0.0)));
+                    new PathCommand("loading_to_cargo_side_r", 180.0)));
             addParallel(new LightsOnCommand());
           }
         });
     addSequential(
         new ChooseAutonFieldSideCommand(
-            new AutoHatchPlaceCommandGroup(-90.0),
-            new AutoHatchPlaceCommandGroup(90.0))); // FIXME: left v. right
+            new AutoHatchPlaceCommandGroup(-90.0), new AutoHatchPlaceCommandGroup(90.0)));
   }
 }

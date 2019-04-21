@@ -166,10 +166,11 @@ public class VisionSubsystem extends Subsystem implements Item {
 
   public void runTuning(int camID) {
     tuningEntry.setNumber(camID);
+    logger.debug("tuning entry set to = {}", tuningEntry.getNumber(2767.0));
   }
 
   public boolean tuneFinished() {
-    return ((int) tuningFinished.getNumber(0) == 1);
+    return (tuningFinished.getNumber(0.0).equals(1.0));
   }
 
   public void setElevatorLevel(ElevatorLevel elevatorLevel) {
@@ -265,7 +266,7 @@ public class VisionSubsystem extends Subsystem implements Item {
       case POSITION:
         return () -> getRawRange();
       case ANGLE:
-        return () -> getRawBearing();
+        return () -> getCorrectedBearing();
       case VALUE:
         return () -> lightState;
       default:
@@ -278,7 +279,7 @@ public class VisionSubsystem extends Subsystem implements Item {
         + (direction == RIGHT ? CAMERA_RANGE_OFFSET_RIGHT : CAMERA_RANGE_OFFSET_LEFT));
   }
 
-  public double getRawBearing() {
+  public double getCorrectedBearing() {
     return (rawBearing
         - (direction == RIGHT ? GLUE_CORRECTION_FACTOR_RIGHT : GLUE_CORRECTION_FACTOR_LEFT)
             * (direction == RIGHT

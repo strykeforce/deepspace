@@ -33,7 +33,6 @@ public class Robot extends TimedRobot {
   private static AutonChooser AUTON;
   private static boolean isEvent;
   private static CommandGroup sandstorm;
-  private boolean isAutonDone = false;
 
   private Logger logger;
 

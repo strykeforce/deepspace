@@ -84,7 +84,7 @@ public class VisionAutoAlignPlaceCommand extends Command implements Item {
     boolean onTarget = Math.abs(yawError) <= goodEnoughYaw;
 
     double strafe;
-    strafeError = Math.sin(Math.toRadians(VISION.getRawBearing())) * range - strafeCorrection;
+    strafeError = Math.sin(Math.toRadians(VISION.getCorrectedBearing())) * range - strafeCorrection;
     // Only take over strafe control if pyeye has a target and the robot is straight to the field
     if (isGood && onTarget) strafe = strafeError * kP_STRAFE * forward;
     else strafe = 0;
