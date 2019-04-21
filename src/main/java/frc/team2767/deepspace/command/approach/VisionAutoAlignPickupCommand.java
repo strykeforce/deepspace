@@ -31,7 +31,7 @@ public class VisionAutoAlignPickupCommand extends Command implements Item {
   private static final double FWD_SCALE = 0.5;
   private static final double FWD_SCALE_FAST = 0.5;
   private static final double goodEnoughYaw = 1.5;
-  private static final double AUTON_OUTPUT = -0.35;
+  private static final double AUTON_OUTPUT = -0.40;
 
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VisionSubsystem VISION = Robot.VISION;

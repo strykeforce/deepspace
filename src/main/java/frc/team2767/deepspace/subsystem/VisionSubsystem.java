@@ -43,7 +43,7 @@ public class VisionSubsystem extends Subsystem implements Item {
   private static final double CAMERA_RANGE_OFFSET_LEFT = -4.8818; // -5.6325
   // NEGATIVE = TOWARDS FIELD LEFT
   private static final double STRAFE_CORRECTION_RIGHT = 0.4; // -1.0
-  private static final double STRAFE_CORRECTION_LEFT = 1.0;
+  private static final double STRAFE_CORRECTION_LEFT = 1.67;
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final DigitalOutput lightsOutput6 = new DigitalOutput(6);
@@ -153,14 +153,6 @@ public class VisionSubsystem extends Subsystem implements Item {
     logger.info("set direction to {}", direction);
   }
 
-  public void runTuning(int camID) {
-    tuningEntry.setNumber(camID);
-  }
-
-  public boolean tuneFinished() {
-    return ((int) tuningFinished.getNumber(0) == 1);
-  }
-
   public void selectCamera() {
     VisionSubsystem.Camera camera;
     camera = Camera.LEFT;
@@ -170,6 +162,14 @@ public class VisionSubsystem extends Subsystem implements Item {
 
     logger.info("chose {} camera", camera);
     cameraIDEntry.setNumber(camera.id);
+  }
+
+  public void runTuning(int camID) {
+    tuningEntry.setNumber(camID);
+  }
+
+  public boolean tuneFinished() {
+    return ((int) tuningFinished.getNumber(0) == 1);
   }
 
   public void setElevatorLevel(ElevatorLevel elevatorLevel) {
@@ -208,19 +208,6 @@ public class VisionSubsystem extends Subsystem implements Item {
     return blinkTimer.get() > currentPattern.duration;
   }
 
-  public double getRawBearing() {
-    return (rawBearing
-        - (direction == RIGHT ? GLUE_CORRECTION_FACTOR_RIGHT : GLUE_CORRECTION_FACTOR_LEFT)
-            * (direction == RIGHT
-                ? CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_RIGHT
-                : CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_LEFT));
-  }
-
-  public double getRawRange() {
-    return (rawRange * (direction == RIGHT ? CAMERA_RANGE_SLOPE_RIGHT : CAMERA_RANGE_SLOPE_LEFT)
-        + (direction == RIGHT ? CAMERA_RANGE_OFFSET_RIGHT : CAMERA_RANGE_OFFSET_LEFT));
-  }
-
   public double getStrafeCorrection() {
     return direction == RIGHT ? STRAFE_CORRECTION_RIGHT : STRAFE_CORRECTION_LEFT;
   }
@@ -241,30 +228,6 @@ public class VisionSubsystem extends Subsystem implements Item {
 
   public void pyeyeDump() {
     logger.debug("PYEYE DUMP\nrange {} at {} degree\n", correctedRange, correctedHeading);
-  }
-
-  public enum Camera {
-    LEFT(1),
-    RIGHT(0);
-
-    int id;
-
-    Camera(int i) {
-      id = i;
-    }
-  }
-
-  public enum LightPattern {
-    GOT_HATCH(0.05, 1.0),
-    CLIMB_GOOD(0.2, 2.0);
-
-    double period;
-    double duration;
-
-    LightPattern(double period, double duration) {
-      this.period = period;
-      this.duration = duration;
-    }
   }
 
   @NotNull
@@ -307,6 +270,43 @@ public class VisionSubsystem extends Subsystem implements Item {
         return () -> lightState;
       default:
         return () -> 2767;
+    }
+  }
+
+  public double getRawRange() {
+    return (rawRange * (direction == RIGHT ? CAMERA_RANGE_SLOPE_RIGHT : CAMERA_RANGE_SLOPE_LEFT)
+        + (direction == RIGHT ? CAMERA_RANGE_OFFSET_RIGHT : CAMERA_RANGE_OFFSET_LEFT));
+  }
+
+  public double getRawBearing() {
+    return (rawBearing
+        - (direction == RIGHT ? GLUE_CORRECTION_FACTOR_RIGHT : GLUE_CORRECTION_FACTOR_LEFT)
+            * (direction == RIGHT
+                ? CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_RIGHT
+                : CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_LEFT));
+  }
+
+  public enum Camera {
+    LEFT(1),
+    RIGHT(0);
+
+    int id;
+
+    Camera(int i) {
+      id = i;
+    }
+  }
+
+  public enum LightPattern {
+    GOT_HATCH(0.05, 1.0),
+    CLIMB_GOOD(0.2, 2.0);
+
+    double period;
+    double duration;
+
+    LightPattern(double period, double duration) {
+      this.period = period;
+      this.duration = duration;
     }
   }
 }
