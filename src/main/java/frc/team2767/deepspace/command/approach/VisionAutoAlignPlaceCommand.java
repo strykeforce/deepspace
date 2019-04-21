@@ -23,7 +23,7 @@ public class VisionAutoAlignPlaceCommand extends Command implements Item {
   private static final double kP_YAW = 0.01; // 0.00625 tuning for NT method, 0.01 pyeye
   private static final double MAX_YAW = 0.3;
   private static final double MIN_RANGE = 35.0;
-  private static final double FORWARD_OUTPUT = 0.2;
+  private static final double FORWARD_OUTPUT = 0.30;
   private static final double goodEnoughYaw = 1.5;
 
   private static final DriveSubsystem DRIVE = Robot.DRIVE;

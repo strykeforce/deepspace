@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team2767.deepspace.command.sequences.pickup.SandstormHatchPickupCommandGroup;
+import frc.team2767.deepspace.command.approach.sandstorm.SandstormCommandGroup;
 import frc.team2767.deepspace.control.Controls;
 import frc.team2767.deepspace.subsystem.*;
 import frc.team2767.deepspace.subsystem.safety.SafetySubsystem;
@@ -30,7 +30,7 @@ public class Robot extends TimedRobot {
 
   public static Controls CONTROLS;
   private static boolean isEvent;
-  private static CommandGroup getHatch;
+  private static CommandGroup sandstorm;
 
   private Logger logger;
 
@@ -64,8 +64,6 @@ public class Robot extends TimedRobot {
     // NullPointerExceptions in commands that require() Subsystems above.
     CONTROLS = new Controls();
 
-    getHatch = new SandstormHatchPickupCommandGroup();
-
     Session.INSTANCE.setBaseUrl("https://keeper.strykeforce.org");
 
     DRIVE.zeroYawEncoders();
@@ -76,6 +74,8 @@ public class Robot extends TimedRobot {
     if (!isEvent) {
       TELEMETRY.start();
     }
+
+    sandstorm = new SandstormCommandGroup();
 
     SmartDashboard.putBoolean("Game/SandstormPickUp", false);
     SmartDashboard.putBoolean("Game/haveHatch", false);
@@ -89,7 +89,7 @@ public class Robot extends TimedRobot {
     BISCUIT.setPosition(BISCUIT.getPosition());
     DRIVE.setAngleAdjustment(true);
     VISION.startSide = StartSide.LEFT;
-    getHatch.start();
+    sandstorm.start();
   }
 
   @Override

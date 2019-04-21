@@ -23,7 +23,7 @@ public class PathController implements Runnable {
   private static final double DT = 0.04;
 
   private static final double MIN_VEL = 45.0;
-
+  private static final double MIN_START = 40.0;
   //  private static final double RATE_CAP = 0.35;
   //  private static final RateLimit rateLimit = new RateLimit(0.015);
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -39,9 +39,11 @@ public class PathController implements Runnable {
   private Setpoint setpoint;
   private double setpointPos;
   private double yawError;
+  private boolean isDriftOut;
 
-  public PathController(String pathName, double targetYaw) {
+  public PathController(String pathName, double targetYaw, boolean isDriftOut) {
     this.targetYaw = targetYaw;
+    this.isDriftOut = isDriftOut;
     wheels = DRIVE.getAllWheels();
     File csvFile = new File("home/lvuser/deploy/paths/" + pathName + ".pf1.csv");
 
@@ -88,12 +90,17 @@ public class PathController implements Runnable {
 
         Trajectory.Segment segment = trajectory.getIteration(iteration);
 
-        double setpointVelocity = (segment.velocity) / maxVelocityInSec;
+        double currentProgress = iteration / (double) trajectory.length();
+
+        double segmentVelocity = segment.velocity;
+        if (isDriftOut && currentProgress < percentToDone && segment.velocity < MIN_START) {
+          segmentVelocity = MIN_START;
+        }
+
+        double setpointVelocity = segmentVelocity / maxVelocityInSec;
 
         double forward = Math.cos(segment.heading) * setpointVelocity;
         double strafe = Math.sin(segment.heading) * setpointVelocity;
-
-        double currentProgress = iteration / (double) trajectory.length();
 
         if (currentProgress > percentToDone && segment.velocity < MIN_VEL) {
           state = States.STOPPING;

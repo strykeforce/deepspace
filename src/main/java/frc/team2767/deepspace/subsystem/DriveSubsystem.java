@@ -98,7 +98,7 @@ public class DriveSubsystem extends Subsystem implements Item {
 
   public void startPath(String path, double targetYaw) {
     logger.debug("starting path");
-    this.pathController = new PathController(path, targetYaw);
+    this.pathController = new PathController(path, targetYaw, true);
     pathController.start();
     isPath = true;
   }
@@ -108,7 +108,6 @@ public class DriveSubsystem extends Subsystem implements Item {
       isPath = false;
       return true;
     }
-
     return false;
   }
 
