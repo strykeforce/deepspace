@@ -15,7 +15,7 @@ public class StowElevatorConditionalCommand extends ConditionalCommand {
     super(
         new CommandGroup() {
           {
-            addSequential(new ElevatorSetPositionCommand(23.0));
+            addSequential(new ElevatorSetPositionCommand(25.0));
             addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.kUpPositionDeg));
             addSequential(new ElevatorSetPositionCommand(12.0));
           }
