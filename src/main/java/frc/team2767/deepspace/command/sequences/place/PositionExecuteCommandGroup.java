@@ -6,6 +6,7 @@ import frc.team2767.deepspace.command.biscuit.ReleaseKrakenCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorMoveToSafePositionCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.sequences.pickup.BallToHatchConditionalCommand;
+import frc.team2767.deepspace.command.sequences.pickup.Biscuit270WrapConditionalCommand;
 
 public class PositionExecuteCommandGroup extends CommandGroup {
 
@@ -13,6 +14,7 @@ public class PositionExecuteCommandGroup extends CommandGroup {
     addSequential(new LogCommand("BEGIN POSITION EXECUTE"));
     addSequential(new ElevatorMoveToSafePositionCommand());
     addSequential(new BiscuitMoveSafeCommand());
+    addSequential(new Biscuit270WrapConditionalCommand());
     addSequential(
         new CommandGroup() {
           {
