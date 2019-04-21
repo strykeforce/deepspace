@@ -11,8 +11,8 @@ public class BiscuitPositionAboveCameraCommand extends Command {
   private static final BiscuitSubsystem BISCUIT = Robot.BISCUIT;
   private static final VisionSubsystem VISION = Robot.VISION;
 
-  private static final double PLACE_RIGHT = 55.0;
-  private static final double PLACE_LEFT = -55.0;
+  private static final double PLACE_RIGHT = 45.0;
+  private static final double PLACE_LEFT = -45.0;
   private static final double PICKUP_RIGHT = 65.0;
   private static final double PICKUP_LEFT = -65.0;
 
