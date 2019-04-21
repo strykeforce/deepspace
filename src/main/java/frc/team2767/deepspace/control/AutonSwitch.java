@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AutonSwitch {
-  private static final int BITS = 6;
+  private static final int BITS = 4;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final List<DigitalInput> digitalInputs = new ArrayList<>();
 

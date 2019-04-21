@@ -28,10 +28,10 @@ public class Robot extends TimedRobot {
   public static SafetySubsystem SAFETY;
   public static VacuumSubsystem VACUUM;
   public static ClimbSubsystem CLIMB;
-
   public static Controls CONTROLS;
-  private static boolean isEvent;
+
   private static AutonChooser AUTON;
+  private static boolean isEvent;
   private static CommandGroup sandstorm;
   private boolean isAutonDone = false;
 
@@ -62,11 +62,13 @@ public class Robot extends TimedRobot {
     SAFETY = new SafetySubsystem();
     VACUUM = new VacuumSubsystem();
     CLIMB = new ClimbSubsystem();
-    AUTON = new AutonChooser();
 
     // Controls initialize Commands so this should be instantiated last to prevent
     // NullPointerExceptions in commands that require() Subsystems above.
     CONTROLS = new Controls();
+
+    // not a subsystem
+    AUTON = new AutonChooser();
 
     Session.INSTANCE.setBaseUrl("https://keeper.strykeforce.org");
 
@@ -75,10 +77,6 @@ public class Robot extends TimedRobot {
     BISCUIT.zero();
     INTAKE.zero();
 
-    if (!isEvent) {
-      TELEMETRY.start();
-    }
-
     sandstorm = new SandstormCommandGroup();
 
     SmartDashboard.putBoolean("Game/SandstormPickUp", false);
@@ -86,13 +84,22 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("Game/climbOnTarget", false);
     SmartDashboard.putBoolean("Game/climbPrecheck", false);
     //    new SmartDashboardControls();
+
+    // must be last
+    if (!isEvent) {
+      TELEMETRY.start();
+    }
+  }
+
+  @Override
+  public void disabledInit() {
+    AUTON.reset();
   }
 
   @Override
   public void autonomousInit() {
     BISCUIT.setPosition(BISCUIT.getPosition());
     DRIVE.setAngleAdjustment(true);
-    isAutonDone = true;
     sandstorm.start();
   }
 
@@ -103,9 +110,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    if (!isAutonDone) {
-      AUTON.checkSwitch();
-    }
+    AUTON.checkSwitch();
     Scheduler.getInstance().run();
   }
 

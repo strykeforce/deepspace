@@ -13,9 +13,9 @@ public class AutonChooser {
   private static final int AUTON_SWITCH_DEBOUNCED = 100;
   private static final Controls controls = Robot.CONTROLS;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private int autonSwitchPosition = -1;
   private int newAutonSwitchPosition;
   private int autonSwitchStableCount = 0;
-  private int autonSwitchPosition = -1;
 
   public AutonChooser() {}
 
@@ -41,15 +41,23 @@ public class AutonChooser {
 
     if (autonSwitchStableCount > AUTON_SWITCH_DEBOUNCED && autonSwitchPosition != switchPosition) {
       changed = true;
-
+      autonSwitchPosition = switchPosition;
       switch (autonSwitchPosition) {
         case 1:
           VISION.startSide = LEFT;
+          break;
         case 2:
           VISION.startSide = RIGHT;
+          break;
       }
     }
 
     return changed;
+  }
+
+  public void reset() {
+    if (autonSwitchPosition == -1) return;
+    logger.debug("reset auton chooser");
+    autonSwitchPosition = -1;
   }
 }
