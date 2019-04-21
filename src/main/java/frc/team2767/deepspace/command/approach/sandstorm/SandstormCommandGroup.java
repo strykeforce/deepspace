@@ -41,7 +41,7 @@ public class SandstormCommandGroup extends CommandGroup {
         new CommandGroup() {
           {
             addParallel(new BiscuitPositionAboveCameraCommand());
-            addParallel(new PathCommand("loading_to_cargo_side_l_0", 0.0));
+            addParallel(new PathCommand("loading_to_cargo_side_l", 0.0));
             addParallel(new LightsOnCommand());
           }
         });
