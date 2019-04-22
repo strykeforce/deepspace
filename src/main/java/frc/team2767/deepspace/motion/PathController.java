@@ -33,7 +33,7 @@ public class PathController implements Runnable {
   private Wheel[] wheels;
   private States state;
   private double maxVelocityInSec;
-  private double targetYaw;
+  private double yawDelta;
   private int iteration;
   private int[] start;
   private Setpoint setpoint;
@@ -41,8 +41,8 @@ public class PathController implements Runnable {
   private double yawError;
   private boolean isDriftOut;
 
-  public PathController(String pathName, double targetYaw, boolean isDriftOut) {
-    this.targetYaw = targetYaw;
+  public PathController(String pathName, double yawDelta, boolean isDriftOut) {
+    this.yawDelta = yawDelta;
     this.isDriftOut = isDriftOut;
     wheels = DRIVE.getAllWheels();
     File csvFile = new File("home/lvuser/deploy/paths/" + pathName + ".pf1.csv");
@@ -77,9 +77,7 @@ public class PathController implements Runnable {
         }
 
         double currentAngle = DRIVE.getGyro().getAngle();
-        setpoint =
-            new Setpoint(
-                currentAngle, currentAngle + targetYaw, percentToDone);
+        setpoint = new Setpoint(currentAngle, yawDelta, percentToDone);
 
         logInit();
         state = States.RUNNING;
@@ -137,9 +135,9 @@ public class PathController implements Runnable {
 
   private void logInit() {
     logger.info(
-        "Path start yawKp = {} targetYaw = {} maxVelocity in/s = {}",
+        "Path start yawKp = {} yawDelta = {} maxVelocity in/s = {}",
         yawKp,
-        targetYaw,
+        yawDelta,
         maxVelocityInSec);
   }
 

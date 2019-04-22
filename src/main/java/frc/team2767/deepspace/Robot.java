@@ -82,7 +82,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("Game/haveHatch", false);
     SmartDashboard.putBoolean("Game/climbOnTarget", false);
     SmartDashboard.putBoolean("Game/climbPrecheck", false);
-    //    new SmartDashboardControls();
 
     // must be last
     if (!isEvent) {

@@ -22,8 +22,8 @@ public class SandstormCommandGroup extends CommandGroup {
           {
             addParallel(
                 new ChooseAutonFieldSideCommand(
-                    new PathCommand("hab_to_cargo_l", 90.0),
-                    new PathCommand("hab_to_cargo_r", 90.0)));
+                    new PathCommand("hab_to_cargo_l", 90.0), // 90.0
+                    new PathCommand("hab_to_cargo_r", 90.0))); // 90.0
             addParallel(new BiscuitPositionAboveCameraCommand());
             addParallel(new LightsOnCommand());
           }
@@ -36,8 +36,8 @@ public class SandstormCommandGroup extends CommandGroup {
             addParallel(new BiscuitPositionAboveCameraCommand());
             addParallel(
                 new ChooseAutonFieldSideCommand(
-                    new PathCommand("cargo_front_to_loading_l", 90.0),
-                    new PathCommand("cargo_front_to_loading_r", 90.0)));
+                    new PathCommand("cargo_front_to_loading_l", 90.0), // 90.0
+                    new PathCommand("cargo_front_to_loading_r", 90.0))); // 90.0
             addParallel(new LightsOnCommand());
           }
         });
@@ -50,7 +50,7 @@ public class SandstormCommandGroup extends CommandGroup {
             addParallel(
                 new ChooseAutonFieldSideCommand(
                     new PathCommand("loading_to_cargo_side_l", 0.0),
-                    new PathCommand("loading_to_cargo_side_r", 180.0)));
+                    new PathCommand("loading_to_cargo_side_r", 180))); // 180.0
             addParallel(new LightsOnCommand());
           }
         });

@@ -42,8 +42,8 @@ public class VisionSubsystem extends Subsystem implements Item {
   private static final double CAMERA_RANGE_SLOPE_LEFT = 1.0499; // 0.8259
   private static final double CAMERA_RANGE_OFFSET_LEFT = -4.8818; // -5.6325
   // NEGATIVE = TOWARDS FIELD LEFT
-  private static final double STRAFE_CORRECTION_RIGHT = 0.4; // -1.0
-  private static final double STRAFE_CORRECTION_LEFT = 1.67;
+  private static final double STRAFE_CORRECTION_RIGHT = 0.0; // -1.0
+  private static final double STRAFE_CORRECTION_LEFT = 0.9;
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final DigitalOutput lightsOutput6 = new DigitalOutput(6);
@@ -55,6 +55,7 @@ public class VisionSubsystem extends Subsystem implements Item {
   public ElevatorLevel elevatorLevel = ElevatorLevel.NOTSET;
   public StartSide startSide = StartSide.NOTSET;
   private NetworkTableEntry bearingEntry;
+  private NetworkTableEntry cameraMode;
   private NetworkTableEntry rangeEntry;
   private NetworkTableEntry cameraIDEntry;
   private NetworkTableEntry targetYawEntry;
@@ -75,12 +76,14 @@ public class VisionSubsystem extends Subsystem implements Item {
     CameraServer cameraServer = CameraServer.getInstance();
     NetworkTableInstance instance = NetworkTableInstance.getDefault();
     NetworkTable table = instance.getTable("Pyeye");
+    cameraMode = table.getEntry("camera_mode");
     bearingEntry = table.getEntry("camera_bearing");
     rangeEntry = table.getEntry("camera_range");
     cameraIDEntry = table.getEntry("camera_id");
     targetYawEntry = table.getEntry("target_yaw");
     tuningEntry = table.getEntry("tuning_id");
     tuningFinished = table.getEntry("tuning_finished");
+    cameraMode.setString("comp");
     targetYawEntry.setNumber(0.0);
     bearingEntry.setNumber(0.0);
     rangeEntry.setNumber(-1.0);
@@ -162,6 +165,10 @@ public class VisionSubsystem extends Subsystem implements Item {
 
     logger.info("chose {} camera", camera);
     cameraIDEntry.setNumber(camera.id);
+  }
+
+  public void setCameraMode(String mode) {
+    cameraMode.setString(mode);
   }
 
   public void runTuning(int camID) {

@@ -21,6 +21,7 @@ public class VisionTuneCommand extends InstantCommand {
 
   @Override
   protected void initialize() {
+    VISION.setCameraMode("tune");
     VISION.enableLights(true);
     VISION.runTuning(tuningID);
   }
@@ -33,5 +34,6 @@ public class VisionTuneCommand extends InstantCommand {
   @Override
   protected void end() {
     VISION.enableLights(false);
+    VISION.setCameraMode("comp");
   }
 }

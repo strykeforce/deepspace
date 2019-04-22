@@ -25,6 +25,7 @@ public class WaitForIntakeBeamCommand extends Command {
       case WAIT_FOR_BEAM:
         if (INTAKE.isIntakeSlowBeamBroken()) {
           INTAKE.rollerOpenLoop(SLOW_SPEED);
+          INTAKE.setPosition(105);
           state = State.SLOW;
           hasBroken = true;
         }
@@ -39,7 +40,7 @@ public class WaitForIntakeBeamCommand extends Command {
       case SLOWER:
         if (System.currentTimeMillis() - breakTime > SLOWER_WAIT_TIME_MS) {
           state = State.DONE;
-          INTAKE.rollerOpenLoop(0.1);
+          INTAKE.rollerOpenLoop(0.15);
         }
         break;
       case DONE:
