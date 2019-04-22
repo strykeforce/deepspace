@@ -38,7 +38,7 @@ public class HatchToBallConditionalCommand extends ConditionalCommand {
       return true;
     }
 
-    logger.debug("not safe", BISCUIT.getPosition());
+    logger.debug("not safe {}", BISCUIT.getPosition());
     return false;
   }
 }

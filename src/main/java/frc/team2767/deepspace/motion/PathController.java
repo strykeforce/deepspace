@@ -4,12 +4,11 @@ import edu.wpi.first.wpilibj.Notifier;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
 import frc.team2767.deepspace.util.Setpoint;
+import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
 import org.strykeforce.thirdcoast.swerve.Wheel;
-
-import java.io.File;
 
 public class PathController implements Runnable {
 
@@ -77,9 +76,10 @@ public class PathController implements Runnable {
           start[i] = wheels[i].getDriveTalon().getSelectedSensorPosition(PID);
         }
 
+        double currentAngle = DRIVE.getGyro().getAngle();
         setpoint =
             new Setpoint(
-                Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360), targetYaw, percentToDone);
+                currentAngle, currentAngle + targetYaw, percentToDone);
 
         logInit();
         state = States.RUNNING;
@@ -109,7 +109,7 @@ public class PathController implements Runnable {
 
         setpointPos = setpoint.getSetpoint(currentProgress);
 
-        yawError = setpointPos - Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360);
+        yawError = setpointPos - DRIVE.getGyro().getAngle();
         double yaw;
 
         yaw = yawError * yawKp;
@@ -126,7 +126,6 @@ public class PathController implements Runnable {
         break;
       case STOPPED:
         logState();
-        //        DRIVE.stop();
         notifier.close();
         break;
     }
@@ -150,19 +149,6 @@ public class PathController implements Runnable {
 
   public double getSetpointPos() {
     return setpointPos;
-  }
-
-  private double distanceError(double position) {
-    return TICKS_PER_INCH * position - getDistance();
-  }
-
-  private double getDistance() {
-    double distance = 0;
-    for (int i = 0; i < NUM_WHEELS; i++) {
-      distance += Math.abs(wheels[i].getDriveTalon().getSelectedSensorPosition(PID) - start[i]);
-    }
-    distance /= 4;
-    return distance;
   }
 
   public void interrupt() {

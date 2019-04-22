@@ -14,6 +14,9 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.command.TeleOpDriveCommand;
 import frc.team2767.deepspace.motion.PathController;
 import frc.team2767.deepspace.motion.TwistController;
+import java.util.List;
+import java.util.Set;
+import java.util.function.DoubleSupplier;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +28,6 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 import org.strykeforce.thirdcoast.telemetry.item.Item;
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
-
-import java.util.List;
-import java.util.Set;
-import java.util.function.DoubleSupplier;
 
 public class DriveSubsystem extends Subsystem implements Item {
 
