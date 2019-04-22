@@ -14,9 +14,6 @@ import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.command.TeleOpDriveCommand;
 import frc.team2767.deepspace.motion.PathController;
 import frc.team2767.deepspace.motion.TwistController;
-import java.util.List;
-import java.util.Set;
-import java.util.function.DoubleSupplier;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +25,10 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 import org.strykeforce.thirdcoast.telemetry.item.Item;
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
+
+import java.util.List;
+import java.util.Set;
+import java.util.function.DoubleSupplier;
 
 public class DriveSubsystem extends Subsystem implements Item {
 
@@ -346,7 +347,8 @@ public class DriveSubsystem extends Subsystem implements Item {
   @NotNull
   @Override
   public Set<Measure> getMeasures() {
-    return Set.of(Measure.ANGLE, Measure.CLOSED_LOOP_ERROR, Measure.CLOSED_LOOP_TARGET);
+    return Set.of(
+        Measure.ANGLE, Measure.CLOSED_LOOP_ERROR, Measure.CLOSED_LOOP_TARGET, Measure.VALUE);
   }
 
   @NotNull
@@ -370,6 +372,8 @@ public class DriveSubsystem extends Subsystem implements Item {
         return () -> (isPath ? pathController.getYawError() : 0.0);
       case CLOSED_LOOP_TARGET:
         return () -> (isPath ? pathController.getSetpointPos() : 0.0);
+      case VALUE:
+        return () -> getGyro().getAngle();
       default:
         return () -> 2767.0;
     }
