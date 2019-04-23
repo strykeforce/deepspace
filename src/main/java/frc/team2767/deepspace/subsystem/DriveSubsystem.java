@@ -99,10 +99,10 @@ public class DriveSubsystem extends Subsystem implements Item {
   // PATHFINDER
   ////////////////////////////////////////////////////////////////////////////
 
-  public void startPath(String path, double targetYaw) {
+  public void startPath(String path, double targetYaw, boolean isDriftOut) {
     this.targetYaw = targetYaw;
     logger.debug("starting path");
-    this.pathController = new PathController(path, targetYaw, true);
+    this.pathController = new PathController(path, targetYaw, isDriftOut);
     pathController.start();
     isPath = true;
   }

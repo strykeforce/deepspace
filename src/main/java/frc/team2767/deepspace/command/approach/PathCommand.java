@@ -9,16 +9,22 @@ public class PathCommand extends Command {
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private final String name;
   private final double targetYaw;
+  private final boolean isDriftOut;
 
   public PathCommand(String name, double targetYaw) {
+    this(name, targetYaw, true);
+  }
+
+  public PathCommand(String name, double targetYaw, boolean isDriftOut) {
     this.name = name;
     this.targetYaw = targetYaw;
+    this.isDriftOut = isDriftOut;
     requires(DRIVE);
   }
 
   @Override
   protected void initialize() {
-    DRIVE.startPath(name, targetYaw);
+    DRIVE.startPath(name, targetYaw, isDriftOut);
   }
 
   @Override

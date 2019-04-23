@@ -19,10 +19,7 @@ public class SandstormCommandGroup extends CommandGroup {
     addSequential(
         new CommandGroup() {
           {
-            addParallel(
-                new ChooseAutonFieldSideCommand(
-                    new PathCommand("hab_to_cargo_l", 90.0), // 90.0
-                    new PathCommand("hab_to_cargo_r", 90.0))); // 90.0
+            addParallel(new ChooseStartPathCommand()); // 90.0
             addParallel(new BiscuitPositionAboveCameraCommand());
             addParallel(new LightsOnCommand());
           }

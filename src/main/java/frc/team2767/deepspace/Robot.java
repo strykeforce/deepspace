@@ -33,6 +33,7 @@ public class Robot extends TimedRobot {
   private static AutonChooser AUTON;
   private static boolean isEvent;
   private static CommandGroup sandstorm;
+  public static StartLevel startLevel = StartLevel.ONE;
 
   private Logger logger;
 
@@ -120,5 +121,10 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     Scheduler.getInstance().run();
+  }
+
+  public enum StartLevel {
+    ONE,
+    TWO;
   }
 }
