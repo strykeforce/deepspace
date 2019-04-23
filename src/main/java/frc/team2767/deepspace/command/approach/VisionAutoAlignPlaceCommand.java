@@ -13,7 +13,7 @@ import org.strykeforce.thirdcoast.swerve.SwerveDrive;
 import org.strykeforce.thirdcoast.util.RateLimit;
 
 public class VisionAutoAlignPlaceCommand extends Command {
-  private static final double kP_STRAFE = 0.11; // 0.11
+  private static final double kP_STRAFE = 0.07; // 0.11
   private static final double kP_YAW = 0.01; // 0.00625 tuning for NT method, 0.01 pyeye
   private static final double MAX_YAW = 0.3;
   private static final double goodEnoughYaw = 1.5;

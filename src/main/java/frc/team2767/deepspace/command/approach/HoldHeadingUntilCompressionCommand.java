@@ -18,7 +18,7 @@ public class HoldHeadingUntilCompressionCommand extends Command {
   private static final VacuumSubsystem VACUUM = Robot.VACUUM;
   private static final VisionSubsystem VISION = Robot.VISION;
   private static final double FORWARD_OUTPUT = 0.2;
-  private static final double OUT_TIME_SEC = 0.075;
+  private static final double OUT_TIME_SEC = 0.05;
   private static final double PAUSE_TIME = 0.2;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private DriveState driveState;
