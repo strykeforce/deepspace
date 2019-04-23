@@ -42,8 +42,9 @@ public class VisionSubsystem extends Subsystem implements Item {
   private static final double CAMERA_RANGE_SLOPE_LEFT = 1.0499; // 0.8259
   private static final double CAMERA_RANGE_OFFSET_LEFT = -4.8818; // -5.6325
   // NEGATIVE = TOWARDS FIELD LEFT
-  private static final double STRAFE_CORRECTION_RIGHT = 0.0; // -1.0
-  private static final double STRAFE_CORRECTION_LEFT = 1.0;
+  private static final double STRAFE_CORRECTION_RIGHT =
+      0.325; // -1.0 // NEGATIVE TO FIELD LEFT FOR THIS ONE?
+  private static final double STRAFE_CORRECTION_LEFT = 0.9;
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final DigitalOutput lightsOutput6 = new DigitalOutput(6);
@@ -55,6 +56,7 @@ public class VisionSubsystem extends Subsystem implements Item {
   public ElevatorLevel elevatorLevel = ElevatorLevel.NOTSET;
   public StartSide startSide = StartSide.NOTSET;
   private NetworkTableEntry bearingEntry;
+  private NetworkTableEntry cameraMode;
   private NetworkTableEntry rangeEntry;
   private NetworkTableEntry cameraIDEntry;
   private NetworkTableEntry targetYawEntry;
@@ -69,18 +71,21 @@ public class VisionSubsystem extends Subsystem implements Item {
   private boolean blinkEnabled;
   private LightPattern currentPattern;
   private double lightState;
+  private double strafeError = 0;
 
   public VisionSubsystem() {
 
     CameraServer cameraServer = CameraServer.getInstance();
     NetworkTableInstance instance = NetworkTableInstance.getDefault();
     NetworkTable table = instance.getTable("Pyeye");
+    cameraMode = table.getEntry("camera_mode");
     bearingEntry = table.getEntry("camera_bearing");
     rangeEntry = table.getEntry("camera_range");
     cameraIDEntry = table.getEntry("camera_id");
     targetYawEntry = table.getEntry("target_yaw");
     tuningEntry = table.getEntry("tuning_id");
     tuningFinished = table.getEntry("tuning_finished");
+    cameraMode.setString("comp");
     targetYawEntry.setNumber(0.0);
     bearingEntry.setNumber(0.0);
     rangeEntry.setNumber(-1.0);
@@ -153,14 +158,6 @@ public class VisionSubsystem extends Subsystem implements Item {
     logger.info("set direction to {}", direction);
   }
 
-  public void runTuning(int camID) {
-    tuningEntry.setNumber(camID);
-  }
-
-  public boolean tuneFinished() {
-    return ((int) tuningFinished.getNumber(0) == 1);
-  }
-
   public void selectCamera() {
     VisionSubsystem.Camera camera;
     camera = Camera.LEFT;
@@ -170,6 +167,19 @@ public class VisionSubsystem extends Subsystem implements Item {
 
     logger.info("chose {} camera", camera);
     cameraIDEntry.setNumber(camera.id);
+  }
+
+  public void setCameraMode(String mode) {
+    cameraMode.setString(mode);
+  }
+
+  public void runTuning(int camID) {
+    tuningEntry.setNumber(camID);
+    logger.debug("tuning entry set to = {}", tuningEntry.getNumber(2767.0));
+  }
+
+  public boolean tuneFinished() {
+    return (tuningFinished.getNumber(0.0).equals(1.0));
   }
 
   public void setElevatorLevel(ElevatorLevel elevatorLevel) {
@@ -208,23 +218,6 @@ public class VisionSubsystem extends Subsystem implements Item {
     return blinkTimer.get() > currentPattern.duration;
   }
 
-  public double getRawBearing() {
-    return (rawBearing
-        - (direction == RIGHT ? GLUE_CORRECTION_FACTOR_RIGHT : GLUE_CORRECTION_FACTOR_LEFT)
-            * (direction == RIGHT
-                ? CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_RIGHT
-                : CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_LEFT));
-  }
-
-  public double getRawRange() {
-    return (rawRange * (direction == RIGHT ? CAMERA_RANGE_SLOPE_RIGHT : CAMERA_RANGE_SLOPE_LEFT)
-        + (direction == RIGHT ? CAMERA_RANGE_OFFSET_RIGHT : CAMERA_RANGE_OFFSET_LEFT));
-  }
-
-  public double getStrafeCorrection() {
-    return direction == RIGHT ? STRAFE_CORRECTION_RIGHT : STRAFE_CORRECTION_LEFT;
-  }
-
   @Override
   protected void initDefaultCommand() {
     setDefaultCommand(new QueryPyeyeDefaultCommand());
@@ -241,6 +234,72 @@ public class VisionSubsystem extends Subsystem implements Item {
 
   public void pyeyeDump() {
     logger.debug("PYEYE DUMP\nrange {} at {} degree\n", correctedRange, correctedHeading);
+  }
+
+  @NotNull
+  @Override
+  public String getDescription() {
+    return "Vision Subsystem";
+  }
+
+  @Override
+  public int getDeviceId() {
+    return 0;
+  }
+
+  @NotNull
+  @Override
+  public Set<Measure> getMeasures() {
+    return Set.of(Measure.POSITION, Measure.ANGLE, Measure.VALUE, Measure.COMPONENT_STRAFE);
+  }
+
+  @NotNull
+  @Override
+  public String getType() {
+    return "vision";
+  }
+
+  @Override
+  public int compareTo(@NotNull Item item) {
+    return 0;
+  }
+
+  @NotNull
+  @Override
+  public DoubleSupplier measurementFor(@NotNull Measure measure) {
+    switch (measure) {
+      case POSITION:
+        return this::getRawRange;
+      case ANGLE:
+        return this::getCorrectedBearing;
+      case VALUE:
+        return () -> lightState;
+      case COMPONENT_STRAFE:
+        return () -> strafeError;
+      default:
+        return () -> 2767;
+    }
+  }
+
+  public double getRawRange() {
+    return (rawRange * (direction == RIGHT ? CAMERA_RANGE_SLOPE_RIGHT : CAMERA_RANGE_SLOPE_LEFT)
+        + (direction == RIGHT ? CAMERA_RANGE_OFFSET_RIGHT : CAMERA_RANGE_OFFSET_LEFT));
+  }
+
+  public double getCorrectedBearing() {
+    return (rawBearing
+        - (direction == RIGHT ? GLUE_CORRECTION_FACTOR_RIGHT : GLUE_CORRECTION_FACTOR_LEFT)
+            * (direction == RIGHT
+                ? CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_RIGHT
+                : CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_LEFT));
+  }
+
+  public double getStrafeCorrection() {
+    return direction == RIGHT ? STRAFE_CORRECTION_RIGHT : STRAFE_CORRECTION_LEFT;
+  }
+
+  public void setStrafeError(double strafeError) {
+    this.strafeError = strafeError;
   }
 
   public enum Camera {
@@ -264,49 +323,6 @@ public class VisionSubsystem extends Subsystem implements Item {
     LightPattern(double period, double duration) {
       this.period = period;
       this.duration = duration;
-    }
-  }
-
-  @NotNull
-  @Override
-  public String getDescription() {
-    return "Vision Subsystem";
-  }
-
-  @Override
-  public int getDeviceId() {
-    return 0;
-  }
-
-  @NotNull
-  @Override
-  public Set<Measure> getMeasures() {
-    return Set.of(Measure.POSITION, Measure.ANGLE, Measure.VALUE);
-  }
-
-  @NotNull
-  @Override
-  public String getType() {
-    return "vision";
-  }
-
-  @Override
-  public int compareTo(@NotNull Item item) {
-    return 0;
-  }
-
-  @NotNull
-  @Override
-  public DoubleSupplier measurementFor(@NotNull Measure measure) {
-    switch (measure) {
-      case POSITION:
-        return () -> getRawRange();
-      case ANGLE:
-        return () -> getRawBearing();
-      case VALUE:
-        return () -> lightState;
-      default:
-        return () -> 2767;
     }
   }
 }

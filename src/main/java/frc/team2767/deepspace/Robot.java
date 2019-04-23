@@ -6,7 +6,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team2767.deepspace.command.sequences.pickup.SandstormHatchPickupCommandGroup;
+import frc.team2767.deepspace.command.approach.sandstorm.SandstormCommandGroup;
+import frc.team2767.deepspace.control.AutonChooser;
 import frc.team2767.deepspace.control.Controls;
 import frc.team2767.deepspace.subsystem.*;
 import frc.team2767.deepspace.subsystem.safety.SafetySubsystem;
@@ -27,10 +28,12 @@ public class Robot extends TimedRobot {
   public static SafetySubsystem SAFETY;
   public static VacuumSubsystem VACUUM;
   public static ClimbSubsystem CLIMB;
-
   public static Controls CONTROLS;
+
+  private static AutonChooser AUTON;
   private static boolean isEvent;
-  private static CommandGroup getHatch;
+  private static CommandGroup sandstorm;
+  public static StartLevel startLevel = StartLevel.ONE;
 
   private Logger logger;
 
@@ -64,7 +67,8 @@ public class Robot extends TimedRobot {
     // NullPointerExceptions in commands that require() Subsystems above.
     CONTROLS = new Controls();
 
-    getHatch = new SandstormHatchPickupCommandGroup();
+    // not a subsystem
+    AUTON = new AutonChooser();
 
     Session.INSTANCE.setBaseUrl("https://keeper.strykeforce.org");
 
@@ -73,23 +77,29 @@ public class Robot extends TimedRobot {
     BISCUIT.zero();
     INTAKE.zero();
 
-    if (!isEvent) {
-      TELEMETRY.start();
-    }
+    sandstorm = new SandstormCommandGroup();
 
     SmartDashboard.putBoolean("Game/SandstormPickUp", false);
     SmartDashboard.putBoolean("Game/haveHatch", false);
     SmartDashboard.putBoolean("Game/climbOnTarget", false);
     SmartDashboard.putBoolean("Game/climbPrecheck", false);
-    //    new SmartDashboardControls();
+
+    // must be last
+    if (!isEvent) {
+      TELEMETRY.start();
+    }
+  }
+
+  @Override
+  public void disabledInit() {
+    AUTON.reset();
   }
 
   @Override
   public void autonomousInit() {
     BISCUIT.setPosition(BISCUIT.getPosition());
     DRIVE.setAngleAdjustment(true);
-    VISION.startSide = StartSide.RIGHT;
-    getHatch.start();
+    sandstorm.start();
   }
 
   @Override
@@ -99,6 +109,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
+    AUTON.checkSwitch();
     Scheduler.getInstance().run();
   }
 
@@ -110,5 +121,10 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     Scheduler.getInstance().run();
+  }
+
+  public enum StartLevel {
+    ONE,
+    TWO;
   }
 }

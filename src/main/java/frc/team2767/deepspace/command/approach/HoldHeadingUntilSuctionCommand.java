@@ -1,5 +1,6 @@
 package frc.team2767.deepspace.command.approach;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,21 +17,21 @@ public class HoldHeadingUntilSuctionCommand extends Command {
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VacuumSubsystem VACUUM = Robot.VACUUM;
   private static final VisionSubsystem VISION = Robot.VISION;
-  private static DriverControls controls;
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-  private static DriveState driveState;
-  private static double initialPressure;
-  private static double forward;
-  private static ExpoScale driveExpo;
-  private static double currentPressure;
-  private static double outInitTime;
-
-  private static final double HATCH_SEAL_GOOD_ENOUGH = 7.5;
+  private static final double HATCH_SEAL_GOOD_ENOUGH = 2.5;
   private static final double FWD_SCALE = 0.2;
   private static final double DRIVE_EXPO = 0.5;
   private static final double DEADBAND = 0.05;
-  private static final double OUT_TIME_SEC = 0.25;
+  private static final double OUT_TIME_SEC = 0.15;
+  private static final double AUTON_DRIVE_PERCENT = 0.25;
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private DriverControls controls;
+  private DriveState driveState;
+  private double initialPressure;
+  private double forward;
+  private ExpoScale driveExpo;
+  private double currentPressure;
+  private double outInitTime;
+  private boolean isAuton;
 
   public HoldHeadingUntilSuctionCommand() {
     requires(DRIVE);
@@ -39,6 +40,7 @@ public class HoldHeadingUntilSuctionCommand extends Command {
 
   @Override
   protected void initialize() {
+    isAuton = DriverStation.getInstance().isAutonomous();
     controls = Robot.CONTROLS.getDriverControls();
     driveState = DriveState.SEAL;
     initialPressure = VACUUM.getPressure();
@@ -49,7 +51,8 @@ public class HoldHeadingUntilSuctionCommand extends Command {
   protected void execute() {
     switch (driveState) {
       case SEAL:
-        forward = driveExpo.apply(controls.getForward()) * FWD_SCALE;
+        forward =
+            isAuton ? -AUTON_DRIVE_PERCENT : driveExpo.apply(controls.getForward()) * FWD_SCALE;
         DRIVE.drive(forward, 0.0, 0.0);
         currentPressure = VACUUM.getPressure();
         if ((currentPressure - initialPressure) > HATCH_SEAL_GOOD_ENOUGH) {
@@ -61,8 +64,11 @@ public class HoldHeadingUntilSuctionCommand extends Command {
         }
         break;
       case OUT:
-        forward = driveExpo.apply(controls.getForward()) * FWD_SCALE;
-        DRIVE.drive(forward, 0.0, 0.0);
+        forward =
+            isAuton
+                ? AUTON_DRIVE_PERCENT * 2.0
+                : driveExpo.apply(controls.getForward()) * FWD_SCALE;
+        DRIVE.drive(1.1 * forward, 0.0, 0.0);
         if (Timer.getFPGATimestamp() - outInitTime > OUT_TIME_SEC) {
           driveState = DriveState.DONE;
           logger.info("Done Auto Hatch Pickup");

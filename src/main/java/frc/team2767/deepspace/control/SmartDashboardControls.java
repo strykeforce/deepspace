@@ -17,7 +17,9 @@ import frc.team2767.deepspace.command.approach.YawToTargetCommand;
 import frc.team2767.deepspace.command.approach.sequences.AutoHatchPlaceCommandGroup;
 import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
-import frc.team2767.deepspace.command.climb.*;
+import frc.team2767.deepspace.command.climb.ClimbAutoCommand;
+import frc.team2767.deepspace.command.climb.DeploySequenceCommandGroup;
+import frc.team2767.deepspace.command.climb.StopClimbCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSafeZeroCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
 import frc.team2767.deepspace.command.intake.IntakePositionCommand;
@@ -53,6 +55,7 @@ public class SmartDashboardControls {
       addPitCommands();
       addAzimuthCommands();
       addVisionCommands();
+      addPathTest();
     }
   }
 
@@ -61,7 +64,7 @@ public class SmartDashboardControls {
     SmartDashboard.putData("Game/tridentSol", VACUUM.getTridentSolenoid());
     SmartDashboard.putBoolean("Game/onTarget", false);
     SmartDashboard.putData("Game/SandstormHatchPickUp", new SandstormHatchPickupCommandGroup());
-    SmartDashboard.putData("Game/hatchPlace", new AutoHatchPlaceCommandGroup());
+    //    SmartDashboard.putData("Game/hatchPlace", new AutoHatchPlaceCommandGroup(0.0));
     SmartDashboard.putData("Game/Gyro", Robot.DRIVE.getGyro());
   }
 
@@ -122,6 +125,27 @@ public class SmartDashboardControls {
     SmartDashboard.putData("Game/OrthogMvmt", new OrthogonalMovementCommand());
     SmartDashboard.putData("Pit/LightsOn", new LightsOnCommand());
     SmartDashboard.putData("Pit/LightsOff", new LightsOffCommand());
+  }
+
+  private void addPathTest() {
+
+    ShuffleboardTab pathTab = Shuffleboard.getTab("Path");
+    pathTab.add("-90.0", new AutoHatchPlaceCommandGroup(-90.0));
+    pathTab.add("90.0", new AutoHatchPlaceCommandGroup(90.0));
+    pathTab.add("-180.0", new AutoHatchPlaceCommandGroup(-180.0));
+    pathTab.add("180.0", new AutoHatchPlaceCommandGroup(180.0));
+    pathTab.add("0.0", new AutoHatchPlaceCommandGroup(0.0));
+    //    pathTab.add("set left", new SetFieldDirectionCommand(FieldDirection.LEFT));
+    //    pathTab.add("path 1", new PathCommand("hab_to_cargo_l", 90.0));
+    //    pathTab.add("place 0.0", new AutoHatchPlaceCommandGroup(0.0));
+    //    pathTab.add("path 2", new PathCommand("cargo_front_to_loading_l", 90.0));
+    //    pathTab.add("pickip", new AutoHatchPickupCommandGroup());
+    //    pathTab.add("set right", new SetFieldDirectionCommand(FieldDirection.RIGHT));
+    //    pathTab.add("path 3", new PathCommand("loading_to_cargo_side_l", 0.0));
+    //    pathTab.add("place 90.0", new AutoHatchPlaceCommandGroup(-90.0)); // FIXME: left v. right
+    //    pathTab.add("r_hab_cargo", new PathCommand("hab_to_cargo_r", 90.0));
+    //    pathTab.add("r_cargo_front_loading", new PathCommand("cargo_front_to_loading_r", 90.0));
+    //    pathTab.add("r_loading_cargo_side", new PathCommand("loading_to_cargo_side_r", 0.0));
   }
 
   private void addTestCommands() {

@@ -4,7 +4,10 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
-import frc.team2767.deepspace.subsystem.*;
+import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
+import frc.team2767.deepspace.subsystem.DriveSubsystem;
+import frc.team2767.deepspace.subsystem.VacuumSubsystem;
+import frc.team2767.deepspace.subsystem.VisionSubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
@@ -14,13 +17,13 @@ public class HoldHeadingUntilCompressionCommand extends Command {
   private static final BiscuitSubsystem BISCUIT = Robot.BISCUIT;
   private static final VacuumSubsystem VACUUM = Robot.VACUUM;
   private static final VisionSubsystem VISION = Robot.VISION;
-  private static final double STRAFE_OUTPUT = 0.2;
-  private static final double OUT_TIME_SEC = 1.0;
+  private static final double FORWARD_OUTPUT = 0.2;
+  private static final double OUT_TIME_SEC = 0.05;
   private static final double PAUSE_TIME = 0.2;
-  private static DriveState driveState;
-  private static double strafe;
-  private static double outInitTime;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private DriveState driveState;
+  private double forward;
+  private double outInitTime;
   private double pauseInitTime;
 
   public HoldHeadingUntilCompressionCommand() {
@@ -29,15 +32,11 @@ public class HoldHeadingUntilCompressionCommand extends Command {
 
   @Override
   protected void initialize() {
+    forward = FORWARD_OUTPUT;
     driveState = DriveState.PLACE;
     DRIVE.setDriveMode(SwerveDrive.DriveMode.CLOSED_LOOP);
-    if (VISION.startSide == StartSide.LEFT) {
-      strafe = STRAFE_OUTPUT;
-    } else {
-      strafe = STRAFE_OUTPUT * -1;
-    }
     logger.info("Hold Heading Until Compression");
-    DRIVE.drive(0.0, strafe, 0.0);
+    DRIVE.drive(forward, 0.0, 0.0);
   }
 
   @Override
@@ -55,12 +54,7 @@ public class HoldHeadingUntilCompressionCommand extends Command {
       case PAUSE:
         logger.debug("{} - {} > {}", Timer.getFPGATimestamp(), pauseInitTime, PAUSE_TIME);
         if (Timer.getFPGATimestamp() - pauseInitTime > PAUSE_TIME) {
-          if (VISION.startSide == StartSide.LEFT) {
-            strafe = STRAFE_OUTPUT * -1;
-          } else {
-            strafe = STRAFE_OUTPUT;
-          }
-          DRIVE.drive(0.0, strafe, 0.0);
+          DRIVE.drive(-forward * 2.0, 0.0, 0.0);
           driveState = DriveState.OUT;
           logger.debug("pause hatch place");
           VISION.enableLights(false);
@@ -85,7 +79,8 @@ public class HoldHeadingUntilCompressionCommand extends Command {
 
   @Override
   protected void end() {
-    DRIVE.stop();
+    DRIVE.undoGyroOffset();
+    //    DRIVE.stop();
   }
 
   private enum DriveState {

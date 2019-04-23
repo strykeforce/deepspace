@@ -20,7 +20,6 @@ public class WaitForBeamBreakCommand extends Command {
     if (INTAKE.isBeamBroken() && !hasBroken) {
       hasBroken = true;
       breakTime = System.currentTimeMillis();
-      INTAKE.setPosition(105);
     }
   }
 

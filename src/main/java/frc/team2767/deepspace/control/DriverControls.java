@@ -4,9 +4,12 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.ZeroGyroCommand;
+import frc.team2767.deepspace.command.approach.sandstorm.AutoPlaceTestCommand;
 import frc.team2767.deepspace.command.approach.sequences.AutoHatchPickupCommandGroup;
-import frc.team2767.deepspace.command.approach.sequences.AutoHatchPlaceCommandGroup;
-import frc.team2767.deepspace.command.biscuit.*;
+import frc.team2767.deepspace.command.biscuit.BiscuitNegativeCommand;
+import frc.team2767.deepspace.command.biscuit.BiscuitPositiveCommand;
+import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
+import frc.team2767.deepspace.command.biscuit.BiscuitZeroCommand;
 import frc.team2767.deepspace.command.climb.ClimbJogCommand;
 import frc.team2767.deepspace.command.climb.ClimbSlowVelocityCommand;
 import frc.team2767.deepspace.command.climb.StopClimbCommand;
@@ -55,8 +58,8 @@ public class DriverControls {
     // interrupt
     // new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenPressed(new InterruptCommand());
     // new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenPressed(new InterruptCommand());
-    new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenPressed(new AutoHatchPlaceCommandGroup());
-    new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenPressed(new AutoHatchPlaceCommandGroup());
+    new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenPressed(new AutoPlaceTestCommand());
+    new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenPressed(new AutoPlaceTestCommand());
 
     // biscuit
     new JoystickButton(joystick, Trim.LEFT_X_POS.id).whenPressed(new BiscuitPositiveCommand());

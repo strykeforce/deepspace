@@ -6,6 +6,7 @@ import frc.team2767.deepspace.command.intake.WaitForIntakeBeamCommand;
 
 public class AutoCargoPickupCommandGroup extends CommandGroup {
   public AutoCargoPickupCommandGroup() {
+    addParallel(new WaitForIntakeBeamCommand());
     addParallel(
         new CommandGroup() {
           {
@@ -14,6 +15,5 @@ public class AutoCargoPickupCommandGroup extends CommandGroup {
             addSequential(new CoconutPickupCommandGroup());
           }
         });
-    addParallel(new WaitForIntakeBeamCommand());
   }
 }
