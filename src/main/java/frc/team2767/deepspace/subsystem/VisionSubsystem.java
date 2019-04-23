@@ -70,6 +70,7 @@ public class VisionSubsystem extends Subsystem implements Item {
   private boolean blinkEnabled;
   private LightPattern currentPattern;
   private double lightState;
+  private double strafeError = 0;
 
   public VisionSubsystem() {
 
@@ -216,10 +217,6 @@ public class VisionSubsystem extends Subsystem implements Item {
     return blinkTimer.get() > currentPattern.duration;
   }
 
-  public double getStrafeCorrection() {
-    return direction == RIGHT ? STRAFE_CORRECTION_RIGHT : STRAFE_CORRECTION_LEFT;
-  }
-
   @Override
   protected void initDefaultCommand() {
     setDefaultCommand(new QueryPyeyeDefaultCommand());
@@ -252,7 +249,7 @@ public class VisionSubsystem extends Subsystem implements Item {
   @NotNull
   @Override
   public Set<Measure> getMeasures() {
-    return Set.of(Measure.POSITION, Measure.ANGLE, Measure.VALUE);
+    return Set.of(Measure.POSITION, Measure.ANGLE, Measure.VALUE, Measure.COMPONENT_STRAFE);
   }
 
   @NotNull
@@ -271,11 +268,13 @@ public class VisionSubsystem extends Subsystem implements Item {
   public DoubleSupplier measurementFor(@NotNull Measure measure) {
     switch (measure) {
       case POSITION:
-        return () -> getRawRange();
+        return this::getRawRange;
       case ANGLE:
-        return () -> getCorrectedBearing();
+        return this::getCorrectedBearing;
       case VALUE:
         return () -> lightState;
+      case COMPONENT_STRAFE:
+        return () -> strafeError;
       default:
         return () -> 2767;
     }
@@ -292,6 +291,14 @@ public class VisionSubsystem extends Subsystem implements Item {
             * (direction == RIGHT
                 ? CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_RIGHT
                 : CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_LEFT));
+  }
+
+  public double getStrafeCorrection() {
+    return direction == RIGHT ? STRAFE_CORRECTION_RIGHT : STRAFE_CORRECTION_LEFT;
+  }
+
+  public void setStrafeError(double strafeError) {
+    this.strafeError = strafeError;
   }
 
   public enum Camera {

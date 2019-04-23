@@ -16,7 +16,6 @@ public class SandstormCommandGroup extends CommandGroup {
   public SandstormCommandGroup() {
     addSequential(new SandstormHatchPickupCommandGroup(), 0.5);
     addSequential(new SetFieldDirectionCommand(FieldDirection.LEFT));
-    addSequential(new LightsOnCommand());
     addSequential(
         new CommandGroup() {
           {

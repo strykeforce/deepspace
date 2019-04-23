@@ -20,10 +20,10 @@ public class HoldHeadingUntilCompressionCommand extends Command {
   private static final double FORWARD_OUTPUT = 0.2;
   private static final double OUT_TIME_SEC = 0.075;
   private static final double PAUSE_TIME = 0.2;
-  private static DriveState driveState;
-  private static double forward;
-  private static double outInitTime;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private DriveState driveState;
+  private double forward;
+  private double outInitTime;
   private double pauseInitTime;
 
   public HoldHeadingUntilCompressionCommand() {

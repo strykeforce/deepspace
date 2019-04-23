@@ -23,9 +23,9 @@ public class HoldHeadingUntilSuctionCommand extends Command {
   private static final double DEADBAND = 0.05;
   private static final double OUT_TIME_SEC = 0.15;
   private static final double AUTON_DRIVE_PERCENT = 0.25;
-  private static DriverControls controls;
-  private static DriveState driveState;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private DriverControls controls;
+  private DriveState driveState;
   private double initialPressure;
   private double forward;
   private ExpoScale driveExpo;

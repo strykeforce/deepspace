@@ -16,9 +16,9 @@ public class AlignToFieldPickupCommand extends Command {
   private static DriverControls controls;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  private static ExpoScale driveExpo;
-  private static double targetYaw;
-  private static double yawError;
+  private ExpoScale driveExpo;
+  private double targetYaw;
+  private double yawError;
 
   private static final double DEADBAND = 0.05;
   private static final double DRIVE_EXPO = 0.5;

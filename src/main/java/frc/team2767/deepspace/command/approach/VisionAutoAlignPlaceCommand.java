@@ -7,18 +7,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
 import frc.team2767.deepspace.subsystem.VisionSubsystem;
-import java.util.Set;
-import java.util.function.DoubleSupplier;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
-import org.strykeforce.thirdcoast.telemetry.TelemetryService;
-import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
-import org.strykeforce.thirdcoast.telemetry.item.Item;
 import org.strykeforce.thirdcoast.util.RateLimit;
 
-public class VisionAutoAlignPlaceCommand extends Command implements Item {
+public class VisionAutoAlignPlaceCommand extends Command {
   private static final double kP_STRAFE = 0.11; // 0.11
   private static final double kP_YAW = 0.01; // 0.00625 tuning for NT method, 0.01 pyeye
   private static final double MAX_YAW = 0.3;
@@ -28,25 +22,21 @@ public class VisionAutoAlignPlaceCommand extends Command implements Item {
 
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VisionSubsystem VISION = Robot.VISION;
-
-  private static double range;
-  private static double forward;
-  private static double strafeError;
-  private static double yawError;
-  private static double strafeCorrection;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final double gyroOffset;
+  private double range;
+  private double forward;
+  private double strafeError;
+  private double yawError;
+  private double strafeCorrection;
   private double targetYaw;
   private boolean isGood = false;
-  private RateLimit rateLimit;
+  private RateLimit strafeRateLimit;
 
   public VisionAutoAlignPlaceCommand(double gyroOffset) {
     requires(DRIVE);
     this.gyroOffset = gyroOffset;
-    rateLimit = new RateLimit(0.05); // 0.015
-    TelemetryService telemetryService = Robot.TELEMETRY;
-    telemetryService.stop();
-    telemetryService.register(this);
+    strafeRateLimit = new RateLimit(0.05); // 0.015
   }
 
   @Override
@@ -61,6 +51,7 @@ public class VisionAutoAlignPlaceCommand extends Command implements Item {
     } else {
       targetYaw = -90.0;
     }
+    DRIVE.setTargetYaw(targetYaw);
     forward = FORWARD_OUTPUT;
     logger.debug("forward = {}", forward);
     logger.info("target yaw: {}", targetYaw);
@@ -76,6 +67,7 @@ public class VisionAutoAlignPlaceCommand extends Command implements Item {
 
     // Calculate Yaw Term based on gyro
     yawError = targetYaw - Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0);
+    DRIVE.setYawError(yawError);
     double yaw = kP_YAW * yawError;
     if (yaw > MAX_YAW) yaw = MAX_YAW;
     if (yaw < -MAX_YAW) yaw = -MAX_YAW;
@@ -85,11 +77,13 @@ public class VisionAutoAlignPlaceCommand extends Command implements Item {
 
     double strafe;
     strafeError = Math.sin(Math.toRadians(VISION.getCorrectedBearing())) * range - strafeCorrection;
+    VISION.setStrafeError(strafeError);
+    logger.info("strafe error = {}", strafeError);
     // Only take over strafe control if pyeye has a target and the robot is straight to the field
     if (isGood && onTarget) strafe = strafeError * kP_STRAFE * forward;
     else strafe = 0;
 
-    DRIVE.drive(forward, rateLimit.apply(strafe), yaw);
+    DRIVE.drive(forward, strafeRateLimit.apply(strafe), yaw);
   }
 
   @Override
@@ -100,48 +94,5 @@ public class VisionAutoAlignPlaceCommand extends Command implements Item {
   @Override
   protected void end() {
     logger.info("End Auto Align Place Vision");
-  }
-
-  @NotNull
-  @Override
-  public String getDescription() {
-    return "VisionPlaceCommand";
-  }
-
-  @Override
-  public int getDeviceId() {
-    return 0;
-  }
-
-  @NotNull
-  @Override
-  public Set<Measure> getMeasures() {
-    return Set.of(Measure.ANGLE, Measure.RANGE);
-  }
-
-  @NotNull
-  @Override
-  public String getType() {
-    return "VisionCommand";
-  }
-
-  @Override
-  public int compareTo(@NotNull Item item) {
-    return 0;
-  }
-
-  @NotNull
-  @Override
-  public DoubleSupplier measurementFor(@NotNull Measure measure) {
-    switch (measure) {
-      case ANGLE:
-        return () -> yawError;
-      case RANGE:
-        return () -> strafeError;
-        //      case COMPONENT_STRAFE:
-        //        return () -> strafe;
-      default:
-        return () -> 2767;
-    }
   }
 }

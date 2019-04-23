@@ -33,6 +33,7 @@ public class DriveSubsystem extends Subsystem implements Item {
 
   public static final double TICKS_PER_INCH = 2500;
   public static final double TICKS_PER_TOOTH = 107.8;
+  private static final VisionSubsystem VISION = Robot.VISION;
   private static final double DRIVE_SETPOINT_MAX = 25_000.0;
   private static final double ROBOT_LENGTH = 21.0;
   private static final double ROBOT_WIDTH = 26.0;
@@ -46,6 +47,8 @@ public class DriveSubsystem extends Subsystem implements Item {
   private TwistController twistController;
   private PathController pathController;
   private boolean isPath = false;
+  private double targetYaw;
+  private double yawError = 0;
 
   public DriveSubsystem() {
     swerve.setFieldOriented(true);
@@ -97,6 +100,7 @@ public class DriveSubsystem extends Subsystem implements Item {
   ////////////////////////////////////////////////////////////////////////////
 
   public void startPath(String path, double targetYaw) {
+    this.targetYaw = targetYaw;
     logger.debug("starting path");
     this.pathController = new PathController(path, targetYaw, true);
     pathController.start();
@@ -115,6 +119,10 @@ public class DriveSubsystem extends Subsystem implements Item {
     logger.debug("path interrupted");
     isPath = false;
     pathController.interrupt();
+  }
+
+  public void setTargetYaw(double targetYaw) {
+    this.targetYaw = targetYaw;
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -206,6 +214,10 @@ public class DriveSubsystem extends Subsystem implements Item {
 
   public Wheel[] getAllWheels() {
     return swerve.getWheels();
+  }
+
+  public void setYawError(double yawError) {
+    this.yawError = yawError;
   }
 
   public void adjustZero(int wheel, int teeth) {
@@ -347,7 +359,12 @@ public class DriveSubsystem extends Subsystem implements Item {
   @Override
   public Set<Measure> getMeasures() {
     return Set.of(
-        Measure.ANGLE, Measure.CLOSED_LOOP_ERROR, Measure.CLOSED_LOOP_TARGET, Measure.VALUE);
+        Measure.ANGLE,
+        Measure.CLOSED_LOOP_ERROR,
+        Measure.CLOSED_LOOP_TARGET,
+        Measure.VALUE,
+        Measure.COMPONENT_STRAFE,
+        Measure.DISPLACEMENT_EXPECTED);
   }
 
   @NotNull
@@ -368,11 +385,13 @@ public class DriveSubsystem extends Subsystem implements Item {
       case ANGLE:
         return () -> Math.IEEEremainder(getGyro().getAngle(), 360);
       case CLOSED_LOOP_ERROR:
-        return () -> (isPath ? pathController.getYawError() : 0.0);
+        return () -> yawError; // yaw error
       case CLOSED_LOOP_TARGET:
         return () -> (isPath ? pathController.getSetpointPos() : 0.0);
       case VALUE:
-        return () -> getGyro().getAngle();
+        return () -> targetYaw - getGyro().getAngle();
+      case DISPLACEMENT_EXPECTED:
+        return () -> targetYaw;
       default:
         return () -> 2767.0;
     }

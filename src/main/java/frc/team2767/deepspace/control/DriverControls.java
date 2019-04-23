@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.ZeroGyroCommand;
-import frc.team2767.deepspace.command.approach.PathCommand;
+import frc.team2767.deepspace.command.approach.sandstorm.SandstormCommandGroup;
 import frc.team2767.deepspace.command.approach.sequences.AutoHatchPickupCommandGroup;
 import frc.team2767.deepspace.command.biscuit.BiscuitNegativeCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositiveCommand;
@@ -58,10 +58,8 @@ public class DriverControls {
     // interrupt
     // new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenPressed(new InterruptCommand());
     // new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenPressed(new InterruptCommand());
-    //    new JoystickButton(joystick, Trim.LEFT_Y_POS.id)
-    //        .whenPressed(new PathCommand("loading_to_cargo_side_r", 180.0));
-    new JoystickButton(joystick, Trim.LEFT_Y_NEG.id)
-        .whenPressed(new PathCommand("loading_to_cargo_side_r", 180.0));
+    new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenPressed(new SandstormCommandGroup());
+    new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenPressed(new SandstormCommandGroup());
 
     // biscuit
     new JoystickButton(joystick, Trim.LEFT_X_POS.id).whenPressed(new BiscuitPositiveCommand());
