@@ -17,9 +17,7 @@ import frc.team2767.deepspace.command.approach.YawToTargetCommand;
 import frc.team2767.deepspace.command.approach.sequences.AutoHatchPlaceCommandGroup;
 import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitSetPositionCommand;
-import frc.team2767.deepspace.command.climb.ClimbAutoCommand;
-import frc.team2767.deepspace.command.climb.DeploySequenceCommandGroup;
-import frc.team2767.deepspace.command.climb.StopClimbCommand;
+import frc.team2767.deepspace.command.climb.*;
 import frc.team2767.deepspace.command.elevator.ElevatorSafeZeroCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
 import frc.team2767.deepspace.command.intake.IntakePositionCommand;
@@ -66,6 +64,8 @@ public class SmartDashboardControls {
     SmartDashboard.putData("Game/SandstormHatchPickUp", new SandstormHatchPickupCommandGroup());
     //    SmartDashboard.putData("Game/hatchPlace", new AutoHatchPlaceCommandGroup(0.0));
     SmartDashboard.putData("Game/Gyro", Robot.DRIVE.getGyro());
+    SmartDashboard.putData("Game/Lvl2Deploy", new ClimbLevel2DeployCommand());
+    SmartDashboard.putData("Game/Lvl2Climb", new ClimbLevel2AutoCommand());
   }
 
   private void addClimbTab() {
