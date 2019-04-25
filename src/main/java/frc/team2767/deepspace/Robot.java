@@ -29,12 +29,10 @@ public class Robot extends TimedRobot {
   public static VacuumSubsystem VACUUM;
   public static ClimbSubsystem CLIMB;
   public static Controls CONTROLS;
-
+  public static StartLevel startLevel = StartLevel.ONE;
   private static AutonChooser AUTON;
   private static boolean isEvent;
   private static CommandGroup sandstorm;
-  public static StartLevel startLevel = StartLevel.ONE;
-
   private Logger logger;
 
   public static boolean isEvent() {
