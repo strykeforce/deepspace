@@ -20,7 +20,7 @@ public class CoconutPickupAutoRetryCommand extends Command {
   private static double currentPressure;
   private static double stableCounts;
 
-  private static double DOWN_SPEED = -0.25;
+  private static double DOWN_SPEED = -0.35;
   private static final double PRESSURE_DIFFERENTIAL = 2.5; // inHg
   private static final double STABLE_COUNTS = 5;
   private static final double WAIT_TIME = 1000; // ms
