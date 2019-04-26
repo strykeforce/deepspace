@@ -63,13 +63,12 @@ public class DriverControls {
     // AutoPlaceTestRightCommand());
 
     // interrupt
-    //    new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenPressed(new InterruptCommand());
-    //    new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenPressed(new InterruptCommand());
+    //        new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenPressed(new InterruptCommand());
+    //        new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenPressed(new InterruptCommand())
+    //        ;
     //
-    //    new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenPressed(new
-    // AutoPlaceTestLeftCommand());
-    //    new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenPressed(new
-    // AutoPlaceTestLeftCommand());
+    //    new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenPressed(new SandstormCommandGroup());
+    //    new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenPressed(new SandstormCommandGroup());
 
     // biscuit
     new JoystickButton(joystick, Trim.LEFT_X_POS.id).whenPressed(new BiscuitPositiveCommand());
