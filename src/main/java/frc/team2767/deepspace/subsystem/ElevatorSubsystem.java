@@ -41,8 +41,6 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
   private static double kDownOutput;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final TalonSRX elevator = new TalonSRX(ID);
-  private ElevatorLevel elevatorLevel = ElevatorLevel.NOTSET;
-  private GamePiece currentGamepiece = GamePiece.NOTSET;
   private int setpointTicks;
   private int startPosition;
   private int stableCount;
@@ -129,7 +127,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
   }
 
   public ElevatorLevel getElevatorLevel() {
-    return elevatorLevel;
+    return VISION.elevatorLevel;
   }
 
   public List<TalonSRX> getTalons() {
@@ -137,14 +135,12 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
   }
 
   public void executePlan() {
-    currentGamepiece = VISION.gamePiece;
-    elevatorLevel = VISION.elevatorLevel;
     double newPosition =
         (elevator.getSelectedSensorPosition() + TICKS_OFFSET) / (double) TICKS_PER_INCH;
 
-    switch (currentGamepiece) {
+    switch (VISION.gamePiece) {
       case HATCH:
-        switch (elevatorLevel) {
+        switch (VISION.elevatorLevel) {
           case ONE:
             newPosition = kHatchLowPositionInches;
             break;
@@ -159,7 +155,7 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
         }
         break;
       case CARGO:
-        switch (elevatorLevel) {
+        switch (VISION.elevatorLevel) {
           case ONE:
             newPosition = kCargoLowPositionInches;
             break;
