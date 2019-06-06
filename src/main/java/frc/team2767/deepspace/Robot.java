@@ -101,16 +101,18 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     BISCUIT.setPosition(BISCUIT.getPosition());
-    DRIVE.setAngleAdjustment(true);
+    DRIVE.sandstormAxisFlip(true);
+    DRIVE.setEnableDriveAxisFlip(true);
     if (isAuton) {
-      sandstorm.start();
+      //      sandstorm.start();
     } else {
-      noAutoSandstorm.start();
+      //      noAutoSandstorm.start();
     }
   }
 
   @Override
   public void teleopInit() {
+    DRIVE.sandstormAxisFlip(false);
     VACUUM.setSolenoidsState(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP);
   }
 

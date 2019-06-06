@@ -41,6 +41,7 @@ public class DriveSubsystem extends Subsystem implements Item {
 
   private static double offsetGyro;
 
+  private static boolean enableDriveAxisFlip = false;
   private static Wheel[] wheels;
   private final SwerveDrive swerve = configSwerve();
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -53,6 +54,11 @@ public class DriveSubsystem extends Subsystem implements Item {
   public DriveSubsystem() {
     swerve.setFieldOriented(true);
     wheels = swerve.getWheels();
+  }
+
+  public void sandstormAxisFlip(boolean enable) {
+    swerve.setFieldOriented(!enable);
+    setEnableDriveAxisFlip(enable);
   }
 
   @Override
@@ -69,7 +75,11 @@ public class DriveSubsystem extends Subsystem implements Item {
   }
 
   public void drive(double forward, double strafe, double yaw) {
-    swerve.drive(forward, strafe, yaw);
+    if (enableDriveAxisFlip) {
+      swerve.drive(strafe, -forward, yaw);
+    } else {
+      swerve.drive(forward, strafe, yaw);
+    }
   }
 
   public void stop() {
@@ -122,6 +132,10 @@ public class DriveSubsystem extends Subsystem implements Item {
     pathController.interrupt();
   }
 
+  public void setEnableDriveAxisFlip(boolean enable) {
+    enableDriveAxisFlip = enable;
+  }
+
   public void setTargetYaw(double targetYaw) {
     this.targetYaw = targetYaw;
   }
@@ -155,6 +169,10 @@ public class DriveSubsystem extends Subsystem implements Item {
   public void interruptTwist() {
     logger.info("twist command interrupted");
     twistController.interrupt();
+  }
+
+  public void setFieldOriented(boolean isFieldOriented) {
+    swerve.setFieldOriented(isFieldOriented);
   }
 
   ////////////////////////////////////////////////////////////////////////////
