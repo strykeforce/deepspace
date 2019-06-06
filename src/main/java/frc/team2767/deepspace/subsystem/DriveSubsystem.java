@@ -101,7 +101,7 @@ public class DriveSubsystem extends Subsystem implements Item {
 
   public void startPath(String path, double targetYaw, boolean isDriftOut) {
     this.targetYaw = targetYaw;
-    logger.debug("starting path");
+    logger.info("starting path");
     this.pathController = new PathController(path, targetYaw, isDriftOut);
     pathController.start();
     isPath = true;
@@ -109,6 +109,7 @@ public class DriveSubsystem extends Subsystem implements Item {
 
   public boolean isPathFinished() {
     if (pathController.isFinished()) {
+      logger.info("Path finished successfully");
       isPath = false;
       return true;
     }
@@ -116,7 +117,7 @@ public class DriveSubsystem extends Subsystem implements Item {
   }
 
   public void interruptPath() {
-    logger.debug("path interrupted");
+    logger.info("path interrupted");
     isPath = false;
     pathController.interrupt();
   }

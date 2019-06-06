@@ -21,7 +21,6 @@ public class AutoHatchPlaceCommandGroup extends CommandGroup {
   public AutoHatchPlaceCommandGroup(double gyroOffset) {
 
     addSequential(new LogCommand("BEGIN AUTO HATCH PLACE"));
-
     addSequential(new LightsOnCommand());
     addSequential(
         new CommandGroup() {
