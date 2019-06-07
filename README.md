@@ -20,47 +20,51 @@ Climb        | leftSlave   | 50 | 2
 Climb        | rightMaster | 51 | 3
 Vacuum       | vacuum      | 60 | 1
 
+* Trident compression sensor attached to Biscuit Talon analog input
+* Vacuum Sensor attached to Vacuum Talon analog input
+
 ## Servos
 
-Subsystem   | Servo          | PWM
------------ | -------------- | ---
-CargoCenter | left           | 0
-CargoCenter | right          | 1
-Climb       | leftKickstand  | 2
-Climb       | rightKickstand | 3
-Climb       | ratchet        | 4
-Biscuit     | krakenRelease  | 5
-Biscuit     | krakenLock     | 6
+Subsystem   | Servo              | PWM
+----------- | ------------------ | ---
+Climb       | leftKickstand      | 2
+Climb       | rightKickstand     | 3
+Climb       | ratchet            | 4
+Biscuit     | krakenRelease      | 5
+Biscuit     | krakenLock(unused) | 6
 
-## CANifier
-
-Subsystem | CANifier | ID
---------- | -------- | --
-Trident   | trident  | 0
-
-Pin # | Name | Attached To
------ | ---- | -----------
-8     | LIMF | compression output
 
 ## DIO
 
-Subsystem   | I/O          | DIO
------------ | -------------| ---
-AutonSwitch |  0           | 0
-AutonSwitch |  1           | 1
-AutonSwitch |  2           | 2
-AutonSwitch |  3           | 3
-AutonSwitch |  4           | 4
-AutonSwitch |  5           | 5
-Vision      | lights       | 6
-Vision      | lights       | 7
-Intake      | beamBreak    | 8
-Vision      | rightCamTune | 9
+Subsystem   | I/O            | DIO
+----------- | ---------------| ---
+AutonSwitch |  0             | 0
+AutonSwitch |  1             | 1
+AutonSwitch |  2             | 2
+AutonSwitch |  3             | 3
+Intake      |  slowBeamBreak | 4
+Vision      | lights         | 5
+Vision      | lights         | 6
+Robot       | eventFlag(BNC) | 7
+Intake      | beamBreak      | 8
+Vision      | cam1Tune       | 9
+
+## Analog Inputs
+
+Subsystem | I/O        | Analog
+--------- |----------- |-------
+Vacuum    | tempSensor | 0
+Vacuum    | climbPlate | 1 
+
+## Roborio
+
+Subsystem | I/O      | Button
+--------- | -------- | -----------
+Vision    | cam0Tune | User Button
 
 ## PCM
 
 Subsystem | Valve        | Solenoid
 --------- | ------------ | --------
 Vacuum    | trident      | 0
-Vacuum    | pump         | 1
 Vacuum    | climb        | 2
