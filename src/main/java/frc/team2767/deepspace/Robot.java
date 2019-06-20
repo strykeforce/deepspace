@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.command.approach.sandstorm.SandstormCommandGroup;
+import frc.team2767.deepspace.command.sequences.pickup.SandstormHatchPickupCommandGroup;
 import frc.team2767.deepspace.control.AutonChooser;
 import frc.team2767.deepspace.control.Controls;
 import frc.team2767.deepspace.subsystem.*;
@@ -29,12 +30,12 @@ public class Robot extends TimedRobot {
   public static VacuumSubsystem VACUUM;
   public static ClimbSubsystem CLIMB;
   public static Controls CONTROLS;
-
+  public static StartLevel startLevel = StartLevel.ONE;
+  public static boolean isAuton;
   private static AutonChooser AUTON;
   private static boolean isEvent;
   private static CommandGroup sandstorm;
-  public static StartLevel startLevel = StartLevel.ONE;
-
+  private static CommandGroup noAutoSandstorm;
   private Logger logger;
 
   public static boolean isEvent() {
@@ -43,6 +44,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    isAuton = true;
     DigitalInput di = new DigitalInput(7);
     isEvent = di.get();
 
@@ -78,6 +80,7 @@ public class Robot extends TimedRobot {
     INTAKE.zero();
 
     sandstorm = new SandstormCommandGroup();
+    noAutoSandstorm = new SandstormHatchPickupCommandGroup();
 
     SmartDashboard.putBoolean("Game/SandstormPickUp", false);
     SmartDashboard.putBoolean("Game/haveHatch", false);
@@ -98,12 +101,18 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     BISCUIT.setPosition(BISCUIT.getPosition());
+    DRIVE.sandstormAxisFlip(true);
     DRIVE.setAngleAdjustment(true);
-    sandstorm.start();
+    if (isAuton) {
+      //      sandstorm.start();
+    } else {
+      //      noAutoSandstorm.start();
+    }
   }
 
   @Override
   public void teleopInit() {
+    DRIVE.sandstormAxisFlip(false);
     VACUUM.setSolenoidsState(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP);
   }
 

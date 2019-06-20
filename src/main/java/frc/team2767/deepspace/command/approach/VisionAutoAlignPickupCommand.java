@@ -100,7 +100,9 @@ public class VisionAutoAlignPickupCommand extends Command {
     if (isGood && onTarget) strafe = strafeError * kP_STRAFE * forward;
     else strafe = driveExpo.apply(controls.getStrafe());
 
-    DRIVE.drive(forward, strafeRateLimit.apply(strafe), yaw);
+    double strafeOutput = strafeRateLimit.apply(strafe);
+    logger.debug("{} {} {}", forward, strafeOutput, yaw);
+    DRIVE.drive(forward, strafeOutput, yaw);
   }
 
   @Override

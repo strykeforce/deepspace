@@ -6,15 +6,13 @@ import frc.team2767.deepspace.subsystem.Action;
 import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 import frc.team2767.deepspace.subsystem.FieldDirection;
 import frc.team2767.deepspace.subsystem.VisionSubsystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BiscuitPositionAboveCameraCommand extends Command {
   private static final BiscuitSubsystem BISCUIT = Robot.BISCUIT;
   private static final VisionSubsystem VISION = Robot.VISION;
-
-  private static final double PLACE_RIGHT = 45.0;
-  private static final double PLACE_LEFT = -45.0;
-  private static final double PICKUP_RIGHT = 65.0;
-  private static final double PICKUP_LEFT = -65.0;
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public BiscuitPositionAboveCameraCommand() {
     requires(BISCUIT);
@@ -22,18 +20,19 @@ public class BiscuitPositionAboveCameraCommand extends Command {
 
   @Override
   protected void initialize() {
+    logger.info("STARTING BISCUIT ABOVE CAMERA");
     BISCUIT.setMotionMagicAccel(BiscuitSubsystem.kSlowAccel);
     if (VISION.action == Action.PLACE) {
       if (VISION.direction == FieldDirection.RIGHT) {
-        BISCUIT.setPosition(PLACE_RIGHT);
+        BISCUIT.setPosition(BiscuitSubsystem.PLACE_RIGHT);
       } else {
-        BISCUIT.setPosition(PLACE_LEFT);
+        BISCUIT.setPosition(BiscuitSubsystem.PLACE_LEFT);
       }
     } else if (VISION.action == Action.PICKUP) {
       if (VISION.direction == FieldDirection.RIGHT) {
-        BISCUIT.setPosition(PICKUP_RIGHT);
+        BISCUIT.setPosition(BiscuitSubsystem.PICKUP_RIGHT);
       } else {
-        BISCUIT.setPosition(PICKUP_LEFT);
+        BISCUIT.setPosition(BiscuitSubsystem.PICKUP_LEFT);
       }
     }
   }
@@ -41,5 +40,10 @@ public class BiscuitPositionAboveCameraCommand extends Command {
   @Override
   protected boolean isFinished() {
     return BISCUIT.onTarget();
+  }
+
+  @Override
+  protected void end() {
+    logger.info("ENDING BISCUIT MOVEMENT");
   }
 }

@@ -6,9 +6,9 @@ import frc.team2767.deepspace.command.sequences.pickup.SandstormHatchPickupComma
 import frc.team2767.deepspace.command.states.SetFieldDirectionCommand;
 import frc.team2767.deepspace.subsystem.FieldDirection;
 
-public class AutoPlaceTestCommand extends CommandGroup {
+public class AutoPlaceTestLeftCommand extends CommandGroup {
 
-  public AutoPlaceTestCommand() {
+  public AutoPlaceTestLeftCommand() {
     addSequential(new SandstormHatchPickupCommandGroup(), 0.5);
     addSequential(new SetFieldDirectionCommand(FieldDirection.LEFT));
     addSequential(new AutoHatchPlaceCommandGroup(0.0));
