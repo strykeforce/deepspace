@@ -46,6 +46,7 @@ public class VacuumSubsystem extends Subsystem implements Item {
   private final int STABLE_THRESHOLD_CLIMB = 2;
   private final Solenoid tridentSolenoid = new Solenoid(0, Valve.TRIDENT.ID);
   private final Solenoid climbSolenoid = new Solenoid(0, Valve.CLIMB.ID);
+  private final Solenoid ballSolenoid = new Solenoid(0, Valve.BALL.ID);
   private final TalonSRX vacuum = new TalonSRX(VACUUM_ID);
   private final AnalogInput analogInput = new AnalogInput(TEMPERATURE_ID);
   private final AnalogInput climbPressure = new AnalogInput(CLIMB_PRESSURE);
@@ -61,6 +62,7 @@ public class VacuumSubsystem extends Subsystem implements Item {
 
     climbSolenoid.set(false);
     tridentSolenoid.set(false);
+    ballSolenoid.set(false);
 
     climbing = false;
 
@@ -131,6 +133,10 @@ public class VacuumSubsystem extends Subsystem implements Item {
     return climbSolenoid;
   }
 
+  public Solenoid getBallSolenoid() {
+    return ballSolenoid;
+  }
+
   public void setSolenoidsState(SolenoidStates state) {
     switch (state) {
       case CLIMB:
@@ -142,6 +148,11 @@ public class VacuumSubsystem extends Subsystem implements Item {
       case PRESSURE_ACCUMULATE:
         climbSolenoid.set(false);
         tridentSolenoid.set(false);
+        break;
+      case BALL_PICKUP:
+        ballSolenoid.set(true);
+        tridentSolenoid.set(false);
+        climbSolenoid.set(false);
         break;
       case COOL_DOWN: // fall through
       case GAME_PIECE_PICKUP:
@@ -302,6 +313,7 @@ public class VacuumSubsystem extends Subsystem implements Item {
 
   public enum Valve {
     TRIDENT(0),
+    BALL(3),
     CLIMB(2);
 
     public final int ID;
@@ -315,6 +327,7 @@ public class VacuumSubsystem extends Subsystem implements Item {
     PRESSURE_ACCUMULATE,
     CLIMB,
     GAME_PIECE_PICKUP,
+    BALL_PICKUP,
     STOP,
     COOL_DOWN
   }
