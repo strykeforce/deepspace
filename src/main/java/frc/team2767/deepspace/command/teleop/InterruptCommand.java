@@ -1,5 +1,6 @@
 package frc.team2767.deepspace.command.teleop;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team2767.deepspace.Robot;
 import frc.team2767.deepspace.subsystem.Action;
@@ -24,6 +25,10 @@ public class InterruptCommand extends InstantCommand {
 
   @Override
   protected void initialize() {
+    if (DriverStation.getInstance().isAutonomous()) {
+      DRIVE.sandstormAxisFlip(true);
+    }
+
     DRIVE.setSlotConfig(DriveSubsystem.DriveTalonConfig.DRIVE_CONFIG);
     DRIVE.undoGyroOffset();
     BISCUIT.setMotionMagicAccel(BiscuitSubsystem.kSlowAccel);
