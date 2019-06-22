@@ -25,8 +25,7 @@ public class SandstormHatchPickupCommandGroup extends CommandGroup {
         new CommandGroup() {
           {
             addParallel(new PressureSetCommand(VacuumSubsystem.kHatchPressureInHg), 0.05);
-            addParallel(
-                new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP));
+            addParallel(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.HATCH_PICKUP));
             addParallel(new SetActionCommand(Action.PLACE));
             addParallel(new SetGamePieceCommand(GamePiece.HATCH));
             addParallel(new SetFieldDirectionCommand(FieldDirection.LEFT));

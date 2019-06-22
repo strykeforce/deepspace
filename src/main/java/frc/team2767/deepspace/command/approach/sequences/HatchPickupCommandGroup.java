@@ -34,7 +34,7 @@ public class HatchPickupCommandGroup extends CommandGroup {
         });
 
     addSequential(new PressureSetCommand(VacuumSubsystem.kHatchPressureInHg), 0.3);
-    addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP));
+    addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.HATCH_PICKUP));
     addSequential(new TalonConfigCommand(DriveSubsystem.DriveTalonConfig.YAW_CONFIG));
     addSequential(new QueryPyeyeCommand());
     addSequential(new CalculateRotationCommand());

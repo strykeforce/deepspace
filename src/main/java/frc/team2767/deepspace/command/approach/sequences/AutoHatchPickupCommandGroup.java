@@ -31,7 +31,7 @@ public class AutoHatchPickupCommandGroup extends CommandGroup {
         });
 
     addSequential(new PressureSetCommand(VacuumSubsystem.kHatchPressureInHg), 0.02);
-    addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP));
+    addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.HATCH_PICKUP));
     addParallel(new ReleaseKrakenCommand(false)); // Don't want kraken in teleop
     addParallel(new BallToHatchAutoSafetyCommand());
     addSequential(new VisionAutoAlignPickupCommand());
