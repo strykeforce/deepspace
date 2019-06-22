@@ -48,6 +48,9 @@ public class VisionAutoAlignPlaceCommand extends Command {
         autoPlaceSideChooser.determineGyroOffset(
             VISION.direction, Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0));
     targetYaw = autoPlaceSideChooser.determineTargetYaw(VISION.direction);
+
+    logger.debug("offset = {} target = {}", gyroOffset, targetYaw);
+
     CONTROLS = Robot.CONTROLS;
     isSandstorm = DriverStation.getInstance().isAutonomous();
     DRIVE.setGyroOffset(gyroOffset);
@@ -55,33 +58,6 @@ public class VisionAutoAlignPlaceCommand extends Command {
     logger.info("Begin Vision Auto Align Place");
     DRIVE.setDriveMode(SwerveDrive.DriveMode.CLOSED_LOOP);
     strafeCorrection = VISION.getStrafeCorrection();
-
-    //    if (!DriverStation.getInstance().isAutonomous()) {
-    //    if (VISION.direction == LEFT) {
-    //      if (gyroAngle > -90 && gyroAngle < 45) {
-    //        targetYaw = 0;
-    //      } else if (gyroAngle >= 45 && gyroAngle <= 135) {
-    //        targetYaw = 90;
-    //      } else {
-    //        targetYaw = 180;
-    //      }
-    //    } else {
-    //      if (gyroAngle > -45 && gyroAngle < 90) {
-    //        targetYaw = 0;
-    //      } else if (gyroAngle >= -135 && gyroAngle <= -45) {
-    //        targetYaw = -90;
-    //      } else {
-    //        targetYaw = 180;
-    //      }
-    //    }
-    //    }
-    //    } else {
-    //      if (VISION.direction == LEFT) {
-    //        targetYaw = 90.0;
-    //      } else {
-    //        targetYaw = -90.0;
-    //      }
-    //    }
 
     DRIVE.setTargetYaw(targetYaw);
     if (!isSandstorm) {

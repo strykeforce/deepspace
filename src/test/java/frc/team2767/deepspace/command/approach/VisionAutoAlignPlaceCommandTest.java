@@ -1,16 +1,18 @@
 package frc.team2767.deepspace.command.approach;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import frc.team2767.deepspace.subsystem.FieldDirection;
 import frc.team2767.deepspace.util.AutoPlaceSideChooser;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class VisionAutoAlignPlaceCommandTest {
 
   AutoPlaceSideChooser autoPlaceSideChooser = new AutoPlaceSideChooser();
 
+  @Disabled
   @ParameterizedTest
   @CsvFileSource(resources = "/autoalign.csv", numLinesToSkip = 1)
   void determineGyroOffset(String direction, double gyroAngle, double gyroOffset) {
@@ -26,6 +28,7 @@ class VisionAutoAlignPlaceCommandTest {
     assertThat(offset).isEqualTo(gyroOffset);
   }
 
+  @Disabled
   @ParameterizedTest
   @CsvFileSource(resources = "/autoalign.csv", numLinesToSkip = 1)
   void determineTargetYaw(String direction, double gyroAngle, double gyroOffset, double targetYaw) {
