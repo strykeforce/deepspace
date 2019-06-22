@@ -46,6 +46,7 @@ public class VacuumSubsystem extends Subsystem implements Item {
   private final int STABLE_THRESHOLD_CLIMB = 2;
   private final Solenoid tridentSolenoid = new Solenoid(0, Valve.TRIDENT.ID);
   private final Solenoid climbSolenoid = new Solenoid(0, Valve.CLIMB.ID);
+  private final Solenoid cargoSolenoid = new Solenoid(0, Valve.CARGO.ID);
   private final TalonSRX vacuum = new TalonSRX(VACUUM_ID);
   private final AnalogInput analogInput = new AnalogInput(TEMPERATURE_ID);
   private final AnalogInput climbPressure = new AnalogInput(CLIMB_PRESSURE);
@@ -131,22 +132,32 @@ public class VacuumSubsystem extends Subsystem implements Item {
     return climbSolenoid;
   }
 
+  public Solenoid getCargoSolenoid() { return cargoSolenoid; }
+
   public void setSolenoidsState(SolenoidStates state) {
     switch (state) {
       case CLIMB:
         climbSolenoid.set(true);
         tridentSolenoid.set(false);
+        cargoSolenoid.set(false);
         climbing = true;
         break;
       case STOP: // fall through
       case PRESSURE_ACCUMULATE:
         climbSolenoid.set(false);
         tridentSolenoid.set(false);
+        cargoSolenoid.set(false);
         break;
       case COOL_DOWN: // fall through
-      case GAME_PIECE_PICKUP:
+      case HATCH_PICKUP:
         tridentSolenoid.set(true);
         climbSolenoid.set(false);
+        cargoSolenoid.set(false);
+        break;
+      case CARGO_PICKUP:
+        tridentSolenoid.set(false);
+        climbSolenoid.set(false);
+        cargoSolenoid.set(true);
         break;
       default:
         logger.warn("could not set to {}", state);
@@ -302,7 +313,8 @@ public class VacuumSubsystem extends Subsystem implements Item {
 
   public enum Valve {
     TRIDENT(0),
-    CLIMB(2);
+    CLIMB(2),
+    CARGO(3);
 
     public final int ID;
 
@@ -314,8 +326,9 @@ public class VacuumSubsystem extends Subsystem implements Item {
   public enum SolenoidStates {
     PRESSURE_ACCUMULATE,
     CLIMB,
-    GAME_PIECE_PICKUP,
+    HATCH_PICKUP,
     STOP,
-    COOL_DOWN
+    COOL_DOWN,
+    CARGO_PICKUP
   }
 }

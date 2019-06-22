@@ -213,7 +213,7 @@ public class SmartDashboardControls {
     SmartDashboard.putData("Vacuum/cool", new VacuumCooldownCommandGroup());
     SmartDashboard.putData(
         "Pit/GamePiece",
-        new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP));
+        new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.HATCH_PICKUP));
     SmartDashboard.putData(
         "Pit/PressureAccumulate",
         new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.PRESSURE_ACCUMULATE));

@@ -29,7 +29,7 @@ public class CoconutPickupCommandGroup extends CommandGroup {
                   {
                     addSequential(
                         new SetSolenoidStatesCommand(
-                            VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP));
+                            VacuumSubsystem.SolenoidStates.CARGO_PICKUP));
                     addSequential(new PressureSetCommand(VacuumSubsystem.kBallPressureInHg), 0.5);
                   }
                 });
@@ -42,7 +42,7 @@ public class CoconutPickupCommandGroup extends CommandGroup {
     new CommandGroup() {
       {
         addParallel(
-            new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP));
+            new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.HATCH_PICKUP));
         addParallel(new ElevatorDownFastOpenLoopCommand());
       }
     });*/
