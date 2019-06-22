@@ -132,7 +132,9 @@ public class VacuumSubsystem extends Subsystem implements Item {
     return climbSolenoid;
   }
 
-  public Solenoid getCargoSolenoid() { return cargoSolenoid; }
+  public Solenoid getCargoSolenoid() {
+    return cargoSolenoid;
+  }
 
   public void setSolenoidsState(SolenoidStates state) {
     switch (state) {
