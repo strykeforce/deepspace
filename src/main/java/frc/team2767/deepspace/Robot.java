@@ -102,7 +102,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     BISCUIT.setPosition(BISCUIT.getPosition());
     DRIVE.sandstormAxisFlip(true);
-    DRIVE.setEnableDriveAxisFlip(true);
+    DRIVE.setAngleAdjustment(true);
     if (isAuton) {
       //      sandstorm.start();
     } else {

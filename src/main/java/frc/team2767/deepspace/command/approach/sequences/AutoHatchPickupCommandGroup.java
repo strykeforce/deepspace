@@ -1,10 +1,7 @@
 package frc.team2767.deepspace.command.approach.sequences;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.team2767.deepspace.command.approach.ApproachDirectionCommand;
-import frc.team2767.deepspace.command.approach.BallToHatchAutoSafetyCommand;
-import frc.team2767.deepspace.command.approach.HoldHeadingUntilSuctionCommand;
-import frc.team2767.deepspace.command.approach.VisionAutoAlignPickupCommand;
+import frc.team2767.deepspace.command.approach.*;
 import frc.team2767.deepspace.command.biscuit.BiscuitConfigMotionAccelCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitFastExecuteCommand;
 import frc.team2767.deepspace.command.biscuit.ReleaseKrakenCommand;
@@ -21,6 +18,7 @@ public class AutoHatchPickupCommandGroup extends CommandGroup {
 
   public AutoHatchPickupCommandGroup() {
     addSequential(new LogCommand("BEGIN AUTO HATCH PICKUP"));
+    addSequential(new FlipSandstormControlsCommand(false));
     addSequential(new ApproachDirectionCommand());
     addSequential(new LightsOnCommand());
     addSequential(
@@ -41,6 +39,7 @@ public class AutoHatchPickupCommandGroup extends CommandGroup {
     addSequential(new HoldHeadingUntilSuctionCommand());
     addParallel(new BiscuitConfigMotionAccelCommand(BiscuitSubsystem.kSlowAccel));
     addParallel(new SetActionCommand(Action.PLACE));
+    addSequential(new SandstormSwapIfAutonConditionalCommand(true));
     addSequential(new LogCommand("END AUTO HATCH PICKUP"));
   }
 }

@@ -56,9 +56,9 @@ public class DriveSubsystem extends Subsystem implements Item {
     wheels = swerve.getWheels();
   }
 
-  public void sandstormAxisFlip(boolean enable) {
-    swerve.setFieldOriented(!enable);
-    setEnableDriveAxisFlip(enable);
+  public void sandstormAxisFlip(boolean isCameraOriented) {
+    swerve.setFieldOriented(!isCameraOriented);
+    setEnableDriveAxisFlip(isCameraOriented);
   }
 
   @Override
@@ -132,8 +132,9 @@ public class DriveSubsystem extends Subsystem implements Item {
     pathController.interrupt();
   }
 
-  public void setEnableDriveAxisFlip(boolean enable) {
+  private void setEnableDriveAxisFlip(boolean enable) {
     enableDriveAxisFlip = enable;
+    logger.debug("driving is {} oriented", enable);
   }
 
   public void setTargetYaw(double targetYaw) {
