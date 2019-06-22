@@ -1,8 +1,8 @@
 package frc.team2767.deepspace.command.approach.sequences;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.team2767.deepspace.command.approach.HoldHeadingUntilCompressionCommand;
 import frc.team2767.deepspace.command.approach.ControlledAutoAlignPlaceCommand;
+import frc.team2767.deepspace.command.approach.HoldHeadingUntilCompressionCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositionAboveCameraCommand;
 import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
