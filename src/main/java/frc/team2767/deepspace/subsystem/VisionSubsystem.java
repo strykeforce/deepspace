@@ -30,7 +30,7 @@ public class VisionSubsystem extends Subsystem implements Item {
   private static final double CAMERA_Y_LEFT = -13.5;
   private static final double CAMERA_Y_RIGHT = 13.5;
   private static final double GLUE_CORRECTION_FACTOR_RIGHT = -1.925; // -0.9536 comp
-  private static final double GLUE_CORRECTION_FACTOR_LEFT = 0.0; // -1.25 comp
+  private static final double GLUE_CORRECTION_FACTOR_LEFT = 0.6147; // -1.25 comp
   private static final double CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_RIGHT =
       1.0; // 1.0 is zero value 0.85
   private static final double CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_LEFT =
@@ -39,8 +39,8 @@ public class VisionSubsystem extends Subsystem implements Item {
   private static final double CAMERA_POSITION_BEARING_RIGHT = 90.0;
   private static final double CAMERA_RANGE_SLOPE_RIGHT = 0.82713; // 1.2449
   private static final double CAMERA_RANGE_OFFSET_RIGHT = 7.687; // -4.3949
-  private static final double CAMERA_RANGE_SLOPE_LEFT = 0.0; // 0.8259
-  private static final double CAMERA_RANGE_OFFSET_LEFT = 0.0; // -5.6325
+  private static final double CAMERA_RANGE_SLOPE_LEFT = 0.8912; // 0.8259
+  private static final double CAMERA_RANGE_OFFSET_LEFT = 9.99; // -5.6325
   // NEGATIVE = TOWARDS FIELD LEFT
   private static final double STRAFE_CORRECTION_RIGHT =
       -0.925; // -1.0 // NEGATIVE TO FIELD LEFT FOR THIS ONE?
@@ -303,8 +303,8 @@ public class VisionSubsystem extends Subsystem implements Item {
   }
 
   public enum Camera {
-    LEFT(1),
-    RIGHT(0);
+    LEFT(0),
+    RIGHT(1);
 
     int id;
 
