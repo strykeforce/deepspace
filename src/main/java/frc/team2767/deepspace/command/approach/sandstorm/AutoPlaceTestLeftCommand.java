@@ -11,6 +11,6 @@ public class AutoPlaceTestLeftCommand extends CommandGroup {
   public AutoPlaceTestLeftCommand() {
     addSequential(new SandstormHatchPickupCommandGroup(), 0.5);
     addSequential(new SetFieldDirectionCommand(FieldDirection.LEFT));
-    addSequential(new AutoHatchPlaceCommandGroup(0.0));
+    addSequential(new AutoHatchPlaceCommandGroup());
   }
 }

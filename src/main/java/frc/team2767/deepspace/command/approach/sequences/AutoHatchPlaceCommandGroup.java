@@ -20,7 +20,7 @@ import frc.team2767.deepspace.subsystem.GamePiece;
 
 public class AutoHatchPlaceCommandGroup extends CommandGroup {
 
-  public AutoHatchPlaceCommandGroup(double gyroOffset) {
+  public AutoHatchPlaceCommandGroup() {
 
     addSequential(new LogCommand("BEGIN AUTO HATCH PLACE"));
     addSequential(new FlipSandstormControlsCommand(false));
@@ -35,7 +35,7 @@ public class AutoHatchPlaceCommandGroup extends CommandGroup {
         });
     addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kHatchLowPositionInches));
     addSequential(new BiscuitPositionAboveCameraCommand());
-    addSequential(new VisionAutoAlignPlaceCommand(gyroOffset));
+    addSequential(new VisionAutoAlignPlaceCommand());
     addSequential(new BiscuitExecutePlanCommand());
     addSequential(new HoldHeadingUntilCompressionCommand());
     addSequential(new SandstormSwapIfAutonConditionalCommand(true));

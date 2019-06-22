@@ -1,12 +1,13 @@
 package frc.team2767.deepspace.command.approach;
 
-import static frc.team2767.deepspace.subsystem.FieldDirection.LEFT;
-
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
+import frc.team2767.deepspace.control.Controls;
 import frc.team2767.deepspace.subsystem.DriveSubsystem;
 import frc.team2767.deepspace.subsystem.VisionSubsystem;
+import frc.team2767.deepspace.util.AutoPlaceSideChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
@@ -22,37 +23,70 @@ public class VisionAutoAlignPlaceCommand extends Command {
 
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VisionSubsystem VISION = Robot.VISION;
+  private static Controls CONTROLS;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
-  private final double gyroOffset;
+  private AutoPlaceSideChooser autoPlaceSideChooser = new AutoPlaceSideChooser();
+  private double gyroOffset;
   private double range;
   private double forward;
   private double strafeError;
   private double yawError;
   private double strafeCorrection;
   private double targetYaw;
+  private boolean isSandstorm;
   private boolean isGood = false;
   private RateLimit strafeRateLimit;
 
-  public VisionAutoAlignPlaceCommand(double gyroOffset) {
+  public VisionAutoAlignPlaceCommand() {
     requires(DRIVE);
-    this.gyroOffset = gyroOffset;
     strafeRateLimit = new RateLimit(0.05); // 0.015
   }
 
   @Override
   protected void initialize() {
+    gyroOffset =
+        autoPlaceSideChooser.determineGyroOffset(
+            VISION.direction, Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0));
+    targetYaw = autoPlaceSideChooser.determineTargetYaw(VISION.direction);
+    CONTROLS = Robot.CONTROLS;
+    isSandstorm = DriverStation.getInstance().isAutonomous();
     DRIVE.setGyroOffset(gyroOffset);
     SmartDashboard.putBoolean("Game/haveHatch", true);
     logger.info("Begin Vision Auto Align Place");
     DRIVE.setDriveMode(SwerveDrive.DriveMode.CLOSED_LOOP);
     strafeCorrection = VISION.getStrafeCorrection();
-    if (VISION.direction == LEFT) {
-      targetYaw = 90.0;
-    } else {
-      targetYaw = -90.0;
-    }
+
+    //    if (!DriverStation.getInstance().isAutonomous()) {
+    //    if (VISION.direction == LEFT) {
+    //      if (gyroAngle > -90 && gyroAngle < 45) {
+    //        targetYaw = 0;
+    //      } else if (gyroAngle >= 45 && gyroAngle <= 135) {
+    //        targetYaw = 90;
+    //      } else {
+    //        targetYaw = 180;
+    //      }
+    //    } else {
+    //      if (gyroAngle > -45 && gyroAngle < 90) {
+    //        targetYaw = 0;
+    //      } else if (gyroAngle >= -135 && gyroAngle <= -45) {
+    //        targetYaw = -90;
+    //      } else {
+    //        targetYaw = 180;
+    //      }
+    //    }
+    //    }
+    //    } else {
+    //      if (VISION.direction == LEFT) {
+    //        targetYaw = 90.0;
+    //      } else {
+    //        targetYaw = -90.0;
+    //      }
+    //    }
+
     DRIVE.setTargetYaw(targetYaw);
-    forward = FORWARD_OUTPUT;
+    if (!isSandstorm) {
+      forward = 0;
+    }
     logger.debug("forward = {}", forward);
     logger.info("target yaw: {}", targetYaw);
   }
@@ -79,6 +113,11 @@ public class VisionAutoAlignPlaceCommand extends Command {
     strafeError = Math.sin(Math.toRadians(VISION.getCorrectedBearing())) * range - strafeCorrection;
     VISION.setStrafeError(strafeError);
     logger.info("strafe error = {}", strafeError);
+
+    if (!isSandstorm) {
+      forward = CONTROLS.getDriverControls().getForward();
+    }
+
     // Only take over strafe control if pyeye has a target and the robot is straight to the field
     if (isGood && onTarget) strafe = strafeError * kP_STRAFE * forward;
     else strafe = 0;
