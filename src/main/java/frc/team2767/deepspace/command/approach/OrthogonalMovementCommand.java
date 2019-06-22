@@ -21,7 +21,7 @@ public class OrthogonalMovementCommand extends Command {
   @SuppressWarnings("Duplicates")
   @Override
   protected void initialize() {
-    double heading = VISION.getRawBearing();
+    double heading = VISION.getCorrectedBearing();
     int distance = (int) (DriveSubsystem.TICKS_PER_INCH * VISION.getRawRange());
 
     distance = (int) (distance * Math.cos(Math.toRadians(90.0 - heading)));

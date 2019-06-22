@@ -20,7 +20,7 @@ public class CalculateRotationCommand extends InstantCommand {
   protected void initialize() {
     RotationCalculator rotationCalculator =
         new RotationCalculator(
-            VISION.getRawBearing(),
+            VISION.getCorrectedBearing(),
             VISION.getRawRange(),
             VISION.getCameraPositionBearing(),
             Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360));

@@ -6,9 +6,12 @@ public class Controls {
   private final XboxControls xboxControls = new XboxControls(1);
   private final SmartDashboardControls smartDashboardControls = new SmartDashboardControls();
   private final RoborioControls roborioControls = new RoborioControls();
+  private final AutonSwitch autonSwitch = new AutonSwitch();
 
-  public Controls() {
-    //    new SmartDashboardControls();
+  public Controls() {}
+
+  public AutonSwitch getAutonSwitch() {
+    return autonSwitch;
   }
 
   public DriverControls getDriverControls() {

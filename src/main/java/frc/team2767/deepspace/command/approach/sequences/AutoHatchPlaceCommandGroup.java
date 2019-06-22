@@ -1,34 +1,44 @@
 package frc.team2767.deepspace.command.approach.sequences;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.ConditionalCommand;
-import frc.team2767.deepspace.command.approach.*;
+import frc.team2767.deepspace.command.approach.FlipSandstormControlsCommand;
+import frc.team2767.deepspace.command.approach.HoldHeadingUntilCompressionCommand;
+import frc.team2767.deepspace.command.approach.SandstormSwapIfAutonConditionalCommand;
+import frc.team2767.deepspace.command.approach.VisionAutoAlignPlaceCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitExecutePlanCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositionAboveCameraCommand;
+import frc.team2767.deepspace.command.elevator.ElevatorSetPositionCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
-import frc.team2767.deepspace.command.states.SetFieldDirectionCommand;
-import frc.team2767.deepspace.command.teleop.DriverPlaceAssistCommand;
+import frc.team2767.deepspace.command.states.SetActionCommand;
+import frc.team2767.deepspace.command.states.SetGamePieceCommand;
+import frc.team2767.deepspace.command.states.SetLevelCommand;
 import frc.team2767.deepspace.command.vision.LightsOnCommand;
-import frc.team2767.deepspace.subsystem.FieldDirection;
+import frc.team2767.deepspace.subsystem.Action;
+import frc.team2767.deepspace.subsystem.ElevatorLevel;
+import frc.team2767.deepspace.subsystem.ElevatorSubsystem;
+import frc.team2767.deepspace.subsystem.GamePiece;
 
 public class AutoHatchPlaceCommandGroup extends CommandGroup {
 
-  public AutoHatchPlaceCommandGroup() {
-    addSequential(new LogCommand("BEGIN AUTO HATCH PLACE"));
+  public AutoHatchPlaceCommandGroup(double gyroOffset) {
 
+    addSequential(new LogCommand("BEGIN AUTO HATCH PLACE"));
+    addSequential(new FlipSandstormControlsCommand(false));
+    addSequential(new LightsOnCommand());
     addSequential(
-        new ConditionalCommand(new SetFieldDirectionCommand(FieldDirection.LEFT)) {
-          @Override
-          protected boolean condition() {
-            return DriverStation.getInstance().isAutonomous();
+        new CommandGroup() {
+          {
+            addParallel(new SetActionCommand(Action.PLACE));
+            addParallel(new SetGamePieceCommand(GamePiece.HATCH));
+            addParallel(new SetLevelCommand(ElevatorLevel.ONE));
           }
         });
-    addSequential(new LightsOnCommand());
+    addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kHatchLowPositionInches));
     addSequential(new BiscuitPositionAboveCameraCommand());
-    addSequential(new DriverPlaceAssistCommand());
+    addSequential(new VisionAutoAlignPlaceCommand(gyroOffset));
     addSequential(new BiscuitExecutePlanCommand());
-    addSequential(new HoldHeadingCommand());
+    addSequential(new HoldHeadingUntilCompressionCommand());
+    addSequential(new SandstormSwapIfAutonConditionalCommand(true));
     addSequential(new LogCommand("END HATCH PLACE"));
   }
 }

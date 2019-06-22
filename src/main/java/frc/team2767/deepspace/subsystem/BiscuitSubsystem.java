@@ -22,6 +22,12 @@ import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
 public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, Item {
 
+  public static final double PLACE_RIGHT = 45.0;
+  public static final double PLACE_LEFT = -45.0;
+  public static final double PICKUP_RIGHT = 65.0;
+  public static final double PICKUP_LEFT = -65.0;
+  public static final int kSlowAccel = 2_500;
+  public static final int kFastAccel = 16_000;
   private static final String PREFS = "BiscuitSubsystem/Position/";
   private static final int BACKUP = 2767;
   private static final int BISCUIT_ID = 40;
@@ -51,8 +57,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
   private static double kKrakenHide;
   private static double kKrakenLock;
   private static double kKrakenUnlock;
-  public static final int kSlowAccel = 2_500;
-  public static final int kFastAccel = 16_000;
+  private static double kCompressionLimit;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private double targetBiscuitPositionDeg = 0;
   private TalonSRX biscuit = new TalonSRX(BISCUIT_ID);
@@ -99,6 +104,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
     kKrakenHide = getPreference("kraken_hide", 0.9);
     kKrakenLock = getPreference("kraken_lock", 0.0);
     kKrakenUnlock = getPreference("kraken_unlock", 0.0);
+    kCompressionLimit = getPreference("compression_limit", 215.0);
   }
 
   private void configTalon() {
@@ -315,6 +321,10 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
     biscuit.set(ControlMode.MotionMagic, setpointTicks);
   }
 
+  public boolean isCompressed() {
+    return biscuit.getSensorCollection().getAnalogInRaw() < kCompressionLimit;
+  }
+
   public boolean onTarget() {
     int current = biscuit.getSelectedSensorPosition();
     if (Math.abs(current - setpointTicks) < kCloseEnoughTicks) {
@@ -370,11 +380,6 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
     }
   }
 
-  public enum Angle {
-    LEFT,
-    RIGHT,
-  }
-
   // --------------------------KRAKEN---------------------------------
   public void releaseKraken(boolean release) {
     logger.info("Releasing Kraken: {}", release);
@@ -402,7 +407,7 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
   @NotNull
   @Override
   public Set<Measure> getMeasures() {
-    return Set.of(Measure.VALUE);
+    return Set.of(Measure.VALUE, Measure.ANALOG_IN_RAW);
   }
 
   @NotNull
@@ -422,8 +427,19 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
     switch (measure) {
       case VALUE:
         return () -> graphCount;
+      case ANALOG_IN_RAW:
+        return () -> getCompression();
       default:
         return () -> 2767.0;
     }
+  }
+
+  public double getCompression() {
+    return biscuit.getSensorCollection().getAnalogInRaw();
+  }
+
+  public enum Angle {
+    LEFT,
+    RIGHT,
   }
 }

@@ -2,6 +2,7 @@ package frc.team2767.deepspace.command.sequences.pickup;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.Robot;
+import frc.team2767.deepspace.subsystem.BiscuitSubsystem;
 import frc.team2767.deepspace.subsystem.ElevatorSubsystem;
 import frc.team2767.deepspace.subsystem.VacuumSubsystem;
 import org.slf4j.Logger;
@@ -10,8 +11,12 @@ import org.slf4j.LoggerFactory;
 public class CoconutPickupAutoRetryCommand extends Command {
   private static final ElevatorSubsystem ELEVATOR = Robot.ELEVATOR;
   private static final VacuumSubsystem VACUUM = Robot.VACUUM;
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
+  private static final BiscuitSubsystem BISCUIT = Robot.BISCUIT;
+  private static final double PRESSURE_DIFFERENTIAL = 2.5; // inHg
+  private static final double STABLE_COUNTS = 5;
+  private static final double WAIT_TIME = 1000; // ms
+  private static final double RESET_HEIGHT = 20.25;
+  private static final double STRING_LENGTH = 260.0;
   private static PickupState state;
   private static double initialPressure;
   private static double startSealTime;
@@ -19,12 +24,8 @@ public class CoconutPickupAutoRetryCommand extends Command {
   private static double currentTime;
   private static double currentPressure;
   private static double stableCounts;
-
-  private static double DOWN_SPEED = -0.23;
-  private static final double PRESSURE_DIFFERENTIAL = 2.5; // inHg
-  private static final double STABLE_COUNTS = 5;
-  private static final double WAIT_TIME = 1000; // ms
-  private static final double RESET_HEIGHT = 20.25;
+  private static double DOWN_SPEED = -0.35;
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public CoconutPickupAutoRetryCommand() {
     requires(ELEVATOR);
@@ -35,7 +36,6 @@ public class CoconutPickupAutoRetryCommand extends Command {
     logger.info("Coconut Pickup Sequence");
     state = PickupState.DOWN;
     ELEVATOR.openLoopMove(DOWN_SPEED);
-    startSealTime = System.currentTimeMillis();
     initialPressure = VACUUM.getPressure();
     stableCounts = 0;
     hasRetried = false;
@@ -45,8 +45,17 @@ public class CoconutPickupAutoRetryCommand extends Command {
   protected void execute() {
     switch (state) {
       case DOWN:
+        if (BISCUIT.getCompression() <= STRING_LENGTH) {
+          state = PickupState.WAIT_FOR_PRESSURE;
+          ELEVATOR.setPosition(ELEVATOR.getPosition()); // inches
+          startSealTime = System.currentTimeMillis();
+        }
+
+        break;
+      case WAIT_FOR_PRESSURE:
         currentTime = System.currentTimeMillis();
         currentPressure = VACUUM.getPressure();
+
         // TIMEOUT = RESET & TRY AGAIN
         if (currentTime - startSealTime > WAIT_TIME && !hasRetried) {
           state = PickupState.RESET;
@@ -66,6 +75,7 @@ public class CoconutPickupAutoRetryCommand extends Command {
           logger.info("Pickup Sequence Done");
           state = PickupState.DONE;
         }
+
         break;
       case RESET:
         if (ELEVATOR.onTarget() && (currentPressure - initialPressure) < PRESSURE_DIFFERENTIAL) {
@@ -73,6 +83,12 @@ public class CoconutPickupAutoRetryCommand extends Command {
           ELEVATOR.openLoopMove(DOWN_SPEED);
           state = PickupState.DOWN;
           logger.info("Moving Down");
+          break;
+        }
+        if (currentPressure - initialPressure > PRESSURE_DIFFERENTIAL) {
+          state = PickupState.DONE;
+          logger.info("Got Seal on RESET");
+          break;
         }
     }
   }
@@ -89,6 +105,7 @@ public class CoconutPickupAutoRetryCommand extends Command {
 
   private enum PickupState {
     DOWN,
+    WAIT_FOR_PRESSURE,
     RESET,
     DONE
   }

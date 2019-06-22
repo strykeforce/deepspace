@@ -5,7 +5,10 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.ZeroGyroCommand;
 import frc.team2767.deepspace.command.approach.sequences.AutoHatchPickupCommandGroup;
-import frc.team2767.deepspace.command.biscuit.*;
+import frc.team2767.deepspace.command.biscuit.BiscuitNegativeCommand;
+import frc.team2767.deepspace.command.biscuit.BiscuitPositiveCommand;
+import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
+import frc.team2767.deepspace.command.biscuit.BiscuitZeroCommand;
 import frc.team2767.deepspace.command.climb.ClimbJogCommand;
 import frc.team2767.deepspace.command.climb.ClimbSlowVelocityCommand;
 import frc.team2767.deepspace.command.climb.StopClimbCommand;
@@ -44,6 +47,9 @@ public class DriverControls {
     new JoystickButton(joystick, Button.UP.id).whenReleased(new StopClimbCommand());
     new JoystickButton(joystick, Button.DOWN.id).whenPressed(new ClimbSlowVelocityCommand());
     new JoystickButton(joystick, Button.DOWN.id).whenReleased(new StopClimbCommand());
+    // new JoystickButton(joystick, Button.UP.id).whenPressed(new ClimbLevel2AutoCommand());
+    // new JoystickButton(joystick, Button.DOWN.id).whenPressed(new
+    // DeploySequenceLvl2CommandGroup());
 
     // vision
     new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id)
@@ -51,11 +57,18 @@ public class DriverControls {
     new JoystickButton(joystick, Trim.RIGHT_Y_POS.id)
         .whenPressed(new AutoHatchPickupCommandGroup());
 
+    //    new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenPressed(new
+    // AutoPlaceTestRightCommand());
+    //    new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenPressed(new
+    // AutoPlaceTestRightCommand());
+
     // interrupt
-    // new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenPressed(new InterruptCommand());
-    // new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenPressed(new InterruptCommand());
-    new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenPressed(new ReleaseKrakenCommand(true));
-    new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenPressed(new ReleaseKrakenCommand(false));
+    //        new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenPressed(new InterruptCommand());
+    //        new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenPressed(new InterruptCommand())
+    //        ;
+    //
+    //    new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenPressed(new SandstormCommandGroup());
+    //    new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenPressed(new SandstormCommandGroup());
 
     // biscuit
     new JoystickButton(joystick, Trim.LEFT_X_POS.id).whenPressed(new BiscuitPositiveCommand());

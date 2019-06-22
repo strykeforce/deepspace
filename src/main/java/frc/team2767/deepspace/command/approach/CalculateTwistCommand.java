@@ -28,13 +28,13 @@ public class CalculateTwistCommand extends InstantCommand {
 
     logger.info(
         "pyeye bearing={} range={} current gyro = {}",
-        VISION.getRawBearing(),
+        VISION.getCorrectedBearing(),
         VISION.getRawRange(),
         yaw);
 
     TwistCalculator twistCalculator =
         new TwistCalculator(
-            VISION.getRawBearing(),
+            VISION.getCorrectedBearing(),
             VISION.getRawRange(),
             VISION.getCameraX(),
             VISION.getCameraY(),

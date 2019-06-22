@@ -35,13 +35,16 @@ public class ClimbSubsystem extends Subsystem implements Item {
   public static double kJogUpPercent = -0.20;
   public static double kJogDownPercent = 0.20;
   public static int kDownVelocity = 2500;
-  public static int kUpVelocity = -2500;
+  public static int kUpVelocity = -1200;
   public static int kDownClimbVelocity = 1750;
   public static int kHabHover;
+  public static int kHabHoverLvl2;
   public static int kLowRelease;
   public static int kHighRelease;
+  public static int kHighLvl2;
   public static int kClimb;
   public static int kTooLowIn;
+  public static int kTooLowLvl2;
   public static boolean isReleased;
   private static double kLeftKickstandHold;
   private static double kLeftKickstandRelease;
@@ -66,11 +69,14 @@ public class ClimbSubsystem extends Subsystem implements Item {
   }
 
   private void climbPrefs() {
-    kHabHover = (int) getPrefs("low_position", 209);
+    kHabHover = (int) getPrefs("lowf_position", 209);
+    kHabHoverLvl2 = (int) getPrefs("lvl2_hover_position", 683);
     kLowRelease = (int) getPrefs("medium_position", 679);
     kHighRelease = (int) getPrefs("high_position", 189);
+    kHighLvl2 = (int) getPrefs("Lvl2_high_position", 600);
     kClimb = (int) getPrefs("climb_position", 884);
     kTooLowIn = (int) getPrefs("too_low_position", 240);
+    kTooLowLvl2 = (int) getPrefs("too_low_Lvl2", 656);
     kSealOutputVelocity = (int) getPrefs("seal_velocity", 300);
 
     kLeftKickstandHold = getPrefs("L_kickstand_hold", 0.4);

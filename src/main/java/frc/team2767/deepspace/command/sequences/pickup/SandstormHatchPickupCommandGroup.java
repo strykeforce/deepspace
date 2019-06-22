@@ -24,9 +24,9 @@ public class SandstormHatchPickupCommandGroup extends CommandGroup {
     addSequential(
         new CommandGroup() {
           {
-            addSequential(
-                new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.PRESSURE_ACCUMULATE));
-            addParallel(new PressureSetCommand(VacuumSubsystem.kHatchPressureInHg), 0.5);
+            addParallel(new PressureSetCommand(VacuumSubsystem.kHatchPressureInHg), 0.05);
+            addParallel(
+                new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.HATCH_PICKUP));
             addParallel(new SetActionCommand(Action.PLACE));
             addParallel(new SetGamePieceCommand(GamePiece.HATCH));
             addParallel(new SetFieldDirectionCommand(FieldDirection.LEFT));
@@ -35,9 +35,8 @@ public class SandstormHatchPickupCommandGroup extends CommandGroup {
             addParallel(new IntakePositionCommand(IntakeSubsystem.kStowPositionDeg));
           }
         });
-    addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.HATCH_PICKUP));
-    addSequential(new ElevatorSetPositionCommand(9.0));
-    addSequential(new WaitForPressureCommand());
+    addSequential(new ElevatorSetPositionCommand(7.5));
+    addSequential(new WaitForPressureCommand(), 0.5);
     addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.kUpPositionDeg));
     addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kHatchLowPositionInches));
     addSequential(new SandstormHatchIndicator(true));
