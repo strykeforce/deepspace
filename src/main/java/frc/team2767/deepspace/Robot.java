@@ -104,9 +104,9 @@ public class Robot extends TimedRobot {
     DRIVE.sandstormAxisFlip(true);
     DRIVE.setAngleAdjustment(true);
     if (isAuton) {
-      //      sandstorm.start();
+      //            sandstorm.start();
     } else {
-      //      noAutoSandstorm.start();
+      noAutoSandstorm.start();
     }
   }
 

@@ -29,8 +29,8 @@ public class VisionSubsystem extends Subsystem implements Item {
   private static final double CAMERA_X = 3.5;
   private static final double CAMERA_Y_LEFT = -13.5;
   private static final double CAMERA_Y_RIGHT = 13.5;
-  private static final double GLUE_CORRECTION_FACTOR_RIGHT = -1.925; // -0.9536 comp
-  private static final double GLUE_CORRECTION_FACTOR_LEFT = 0.6147; // -1.25 comp
+  private static final double GLUE_CORRECTION_FACTOR_RIGHT = 1.925; // -0.9536 comp
+  private static final double GLUE_CORRECTION_FACTOR_LEFT = -0.6147; // -1.25 comp
   private static final double CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_RIGHT =
       1.0; // 1.0 is zero value 0.85
   private static final double CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_LEFT =
@@ -43,7 +43,7 @@ public class VisionSubsystem extends Subsystem implements Item {
   private static final double CAMERA_RANGE_OFFSET_LEFT = 9.99; // -5.6325
   // NEGATIVE = TOWARDS FIELD LEFT
   private static final double STRAFE_CORRECTION_RIGHT =
-      -0.925; // -1.0 // NEGATIVE TO FIELD LEFT FOR THIS ONE?
+      -4.5; // -1.0 // NEGATIVE TO FIELD LEFT FOR THIS ONE?
   private static final double STRAFE_CORRECTION_LEFT = 0.0;
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -282,6 +282,10 @@ public class VisionSubsystem extends Subsystem implements Item {
   }
 
   public double getRawRange() {
+    if (rawRange < 0) {
+      return -1;
+    }
+
     return (rawRange * (direction == RIGHT ? CAMERA_RANGE_SLOPE_RIGHT : CAMERA_RANGE_SLOPE_LEFT)
         + (direction == RIGHT ? CAMERA_RANGE_OFFSET_RIGHT : CAMERA_RANGE_OFFSET_LEFT));
   }
@@ -303,8 +307,8 @@ public class VisionSubsystem extends Subsystem implements Item {
   }
 
   public enum Camera {
-    LEFT(0),
-    RIGHT(1);
+    LEFT(1),
+    RIGHT(0);
 
     int id;
 

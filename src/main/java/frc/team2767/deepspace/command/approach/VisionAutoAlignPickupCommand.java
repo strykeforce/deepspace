@@ -112,6 +112,8 @@ public class VisionAutoAlignPickupCommand extends Command {
 
   @Override
   protected void end() {
+
+    logger.debug("range = {}", range);
     logger.info("End Auto Align Pickup Vision");
   }
 

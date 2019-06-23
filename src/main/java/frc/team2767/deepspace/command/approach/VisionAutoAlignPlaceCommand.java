@@ -60,9 +60,6 @@ public class VisionAutoAlignPlaceCommand extends Command {
     strafeCorrection = VISION.getStrafeCorrection();
 
     DRIVE.setTargetYaw(targetYaw);
-    if (!isSandstorm) {
-      forward = 0;
-    }
     logger.debug("forward = {}", forward);
     logger.info("target yaw: {}", targetYaw);
   }
@@ -90,15 +87,12 @@ public class VisionAutoAlignPlaceCommand extends Command {
     VISION.setStrafeError(strafeError);
     logger.info("strafe error = {}", strafeError);
 
-    if (!isSandstorm) {
-      forward = CONTROLS.getDriverControls().getForward();
-    }
-
     // Only take over strafe control if pyeye has a target and the robot is straight to the field
     if (isGood && onTarget) strafe = strafeError * kP_STRAFE * forward;
     else strafe = 0;
 
-    DRIVE.drive(forward, strafeRateLimit.apply(strafe), yaw);
+    DRIVE.drive(
+        CONTROLS.getDriverControls().getForward() * 0.4, strafeRateLimit.apply(strafe), yaw);
   }
 
   @Override
