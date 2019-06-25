@@ -11,9 +11,6 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
-import java.util.List;
-import java.util.Set;
-import java.util.function.DoubleSupplier;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +18,10 @@ import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
 import org.strykeforce.thirdcoast.telemetry.item.Item;
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
+
+import java.util.List;
+import java.util.Set;
+import java.util.function.DoubleSupplier;
 
 public class VacuumSubsystem extends Subsystem implements Item {
 
@@ -62,7 +63,7 @@ public class VacuumSubsystem extends Subsystem implements Item {
 
     climbSolenoid.set(false);
     tridentSolenoid.set(false);
-    ballSolenoid.set(false);
+    cargoSolenoid.set(false);
 
     climbing = false;
 
