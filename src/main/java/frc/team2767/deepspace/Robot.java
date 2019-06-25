@@ -113,7 +113,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     DRIVE.sandstormAxisFlip(false);
-    VACUUM.setSolenoidsState(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP);
+    VACUUM.setSolenoidsState(VacuumSubsystem.SolenoidStates.HATCH_PICKUP);
   }
 
   @Override

@@ -30,9 +30,6 @@ Subsystem   | Servo              | PWM
 Climb       | leftKickstand      | 2
 Climb       | rightKickstand     | 3
 Climb       | ratchet            | 4
-Biscuit     | krakenRelease      | 5
-Biscuit     | krakenLock(unused) | 6
-
 
 ## DIO
 

@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team2767.deepspace.command.approach.*;
 import frc.team2767.deepspace.command.biscuit.BiscuitConfigMotionAccelCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitFastExecuteCommand;
-import frc.team2767.deepspace.command.biscuit.ReleaseKrakenCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.states.SetActionCommand;
 import frc.team2767.deepspace.command.states.SetGamePieceCommand;
@@ -31,8 +30,7 @@ public class AutoHatchPickupCommandGroup extends CommandGroup {
         });
 
     addSequential(new PressureSetCommand(VacuumSubsystem.kHatchPressureInHg), 0.02);
-    addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP));
-    addParallel(new ReleaseKrakenCommand(false)); // Don't want kraken in teleop
+    addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.HATCH_PICKUP));
     addParallel(new BallToHatchAutoSafetyCommand());
     addSequential(new VisionAutoAlignPickupCommand());
     addSequential(new BiscuitFastExecuteCommand());

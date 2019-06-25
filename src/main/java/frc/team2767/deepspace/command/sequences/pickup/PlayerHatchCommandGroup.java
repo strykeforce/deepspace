@@ -18,7 +18,7 @@ public class PlayerHatchCommandGroup extends CommandGroup {
   public PlayerHatchCommandGroup() {
     addSequential(new LogCommand("BEGIN PLAYER HATCH PICKUP"));
     addSequential(new ApproachDirectionCommand());
-    addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.GAME_PIECE_PICKUP));
+    addSequential(new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.HATCH_PICKUP));
     //    addParallel(new AlignToFieldPickupCommand());
     addParallel(new PressureSetCommand(VacuumSubsystem.kHatchPressureInHg), 0.02);
     addParallel(new BiscuitMoveSafeCommand());
