@@ -11,6 +11,7 @@ import frc.team2767.deepspace.util.AutoPlaceSideChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.swerve.SwerveDrive;
+import org.strykeforce.thirdcoast.util.ExpoScale;
 import org.strykeforce.thirdcoast.util.RateLimit;
 
 public class VisionAutoAlignPlaceCommand extends Command {
@@ -20,6 +21,8 @@ public class VisionAutoAlignPlaceCommand extends Command {
   private static final double goodEnoughYaw = 1.5;
   private static final double MIN_RANGE = 35.0;
   private static final double FORWARD_OUTPUT = 0.30;
+  private static final double DEADBAND = 0.05;
+  private static final double DRIVE_EXPO = 0.5;
 
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VisionSubsystem VISION = Robot.VISION;
@@ -36,10 +39,12 @@ public class VisionAutoAlignPlaceCommand extends Command {
   private boolean isSandstorm;
   private boolean isGood = false;
   private RateLimit strafeRateLimit;
+  private final ExpoScale driveExpo;
 
   public VisionAutoAlignPlaceCommand() {
     requires(DRIVE);
     strafeRateLimit = new RateLimit(0.05); // 0.015
+    this.driveExpo = new ExpoScale(DEADBAND, DRIVE_EXPO);
   }
 
   @Override
@@ -85,14 +90,18 @@ public class VisionAutoAlignPlaceCommand extends Command {
     double strafe;
     strafeError = Math.sin(Math.toRadians(VISION.getCorrectedBearing())) * range - strafeCorrection;
     VISION.setStrafeError(strafeError);
-    logger.info("strafe error = {}", strafeError);
+    forward = driveExpo.apply(CONTROLS.getDriverControls().getForward());
 
     // Only take over strafe control if pyeye has a target and the robot is straight to the field
     if (isGood && onTarget) strafe = strafeError * kP_STRAFE * forward;
-    else strafe = 0;
+    else strafe = driveExpo.apply(CONTROLS.getDriverControls().getStrafe());
 
-    DRIVE.drive(
-        CONTROLS.getDriverControls().getForward() * 0.4, strafeRateLimit.apply(strafe), yaw);
+    strafe = strafeRateLimit.apply(strafe);
+
+    DRIVE.setGraphableStrafe(strafe);
+    logger.info("strafe = {}", strafe);
+
+    DRIVE.drive(forward, strafe, yaw);
   }
 
   @Override
