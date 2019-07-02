@@ -15,12 +15,12 @@ import org.strykeforce.thirdcoast.util.ExpoScale;
 import org.strykeforce.thirdcoast.util.RateLimit;
 
 public class VisionAutoAlignPlaceCommand extends Command {
-  private static final double kP_STRAFE = 0.07; // 0.11
+  private static final double kP_STRAFE = 0.1; // 0.11
   private static final double kP_YAW = 0.01; // 0.00625 tuning for NT method, 0.01 pyeye
   private static final double MAX_YAW = 0.3;
   private static final double goodEnoughYaw = 1.5;
   private static final double MIN_RANGE = 35.0;
-  private static final double FORWARD_OUTPUT = 0.30;
+  private static final double FORWARD_SCALE = 0.30;
   private static final double DEADBAND = 0.05;
   private static final double DRIVE_EXPO = 0.5;
 
@@ -90,7 +90,7 @@ public class VisionAutoAlignPlaceCommand extends Command {
     double strafe;
     strafeError = Math.sin(Math.toRadians(VISION.getCorrectedBearing())) * range - strafeCorrection;
     VISION.setStrafeError(strafeError);
-    forward = driveExpo.apply(CONTROLS.getDriverControls().getForward());
+    forward = driveExpo.apply(CONTROLS.getDriverControls().getForward()) * FORWARD_SCALE;
 
     // Only take over strafe control if pyeye has a target and the robot is straight to the field
     if (isGood && onTarget) strafe = strafeError * kP_STRAFE * forward;
@@ -107,6 +107,11 @@ public class VisionAutoAlignPlaceCommand extends Command {
   @Override
   protected boolean isFinished() {
     return (range <= MIN_RANGE && isGood);
+  }
+
+  @Override
+  protected void interrupted() {
+    DRIVE.undoGyroOffset();
   }
 
   @Override
