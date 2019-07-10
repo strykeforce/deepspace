@@ -134,6 +134,6 @@ public class Robot extends TimedRobot {
 
   public enum StartLevel {
     ONE,
-    TWO;
+    TWO
   }
 }

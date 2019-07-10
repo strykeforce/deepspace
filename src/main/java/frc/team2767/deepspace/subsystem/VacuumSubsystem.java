@@ -203,7 +203,7 @@ public class VacuumSubsystem extends Subsystem implements Item {
 
   @Override
   public void periodic() {
-    if (!Robot.isEvent()) SmartDashboard.putNumber("Game/Temperature", getPumpTemperature());
+    //    if (!Robot.isEvent()) SmartDashboard.putNumber("Game/Temperature", getPumpTemperature());
     if (climbing) {
       SmartDashboard.putBoolean("Game/climbOnTarget", isClimbOnTarget());
       SmartDashboard.putBoolean("Game/climbPrecheck", isClimbPrecheck());

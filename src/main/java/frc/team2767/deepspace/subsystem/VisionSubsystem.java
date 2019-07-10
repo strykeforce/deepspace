@@ -72,6 +72,7 @@ public class VisionSubsystem extends Subsystem implements Item {
   private LightPattern currentPattern;
   private double lightState;
   private double strafeError = 0;
+  private int counter;
 
   public VisionSubsystem() {
 
@@ -99,6 +100,12 @@ public class VisionSubsystem extends Subsystem implements Item {
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
     telemetryService.register(this);
+    counter = 0;
+  }
+
+  @Override
+  public void periodic() {
+    counter++;
   }
 
   public double getCorrectedRange() {
@@ -140,6 +147,7 @@ public class VisionSubsystem extends Subsystem implements Item {
   public void queryPyeye() {
     rawBearing = (double) bearingEntry.getNumber(0.0);
     rawRange = (double) rangeEntry.getNumber(-1.0);
+    counter++;
   }
 
   public void setGamePiece(GamePiece gamePiece) {
@@ -250,7 +258,8 @@ public class VisionSubsystem extends Subsystem implements Item {
   @NotNull
   @Override
   public Set<Measure> getMeasures() {
-    return Set.of(Measure.POSITION, Measure.ANGLE, Measure.VALUE, Measure.COMPONENT_STRAFE);
+    return Set.of(
+        Measure.POSITION, Measure.ANGLE, Measure.VALUE, Measure.COMPONENT_STRAFE, Measure.UNKNOWN);
   }
 
   @NotNull
@@ -264,10 +273,20 @@ public class VisionSubsystem extends Subsystem implements Item {
     return 0;
   }
 
+  public void setCounter(int counter) {
+    this.counter = counter;
+  }
+
+  public int getCounter() {
+    return counter % 20;
+  }
+
   @NotNull
   @Override
   public DoubleSupplier measurementFor(@NotNull Measure measure) {
     switch (measure) {
+      case UNKNOWN:
+        return this::getCounter;
       case POSITION:
         return this::getRawRange;
       case ANGLE:
@@ -275,7 +294,7 @@ public class VisionSubsystem extends Subsystem implements Item {
       case VALUE:
         return () -> lightState;
       case COMPONENT_STRAFE:
-        return () -> strafeError;
+        return this::getStrafeError;
       default:
         return () -> 2767;
     }
@@ -298,12 +317,16 @@ public class VisionSubsystem extends Subsystem implements Item {
                 : CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_LEFT));
   }
 
-  public double getStrafeCorrection() {
-    return direction == RIGHT ? STRAFE_CORRECTION_RIGHT : STRAFE_CORRECTION_LEFT;
+  public double getStrafeError() {
+    return strafeError;
   }
 
   public void setStrafeError(double strafeError) {
     this.strafeError = strafeError;
+  }
+
+  public double getStrafeCorrection() {
+    return direction == RIGHT ? STRAFE_CORRECTION_RIGHT : STRAFE_CORRECTION_LEFT;
   }
 
   public enum Camera {

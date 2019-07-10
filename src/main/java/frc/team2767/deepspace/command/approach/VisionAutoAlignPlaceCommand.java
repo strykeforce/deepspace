@@ -20,7 +20,7 @@ public class VisionAutoAlignPlaceCommand extends Command {
   private static final double MAX_YAW = 0.3;
   private static final double goodEnoughYaw = 1.5;
   private static final double MIN_RANGE = 35.0;
-  private static final double FORWARD_SCALE = 0.30;
+  private static final double FORWARD_SCALE = 0.35;
   private static final double DEADBAND = 0.05;
   private static final double DRIVE_EXPO = 0.5;
 

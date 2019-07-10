@@ -1,6 +1,7 @@
 package frc.team2767.deepspace.command.approach;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
@@ -25,7 +26,7 @@ public class VisionAutoAlignPickupCommand extends Command {
   private static final double MIN_RANGE = 35.0;
   private static final double FWD_SCALE = 0.5;
   private static final double FWD_SCALE_FAST = 0.5;
-  private static final double AUTON_OUTPUT = -0.20;
+  private static final double AUTON_OUTPUT = 0.35;
 
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VisionSubsystem VISION = Robot.VISION;
@@ -41,6 +42,7 @@ public class VisionAutoAlignPickupCommand extends Command {
   private double targetYaw;
   private boolean isGood = false;
   private RateLimit strafeRateLimit;
+  private double last;
 
   public VisionAutoAlignPickupCommand() {
     requires(DRIVE);
@@ -62,11 +64,16 @@ public class VisionAutoAlignPickupCommand extends Command {
     } else targetYaw = 90.0;
     DRIVE.setTargetYaw(targetYaw);
     logger.info("Target Yaw: {}", targetYaw);
+    last = Timer.getFPGATimestamp();
   }
 
   @SuppressWarnings("Duplicates")
   @Override
   protected void execute() {
+    double start = Timer.getFPGATimestamp();
+    //    logger.info("time = {}", (time - last) * 1000);
+    //    last = time;
+
     // Pyeye Method:
     VISION.queryPyeye(); // gets corrected heading and range from NT
     range = VISION.getRawRange();
@@ -85,7 +92,7 @@ public class VisionAutoAlignPickupCommand extends Command {
     double forward;
     // forward is still normal
     if (isAuton) {
-      forward = AUTON_OUTPUT;
+      forward = driveExpo.apply(controls.getForward()) * AUTON_OUTPUT;
     } else if (isGood) {
       forward = driveExpo.apply(controls.getForward()) * FWD_SCALE;
     } else {
@@ -95,7 +102,6 @@ public class VisionAutoAlignPickupCommand extends Command {
     double strafe;
     strafeError = Math.sin(Math.toRadians(VISION.getCorrectedBearing())) * range - strafeCorrection;
 
-    logger.info("strafe error = {}", strafeError);
     VISION.setStrafeError(strafeError);
 
     // Only take over strafe control if pyeye has a target and the robot is straight to the field
@@ -103,8 +109,12 @@ public class VisionAutoAlignPickupCommand extends Command {
     else strafe = driveExpo.apply(controls.getStrafe());
 
     double strafeOutput = strafeRateLimit.apply(strafe);
-    logger.debug("{} {} {}", forward, strafeOutput, yaw);
+
+    double middle = Timer.getFPGATimestamp();
     DRIVE.drive(forward, strafeOutput, yaw);
+    double end = Timer.getFPGATimestamp();
+
+    logger.debug("{}\t{}\t{}", start, middle, end);
   }
 
   @Override
