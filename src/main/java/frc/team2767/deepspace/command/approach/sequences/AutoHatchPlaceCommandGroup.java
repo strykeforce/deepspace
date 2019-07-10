@@ -33,9 +33,14 @@ public class AutoHatchPlaceCommandGroup extends CommandGroup {
             addParallel(new SetLevelCommand(ElevatorLevel.ONE));
           }
         });
-    addSequential(new ElevatorSetPositionCommand(ElevatorSubsystem.kHatchLowPositionInches));
-    addSequential(new BiscuitPositionAboveCameraCommand());
-    addSequential(new VisionAutoAlignPlaceCommand());
+    addSequential(
+        new CommandGroup() {
+          {
+            addParallel(new ElevatorSetPositionCommand(ElevatorSubsystem.kHatchLowPositionInches));
+            addParallel(new BiscuitPositionAboveCameraCommand());
+            addSequential(new VisionAutoAlignPlaceCommand());
+          }
+        });
     addSequential(new BiscuitExecutePlanCommand());
     addSequential(new HoldHeadingUntilCompressionCommand());
     addSequential(new SandstormSwapIfAutonConditionalCommand(true));
