@@ -29,8 +29,8 @@ public class VisionSubsystem extends Subsystem implements Item {
   private static final double CAMERA_X = 3.5;
   private static final double CAMERA_Y_LEFT = -13.5;
   private static final double CAMERA_Y_RIGHT = 13.5;
-  private static final double GLUE_CORRECTION_FACTOR_RIGHT = -2.26; // -0.9536 comp
-  private static final double GLUE_CORRECTION_FACTOR_LEFT = 0.6147; // -1.25 comp
+  private static final double GLUE_CORRECTION_FACTOR_RIGHT = -2.21; // -2.26 comp
+  private static final double GLUE_CORRECTION_FACTOR_LEFT = 0.21; // 0.6147 comp
   private static final double CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_RIGHT =
       1.0; // 1.0 is zero value 0.85
   private static final double CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_LEFT =
@@ -41,10 +41,10 @@ public class VisionSubsystem extends Subsystem implements Item {
   private static final double CAMERA_RANGE_OFFSET_RIGHT = -5.02; // -4.3949
   private static final double CAMERA_RANGE_SLOPE_LEFT = 1.061; // 0.8259
   private static final double CAMERA_RANGE_OFFSET_LEFT = -4.92; // -5.6325
-  // NEGATIVE = TOWARDS FIELD LEFT
+  // NEGATIVE = TOWARDS FIELD LEFT (this one was negative)
   private static final double STRAFE_CORRECTION_RIGHT =
-      -0.25; // -1.0 // NEGATIVE TO FIELD LEFT FOR THIS ONE?
-  private static final double STRAFE_CORRECTION_LEFT = 0.35;
+      0.0; // -1.0 // NEGATIVE TO FIELD LEFT FOR THIS ONE?
+  private static final double STRAFE_CORRECTION_LEFT = 1.0; // was positive
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final DigitalOutput lightsOutput6 = new DigitalOutput(6);
