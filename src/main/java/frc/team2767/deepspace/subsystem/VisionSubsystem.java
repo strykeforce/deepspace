@@ -72,7 +72,6 @@ public class VisionSubsystem extends Subsystem implements Item {
   private LightPattern currentPattern;
   private double lightState;
   private double strafeError = 0;
-  private int counter;
 
   public VisionSubsystem() {
 
@@ -100,12 +99,6 @@ public class VisionSubsystem extends Subsystem implements Item {
     TelemetryService telemetryService = Robot.TELEMETRY;
     telemetryService.stop();
     telemetryService.register(this);
-    counter = 0;
-  }
-
-  @Override
-  public void periodic() {
-    counter++;
   }
 
   public double getCorrectedRange() {
@@ -147,7 +140,6 @@ public class VisionSubsystem extends Subsystem implements Item {
   public void queryPyeye() {
     rawBearing = (double) bearingEntry.getNumber(0.0);
     rawRange = (double) rangeEntry.getNumber(-1.0);
-    counter++;
   }
 
   public void setGamePiece(GamePiece gamePiece) {
@@ -274,20 +266,10 @@ public class VisionSubsystem extends Subsystem implements Item {
     return 0;
   }
 
-  public void setCounter(int counter) {
-    this.counter = counter;
-  }
-
-  public int getCounter() {
-    return counter % 20;
-  }
-
   @NotNull
   @Override
   public DoubleSupplier measurementFor(@NotNull Measure measure) {
     switch (measure) {
-      case UNKNOWN:
-        return this::getCounter;
       case POSITION:
         return this::getRawRange;
       case ANGLE:

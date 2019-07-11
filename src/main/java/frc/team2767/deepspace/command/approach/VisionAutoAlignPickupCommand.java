@@ -1,7 +1,6 @@
 package frc.team2767.deepspace.command.approach;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
@@ -21,7 +20,6 @@ public class VisionAutoAlignPickupCommand extends Command {
   private static final double MAX_YAW = 0.3;
   private static final double goodEnoughYaw = 1.5;
   private static final double DRIVE_EXPO = 0.5;
-  private static final double YAW_EXPO = 0.5;
   private static final double DEADBAND = 0.05;
   private static final double MIN_RANGE = 35.0;
   private static final double FWD_SCALE = 0.6;
@@ -31,23 +29,18 @@ public class VisionAutoAlignPickupCommand extends Command {
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VisionSubsystem VISION = Robot.VISION;
   private final ExpoScale driveExpo;
-  private final ExpoScale yawExpo;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private double range;
-  private double strafeError;
-  private double yawError;
   private DriverControls controls;
   private double strafeCorrection;
   private boolean isAuton;
   private double targetYaw;
   private boolean isGood = false;
   private RateLimit strafeRateLimit;
-  private double last;
 
   public VisionAutoAlignPickupCommand() {
     requires(DRIVE);
     this.driveExpo = new ExpoScale(DEADBAND, DRIVE_EXPO);
-    this.yawExpo = new ExpoScale(DEADBAND, YAW_EXPO);
     strafeRateLimit = new RateLimit(0.04); // 0.015
   }
 
@@ -64,7 +57,6 @@ public class VisionAutoAlignPickupCommand extends Command {
     } else targetYaw = 90.0;
     DRIVE.setTargetYaw(targetYaw);
     logger.info("Target Yaw: {}", targetYaw);
-    last = Timer.getFPGATimestamp();
   }
 
   @SuppressWarnings("Duplicates")
@@ -76,7 +68,7 @@ public class VisionAutoAlignPickupCommand extends Command {
     isGood = range >= 0; // check if range is good (we have a target), not -1
 
     // Calculate Yaw Term based on gyro
-    yawError = targetYaw - Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0);
+    double yawError = targetYaw - Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0);
     DRIVE.setYawError(yawError);
     double yaw = kP_YAW * yawError;
     if (yaw > MAX_YAW) yaw = MAX_YAW;
@@ -96,7 +88,8 @@ public class VisionAutoAlignPickupCommand extends Command {
     }
 
     double strafe;
-    strafeError = Math.sin(Math.toRadians(VISION.getCorrectedBearing())) * range - strafeCorrection;
+    double strafeError =
+        Math.sin(Math.toRadians(VISION.getCorrectedBearing())) * range - strafeCorrection;
 
     VISION.setStrafeError(strafeError);
 
