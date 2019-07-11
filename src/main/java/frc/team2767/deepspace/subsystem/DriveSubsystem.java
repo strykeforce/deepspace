@@ -33,7 +33,6 @@ public class DriveSubsystem extends Subsystem implements Item {
 
   public static final double TICKS_PER_INCH = 2500;
   public static final double TICKS_PER_TOOTH = 107.8;
-  private static final VisionSubsystem VISION = Robot.VISION;
   private static final double DRIVE_SETPOINT_MAX = 25_000.0;
   private static final double ROBOT_LENGTH = 21.0;
   private static final double ROBOT_WIDTH = 26.0;
@@ -49,16 +48,26 @@ public class DriveSubsystem extends Subsystem implements Item {
   private PathController pathController;
   private boolean isPath = false;
   private double targetYaw;
-  private double yawError = 0;
+  private double yawError;
+  private double graphableStrafe;
 
   public DriveSubsystem() {
     swerve.setFieldOriented(true);
     wheels = swerve.getWheels();
   }
 
+  public void setGraphableStrafe(double graphableStrafe) {
+    this.graphableStrafe = graphableStrafe;
+  }
+
   public void sandstormAxisFlip(boolean isCameraOriented) {
     swerve.setFieldOriented(!isCameraOriented);
     setEnableDriveAxisFlip(isCameraOriented);
+  }
+
+  private void setEnableDriveAxisFlip(boolean enable) {
+    enableDriveAxisFlip = enable;
+    logger.debug("driving is {} oriented", enable);
   }
 
   @Override
@@ -86,6 +95,10 @@ public class DriveSubsystem extends Subsystem implements Item {
     swerve.stop();
   }
 
+  ////////////////////////////////////////////////////////////////////////////
+  // PATHFINDER
+  ////////////////////////////////////////////////////////////////////////////
+
   public double getAverageOutputCurrent() {
     double sum = 0;
 
@@ -104,10 +117,6 @@ public class DriveSubsystem extends Subsystem implements Item {
 
     return (max1 + max2) / 2;
   }
-
-  ////////////////////////////////////////////////////////////////////////////
-  // PATHFINDER
-  ////////////////////////////////////////////////////////////////////////////
 
   public void startPath(String path, double targetYaw, boolean isDriftOut) {
     this.targetYaw = targetYaw;
@@ -130,11 +139,6 @@ public class DriveSubsystem extends Subsystem implements Item {
     logger.info("path interrupted");
     isPath = false;
     pathController.interrupt();
-  }
-
-  private void setEnableDriveAxisFlip(boolean enable) {
-    enableDriveAxisFlip = enable;
-    logger.debug("driving is {} oriented", enable);
   }
 
   public void setTargetYaw(double targetYaw) {
@@ -412,6 +416,8 @@ public class DriveSubsystem extends Subsystem implements Item {
         return () -> targetYaw - getGyro().getAngle();
       case DISPLACEMENT_EXPECTED:
         return () -> targetYaw;
+      case COMPONENT_STRAFE:
+        return () -> graphableStrafe;
       default:
         return () -> 2767.0;
     }

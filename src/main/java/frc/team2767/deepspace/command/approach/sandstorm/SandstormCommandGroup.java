@@ -24,7 +24,7 @@ public class SandstormCommandGroup extends CommandGroup {
             addParallel(new LightsOnCommand());
           }
         });
-    addSequential(new AutoHatchPlaceCommandGroup(0.0));
+    addSequential(new AutoHatchPlaceCommandGroup());
     addSequential(new ApproachDirectionCommand());
     addSequential(
         new CommandGroup() {
@@ -50,8 +50,6 @@ public class SandstormCommandGroup extends CommandGroup {
             addParallel(new LightsOnCommand());
           }
         });
-    addSequential(
-        new ChooseAutonFieldSideCommand(
-            new AutoHatchPlaceCommandGroup(-90.0), new AutoHatchPlaceCommandGroup(90.0)));
+    addSequential(new AutoHatchPlaceCommandGroup());
   }
 }

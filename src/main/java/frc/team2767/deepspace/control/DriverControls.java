@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.ZeroGyroCommand;
 import frc.team2767.deepspace.command.approach.sequences.AutoHatchPickupCommandGroup;
+import frc.team2767.deepspace.command.approach.sequences.AutoHatchPlaceCommandGroup;
 import frc.team2767.deepspace.command.biscuit.BiscuitNegativeCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositiveCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
@@ -15,7 +16,6 @@ import frc.team2767.deepspace.command.climb.StopClimbCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.log.SafetyLogDumpCommand;
 import frc.team2767.deepspace.command.sequences.pickup.AutoCargoPickupCommandGroup;
-import frc.team2767.deepspace.command.teleop.DriverPlaceAssistCommand;
 import frc.team2767.deepspace.command.teleop.InterruptCommand;
 import frc.team2767.deepspace.command.teleop.InterruptIntakeCommand;
 import frc.team2767.deepspace.command.teleop.ReleaseGamepieceCommand;
@@ -67,8 +67,10 @@ public class DriverControls {
     //        new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenPressed(new InterruptCommand())
     //        ;
     //
-    //    new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenPressed(new SandstormCommandGroup());
-    //    new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenPressed(new SandstormCommandGroup());
+    //    new JoystickButton(joystick, Trim.LEFT_Y_POS.id).whenPressed(new
+    // AutoHatchPlaceCommandGroup());
+    //    new JoystickButton(joystick, Trim.LEFT_Y_NEG.id).whenPressed(new
+    // AutoHatchPlaceCommandGroup());
 
     // biscuit
     new JoystickButton(joystick, Trim.LEFT_X_POS.id).whenPressed(new BiscuitPositiveCommand());
@@ -86,7 +88,7 @@ public class DriverControls {
 
     // gamepiece place
     new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(new ReleaseGamepieceCommand());
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed(new DriverPlaceAssistCommand());
+    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed(new AutoHatchPlaceCommandGroup());
     // new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased(new InterruptCommand());
   }
 

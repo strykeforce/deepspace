@@ -6,14 +6,11 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team2767.deepspace.command.approach.sandstorm.SandstormCommandGroup;
 import frc.team2767.deepspace.command.sequences.pickup.SandstormHatchPickupCommandGroup;
 import frc.team2767.deepspace.control.AutonChooser;
 import frc.team2767.deepspace.control.Controls;
 import frc.team2767.deepspace.subsystem.*;
 import frc.team2767.deepspace.subsystem.safety.SafetySubsystem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryController;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
 import org.strykeforce.thirdcoast.trapper.Session;
@@ -31,12 +28,9 @@ public class Robot extends TimedRobot {
   public static ClimbSubsystem CLIMB;
   public static Controls CONTROLS;
   public static StartLevel startLevel = StartLevel.ONE;
-  public static boolean isAuton;
   private static AutonChooser AUTON;
   private static boolean isEvent;
-  private static CommandGroup sandstorm;
   private static CommandGroup noAutoSandstorm;
-  private Logger logger;
 
   public static boolean isEvent() {
     return isEvent;
@@ -44,7 +38,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    isAuton = true;
     DigitalInput di = new DigitalInput(7);
     isEvent = di.get();
 
@@ -53,7 +46,6 @@ public class Robot extends TimedRobot {
       System.out.println("Event flag removed - switching logging to log file");
       System.setProperty(ContextInitializer.CONFIG_FILE_PROPERTY, "logback-event.xml");
     }
-    logger = LoggerFactory.getLogger(this.getClass());
 
     TELEMETRY = new TelemetryService(TelemetryController::new);
     DRIVE = new DriveSubsystem();
@@ -79,7 +71,6 @@ public class Robot extends TimedRobot {
     BISCUIT.zero();
     INTAKE.zero();
 
-    sandstorm = new SandstormCommandGroup();
     noAutoSandstorm = new SandstormHatchPickupCommandGroup();
 
     SmartDashboard.putBoolean("Game/SandstormPickUp", false);
@@ -103,11 +94,7 @@ public class Robot extends TimedRobot {
     BISCUIT.setPosition(BISCUIT.getPosition());
     DRIVE.sandstormAxisFlip(true);
     DRIVE.setAngleAdjustment(true);
-    if (isAuton) {
-      //      sandstorm.start();
-    } else {
-      //      noAutoSandstorm.start();
-    }
+    noAutoSandstorm.start();
   }
 
   @Override
@@ -134,6 +121,6 @@ public class Robot extends TimedRobot {
 
   public enum StartLevel {
     ONE,
-    TWO;
+    TWO
   }
 }

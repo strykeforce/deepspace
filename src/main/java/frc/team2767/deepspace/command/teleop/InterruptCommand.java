@@ -25,6 +25,7 @@ public class InterruptCommand extends InstantCommand {
 
   @Override
   protected void initialize() {
+    logger.info("INTERRUPT INIT");
     if (DriverStation.getInstance().isAutonomous()) {
       DRIVE.sandstormAxisFlip(true);
     }
@@ -32,7 +33,7 @@ public class InterruptCommand extends InstantCommand {
     DRIVE.setSlotConfig(DriveSubsystem.DriveTalonConfig.DRIVE_CONFIG);
     DRIVE.undoGyroOffset();
     BISCUIT.setMotionMagicAccel(BiscuitSubsystem.kSlowAccel);
-    logger.info("INTERRUPT INIT");
     VISION.setAction(Action.PLACE);
+    VISION.enableLights(false);
   }
 }

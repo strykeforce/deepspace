@@ -16,7 +16,7 @@ public class CoconutPickupAutoRetryCommand extends Command {
   private static final double STABLE_COUNTS = 5;
   private static final double WAIT_TIME = 1000; // ms
   private static final double RESET_HEIGHT = 20.25;
-  private static final double STRING_LENGTH = 260.0;
+  private static final double STRING_COMPRESSED_LENGTH = 223.0; // full length is 248
   private static PickupState state;
   private static double initialPressure;
   private static double startSealTime;
@@ -45,7 +45,7 @@ public class CoconutPickupAutoRetryCommand extends Command {
   protected void execute() {
     switch (state) {
       case DOWN:
-        if (BISCUIT.getCompression() <= STRING_LENGTH) {
+        if (BISCUIT.getCompression() <= STRING_COMPRESSED_LENGTH) {
           state = PickupState.WAIT_FOR_PRESSURE;
           ELEVATOR.setPosition(ELEVATOR.getPosition()); // inches
           startSealTime = System.currentTimeMillis();

@@ -45,7 +45,6 @@ public class AutonChooser {
       switch (autonSwitchPosition) {
         case 0:
           VISION.startSide = LEFT;
-          Robot.isAuton = false;
         case 1:
           VISION.startSide = LEFT;
           Robot.startLevel = Robot.StartLevel.ONE;
