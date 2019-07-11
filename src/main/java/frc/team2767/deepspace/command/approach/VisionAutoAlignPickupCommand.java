@@ -70,10 +70,6 @@ public class VisionAutoAlignPickupCommand extends Command {
   @SuppressWarnings("Duplicates")
   @Override
   protected void execute() {
-    double start = Timer.getFPGATimestamp();
-    //    logger.info("time = {}", (time - last) * 1000);
-    //    last = time;
-
     // Pyeye Method:
     VISION.queryPyeye(); // gets corrected heading and range from NT
     range = VISION.getRawRange();
@@ -110,11 +106,7 @@ public class VisionAutoAlignPickupCommand extends Command {
 
     double strafeOutput = strafeRateLimit.apply(strafe);
 
-    double middle = Timer.getFPGATimestamp();
     DRIVE.drive(forward, strafeOutput, yaw);
-    double end = Timer.getFPGATimestamp();
-
-    logger.debug("{}\t{}\t{}", start, middle, end);
   }
 
   @Override

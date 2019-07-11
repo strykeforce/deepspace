@@ -33,9 +33,7 @@ public class Robot extends TimedRobot {
   public static StartLevel startLevel = StartLevel.ONE;
   private static AutonChooser AUTON;
   private static boolean isEvent;
-  private static CommandGroup sandstorm;
   private static CommandGroup noAutoSandstorm;
-  private Logger logger;
 
   public static boolean isEvent() {
     return isEvent;
@@ -51,7 +49,6 @@ public class Robot extends TimedRobot {
       System.out.println("Event flag removed - switching logging to log file");
       System.setProperty(ContextInitializer.CONFIG_FILE_PROPERTY, "logback-event.xml");
     }
-    logger = LoggerFactory.getLogger(this.getClass());
 
     TELEMETRY = new TelemetryService(TelemetryController::new);
     DRIVE = new DriveSubsystem();
@@ -77,7 +74,6 @@ public class Robot extends TimedRobot {
     BISCUIT.zero();
     INTAKE.zero();
 
-    sandstorm = new SandstormCommandGroup();
     noAutoSandstorm = new SandstormHatchPickupCommandGroup();
 
     SmartDashboard.putBoolean("Game/SandstormPickUp", false);
