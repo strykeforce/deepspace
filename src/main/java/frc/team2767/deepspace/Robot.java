@@ -31,7 +31,6 @@ public class Robot extends TimedRobot {
   public static ClimbSubsystem CLIMB;
   public static Controls CONTROLS;
   public static StartLevel startLevel = StartLevel.ONE;
-  public static boolean isAuton;
   private static AutonChooser AUTON;
   private static boolean isEvent;
   private static CommandGroup sandstorm;
@@ -44,7 +43,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    isAuton = true;
     DigitalInput di = new DigitalInput(7);
     isEvent = di.get();
 
@@ -103,11 +101,7 @@ public class Robot extends TimedRobot {
     BISCUIT.setPosition(BISCUIT.getPosition());
     DRIVE.sandstormAxisFlip(true);
     DRIVE.setAngleAdjustment(true);
-    if (isAuton) {
-      //            sandstorm.start();
-    } else {
-      noAutoSandstorm.start();
-    }
+    noAutoSandstorm.start();
   }
 
   @Override
