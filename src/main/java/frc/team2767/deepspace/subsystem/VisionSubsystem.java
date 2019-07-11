@@ -183,6 +183,7 @@ public class VisionSubsystem extends Subsystem implements Item {
 
   public void runTuning(int camID) {
     tuningEntry.setNumber(camID);
+    tuningFinished.setNumber(0);
     logger.debug("tuning entry set to = {}", tuningEntry.getNumber(2767.0));
   }
 

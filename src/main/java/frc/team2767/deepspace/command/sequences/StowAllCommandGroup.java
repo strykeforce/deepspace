@@ -5,6 +5,7 @@ import frc.team2767.deepspace.command.intake.IntakePositionCommand;
 import frc.team2767.deepspace.command.log.LogCommand;
 import frc.team2767.deepspace.command.teleop.StowElevatorConditionalCommand;
 import frc.team2767.deepspace.command.vacuum.StowValveControlCommand;
+import frc.team2767.deepspace.command.vision.LightsOffCommand;
 import frc.team2767.deepspace.subsystem.IntakeSubsystem;
 
 public class StowAllCommandGroup extends CommandGroup {
@@ -16,6 +17,7 @@ public class StowAllCommandGroup extends CommandGroup {
             addParallel(new StowValveControlCommand());
             addParallel(new StowElevatorConditionalCommand());
             addParallel(new IntakePositionCommand(IntakeSubsystem.kStowPositionDeg));
+            addParallel(new LightsOffCommand());
           }
         });
     addSequential(new LogCommand("END STOW ALL"));
