@@ -55,23 +55,23 @@ public class VisionSubsystem extends Subsystem implements Item {
   public FieldDirection direction = FieldDirection.NOTSET;
   public ElevatorLevel elevatorLevel = ElevatorLevel.NOTSET;
   public StartSide startSide = StartSide.NOTSET;
-  private NetworkTableEntry bearingEntry;
-  private NetworkTableEntry cameraMode;
-  private NetworkTableEntry rangeEntry;
-  private NetworkTableEntry cameraIDEntry;
-  private NetworkTableEntry targetYawEntry;
-  private NetworkTableEntry tuningEntry;
-  private NetworkTableEntry tuningFinished;
-  private double rawRange;
-  private double rawBearing;
-  private double correctedRange;
-  private double correctedHeading;
-  private double targetYaw;
-  private double blinkPeriod;
-  private boolean blinkEnabled;
-  private LightPattern currentPattern;
-  private double lightState;
-  private double strafeError = 0;
+  private static NetworkTableEntry bearingEntry;
+  private static NetworkTableEntry cameraMode;
+  private static NetworkTableEntry rangeEntry;
+  private static NetworkTableEntry cameraIDEntry;
+  private static NetworkTableEntry targetYawEntry;
+  private static NetworkTableEntry tuningEntry;
+  private static NetworkTableEntry tuningFinished;
+  private static double rawRange;
+  private static double rawBearing;
+  private static double correctedRange;
+  private static double correctedHeading;
+  private static double targetYaw;
+  private static double blinkPeriod;
+  private static boolean blinkEnabled;
+  private static LightPattern currentPattern;
+  private static double lightState;
+  private static double strafeError = 0;
 
   public VisionSubsystem() {
 

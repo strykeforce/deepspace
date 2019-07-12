@@ -22,8 +22,8 @@ public class VisionAutoAlignPickupCommand extends Command {
   private static final double DRIVE_EXPO = 0.5;
   private static final double DEADBAND = 0.05;
   private static final double MIN_RANGE = 35.0;
-  private static final double FWD_SCALE = 0.6;
-  private static final double FWD_SCALE_FAST = 0.6;
+  private static final double FWD_SCALE = 0.5;
+  private static final double FWD_SCALE_FAST = 0.5;
   private static final double AUTON_OUTPUT = 0.35;
 
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
@@ -110,7 +110,7 @@ public class VisionAutoAlignPickupCommand extends Command {
   @Override
   protected void end() {
 
-    logger.debug("range = {}", range);
+    logger.info("range = {}", range);
     logger.info("End Auto Align Pickup Vision");
   }
 }
