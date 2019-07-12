@@ -26,7 +26,7 @@ class HealthCheckCommand : Command() {
                 name = "swerve azimuth tests"
                 talons = Robot.DRIVE.allWheels.map { it.azimuthTalon }
 
-                val volt3currentRange = 0.25..0.65
+                val volt3currentRange = 0.25..0.75
                 val volt6currentRange = 0.5..1.25
                 val volt9currentRange = 1.0..1.5
 
@@ -57,13 +57,13 @@ class HealthCheckCommand : Command() {
                 timedTest {
                     percentOutput = 0.75
                     currentRange = volt9currentRange
-                    speedRange = 750..810
+                    speedRange = 750..820
                 }
 
                 timedTest {
                     percentOutput = -0.75
                     currentRange = volt9currentRange
-                    speedRange = -810..-750
+                    speedRange = -820..-750
                 }
 
             }
@@ -79,13 +79,13 @@ class HealthCheckCommand : Command() {
                 timedTest {
                     percentOutput = 0.25
                     currentRange = volt3currentRange
-                    speedRange = 8500..9500
+                    speedRange = -9500..-8500
                 }
 
                 timedTest {
                     percentOutput = -0.25
                     currentRange = volt3currentRange
-                    speedRange = -9500..-8500
+                    speedRange = 8500..9500
                 }
 
                 timedTest {
@@ -103,13 +103,13 @@ class HealthCheckCommand : Command() {
                 timedTest {
                     percentOutput = 1.0
                     currentRange = volt12currentRange
-                    speedRange = 34750..38500
+                    speedRange = 34750..39500
                 }
 
                 timedTest {
                     percentOutput = -1.0
                     currentRange = volt12currentRange
-                    speedRange = -38500..-34750
+                    speedRange = -39500..-34750
                 }
             }
 
@@ -260,13 +260,13 @@ class HealthCheckCommand : Command() {
                 timedTest {
                     percentOutput = 1.0
                     currentRange = volt12currentRange
-                    speedRange = 16000..19000
+                    speedRange = -19000..-16000
                 }
 
                 timedTest {
                     percentOutput = -1.0
                     currentRange = volt12currentRange
-                    speedRange = -19000..-16000
+                    speedRange = 16000..19000
                 }
             }
         }
