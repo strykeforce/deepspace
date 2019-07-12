@@ -75,7 +75,7 @@ public class ClimbSubsystem extends Subsystem implements Item {
     kHighRelease = (int) getPrefs("high_position", 189);
     kHighLvl2 = (int) getPrefs("Lvl2_high_position", 600);
     kClimb = (int) getPrefs("climb_position", 884);
-    kTooLowIn = (int) getPrefs("too_low_position", 240);
+    kTooLowIn = (int) getPrefs("too_low_position", 300);
     kTooLowLvl2 = (int) getPrefs("too_low_Lvl2", 656);
     kSealOutputVelocity = (int) getPrefs("seal_velocity", 300);
 
