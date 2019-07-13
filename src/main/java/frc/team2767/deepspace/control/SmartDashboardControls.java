@@ -52,6 +52,7 @@ public class SmartDashboardControls {
       addPitCommands();
       addAzimuthCommands();
       addVisionCommands();
+      addVacuumCommands();
       addPathTest();
     }
   }

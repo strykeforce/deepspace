@@ -79,13 +79,13 @@ class HealthCheckCommand : Command() {
                 timedTest {
                     percentOutput = 0.25
                     currentRange = volt3currentRange
-                    speedRange = -9500..-8500
+                    speedRange = 8500..9500
                 }
 
                 timedTest {
                     percentOutput = -0.25
                     currentRange = volt3currentRange
-                    speedRange = 8500..9500
+                    speedRange = -9500..-8500
                 }
 
                 timedTest {
@@ -248,13 +248,13 @@ class HealthCheckCommand : Command() {
                 timedTest {
                     percentOutput = 0.25
                     currentRange = volt6currentRange
-                    speedRange = 3500..4500
+                    speedRange = -4500..-3500
                 }
 
                 timedTest {
                     percentOutput = -0.25
                     currentRange = volt6currentRange
-                    speedRange = -4500..-3500
+                    speedRange = 3500..4500
                 }
 
                 timedTest {
