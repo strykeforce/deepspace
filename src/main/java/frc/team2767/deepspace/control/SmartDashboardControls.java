@@ -66,6 +66,7 @@ public class SmartDashboardControls {
     SmartDashboard.putData("Game/Gyro", Robot.DRIVE.getGyro());
     SmartDashboard.putData("Game/Lvl2Deploy", new ClimbLevel2DeployCommand());
     SmartDashboard.putData("Game/Lvl2Climb", new ClimbLevel2AutoCommand());
+    SmartDashboard.putData("Stop pump", new StopPumpCommandGroup());
   }
 
   private void addClimbTab() {

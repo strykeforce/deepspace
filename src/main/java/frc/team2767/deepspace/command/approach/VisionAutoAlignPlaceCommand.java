@@ -1,6 +1,5 @@
 package frc.team2767.deepspace.command.approach;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team2767.deepspace.Robot;
@@ -29,14 +28,10 @@ public class VisionAutoAlignPlaceCommand extends Command {
   private static Controls CONTROLS;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private AutoPlaceSideChooser autoPlaceSideChooser = new AutoPlaceSideChooser();
-  private double gyroOffset;
   private double range;
   private double forward;
-  private double strafeError;
-  private double yawError;
   private double strafeCorrection;
   private double targetYaw;
-  private boolean isSandstorm;
   private boolean isGood = false;
   private RateLimit strafeRateLimit;
   private final ExpoScale driveExpo;
@@ -49,7 +44,7 @@ public class VisionAutoAlignPlaceCommand extends Command {
 
   @Override
   protected void initialize() {
-    gyroOffset =
+    double gyroOffset =
         autoPlaceSideChooser.determineGyroOffset(
             VISION.direction, Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0));
     targetYaw = autoPlaceSideChooser.determineTargetYaw(VISION.direction);
@@ -57,7 +52,6 @@ public class VisionAutoAlignPlaceCommand extends Command {
     logger.debug("offset = {} target = {}", gyroOffset, targetYaw);
 
     CONTROLS = Robot.CONTROLS;
-    isSandstorm = DriverStation.getInstance().isAutonomous();
     DRIVE.setGyroOffset(gyroOffset);
     SmartDashboard.putBoolean("Game/haveHatch", true);
     logger.info("Begin Vision Auto Align Place");
@@ -78,7 +72,7 @@ public class VisionAutoAlignPlaceCommand extends Command {
     isGood = range >= 0; // check if range is good (we have a target), not -1
 
     // Calculate Yaw Term based on gyro
-    yawError = targetYaw - Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0);
+    double yawError = targetYaw - Math.IEEEremainder(DRIVE.getGyro().getAngle(), 360.0);
     DRIVE.setYawError(yawError);
     double yaw = kP_YAW * yawError;
     if (yaw > MAX_YAW) yaw = MAX_YAW;
@@ -88,7 +82,8 @@ public class VisionAutoAlignPlaceCommand extends Command {
     boolean onTarget = Math.abs(yawError) <= goodEnoughYaw;
 
     double strafe;
-    strafeError = Math.sin(Math.toRadians(VISION.getCorrectedBearing())) * range - strafeCorrection;
+    double strafeError =
+        Math.sin(Math.toRadians(VISION.getCorrectedBearing())) * range - strafeCorrection;
     VISION.setStrafeError(strafeError);
     forward = driveExpo.apply(CONTROLS.getDriverControls().getForward()) * FORWARD_SCALE;
 

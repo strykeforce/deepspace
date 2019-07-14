@@ -1,7 +1,7 @@
 package frc.team2767.deepspace.subsystem.safety;
 
 enum IntakePosition {
-  INTAKE_INTAKE(12_081, -700),
+  INTAKE_INTAKE(12_081, -800),
   INTAKE_STOW(12_081, -475);
 
   public final int forwardLimit;
