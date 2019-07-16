@@ -30,7 +30,7 @@ public class VisionSubsystem extends Subsystem implements Item {
   private static final double CAMERA_Y_LEFT = -13.5;
   private static final double CAMERA_Y_RIGHT = 13.5;
   private static final double GLUE_CORRECTION_FACTOR_RIGHT = -2.21; // -2.26 comp
-  private static final double GLUE_CORRECTION_FACTOR_LEFT = 0.21; // 0.6147 comp
+  private static final double GLUE_CORRECTION_FACTOR_LEFT = 0.6417; // 0.6147 comp
   private static final double CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_RIGHT =
       1.0; // 1.0 is zero value 0.85
   private static final double CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_LEFT =
@@ -43,8 +43,8 @@ public class VisionSubsystem extends Subsystem implements Item {
   private static final double CAMERA_RANGE_OFFSET_LEFT = -4.92; // -5.6325
   // NEGATIVE = TOWARDS FIELD LEFT (this one was negative)
   private static final double STRAFE_CORRECTION_RIGHT =
-      0.0; // -1.0 // NEGATIVE TO FIELD LEFT FOR THIS ONE?
-  private static final double STRAFE_CORRECTION_LEFT = 1.0; // was positive
+      -0.5; // -1.0 // NEGATIVE TO FIELD LEFT FOR THIS ONE?
+  private static final double STRAFE_CORRECTION_LEFT = 0.5; // was positive
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private final DigitalOutput lightsOutput6 = new DigitalOutput(6);
@@ -55,23 +55,23 @@ public class VisionSubsystem extends Subsystem implements Item {
   public FieldDirection direction = FieldDirection.NOTSET;
   public ElevatorLevel elevatorLevel = ElevatorLevel.NOTSET;
   public StartSide startSide = StartSide.NOTSET;
-  private NetworkTableEntry bearingEntry;
-  private NetworkTableEntry cameraMode;
-  private NetworkTableEntry rangeEntry;
-  private NetworkTableEntry cameraIDEntry;
-  private NetworkTableEntry targetYawEntry;
-  private NetworkTableEntry tuningEntry;
-  private NetworkTableEntry tuningFinished;
-  private double rawRange;
-  private double rawBearing;
-  private double correctedRange;
-  private double correctedHeading;
-  private double targetYaw;
-  private double blinkPeriod;
-  private boolean blinkEnabled;
-  private LightPattern currentPattern;
-  private double lightState;
-  private double strafeError = 0;
+  private static NetworkTableEntry bearingEntry;
+  private static NetworkTableEntry cameraMode;
+  private static NetworkTableEntry rangeEntry;
+  private static NetworkTableEntry cameraIDEntry;
+  private static NetworkTableEntry targetYawEntry;
+  private static NetworkTableEntry tuningEntry;
+  private static NetworkTableEntry tuningFinished;
+  private static double rawRange;
+  private static double rawBearing;
+  private static double correctedRange;
+  private static double correctedHeading;
+  private static double targetYaw;
+  private static double blinkPeriod;
+  private static boolean blinkEnabled;
+  private static LightPattern currentPattern;
+  private static double lightState;
+  private static double strafeError = 0;
 
   public VisionSubsystem() {
 

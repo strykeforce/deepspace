@@ -22,40 +22,13 @@ class HealthCheckCommand : Command() {
 
     override fun initialize() {
         healthCheck = healthCheck {
-            //
-//            vacuumCheck {
-//                name = "pressure tests"
-//
-//                pressureTest {
-//                    name = "climb pressure test"
-//
-//                    pressure = 18.0
-//                    encoderTimeOutCount = 20_000
-//                    maxAcceptablePressureDrop = 2
-//                }
-//            }
-
-            // pump tests are highly dependent on valve states set in pressure tests
-//            talonCheck {
-//                name = "pump tests"
-//                talons = Robot.VACUUM.talons
-//
-//                timedTest {
-//                    percentOutput = 0.25
-//                    currentRange = 0.0..0.0
-//                    speedRange = 0..0
-//                    duration = 5.0
-//                }
-//            }
-
-
             talonCheck {
                 name = "swerve azimuth tests"
                 talons = Robot.DRIVE.allWheels.map { it.azimuthTalon }
 
-                val volt3currentRange = 0.5..0.65
-                val volt6currentRange = 0.5..1.0
-                val volt9currentRange = 1.0..1.25
+                val volt3currentRange = 0.25..0.75
+                val volt6currentRange = 0.5..1.25
+                val volt9currentRange = 1.0..1.5
 
                 timedTest {
                     percentOutput = 0.25
@@ -84,13 +57,13 @@ class HealthCheckCommand : Command() {
                 timedTest {
                     percentOutput = 0.75
                     currentRange = volt9currentRange
-                    speedRange = 750..810
+                    speedRange = 750..820
                 }
 
                 timedTest {
                     percentOutput = -0.75
                     currentRange = volt9currentRange
-                    speedRange = -810..-750
+                    speedRange = -820..-750
                 }
 
             }
@@ -99,8 +72,8 @@ class HealthCheckCommand : Command() {
                 name = "swerve drive tests"
                 talons = Robot.DRIVE.allWheels.map { it.driveTalon }
 
-                val volt3currentRange = 0.75..1.125
-                val volt6currentRange = 1.0..1.75
+                val volt3currentRange = 0.5..1.125
+                val volt6currentRange = 1.0..2.0
                 val volt12currentRange = 2.5..5.0
 
                 timedTest {
@@ -130,13 +103,13 @@ class HealthCheckCommand : Command() {
                 timedTest {
                     percentOutput = 1.0
                     currentRange = volt12currentRange
-                    speedRange = 34750..38500
+                    speedRange = 34750..39500
                 }
 
                 timedTest {
                     percentOutput = -1.0
                     currentRange = volt12currentRange
-                    speedRange = -38500..-34750
+                    speedRange = -39500..-34750
                 }
             }
 
@@ -145,7 +118,8 @@ class HealthCheckCommand : Command() {
                 name = "elevator position tests"
                 talons = Robot.ELEVATOR.talons
 
-                val elevatorCurrentRange = 2.0..3.0
+                val elevatorDownCurrentRange = 0.5..3.0
+                val elevatorUpCurrentRange = 0.5..3.0
 
                 positionTalon {
                     encoderTarget = 10_000
@@ -159,8 +133,8 @@ class HealthCheckCommand : Command() {
                     encoderGoodEnough = 500
                     encoderTimeOutCount = 5000
 
-                    currentRange = elevatorCurrentRange
-                    speedRange = 500..650
+                    currentRange = elevatorUpCurrentRange
+                    speedRange = 200..300
                 }
 
                 positionTest {
@@ -170,8 +144,8 @@ class HealthCheckCommand : Command() {
                     encoderGoodEnough = 500
                     encoderTimeOutCount = 5000
 
-                    currentRange = elevatorCurrentRange
-                    speedRange = -650..-500
+                    currentRange = elevatorDownCurrentRange
+                    speedRange = -900..-750
                 }
             }
 
@@ -191,7 +165,7 @@ class HealthCheckCommand : Command() {
                     encoderTimeOutCount = 500
 
                     currentRange = shoulderDownCurrentRange
-                    speedRange = 100..160
+                    speedRange = 130..190
                 }
 
                 positionTest {
@@ -202,7 +176,7 @@ class HealthCheckCommand : Command() {
                     encoderTimeOutCount = 500
 
                     currentRange = shoulderUpCurrentRange
-                    speedRange = -160..-100
+                    speedRange = -190..-130
                 }
             }
 
@@ -221,7 +195,7 @@ class HealthCheckCommand : Command() {
                     encoderTimeOutCount = 500
 
                     currentRange = downCurrentRange
-                    speedRange = 270..300
+                    speedRange = 270..340
                 }
 
                 positionTest {
@@ -232,7 +206,7 @@ class HealthCheckCommand : Command() {
                     encoderTimeOutCount = 250
 
                     currentRange = upCurrentRange
-                    speedRange = -230..-200
+                    speedRange = -240..-200
                 }
 
                 positionTalon {
@@ -248,7 +222,7 @@ class HealthCheckCommand : Command() {
                     encoderTimeOutCount = 500
 
                     currentRange = downCurrentRange
-                    speedRange = -300..-270
+                    speedRange = -340..-270
                 }
 
                 positionTest {
@@ -259,7 +233,7 @@ class HealthCheckCommand : Command() {
                     encoderTimeOutCount = 250
 
                     currentRange = upCurrentRange
-                    speedRange = 200..230
+                    speedRange = 200..240
                 }
 
             }
@@ -268,31 +242,31 @@ class HealthCheckCommand : Command() {
                 name = "intake roller tests"
                 talons = Robot.INTAKE.rollerTalon
 
-                val volt6currentRange = 1.0..3.0
-                val volt12currentRange = 9.0..11.0
+                val volt6currentRange = 1.0..4.0
+                val volt12currentRange = 13.0..17.0
 
                 timedTest {
                     percentOutput = 0.25
                     currentRange = volt6currentRange
-                    speedRange = 1100..1350
+                    speedRange = -4500..-3500
                 }
 
                 timedTest {
                     percentOutput = -0.25
                     currentRange = volt6currentRange
-                    speedRange = -1350..-1100
+                    speedRange = 3500..4500
                 }
 
                 timedTest {
                     percentOutput = 1.0
                     currentRange = volt12currentRange
-                    speedRange = 1100..6500
+                    speedRange = -19000..-16000
                 }
 
                 timedTest {
                     percentOutput = -1.0
                     currentRange = volt12currentRange
-                    speedRange = -6500..-1100
+                    speedRange = 16000..19000
                 }
             }
         }

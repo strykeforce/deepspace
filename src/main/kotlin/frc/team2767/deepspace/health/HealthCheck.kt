@@ -22,13 +22,6 @@ class HealthCheck {
     private lateinit var iterator: Iterator<TestGroup>
     private lateinit var currentTestGroup: TestGroup
 
-    fun vacuumCheck(init: VacuumGroup.() -> Unit): VacuumGroup {
-        val test = VacuumGroup(this)
-        test.init()
-        testGroups.add(test)
-        return test
-    }
-
     fun talonCheck(init: TalonGroup.() -> Unit): TalonGroup {
         val test = TalonGroup(this)
         test.init()
@@ -89,7 +82,7 @@ class HealthCheck {
         return "HealthCheck(testGroups=$testGroups)"
     }
 
-
+    @Suppress("unused")
     private enum class State {
         STARTING,
         RUNNING,

@@ -51,8 +51,8 @@ class TalonTimedTest(private val group: TalonGroup) : Test, Reportable {
             }
 
             RUNNING -> {
-                talonCurrents.forEach { talon, currents -> currents.add(talon.outputCurrent) }
-                talonSpeeds.forEach { talon, speeds -> speeds.add(talon.selectedSensorVelocity) }
+                talonCurrents.forEach { (talon, currents) -> currents.add(talon.outputCurrent) }
+                talonSpeeds.forEach { (talon, speeds) -> speeds.add(talon.selectedSensorVelocity) }
                 if (++iteration == iterations) state = STOPPING
             }
 

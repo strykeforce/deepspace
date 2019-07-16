@@ -15,16 +15,18 @@ public class CoconutPickupAutoRetryCommand extends Command {
   private static final double PRESSURE_DIFFERENTIAL = 2.5; // inHg
   private static final double STABLE_COUNTS = 5;
   private static final double WAIT_TIME = 1000; // ms
+  private static final double DOWN_TIMEOUT = 1500;
   private static final double RESET_HEIGHT = 20.25;
-  private static final double STRING_COMPRESSED_LENGTH = 223.0; // full length is 248
-  private static PickupState state;
-  private static double initialPressure;
-  private static double startSealTime;
-  private static boolean hasRetried;
-  private static double currentTime;
-  private static double currentPressure;
-  private static double stableCounts;
+  private static final double STRING_COMPRESSED_LENGTH = 223.0; // full length is 252
   private static double DOWN_SPEED = -0.35;
+  private PickupState state;
+  private double initialPressure;
+  private double startSealTime;
+  private boolean hasRetried;
+  private double downInitTime;
+  private double currentTime;
+  private double currentPressure;
+  private double stableCounts;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public CoconutPickupAutoRetryCommand() {
@@ -39,6 +41,7 @@ public class CoconutPickupAutoRetryCommand extends Command {
     initialPressure = VACUUM.getPressure();
     stableCounts = 0;
     hasRetried = false;
+    downInitTime = System.currentTimeMillis();
   }
 
   @Override
@@ -49,6 +52,22 @@ public class CoconutPickupAutoRetryCommand extends Command {
           state = PickupState.WAIT_FOR_PRESSURE;
           ELEVATOR.setPosition(ELEVATOR.getPosition()); // inches
           startSealTime = System.currentTimeMillis();
+          break;
+        }
+
+        // TIMEOUT (on down) = RESET & TRY AGAIN
+        if (System.currentTimeMillis() - downInitTime > DOWN_TIMEOUT) {
+          if (!hasRetried) {
+            state = PickupState.RESET;
+            hasRetried = true;
+            ELEVATOR.setPosition(RESET_HEIGHT);
+            logger.info("retrying");
+            break;
+          } else {
+            state = PickupState.DONE;
+            ELEVATOR.setPosition(RESET_HEIGHT);
+            break;
+          }
         }
 
         break;
@@ -61,7 +80,7 @@ public class CoconutPickupAutoRetryCommand extends Command {
           state = PickupState.RESET;
           hasRetried = true;
           ELEVATOR.setPosition(RESET_HEIGHT);
-          logger.info("Retrying");
+          logger.info("retrying");
           break;
         }
 
@@ -78,8 +97,10 @@ public class CoconutPickupAutoRetryCommand extends Command {
 
         break;
       case RESET:
+        currentPressure = VACUUM.getPressure();
         if (ELEVATOR.onTarget() && (currentPressure - initialPressure) < PRESSURE_DIFFERENTIAL) {
           startSealTime = System.currentTimeMillis();
+          downInitTime = System.currentTimeMillis();
           ELEVATOR.openLoopMove(DOWN_SPEED);
           state = PickupState.DOWN;
           logger.info("Moving Down");

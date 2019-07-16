@@ -29,7 +29,7 @@ public class SandstormHatchPickupCommandGroup extends CommandGroup {
             addParallel(new SetGamePieceCommand(GamePiece.HATCH));
             addParallel(new SetFieldDirectionCommand(FieldDirection.LEFT));
             addParallel(new SetLevelCommand(ElevatorLevel.ONE));
-            addParallel(new IntakePositionCommand(IntakeSubsystem.kStowPositionDeg));
+            addParallel(new IntakePositionCommand(IntakeSubsystem.kStowPositionDeg), 0.05);
           }
         });
     addSequential(new ElevatorSetPositionCommand(7.5));

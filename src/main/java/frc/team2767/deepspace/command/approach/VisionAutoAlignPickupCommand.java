@@ -22,12 +22,13 @@ public class VisionAutoAlignPickupCommand extends Command {
   private static final double DRIVE_EXPO = 0.5;
   private static final double DEADBAND = 0.05;
   private static final double MIN_RANGE = 35.0;
-  private static final double FWD_SCALE = 0.6;
-  private static final double FWD_SCALE_FAST = 0.6;
-  private static final double AUTON_OUTPUT = 0.35;
+  private static final double FWD_SCALE = 0.5;
+  private static final double FWD_SCALE_FAST = 0.5;
+  private static final double AUTON_OUTPUT = 0.30;
 
   private static final DriveSubsystem DRIVE = Robot.DRIVE;
   private static final VisionSubsystem VISION = Robot.VISION;
+
   private final ExpoScale driveExpo;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   private double range;
@@ -46,6 +47,7 @@ public class VisionAutoAlignPickupCommand extends Command {
 
   @Override
   protected void initialize() {
+    VISION.queryPyeye();
     isAuton = DriverStation.getInstance().isAutonomous();
     SmartDashboard.putBoolean("Game/haveHatch", false);
     logger.info("Begin Vision Auto Align Pickup");
@@ -110,7 +112,7 @@ public class VisionAutoAlignPickupCommand extends Command {
   @Override
   protected void end() {
 
-    logger.debug("range = {}", range);
+    logger.info("range = {}", range);
     logger.info("End Auto Align Pickup Vision");
   }
 }

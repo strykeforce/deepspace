@@ -257,6 +257,10 @@ public class ElevatorSubsystem extends Subsystem implements Limitable, Zeroable 
   @SuppressWarnings("Duplicates")
   @Override
   public void setLimits(int forward, int reverse) {
+    if (elevator.hasResetOccurred()) {
+      logger.warn("ELEVATOR TALON RESET");
+    }
+
     if (forward != currentForwardLimit) {
       elevator.configForwardSoftLimitThreshold(forward, 0);
       currentForwardLimit = forward;
