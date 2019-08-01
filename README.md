@@ -1,5 +1,12 @@
 # 2019 FIRST DEEP SPACE
 
+![airtight](https://strykeforce.smugmug.com/2019-Stryke-Force/2019-Deep-Space/i-2dCqG95/A)
+
+## Controls
+![driver](doc/2019-driver-controls.jpg)
+
+![copilot](doc/2019-copilot-controls.jpg)
+
 ## Talons
 
 Subsystem    | Talon       | ID | PDP
@@ -61,7 +68,8 @@ Vision    | cam0Tune | User Button
 
 ## PCM
 
-Subsystem | Valve        | Solenoid
---------- | ------------ | --------
-Vacuum    | trident      | 0
-Vacuum    | climb        | 2
+Subsystem | Valve         | Solenoid
+--------- | ------------- | --------
+Vacuum    | trident(hatch)| 0
+Vacuum    | climb         | 2
+Vacuum    | trident(cargo)| 3
