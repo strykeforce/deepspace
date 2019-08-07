@@ -41,30 +41,8 @@ public final class TeleOpDriveCommand extends Command {
 
   @Override
   protected void execute() {
-    /*VISION.queryPyeye(); // gets corrected heading and range from NT
-
-    double maxYawVelocity = 0.3; // max yaw input
-
-    double error = VISION.getCorrectedHeading();
-    boolean isGood =
-        VISION.getCorrectedRange() >= 0; // check if range is good (we have a target), not -1*/
     double yaw;
-
-    /*if (isGood) {
-
-      yaw = error * kP; // corrected heading is error from camera center
-
-      // normalize yaw
-      if (yaw > maxYawVelocity) {
-        yaw = maxYawVelocity;
-      } else if (yaw < -maxYawVelocity) {
-        yaw = -maxYawVelocity;
-      }
-    } else {*/
     yaw = yawExpo.apply(controls.getYaw());
-    // }
-
-    // forward and strafe are still normal
     double forward = driveExpo.apply(controls.getForward());
     double strafe = driveExpo.apply(controls.getStrafe());
 
