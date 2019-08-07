@@ -3,9 +3,9 @@
 ![airtight](https://strykeforce.smugmug.com/2019-Stryke-Force/2019-Deep-Space/i-2dCqG95/A)
 
 ## Controls
-![driver](doc/2019-driver-controls.jpg)
+![driver](docs/2019-driver-controls.JPG)
 
-![copilot](doc/2019-copilot-controls.jpg)
+![copilot](docs/2019-copilot-controls.JPG)
 
 ## Talons
 
