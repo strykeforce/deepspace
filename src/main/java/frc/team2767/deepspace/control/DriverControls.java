@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2767.deepspace.command.ZeroGyroCommand;
 import frc.team2767.deepspace.command.approach.sequences.AutoHatchPickupCommandGroup;
-import frc.team2767.deepspace.command.approach.sequences.AutoHatchPlaceCommandGroup;
 import frc.team2767.deepspace.command.biscuit.BiscuitNegativeCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitPositiveCommand;
 import frc.team2767.deepspace.command.biscuit.BiscuitStopCommand;
@@ -88,7 +87,8 @@ public class DriverControls {
 
     // gamepiece place
     new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(new ReleaseGamepieceCommand());
-    new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed(new AutoHatchPlaceCommandGroup());
+    // new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed(new
+    // AutoHatchPlaceCommandGroup());
     // new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased(new InterruptCommand());
   }
 
