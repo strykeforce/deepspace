@@ -118,8 +118,8 @@ class HealthCheckCommand : Command() {
                 name = "elevator position tests"
                 talons = Robot.ELEVATOR.talons
 
-                val elevatorDownCurrentRange = 0.5..3.0
-                val elevatorUpCurrentRange = 0.5..3.0
+                val elevatorDownCurrentRange = 0.25..1.5
+                val elevatorUpCurrentRange = 2.0..3.5
 
                 positionTalon {
                     encoderTarget = 10_000
@@ -127,25 +127,25 @@ class HealthCheckCommand : Command() {
                 }
 
                 positionTest {
-                    percentOutput = 0.2
+                    percentOutput = 0.23
 
                     encoderChangeTarget = 15_000
                     encoderGoodEnough = 500
                     encoderTimeOutCount = 5000
 
                     currentRange = elevatorUpCurrentRange
-                    speedRange = 200..300
+                    speedRange = 250..450
                 }
 
                 positionTest {
-                    percentOutput = -0.2
+                    percentOutput = -0.183
 
                     encoderChangeTarget = 15_000
                     encoderGoodEnough = 500
                     encoderTimeOutCount = 5000
 
                     currentRange = elevatorDownCurrentRange
-                    speedRange = -900..-750
+                    speedRange = -750..-550
                 }
             }
 

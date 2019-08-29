@@ -17,8 +17,8 @@ public class CoconutPickupAutoRetryCommand extends Command {
   private static final double WAIT_TIME = 1000; // ms
   private static final double DOWN_TIMEOUT = 1500;
   private static final double RESET_HEIGHT = 20.25;
-  private static final double STRING_COMPRESSED_LENGTH = 223.0; // full length is 252
-  private static double DOWN_SPEED = -0.35;
+  private static final double STRING_COMPRESSED_LENGTH = 230.0; // full length is 252, was 223
+  private static double DOWN_SPEED = -0.37; // was 35
   private PickupState state;
   private double initialPressure;
   private double startSealTime;
