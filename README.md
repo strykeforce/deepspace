@@ -1,6 +1,6 @@
 # 2019 FIRST DEEP SPACE
 
-![airtight](https://strykeforce.smugmug.com/2019-Stryke-Force/2019-Deep-Space/i-2dCqG95/A)
+![airtight](https://photos.smugmug.com/2019-Stryke-Force/2019-Deep-Space/i-2dCqG95/0/b0bcb757/L/Hang%20Time-L.jpg)
 
 ## Controls
 ![driver](docs/2019-driver-controls.JPG)
