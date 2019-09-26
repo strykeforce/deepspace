@@ -13,11 +13,11 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
-import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
-import org.strykeforce.thirdcoast.telemetry.item.Item;
+import org.strykeforce.thirdcoast.telemetry.item.Measurable;
+import org.strykeforce.thirdcoast.telemetry.item.Measure;
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
-public class ClimbSubsystem extends Subsystem implements Item {
+public class ClimbSubsystem extends Subsystem implements Measurable {
 
   // max 843
   // min 139
@@ -221,10 +221,12 @@ public class ClimbSubsystem extends Subsystem implements Item {
     return 0;
   }
 
+  private static final String STRING_POT = "STRING_POT";
+
   @NotNull
   @Override
   public Set<Measure> getMeasures() {
-    return Set.of(Measure.ANALOG_IN_RAW);
+    return Set.of(new Measure(STRING_POT, "String Pot Raw Analog"));
   }
 
   @NotNull
@@ -234,15 +236,15 @@ public class ClimbSubsystem extends Subsystem implements Item {
   }
 
   @Override
-  public int compareTo(@NotNull Item item) {
+  public int compareTo(@NotNull Measurable item) {
     return 0;
   }
 
   @NotNull
   @Override
   public DoubleSupplier measurementFor(@NotNull Measure measure) {
-    switch (measure) {
-      case ANALOG_IN_RAW:
+    switch (measure.getName()) {
+      case STRING_POT:
         return this::getStringPotPosition;
       default:
         return () -> 2767.0;

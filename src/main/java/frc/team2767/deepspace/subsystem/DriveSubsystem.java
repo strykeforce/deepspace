@@ -25,11 +25,11 @@ import org.strykeforce.thirdcoast.swerve.SwerveDrive.DriveMode;
 import org.strykeforce.thirdcoast.swerve.SwerveDriveConfig;
 import org.strykeforce.thirdcoast.swerve.Wheel;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
-import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
-import org.strykeforce.thirdcoast.telemetry.item.Item;
+import org.strykeforce.thirdcoast.telemetry.item.Measurable;
+import org.strykeforce.thirdcoast.telemetry.item.Measure;
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
-public class DriveSubsystem extends Subsystem implements Item {
+public class DriveSubsystem extends Subsystem implements Measurable {
 
   public static final double TICKS_PER_INCH = 2500;
   public static final double TICKS_PER_TOOTH = 107.8;
@@ -37,9 +37,13 @@ public class DriveSubsystem extends Subsystem implements Item {
   private static final double ROBOT_LENGTH = 21.0;
   private static final double ROBOT_WIDTH = 26.0;
   private static final int NUM_WHEELS = 4;
-
+  private static final String GYRO_ANGLE = "GYRO_ANGE";
+  private static final String YAW_ERROR = "YAW_ERROR";
+  private static final String PATH_POSITION = "PATH_POSITION";
+  private static final String GYRO_ERROR = "GYRO_ERROR";
+  private static final String YAW_TARGET = "YAW_TARGET";
+  private static final String STRAFE = "STRAFE";
   private static double offsetGyro;
-
   private static boolean enableDriveAxisFlip = false;
   private static Wheel[] wheels;
   private final SwerveDrive swerve = configSwerve();
@@ -64,6 +68,10 @@ public class DriveSubsystem extends Subsystem implements Item {
     swerve.setFieldOriented(!isCameraOriented);
     setEnableDriveAxisFlip(isCameraOriented);
   }
+
+  ////////////////////////////////////////////////////////////////////////////
+  // PATHFINDER
+  ////////////////////////////////////////////////////////////////////////////
 
   private void setEnableDriveAxisFlip(boolean enable) {
     enableDriveAxisFlip = enable;
@@ -91,13 +99,13 @@ public class DriveSubsystem extends Subsystem implements Item {
     }
   }
 
+  ////////////////////////////////////////////////////////////////////////////
+  // TWIST
+  ////////////////////////////////////////////////////////////////////////////
+
   public void stop() {
     swerve.stop();
   }
-
-  ////////////////////////////////////////////////////////////////////////////
-  // PATHFINDER
-  ////////////////////////////////////////////////////////////////////////////
 
   public double getAverageOutputCurrent() {
     double sum = 0;
@@ -141,13 +149,11 @@ public class DriveSubsystem extends Subsystem implements Item {
     pathController.interrupt();
   }
 
+  ////////////////////////////////////////////////////////////////////////////
+
   public void setTargetYaw(double targetYaw) {
     this.targetYaw = targetYaw;
   }
-
-  ////////////////////////////////////////////////////////////////////////////
-  // TWIST
-  ////////////////////////////////////////////////////////////////////////////
 
   public void startTwist(double heading, int distance, double targetYaw) {
     logger.info("heading={} distance={} targetYaw={}", heading, distance, targetYaw);
@@ -179,8 +185,6 @@ public class DriveSubsystem extends Subsystem implements Item {
   public void setFieldOriented(boolean isFieldOriented) {
     swerve.setFieldOriented(isFieldOriented);
   }
-
-  ////////////////////////////////////////////////////////////////////////////
 
   public void setWheelAzimuthPosition(List<Integer> positions) {
     Wheel[] wheels = swerve.getWheels();
@@ -221,6 +225,10 @@ public class DriveSubsystem extends Subsystem implements Item {
     gyro.setAngleAdjustment(adj);
   }
 
+  ////////////////////////////////////////////////////////////////////////////
+  // SWERVE CONFIG
+  ////////////////////////////////////////////////////////////////////////////
+
   public void undoGyroOffset() {
     AHRS gyro = swerve.getGyro();
     double adj = gyro.getAngleAdjustment();
@@ -257,10 +265,6 @@ public class DriveSubsystem extends Subsystem implements Item {
   public SwerveDrive getSwerveDrive() {
     return swerve;
   }
-
-  ////////////////////////////////////////////////////////////////////////////
-  // SWERVE CONFIG
-  ////////////////////////////////////////////////////////////////////////////
 
   public void setAngleOrthogonalAngle() {
     double[] angles = new double[] {-90.0, 0.0, 90.0, 180.0, -180.0};
@@ -383,12 +387,12 @@ public class DriveSubsystem extends Subsystem implements Item {
   @Override
   public Set<Measure> getMeasures() {
     return Set.of(
-        Measure.ANGLE,
-        Measure.CLOSED_LOOP_ERROR,
-        Measure.CLOSED_LOOP_TARGET,
-        Measure.VALUE,
-        Measure.COMPONENT_STRAFE,
-        Measure.DISPLACEMENT_EXPECTED);
+        new Measure(GYRO_ANGLE, "Gyro Angle"),
+        new Measure(YAW_ERROR, "Yaw Error"),
+        new Measure(PATH_POSITION, "Path Position"),
+        new Measure(GYRO_ERROR, "Gyro Error"),
+        new Measure(YAW_TARGET, "Yaw Target"),
+        new Measure(STRAFE, "Strafe"));
   }
 
   @NotNull
@@ -398,25 +402,25 @@ public class DriveSubsystem extends Subsystem implements Item {
   }
 
   @Override
-  public int compareTo(@NotNull Item item) {
+  public int compareTo(@NotNull Measurable item) {
     return 0;
   }
 
   @NotNull
   @Override
   public DoubleSupplier measurementFor(@NotNull Measure measure) {
-    switch (measure) {
-      case ANGLE:
+    switch (measure.getName()) {
+      case GYRO_ANGLE:
         return () -> Math.IEEEremainder(getGyro().getAngle(), 360);
-      case CLOSED_LOOP_ERROR:
+      case YAW_ERROR:
         return () -> yawError; // yaw error
-      case CLOSED_LOOP_TARGET:
+      case PATH_POSITION:
         return () -> (isPath ? pathController.getSetpointPos() : 0.0);
-      case VALUE:
+      case GYRO_ERROR:
         return () -> targetYaw - getGyro().getAngle();
-      case DISPLACEMENT_EXPECTED:
+      case YAW_TARGET:
         return () -> targetYaw;
-      case COMPONENT_STRAFE:
+      case STRAFE:
         return () -> graphableStrafe;
       default:
         return () -> 2767.0;

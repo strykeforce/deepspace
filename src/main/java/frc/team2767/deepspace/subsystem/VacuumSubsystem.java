@@ -18,11 +18,11 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
-import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
-import org.strykeforce.thirdcoast.telemetry.item.Item;
+import org.strykeforce.thirdcoast.telemetry.item.Measurable;
+import org.strykeforce.thirdcoast.telemetry.item.Measure;
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
-public class VacuumSubsystem extends Subsystem implements Item {
+public class VacuumSubsystem extends Subsystem implements Measurable {
 
   private static final double COUNTS_PER_INHG = 35.533;
   private static final double COUNTS_OFFSET = 31.98;
@@ -36,6 +36,7 @@ public class VacuumSubsystem extends Subsystem implements Item {
   private static final int CLIMB_PRESSURE = 1;
   private static final int CLIMB_GOOD_ENOUGH = 800;
   private static final int CLIMB_PRE_CHECK = 350;
+  private static final String CLIMB_PRESSURE_KEY = "CLIMB_PRESSURE";
   public static double kBallPressureInHg;
   public static double kHatchPressureInHg;
   public static double kClimbPressureInHg;
@@ -52,8 +53,8 @@ public class VacuumSubsystem extends Subsystem implements Item {
   private final AnalogInput climbPressure = new AnalogInput(CLIMB_PRESSURE);
   private boolean climbing;
   private int setpoint;
-  private int stableCount;
-  private int climbStableCounts;;
+  private int stableCount;;
+  private int climbStableCounts;
 
   public VacuumSubsystem() {
     stableCount = 0;
@@ -285,7 +286,7 @@ public class VacuumSubsystem extends Subsystem implements Item {
   @NotNull
   @Override
   public Set<Measure> getMeasures() {
-    return Set.of(Measure.ANALOG_IN);
+    return Set.of(new Measure(CLIMB_PRESSURE_KEY, "Climb Pressure"));
   }
 
   @NotNull
@@ -295,23 +296,19 @@ public class VacuumSubsystem extends Subsystem implements Item {
   }
 
   @Override
-  public int compareTo(@NotNull Item item) {
+  public int compareTo(@NotNull Measurable item) {
     return 0;
   }
 
   @NotNull
   @Override
   public DoubleSupplier measurementFor(@NotNull Measure measure) {
-    switch (measure) {
-      case ANALOG_IN:
-        return this::getClimbPressure;
+    switch (measure.getName()) {
+      case CLIMB_PRESSURE_KEY:
+        return () -> climbPressure.getValue();
       default:
         return () -> 2767.0;
     }
-  }
-
-  public double getClimbPressure() {
-    return climbPressure.getValue();
   }
 
   public enum Valve {

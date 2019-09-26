@@ -18,10 +18,10 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
-import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
-import org.strykeforce.thirdcoast.telemetry.item.Item;
+import org.strykeforce.thirdcoast.telemetry.item.Measurable;
+import org.strykeforce.thirdcoast.telemetry.item.Measure;
 
-public class VisionSubsystem extends Subsystem implements Item {
+public class VisionSubsystem extends Subsystem implements Measurable {
 
   // 36 in away
   // gain test: 4in off both left and right
@@ -45,16 +45,10 @@ public class VisionSubsystem extends Subsystem implements Item {
   private static final double STRAFE_CORRECTION_RIGHT =
       -0.5; // -1.0 // NEGATIVE TO FIELD LEFT FOR THIS ONE?
   private static final double STRAFE_CORRECTION_LEFT = 0.5; // was positive
-
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
-  private final DigitalOutput lightsOutput6 = new DigitalOutput(6);
-  private final DigitalOutput lightsOutput5 = new DigitalOutput(5);
-  private final Timer blinkTimer = new Timer();
-  public GamePiece gamePiece = GamePiece.NOTSET;
-  public Action action = Action.NOTSET;
-  public FieldDirection direction = FieldDirection.NOTSET;
-  public ElevatorLevel elevatorLevel = ElevatorLevel.NOTSET;
-  public StartSide startSide = StartSide.NOTSET;
+  private static final String RANGE = "RANGE";
+  private static final String CORRECTED_BEARING = "CORRECTED_BEARING";
+  private static final String LIGHT_STATE = "LIGHT_STATE";
+  private static final String STRAFE_ERROR = "STRAFE_ERROR";
   private static NetworkTableEntry bearingEntry;
   private static NetworkTableEntry cameraMode;
   private static NetworkTableEntry rangeEntry;
@@ -72,6 +66,15 @@ public class VisionSubsystem extends Subsystem implements Item {
   private static LightPattern currentPattern;
   private static double lightState;
   private static double strafeError = 0;
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private final DigitalOutput lightsOutput6 = new DigitalOutput(6);
+  private final DigitalOutput lightsOutput5 = new DigitalOutput(5);
+  private final Timer blinkTimer = new Timer();
+  public GamePiece gamePiece = GamePiece.NOTSET;
+  public Action action = Action.NOTSET;
+  public FieldDirection direction = FieldDirection.NOTSET;
+  public ElevatorLevel elevatorLevel = ElevatorLevel.NOTSET;
+  public StartSide startSide = StartSide.NOTSET;
 
   public VisionSubsystem() {
 
@@ -252,7 +255,10 @@ public class VisionSubsystem extends Subsystem implements Item {
   @Override
   public Set<Measure> getMeasures() {
     return Set.of(
-        Measure.POSITION, Measure.ANGLE, Measure.VALUE, Measure.COMPONENT_STRAFE, Measure.UNKNOWN);
+        new Measure(RANGE, "Raw Range"),
+        new Measure(CORRECTED_BEARING, "Corrected Bearing"),
+        new Measure(LIGHT_STATE, "Light State"),
+        new Measure(STRAFE_ERROR, "Strafe Error"));
   }
 
   @NotNull
@@ -262,21 +268,21 @@ public class VisionSubsystem extends Subsystem implements Item {
   }
 
   @Override
-  public int compareTo(@NotNull Item item) {
+  public int compareTo(@NotNull Measurable item) {
     return 0;
   }
 
   @NotNull
   @Override
   public DoubleSupplier measurementFor(@NotNull Measure measure) {
-    switch (measure) {
-      case POSITION:
+    switch (measure.getName()) {
+      case RANGE:
         return this::getRawRange;
-      case ANGLE:
+      case CORRECTED_BEARING:
         return this::getCorrectedBearing;
-      case VALUE:
+      case LIGHT_STATE:
         return () -> lightState;
-      case COMPONENT_STRAFE:
+      case STRAFE_ERROR:
         return this::getStrafeError;
       default:
         return () -> 2767;
