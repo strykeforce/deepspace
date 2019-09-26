@@ -15,11 +15,11 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
-import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
-import org.strykeforce.thirdcoast.telemetry.item.Item;
+import org.strykeforce.thirdcoast.telemetry.item.Measurable;
+import org.strykeforce.thirdcoast.telemetry.item.Measure;
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
-public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, Item {
+public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, Measurable {
 
   public static final double PLACE_RIGHT = 45.0;
   public static final double PLACE_LEFT = -45.0;
@@ -370,6 +370,9 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
   }
 
   // --------------------------GRAPHER---------------------------------
+  private static final String COUNTER = "COUNTER";
+  private static final String COMPRESSION = "COMPRESSION";
+
   @NotNull
   @Override
   public String getDescription() {
@@ -384,7 +387,8 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
   @NotNull
   @Override
   public Set<Measure> getMeasures() {
-    return Set.of(Measure.VALUE, Measure.ANALOG_IN_RAW);
+    return Set.of(
+        new Measure(COUNTER, "Counter"), new Measure(COMPRESSION, "Compression Raw Analog"));
   }
 
   @NotNull
@@ -394,18 +398,18 @@ public class BiscuitSubsystem extends Subsystem implements Limitable, Zeroable, 
   }
 
   @Override
-  public int compareTo(@NotNull Item item) {
+  public int compareTo(@NotNull Measurable item) {
     return 0;
   }
 
   @NotNull
   @Override
   public DoubleSupplier measurementFor(@NotNull Measure measure) {
-    switch (measure) {
-      case VALUE:
+    switch (measure.getName()) {
+      case COUNTER:
         return () -> graphCount;
-      case ANALOG_IN_RAW:
-        return () -> getCompression();
+      case COMPRESSION:
+        return this::getCompression;
       default:
         return () -> 2767.0;
     }
