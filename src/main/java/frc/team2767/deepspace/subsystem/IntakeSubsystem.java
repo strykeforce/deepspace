@@ -48,6 +48,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable, I
 
   private int currentForwardLimit;
   private int currentReverseLimit;
+  private shoulderILimit currentLimit = shoulderILimit.NORMAL;
 
   public IntakeSubsystem() {
 
@@ -244,6 +245,26 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable, I
     shoulder.set(ControlMode.MotionMagic, setpointTicks);
   }
 
+  public void setCurrentLimit(shoulderILimit limit) {
+    if (limit != currentLimit) {
+      switch (limit) {
+        case STOW:
+          shoulder.configContinuousCurrentLimit(shoulderILimit.STOW.continuous, 10);
+          shoulder.configPeakCurrentLimit(shoulderILimit.STOW.peak, 10);
+          logger.info("shoulder current limit: STOW");
+          break;
+        case NORMAL:
+          shoulder.configContinuousCurrentLimit(shoulderILimit.NORMAL.continuous, 10);
+          shoulder.configPeakCurrentLimit(shoulderILimit.NORMAL.peak, 10);
+          logger.info("shoulder current limit: NORMAL");
+          break;
+      }
+    }
+    currentLimit = limit;
+  }
+
+  // ------------------------GRAPHER-------------------------------------------------
+
   @NotNull
   @Override
   public String getDescription() {
@@ -301,5 +322,18 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable, I
 
   public boolean isIntakeSlowBeamBroken() {
     return !intakeBeamBreak.get();
+  }
+
+  public enum shoulderILimit {
+    NORMAL(10, 15),
+    STOW(1, 2);
+
+    public final int continuous;
+    public final int peak;
+
+    shoulderILimit(int continuous, int peak) {
+      this.continuous = continuous;
+      this.peak = peak;
+    }
   }
 }
