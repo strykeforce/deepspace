@@ -16,6 +16,10 @@ public class IntakePositionCommand extends Command {
 
   @Override
   protected void initialize() {
+    if (angle == IntakeSubsystem.kStowPositionDeg)
+      INTAKE.setCurrentLimit(IntakeSubsystem.shoulderILimit.STOW);
+    else INTAKE.setCurrentLimit(IntakeSubsystem.shoulderILimit.NORMAL);
+
     INTAKE.setPosition(angle);
   }
 
