@@ -29,18 +29,18 @@ public class VisionSubsystem extends Subsystem implements Measurable {
   private static final double CAMERA_X = 3.5;
   private static final double CAMERA_Y_LEFT = -13.5;
   private static final double CAMERA_Y_RIGHT = 13.5;
-  private static final double GLUE_CORRECTION_FACTOR_RIGHT = -2.21; // -2.26 comp
-  private static final double GLUE_CORRECTION_FACTOR_LEFT = 0.6417; // 0.6147 comp
+  private static final double GLUE_CORRECTION_FACTOR_RIGHT = -1.8181; // -2.21
+  private static final double GLUE_CORRECTION_FACTOR_LEFT = 0.8556; // 0.6417
   private static final double CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_RIGHT =
       1.0; // 1.0 is zero value 0.85
   private static final double CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_LEFT =
       1.0; // 1.0 is zero value 0.85
   private static final double CAMERA_POSITION_BEARING_LEFT = -90.0;
   private static final double CAMERA_POSITION_BEARING_RIGHT = 90.0;
-  private static final double CAMERA_RANGE_SLOPE_RIGHT = 1.054; // 1.2449
-  private static final double CAMERA_RANGE_OFFSET_RIGHT = -5.02; // -4.3949
-  private static final double CAMERA_RANGE_SLOPE_LEFT = 1.061; // 0.8259
-  private static final double CAMERA_RANGE_OFFSET_LEFT = -4.92; // -5.6325
+  private static final double CAMERA_RANGE_SLOPE_RIGHT = 1.0886; // 1.054
+  private static final double CAMERA_RANGE_OFFSET_RIGHT = -5.7751; // -5.02
+  private static final double CAMERA_RANGE_SLOPE_LEFT = 1.0437; // 1.061
+  private static final double CAMERA_RANGE_OFFSET_LEFT = -4.3828; // -4.92
   // NEGATIVE = TOWARDS FIELD LEFT (this one was negative)
   private static final double STRAFE_CORRECTION_RIGHT =
       -0.5; // -1.0 // NEGATIVE TO FIELD LEFT FOR THIS ONE?
