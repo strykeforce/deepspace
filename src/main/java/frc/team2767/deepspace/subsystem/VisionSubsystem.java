@@ -29,8 +29,8 @@ public class VisionSubsystem extends Subsystem implements Measurable {
   private static final double CAMERA_X = 3.5;
   private static final double CAMERA_Y_LEFT = -13.5;
   private static final double CAMERA_Y_RIGHT = 13.5;
-  private static final double GLUE_CORRECTION_FACTOR_RIGHT = -1.8181; // -2.21
-  private static final double GLUE_CORRECTION_FACTOR_LEFT = 0.8556; // 0.6417
+  private static final double GLUE_CORRECTION_FACTOR_RIGHT = -1.9251; // -1.8181
+  private static final double GLUE_CORRECTION_FACTOR_LEFT = 0.9625; // 0.8556
   private static final double CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_RIGHT =
       1.0; // 1.0 is zero value 0.85
   private static final double CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_LEFT =
@@ -41,10 +41,10 @@ public class VisionSubsystem extends Subsystem implements Measurable {
   private static final double CAMERA_RANGE_OFFSET_RIGHT = -5.7751; // -5.02
   private static final double CAMERA_RANGE_SLOPE_LEFT = 1.0437; // 1.061
   private static final double CAMERA_RANGE_OFFSET_LEFT = -4.3828; // -4.92
-  // NEGATIVE = TOWARDS FIELD LEFT (this one was negative)
+  // NEGATIVE = TOWARDS FIELD LEFT (this one was negative) from driver station perspective
   private static final double STRAFE_CORRECTION_RIGHT =
-      -0.5; // -1.0 // NEGATIVE TO FIELD LEFT FOR THIS ONE?
-  private static final double STRAFE_CORRECTION_LEFT = 0.5; // was positive
+      -0.75; // -1.0 // NEGATIVE TO FIELD LEFT FOR THIS ONE
+  private static final double STRAFE_CORRECTION_LEFT = 0; // was positive
   private static final String RANGE = "RANGE";
   private static final String CORRECTED_BEARING = "CORRECTED_BEARING";
   private static final String LIGHT_STATE = "LIGHT_STATE";
