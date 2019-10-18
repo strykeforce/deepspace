@@ -41,7 +41,7 @@ public class VisionSubsystem extends Subsystem implements Measurable {
   private static final double CAMERA_RANGE_OFFSET_RIGHT = -5.7751; // -5.02
   private static final double CAMERA_RANGE_SLOPE_LEFT = 1.0437; // 1.061
   private static final double CAMERA_RANGE_OFFSET_LEFT = -4.3828; // -4.92
-  // NEGATIVE = TOWARDS FIELD LEFT (this one was negative)
+  // NEGATIVE = TOWARDS FIELD LEFT (this one was negative) from driver station perspective
   private static final double STRAFE_CORRECTION_RIGHT =
       -0.75; // -1.0 // NEGATIVE TO FIELD LEFT FOR THIS ONE
   private static final double STRAFE_CORRECTION_LEFT = 0; // was positive
