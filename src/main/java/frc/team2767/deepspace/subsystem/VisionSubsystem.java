@@ -18,10 +18,10 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
-import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
-import org.strykeforce.thirdcoast.telemetry.item.Item;
+import org.strykeforce.thirdcoast.telemetry.item.Measurable;
+import org.strykeforce.thirdcoast.telemetry.item.Measure;
 
-public class VisionSubsystem extends Subsystem implements Item {
+public class VisionSubsystem extends Subsystem implements Measurable {
 
   // 36 in away
   // gain test: 4in off both left and right
@@ -29,32 +29,26 @@ public class VisionSubsystem extends Subsystem implements Item {
   private static final double CAMERA_X = 3.5;
   private static final double CAMERA_Y_LEFT = -13.5;
   private static final double CAMERA_Y_RIGHT = 13.5;
-  private static final double GLUE_CORRECTION_FACTOR_RIGHT = -2.21; // -2.26 comp
-  private static final double GLUE_CORRECTION_FACTOR_LEFT = 0.6417; // 0.6147 comp
+  private static final double GLUE_CORRECTION_FACTOR_RIGHT = -1.8181; // -2.21
+  private static final double GLUE_CORRECTION_FACTOR_LEFT = 0.8556; // 0.6417
   private static final double CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_RIGHT =
       1.0; // 1.0 is zero value 0.85
   private static final double CAMERA_DEGREES_PER_PIXEL_ADJUSTMENT_LEFT =
       1.0; // 1.0 is zero value 0.85
   private static final double CAMERA_POSITION_BEARING_LEFT = -90.0;
   private static final double CAMERA_POSITION_BEARING_RIGHT = 90.0;
-  private static final double CAMERA_RANGE_SLOPE_RIGHT = 1.054; // 1.2449
-  private static final double CAMERA_RANGE_OFFSET_RIGHT = -5.02; // -4.3949
-  private static final double CAMERA_RANGE_SLOPE_LEFT = 1.061; // 0.8259
-  private static final double CAMERA_RANGE_OFFSET_LEFT = -4.92; // -5.6325
+  private static final double CAMERA_RANGE_SLOPE_RIGHT = 1.0886; // 1.054
+  private static final double CAMERA_RANGE_OFFSET_RIGHT = -5.7751; // -5.02
+  private static final double CAMERA_RANGE_SLOPE_LEFT = 1.0437; // 1.061
+  private static final double CAMERA_RANGE_OFFSET_LEFT = -4.3828; // -4.92
   // NEGATIVE = TOWARDS FIELD LEFT (this one was negative)
   private static final double STRAFE_CORRECTION_RIGHT =
       -0.5; // -1.0 // NEGATIVE TO FIELD LEFT FOR THIS ONE?
   private static final double STRAFE_CORRECTION_LEFT = 0.5; // was positive
-
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
-  private final DigitalOutput lightsOutput6 = new DigitalOutput(6);
-  private final DigitalOutput lightsOutput5 = new DigitalOutput(5);
-  private final Timer blinkTimer = new Timer();
-  public GamePiece gamePiece = GamePiece.NOTSET;
-  public Action action = Action.NOTSET;
-  public FieldDirection direction = FieldDirection.NOTSET;
-  public ElevatorLevel elevatorLevel = ElevatorLevel.NOTSET;
-  public StartSide startSide = StartSide.NOTSET;
+  private static final String RANGE = "RANGE";
+  private static final String CORRECTED_BEARING = "CORRECTED_BEARING";
+  private static final String LIGHT_STATE = "LIGHT_STATE";
+  private static final String STRAFE_ERROR = "STRAFE_ERROR";
   private static NetworkTableEntry bearingEntry;
   private static NetworkTableEntry cameraMode;
   private static NetworkTableEntry rangeEntry;
@@ -72,6 +66,15 @@ public class VisionSubsystem extends Subsystem implements Item {
   private static LightPattern currentPattern;
   private static double lightState;
   private static double strafeError = 0;
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private final DigitalOutput lightsOutput6 = new DigitalOutput(6);
+  private final DigitalOutput lightsOutput5 = new DigitalOutput(5);
+  private final Timer blinkTimer = new Timer();
+  public GamePiece gamePiece = GamePiece.NOTSET;
+  public Action action = Action.NOTSET;
+  public FieldDirection direction = FieldDirection.NOTSET;
+  public ElevatorLevel elevatorLevel = ElevatorLevel.NOTSET;
+  public StartSide startSide = StartSide.NOTSET;
 
   public VisionSubsystem() {
 
@@ -252,7 +255,10 @@ public class VisionSubsystem extends Subsystem implements Item {
   @Override
   public Set<Measure> getMeasures() {
     return Set.of(
-        Measure.POSITION, Measure.ANGLE, Measure.VALUE, Measure.COMPONENT_STRAFE, Measure.UNKNOWN);
+        new Measure(RANGE, "Raw Range"),
+        new Measure(CORRECTED_BEARING, "Corrected Bearing"),
+        new Measure(LIGHT_STATE, "Light State"),
+        new Measure(STRAFE_ERROR, "Strafe Error"));
   }
 
   @NotNull
@@ -262,21 +268,21 @@ public class VisionSubsystem extends Subsystem implements Item {
   }
 
   @Override
-  public int compareTo(@NotNull Item item) {
+  public int compareTo(@NotNull Measurable item) {
     return 0;
   }
 
   @NotNull
   @Override
   public DoubleSupplier measurementFor(@NotNull Measure measure) {
-    switch (measure) {
-      case POSITION:
+    switch (measure.getName()) {
+      case RANGE:
         return this::getRawRange;
-      case ANGLE:
+      case CORRECTED_BEARING:
         return this::getCorrectedBearing;
-      case VALUE:
+      case LIGHT_STATE:
         return () -> lightState;
-      case COMPONENT_STRAFE:
+      case STRAFE_ERROR:
         return this::getStrafeError;
       default:
         return () -> 2767;

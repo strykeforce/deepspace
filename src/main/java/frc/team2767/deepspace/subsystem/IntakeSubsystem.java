@@ -16,11 +16,11 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.strykeforce.thirdcoast.telemetry.TelemetryService;
-import org.strykeforce.thirdcoast.telemetry.grapher.Measure;
-import org.strykeforce.thirdcoast.telemetry.item.Item;
+import org.strykeforce.thirdcoast.telemetry.item.Measurable;
+import org.strykeforce.thirdcoast.telemetry.item.Measure;
 import org.strykeforce.thirdcoast.telemetry.item.TalonItem;
 
-public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable, Item {
+public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable, Measurable {
 
   private static final int TICKS_PER_DEGREE = 90;
   private static final int TICKS_OFFSET = 9664;
@@ -30,6 +30,8 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable, I
   private static final int INTAKE_SLOW_BEAM_ID = 4;
   private static final int STABLE_THRESH = 4;
   private static final String PREFS_NAME = "IntakeSubsystem/Settings/";
+  private static final String BEAM = "BEAM";
+  private static final String INTAKE_BEAM = "INTAKE_BEAM";
   public static double kStowPositionDeg;
   public static double kZeroPositionTicks;
   public static double kMiddlePositionDeg;
@@ -48,6 +50,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable, I
 
   private int currentForwardLimit;
   private int currentReverseLimit;
+  private ShoulderILimit currentLimit = ShoulderILimit.NORMAL;
 
   public IntakeSubsystem() {
 
@@ -244,6 +247,26 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable, I
     shoulder.set(ControlMode.MotionMagic, setpointTicks);
   }
 
+  public void setCurrentLimit(ShoulderILimit limit) {
+    if (limit != currentLimit) {
+      switch (limit) {
+        case STOW:
+          shoulder.configContinuousCurrentLimit(ShoulderILimit.STOW.continuous, 10);
+          shoulder.configPeakCurrentLimit(ShoulderILimit.STOW.peak, 10);
+          logger.info("shoulder current limit: STOW");
+          break;
+        case NORMAL:
+          shoulder.configContinuousCurrentLimit(ShoulderILimit.NORMAL.continuous, 10);
+          shoulder.configPeakCurrentLimit(ShoulderILimit.NORMAL.peak, 10);
+          logger.info("shoulder current limit: NORMAL");
+          break;
+      }
+    }
+    currentLimit = limit;
+  }
+
+  // ------------------------GRAPHER-------------------------------------------------
+
   @NotNull
   @Override
   public String getDescription() {
@@ -258,7 +281,7 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable, I
   @NotNull
   @Override
   public Set<Measure> getMeasures() {
-    return Set.of(Measure.VALUE, Measure.UNKNOWN);
+    return Set.of(new Measure(BEAM, "Beam"), new Measure(INTAKE_BEAM, "Intake Beam"));
   }
 
   @NotNull
@@ -268,17 +291,17 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable, I
   }
 
   @Override
-  public int compareTo(@NotNull Item item) {
+  public int compareTo(@NotNull Measurable item) {
     return 0;
   }
 
   @NotNull
   @Override
   public DoubleSupplier measurementFor(@NotNull Measure measure) {
-    switch (measure) {
-      case VALUE:
+    switch (measure.getName()) {
+      case BEAM:
         return this::graphBeam;
-      case UNKNOWN:
+      case INTAKE_BEAM:
         return this::graphIntakeBeam;
       default:
         return () -> 2767;
@@ -301,5 +324,18 @@ public class IntakeSubsystem extends Subsystem implements Limitable, Zeroable, I
 
   public boolean isIntakeSlowBeamBroken() {
     return !intakeBeamBreak.get();
+  }
+
+  public enum ShoulderILimit {
+    NORMAL(10, 15),
+    STOW(1, 2);
+
+    public final int continuous;
+    public final int peak;
+
+    ShoulderILimit(int continuous, int peak) {
+      this.continuous = continuous;
+      this.peak = peak;
+    }
   }
 }
