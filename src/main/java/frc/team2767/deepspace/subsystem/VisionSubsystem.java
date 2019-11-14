@@ -236,6 +236,11 @@ public class VisionSubsystem extends Subsystem implements Measurable {
     logger.debug("Set target yaw to {}", targetYaw);
   }
 
+  public double getYawFactor() {
+    // returns the bearing as a fraction of the potential offset
+    return getCorrectedBearing() / 34.224;
+  }
+
   public void pyeyeDump() {
     logger.debug("PYEYE DUMP\nrange {} at {} degree\n", correctedRange, correctedHeading);
   }

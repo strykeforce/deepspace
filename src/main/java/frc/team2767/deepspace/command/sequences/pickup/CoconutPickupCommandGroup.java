@@ -35,19 +35,7 @@ public class CoconutPickupCommandGroup extends CommandGroup {
           }
         });
 
-    /*addSequential(
-    new CommandGroup() {
-      {
-        addParallel(
-            new SetSolenoidStatesCommand(VacuumSubsystem.SolenoidStates.HATCH_PICKUP));
-        addParallel(new ElevatorDownFastOpenLoopCommand());
-      }
-    });*/
-
-    // addParallel(new IntakePositionCommand(105));
     addSequential(new BiscuitSetPositionCommand(BiscuitSubsystem.kDownPosition));
-    // addSequential(new ElevatorDownFastOpenLoopCommand());
-    // addSequential(new WaitForPressureCommand());
     addSequential(new CoconutPickupAutoRetryCommand());
     addSequential(new ElevatorSetPositionCommand(25.0));
     addParallel(new SetActionCommand(Action.PLACE));

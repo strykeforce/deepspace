@@ -3,6 +3,8 @@ package frc.team2767.deepspace.control;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team2767.deepspace.command.CameraDriveCommand;
+import frc.team2767.deepspace.command.TeleOpDriveCommand;
 import frc.team2767.deepspace.command.ZeroGyroCommand;
 import frc.team2767.deepspace.command.approach.sequences.AutoHatchPickupCommandGroup;
 import frc.team2767.deepspace.command.biscuit.BiscuitNegativeCommand;
@@ -87,6 +89,11 @@ public class DriverControls {
 
     // gamepiece place
     new JoystickButton(joystick, Shoulder.LEFT_DOWN.id).whenPressed(new ReleaseGamepieceCommand());
+
+    // drive mode
+    new JoystickButton(joystick, Toggle.LEFT_TOGGLE.id).whenPressed(new CameraDriveCommand());
+    new JoystickButton(joystick, Toggle.LEFT_TOGGLE.id).whenReleased(new TeleOpDriveCommand());
+
     // new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenPressed(new
     // AutoHatchPlaceCommandGroup());
     // new JoystickButton(joystick, Shoulder.LEFT_UP.id).whenReleased(new InterruptCommand());
